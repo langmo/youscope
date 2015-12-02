@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-addon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-server-addon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-shared"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-uielements"/>
+	<classpathentry kind="lib" path="/youscope-shared/lib/xstream-1.4.2.jar"/>
+	<classpathentry kind="src" path="/youscope-addon"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

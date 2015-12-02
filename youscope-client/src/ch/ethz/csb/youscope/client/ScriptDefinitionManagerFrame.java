@@ -1,0 +1,166 @@
+/**
+ * 
+ */
+package ch.ethz.csb.youscope.client;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+
+import ch.ethz.csb.youscope.client.addon.YouScopeFrame;
+import ch.ethz.csb.youscope.client.uielements.ImageLoadingTools;
+import ch.ethz.csb.youscope.client.uielements.StandardFormats;
+
+/**
+ * @author langmo
+ *
+ */
+class ScriptDefinitionManagerFrame implements ActionListener
+{
+	protected YouScopeFrame									frame;
+	    
+	protected JList<ScriptDefinitionDTO> scriptList;
+	
+	private Vector<ActionListener> listeners = new Vector<ActionListener>();
+	
+	ScriptDefinitionManagerFrame(YouScopeFrame frame)
+	{
+		this.frame = frame;
+		frame.setTitle("Script Shortcut Manager");
+		frame.setResizable(true);
+		frame.setClosable(true);
+		frame.setMaximizable(false);
+		
+		ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add");
+        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete");
+        ImageIcon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit");
+        
+        JButton newShortcutButton = new JButton("New Shortcut", addButtonIcon);
+        newShortcutButton.setHorizontalAlignment(SwingConstants.LEFT);
+        newShortcutButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	YouScopeFrame newFrame = ScriptDefinitionManagerFrame.this.frame.createModalChildFrame();
+                	ScriptDefinitionConfigurationFrame configFrame = new ScriptDefinitionConfigurationFrame(newFrame);
+                	configFrame.addActionListener(ScriptDefinitionManagerFrame.this);
+                	newFrame.setVisible(true);
+                }
+            });
+
+        JButton deleteShortcutButton = new JButton("Delete Shortcut", deleteButtonIcon);
+        deleteShortcutButton.setHorizontalAlignment(SwingConstants.LEFT);
+        deleteShortcutButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	ScriptDefinitionDTO scriptDefinition = scriptList.getSelectedValue();
+                    if (scriptDefinition == null)
+                        return;
+                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the script shortcut \"" + scriptDefinition.getName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
+					if(shouldDelete != JOptionPane.YES_OPTION)
+						return;
+					ScriptDefinitionManager.deleteScriptDefinition(scriptDefinition);
+					ScriptDefinitionManagerFrame.this.actionPerformed(e);
+                }
+            });
+
+        JButton editShortcutButton = new JButton("Edit Shortcut", editButtonIcon);
+        editShortcutButton.setHorizontalAlignment(SwingConstants.LEFT);
+        editShortcutButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    ScriptDefinitionDTO scriptDefinition = scriptList.getSelectedValue();
+                    if (scriptDefinition == null)
+                        return;
+               
+                    YouScopeFrame newFrame = ScriptDefinitionManagerFrame.this.frame.createModalChildFrame();
+                    ScriptDefinitionConfigurationFrame configFrame = new ScriptDefinitionConfigurationFrame(newFrame, scriptDefinition);
+                	configFrame.addActionListener(ScriptDefinitionManagerFrame.this);
+                    newFrame.setVisible(true);
+                }
+            });
+
+        // add Button Panel
+        GridBagLayout elementsLayout = new GridBagLayout();
+        GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
+        GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
+
+        JPanel buttonPanel = new JPanel(elementsLayout);
+        StandardFormats.addGridBagElement(newShortcutButton, elementsLayout, newLineConstr, buttonPanel);
+        StandardFormats.addGridBagElement(editShortcutButton, elementsLayout, newLineConstr, buttonPanel);
+        StandardFormats.addGridBagElement(deleteShortcutButton, elementsLayout, newLineConstr, buttonPanel);
+        StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, buttonPanel);
+
+        scriptList = new JList<ScriptDefinitionDTO>();
+        scriptList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane shortcutListPane = new JScrollPane(scriptList);
+        shortcutListPane.setPreferredSize(new Dimension(250, 150));
+        shortcutListPane.setMinimumSize(new Dimension(10, 10));
+        
+        JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	ScriptDefinitionManagerFrame.this.frame.setVisible(false);
+                }
+            });
+		
+
+        refreshShortcutList();
+        
+        JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(new JLabel("Shortcuts:"), BorderLayout.NORTH);
+        contentPane.add(closeButton, BorderLayout.SOUTH);
+        contentPane.add(shortcutListPane, BorderLayout.CENTER);
+        contentPane.add(buttonPanel, BorderLayout.EAST);
+
+		frame.setContentPane(contentPane);
+		frame.pack();
+	}
+	
+	private void refreshShortcutList()
+	{
+		 scriptList.setListData(ScriptDefinitionManager.getScriptDefinitions());
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0)
+	{
+		refreshShortcutList();	
+		for(ActionListener listener : listeners)
+        {
+        	listener.actionPerformed(new ActionEvent(this, 155, "Script shortcut created or edited."));
+        }
+	}
+	
+	public void addActionListener(ActionListener listener)
+	{
+		listeners.add(listener);
+	}
+	public void removeActionListener(ActionListener listener)
+	{
+		listeners.remove(listener);
+	}
+}

@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: ch.ethz.csb.youscope.starter.Starter
+SplashScreen-Image: ch/ethz/csb/youscope/starter/images/splash.jpg

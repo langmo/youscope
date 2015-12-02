@@ -1,0 +1,123 @@
+/**
+ * 
+ */
+package ch.ethz.csb.youscope.addon.changepositionjob;
+
+import ch.ethz.csb.youscope.shared.configuration.ConfigurationException;
+import ch.ethz.csb.youscope.shared.configuration.JobConfiguration;
+import ch.ethz.csb.youscope.shared.measurement.job.basicjobs.ChangePositionJob;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.converters.basic.BooleanConverter;
+
+/**
+ * This job/task changes the position of the microscope in regular intervals.
+ * 
+ * @author Moritz Lang
+ */
+@XStreamAlias("change-position-job")
+public class ChangePositionJobConfiguration extends JobConfiguration
+{
+	/**
+	 * Serial Version UID.
+	 */
+	private static final long	serialVersionUID	= 625890415353745764L;
+
+	/**
+	 * The intended x-position of the microscope.
+	 */
+	@XStreamAlias("x")
+	@XStreamAsAttribute
+	private double				x					= 0;
+
+	/**
+	 * The intended y-position of the microscope.
+	 */
+	@XStreamAlias("y")
+	@XStreamAsAttribute
+	private double				y					= 0;
+
+	/**
+	 * TRUE if x and y values are absolute, FALSE if relative.
+	 */
+	@XStreamAlias("absolute-value")
+	@XStreamAsAttribute
+	@XStreamConverter(value = BooleanConverter.class, booleans = {false}, strings = {"yes", "no"})
+	private boolean				absolute			= true;
+
+	/**
+	 * @param x the x to set
+	 */
+	public void setX(double x)
+	{
+		this.x = x;
+	}
+
+	/**
+	 * @return the x
+	 */
+	public double getX()
+	{
+		return x;
+	}
+
+	@Override
+	public String getDescription()
+	{
+		if(isAbsolute())
+			return "<p>[x, y] = [" + Double.toString(x) + ", " + Double.toString(getY()) + "]</p>";
+		return "<p>[x, y] = [x + " + Double.toString(x) + ", y + " + Double.toString(getY()) + "]</p>";
+	}
+
+	/**
+	 * @param absolute the absolute to set
+	 */
+	public void setAbsolute(boolean absolute)
+	{
+		this.absolute = absolute;
+	}
+
+	/**
+	 * @return the absolute
+	 */
+	public boolean isAbsolute()
+	{
+		return absolute;
+	}
+
+	/**
+	 * @param y the y to set
+	 */
+	public void setY(double y)
+	{
+		this.y = y;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public double getY()
+	{
+		return y;
+	}	
+
+	@Override
+	public String getTypeIdentifier()
+	{
+		return ChangePositionJob.DEFAULT_TYPE_IDENTIFIER;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		// nothing to check.
+		
+	}
+}

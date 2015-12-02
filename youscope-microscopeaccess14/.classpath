@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-server-addon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-shared"/>
+	<classpathentry kind="lib" path="lib/micro_manager14_20/MMCoreJ.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

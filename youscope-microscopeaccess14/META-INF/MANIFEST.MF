@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: ../shared/youscope-shared.jar ../server/youscope-server-addon.jar
+

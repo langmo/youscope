@@ -1,0 +1,120 @@
+/**
+ * 
+ */
+package ch.ethz.csb.youscope.addon.changepositionjob;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+
+import ch.ethz.csb.youscope.client.addon.ConfigurationAddonAdapter;
+import ch.ethz.csb.youscope.client.addon.ConfigurationMetadataAdapter;
+import ch.ethz.csb.youscope.client.addon.YouScopeClient;
+import ch.ethz.csb.youscope.client.uielements.DynamicPanel;
+import ch.ethz.csb.youscope.client.uielements.StandardFormats;
+import ch.ethz.csb.youscope.shared.YouScopeServer;
+import ch.ethz.csb.youscope.shared.addon.AddonException;
+import ch.ethz.csb.youscope.shared.measurement.job.basicjobs.ChangePositionJob;
+
+/**
+ * UI for change position jobs.
+ * @author Moritz Lang
+ */
+class ChangePositionJobConfigurationAddon extends ConfigurationAddonAdapter<ChangePositionJobConfiguration>
+{
+
+	private JFormattedTextField							xPositionField			= new JFormattedTextField(StandardFormats.getDoubleFormat());
+
+	private JFormattedTextField							yPositionField			= new JFormattedTextField(StandardFormats.getDoubleFormat());
+
+	private JCheckBox										absoluteValueCheckBox	= new JCheckBox("Absolute Value", true);
+
+	ChangePositionJobConfigurationAddon(YouScopeClient client, YouScopeServer server) throws AddonException
+	{
+		super(getMetadata(),  client, server);
+	}
+	
+	static ConfigurationMetadataAdapter<ChangePositionJobConfiguration> getMetadata()
+	{
+		return new ConfigurationMetadataAdapter<ChangePositionJobConfiguration>(ChangePositionJob.DEFAULT_TYPE_IDENTIFIER, 
+				ChangePositionJobConfiguration.class, 
+				ChangePositionJob.class, 
+				"Stage Position", 
+				new String[]{"Elementary"},
+				"icons/map.png");
+	}
+	
+	@Override
+	protected Component createUI(ChangePositionJobConfiguration configuration) throws AddonException 
+	{
+		setTitle("Change Position Job");
+		setResizable(false);
+		setMaximizable(false);
+		
+		Point2D.Double currentPosition;
+		try
+		{
+			currentPosition = getServer().getMicroscope().getStageDevice().getPosition();
+		}
+		catch(Exception e2)
+		{
+			getClient().sendError("Could not obtain current postion of microscope. Initilizing settings with zero position.", e2);
+			currentPosition = new Point2D.Double();
+		}
+
+		xPositionField.setValue(currentPosition.x);
+		yPositionField.setValue(currentPosition.y);
+
+		DynamicPanel contentPane = new DynamicPanel();
+
+		contentPane.add(new JLabel("X-Position (in micro meter):"));
+		contentPane.add(xPositionField);
+		contentPane.add(new JLabel("Y-Position (in micro meter):"));
+		contentPane.add(yPositionField);
+		JButton currentPositionButton = new JButton("Current Position");
+		currentPositionButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Point2D.Double currentPosition;
+				try
+				{
+					currentPosition = getServer().getMicroscope().getStageDevice().getPosition();
+				}
+				catch(Exception e)
+				{
+					getClient().sendError("Could not obtain current postion of microscope. Initilizing settings with zero position.", e);
+					currentPosition = new Point2D.Double();
+				}
+				
+				xPositionField.setValue(currentPosition.x);
+				yPositionField.setValue(currentPosition.y);
+			}
+		});
+		contentPane.add(currentPositionButton);
+
+		contentPane.add(absoluteValueCheckBox);
+
+		xPositionField.setValue(configuration.getX());
+		yPositionField.setValue(configuration.getY());
+
+		absoluteValueCheckBox.setSelected(configuration.isAbsolute());
+		return contentPane;
+	}
+
+	@Override
+	protected void commitChanges(ChangePositionJobConfiguration configuration)
+	{
+		configuration.setX(((Number)xPositionField.getValue()).doubleValue());
+		configuration.setY(((Number)yPositionField.getValue()).doubleValue());
+		configuration.setAbsolute(absoluteValueCheckBox.isSelected());
+		
+	}	
+}

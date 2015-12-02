@@ -1,0 +1,5 @@
+ch.ethz.csb.youscope.addon.dropletmicrofluidics.DropletMicrofluidicJobAddonFactory
+ch.ethz.csb.youscope.addon.dropletmicrofluidics.defaultobserver.DefaultObserverFactory
+ch.ethz.csb.youscope.addon.dropletmicrofluidics.tablecontroller.TableControllerFactory
+ch.ethz.csb.youscope.addon.dropletmicrofluidics.evaporationController.EvaporationControllerFactory
+ch.ethz.csb.youscope.addon.dropletmicrofluidics.flexiblecontroller.FlexibleControllerFactory

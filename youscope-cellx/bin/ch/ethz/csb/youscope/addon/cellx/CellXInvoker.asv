@@ -1,0 +1,82 @@
+%% Check variables
+if ~exist('tableDataSink', 'var') ...
+        || ~exist('detectionImage', 'var') ...
+        || ~exist('fluorescenceImages', 'var') ...
+        || ~exist('lastResult', 'var') ...
+        || ~exist('currentResult', 'var') ...
+        || ~exist('scriptsFolder', 'var')
+    error('YouScopeCellXInterface:EmptyParameters', 'Not all parameters for the YouScope-CellX Interfacer were set.');
+end
+
+%% add paths
+%cd(scriptsFolder)
+addpath([scriptsFolder, '/mclasses'], '-begin');
+addpath([scriptsFolder, '/mscripts'], '-begin');
+addpath([scriptsFolder, '/mfunctions'], '-begin');
+addpath([scriptsFolder, '/mex'], '-begin');
+addpath([scriptsFolder, '/mex/maxflow'], '-begin');
+addpath([scriptsFolder, '/YouScopeInterface'], '-begin');
+
+%% Get last state (needed for incremental tracking
+if ~isempty(lastResult)
+    previousSegmentedCells = lastResult.getData('segmentedCells');
+    previousSegmentationMask = lastResult.getData('segmentationMask');
+    previousCellTable = lastResult.getData('cellTable');
+    invocationNo = lastResult.getData('invocation');
+
+    if ~isempty(previousSegmentedCells)
+        previousSegmentedCells = hlp_deserialize(previousSegmentedCells);
+    end
+    if ~isempty(previousSegmentationMask)
+        previousSegmentationMask = hlp_deserialize(previousSegmentationMask);
+    end
+    if ~isempty(previousCellTable)
+        previousCellTable = hlp_deserialize(previousCellTable);
+    end
+     if ~isempty(invocationNo)
+        invocationNo = 1;
+    end
+else
+    previousSegmentedCells = [];
+    previousSegmentationMask = [];
+    previousCellTable = [];
+    invocationNo = 1;
+end
+
+%% Convert images
+segmImage = double(toMatlabImage(detectionImage)) / intmax('uint8');
+fluoInitialImages = cell(1, length(fluorescenceImages));
+fluoTags = cell(1, length(fluorescenceImages));
+flatFieldFileNames = cell(1, length(fluorescenceImages));
+for i = 1:length(fluorescenceImages)
+    fluoInitialImages{i} = toMatlabImage(fluorescenceImages(i));
+    fluoTags{i} = sprintf('fluo%g', i);
+    % TODO: What is this?
+    flatFieldFileNames{i} = [scriptsFolder, '/dataYouScope/endocytosis/ffgre_position010100_time0002.tif'];
+end
+
+%% Configuration
+% TODO: do with YouScope
+configFileName = [scriptsFolder, '/dataYouScope/endocytosis/configEndocytosisB.xml'];
+config = CellXConfiguration.readXML(configFileName);
+config.check();
+    
+%% Run Cell Detection & Tracking
+cellXYouScopeInterfacer = CellXYouScopeInterface(invocationNo, configFileName,segmImage,...
+    fluoTags,flatFieldFileNames,fluoInitialImages,...
+    previousSegmentedCells,previousSegmentationMask,...
+    previousCellTable);
+cellXYouScopeInterfacer.run;
+
+%% Save tracking data for next call
+currentResult.setData('segmentedCells', hlp_serialize(cellXYouScopeInterfacer.currentSegmentedCells));
+currentResult.setData('segmentationMask', hlp_serialize(cellXYouScopeInterfacer.currentSegmentationMask));
+currentResult.setData('cellTable', hlp_serialize(cellXYouScopeInterfacer.currentResult));    
+currentResult.setData('invocation', invocationNo);
+
+%% Send data to YouScope
+tableDataSink.newRows(cellXYouScopeInterfacer.currentResult.headers, reshape(cellstr(num2str(cellXYouScopeInterfacer.currentResult.data)), size(cellXYouScopeInterfacer.currentResult.data, 1), size(cellXYouScopeInterfacer.currentResult.data, 2)));
+if exist('imageSink', 'var')
+    imageSink.imageMade(toYouScopeImage(cellXYouScopeInterfacer.currentSegmentationMask));  
+end
+    

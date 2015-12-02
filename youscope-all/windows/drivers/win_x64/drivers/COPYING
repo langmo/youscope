@@ -1,0 +1,7 @@
+All files in this folder are part of the MicroManager project (see http://www.micro-manager.org).
+The Device adapters (all files starting with "mmgr") are distributed under the "BSD" license, while the MMCore is distributed under "Lesser GPL" license.
+The respective licenses can be found in this folder, or in the internet:
+BSD: http://www.opensource.org/licenses/bsd-license.php
+LGPL: http://www.opensource.org/licenses/lgpl-2.1.php
+
+Read the respctive section of the MicroManager homepage (http://www.micro-manager.org) for more details.

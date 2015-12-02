@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="onix-controller/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-addon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-uielements"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-server-addon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/youscope-shared"/>
+	<classpathentry kind="lib" path="/youscope-shared/lib/xstream-1.4.2.jar"/>
+	<classpathentry kind="src" path="/youscope-addon"/>
+	<classpathentry kind="lib" path="C:/OneDrive/YouScope/sources/youscope-private/3rdparty/onix/ONIX.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,5 @@
+ch.ethz.csb.youscope.addon.brentfocussearch.BrentFocusSearchAddonFactory
+ch.ethz.csb.youscope.addon.exhaustivefocussearch.ExhaustiveFocusSearchAddonFactory
+ch.ethz.csb.youscope.addon.matlabfocusscores.MatlabScoresAddonFactory
+ch.ethz.csb.youscope.addon.simplefocusscores.SimpleScoresAddonFactory
+ch.ethz.csb.youscope.addon.autofocus.AutoFocusJobFactory
