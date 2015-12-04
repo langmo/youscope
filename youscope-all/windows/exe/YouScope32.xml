@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>youscope-starter.jar</jar>
+  <outfile>YouScope32.exe</outfile>
+  <errTitle>YouScope</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>http://www.youscope.org</supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>YouScope.ico</icon>
+  <var>PATH=%CD%drivers32;%PATH%</var>
+  <classPath>
+    <mainClass>org.youscope.starter.Starter</mainClass>
+    <cp>youscope-starter.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>32</runtimeBits>
+    <initialHeapSize>256</initialHeapSize>
+    <initialHeapPercent>10</initialHeapPercent>
+    <maxHeapSize>1024</maxHeapSize>
+    <maxHeapPercent>50</maxHeapPercent>
+  </jre>
+  <splash>
+    <file>splash.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
+  <versionInfo>
+    <fileVersion>2.0.0.0</fileVersion>
+    <txtFileVersion>2.0</txtFileVersion>
+    <fileDescription>YouScope - Microscope Control Environment</fileDescription>
+    <copyright>Moritz Lang, info@youscope.org</copyright>
+    <productVersion>2.0.0.0</productVersion>
+    <txtProductVersion>2.0</txtProductVersion>
+    <productName>YouScope - Microscope Control Environment</productName>
+    <companyName>YouScope.org</companyName>
+    <internalName>YouScope</internalName>
+    <originalFilename>YouScope.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

@@ -1,0 +1,3 @@
+org.youscope.plugin.composedimaging.ComposedImagingJobAddonFactory
+org.youscope.plugin.composedimaging.PlateScanningJobAddonFactory
+org.youscope.plugin.composedimaging.StaggeringJobAddonFactory

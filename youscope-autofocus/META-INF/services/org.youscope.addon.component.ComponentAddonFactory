@@ -1,0 +1,5 @@
+org.youscope.plugin.brentfocussearch.BrentFocusSearchAddonFactory
+org.youscope.plugin.exhaustivefocussearch.ExhaustiveFocusSearchAddonFactory
+org.youscope.plugin.matlabfocusscores.MatlabScoresAddonFactory
+org.youscope.plugin.simplefocusscores.SimpleScoresAddonFactory
+org.youscope.plugin.autofocus.AutoFocusJobFactory

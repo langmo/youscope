@@ -1,0 +1,4 @@
+org.youscope.plugin.quickdetect.QuickDetectAddonFactory
+org.youscope.plugin.lifecelldetection.CellDetectionJobAddonFactory
+org.youscope.plugin.glowvisualizer.GlowVisualizerAddonFactory
+org.youscope.plugin.labelvisualizer.LabelVisualizerAddonFactory

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="/youscope-shared"/>
+	<classpathentry kind="src" path="/youscope-common"/>
 	<classpathentry excluding="microscopeController/ScriptingJobFrame2.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-addon"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/youscope-client-uielements"/>
-	<classpathentry kind="lib" path="/youscope-client-uielements/lib/jcommon-1.0.17.jar"/>
-	<classpathentry kind="lib" path="/youscope-client-uielements/lib/jfreechart-1.0.14.jar"/>
-	<classpathentry kind="lib" path="lib/zxing-core-1.7.jar"/>
-	<classpathentry kind="lib" path="lib/zxing-j2se-1.7.jar"/>
+	<classpathentry kind="src" path="/youscope-addon"/>
+	<classpathentry kind="lib" path="/youscope-all/lib/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="lib" path="/youscope-all/lib/zxing-core-1.7.jar"/>
+	<classpathentry kind="lib" path="/youscope-all/lib/zxing-j2se-1.7.jar"/>
+	<classpathentry kind="lib" path="/youscope-all/lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -13,7 +13,7 @@
     </description>
 	
 	<property environment="env"/>
-	<property name="ys.shared" value="shared" />
+	<property name="ys.shared" value="common" />
 	<property name="ys.client" value="client" />
 	<property name="ys.server" value="server" />
 	<property name="ys.plugins" value="plugins" />
@@ -40,22 +40,15 @@
 	<target name="-autocompile.init">
 		<echo>Project name is ${project}...</echo>
 		<condition property="isClientJar">
-			<or>
-				<equals arg1="${project}" arg2="youscope-client" />
-				<equals arg1="${project}" arg2="youscope-client-uielements" />
-				<equals arg1="${project}" arg2="youscope-client-addon" />
-			</or>
+			<equals arg1="${project}" arg2="youscope-client" />
 		</condition>	
 		<condition property="isServerJar">
-			<or>
-				<equals arg1="${project}" arg2="youscope-server" />
-				<equals arg1="${project}" arg2="youscope-server-addon" />
-			</or>
+			<equals arg1="${project}" arg2="youscope-server" />
 		</condition>
 		<condition property="isSharedJar">
 			<or>
 				<equals arg1="${project}" arg2="youscope-addon" />
-				<equals arg1="${project}" arg2="youscope-shared" />
+				<equals arg1="${project}" arg2="youscope-common" />
 			</or>
 		</condition>   
 		<condition property="isMainJar">
@@ -68,16 +61,13 @@
 				<or>
 					<!-- isClientJar -->
 					<equals arg1="${project}" arg2="youscope-client" />
-					<equals arg1="${project}" arg2="youscope-client-uielements" />
-					<equals arg1="${project}" arg2="youscope-client-addon" />
 					
 					<!-- isServerJar -->
 					<equals arg1="${project}" arg2="youscope-server" />
-					<equals arg1="${project}" arg2="youscope-server-addon" />
 					
 					<!-- isSharedJar -->
 					<equals arg1="${project}" arg2="youscope-addon" />
-					<equals arg1="${project}" arg2="youscope-shared" />
+					<equals arg1="${project}" arg2="youscope-common" />
 					
 					<!-- isMainJar -->
 					<equals arg1="${project}" arg2="youscope-starter" />

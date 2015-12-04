@@ -1,0 +1,5 @@
+org.youscope.plugin.dropletmicrofluidics.DropletMicrofluidicJobAddonFactory
+org.youscope.plugin.dropletmicrofluidics.defaultobserver.DefaultObserverFactory
+org.youscope.plugin.dropletmicrofluidics.tablecontroller.TableControllerFactory
+org.youscope.plugin.dropletmicrofluidics.evaporationController.EvaporationControllerFactory
+org.youscope.plugin.dropletmicrofluidics.flexiblecontroller.FlexibleControllerFactory

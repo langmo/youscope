@@ -17,7 +17,7 @@
 <name>java.library.path</name>
 <value>${EXECUTABLEPATH}drivers</value>
 </javaProperties>
-<mainClassName>ch.ethz.csb.youscope.starter.Starter</mainClassName>
+<mainClassName>org.youscope.starter.Starter</mainClassName>
 <maximumMemoryHeap>536870912</maximumMemoryHeap>
 <maximumVersion></maximumVersion>
 <minimumVersion>1.4</minimumVersion>

@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
-Class-Path: ../client/youscope-client-addon.jar ../client/youscope-client-uielements.jar ../shared/youscope-shared.jar ../client/fugue-icons-2.6.4.jar
-
+Class-Path: ../common/youscope-common.jar ../common/youscope-addon.jar ../lib/xstream-1.4.2.jar
