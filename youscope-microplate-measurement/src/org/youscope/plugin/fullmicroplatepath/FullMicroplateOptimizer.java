@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
  * Returns the optimized path for a microplate where all wells are selected, as well as all positions.
@@ -21,7 +21,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 {
 
 	@Override
-	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfigurationDTO posConf)
+	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfiguration posConf)
 	{
 		if(!isApplicable(posConf))
 			return null;
@@ -98,7 +98,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 		return positions;
 	}
 	
-	private void addWell(MicroplatePositionConfigurationDTO posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
+	private void addWell(MicroplatePositionConfiguration posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
 	{
 		if(posConf.getWellNumPositionsX() == 1)
 		{
@@ -129,7 +129,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 		}
 	}
 	
-	private void addTopWellPositions(MicroplatePositionConfigurationDTO posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
+	private void addTopWellPositions(MicroplatePositionConfiguration posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
 	{
 		/*
 		 *  +--+--+
@@ -184,7 +184,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 		}
 	}
 	
-	private void addBottomWellPositions(MicroplatePositionConfigurationDTO posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
+	private void addBottomWellPositions(MicroplatePositionConfiguration posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
 	{
 		/*
 		 *  +  +--+
@@ -239,7 +239,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 		}
 	}
 	
-	private void addUnevenWellPositions(MicroplatePositionConfigurationDTO posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
+	private void addUnevenWellPositions(MicroplatePositionConfiguration posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
 	{
 		/*
 		 *  +--+--+
@@ -294,7 +294,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 		}
 	}
 	
-	private void addEvenWellPositions(MicroplatePositionConfigurationDTO posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
+	private void addEvenWellPositions(MicroplatePositionConfiguration posConf, Vector<PathOptimizerPosition> positions, int wellX, int wellY)
 	{
 		/*
 		 *  +--+  +
@@ -350,7 +350,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 	}
 
 	@Override
-	public boolean isApplicable(MicroplatePositionConfigurationDTO posConf)
+	public boolean isApplicable(MicroplatePositionConfiguration posConf)
 	{
 		if(!posConf.isAliasMicroplate()
 				&& posConf.isAllPositionsSelected()
@@ -365,7 +365,7 @@ public class FullMicroplateOptimizer implements PathOptimizer
 	}
 
 	@Override
-	public double getSpecificity(MicroplatePositionConfigurationDTO posConf)
+	public double getSpecificity(MicroplatePositionConfiguration posConf)
 	{
 		// For the problems this optimizer can handle, it is optimal.
 		if(!isApplicable(posConf))

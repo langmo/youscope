@@ -11,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -25,7 +26,6 @@ import javax.swing.SwingConstants;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.TaskContainer;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -42,8 +42,8 @@ public class TasksDefinitionPanel extends JPanel
 
     private JList<String> taskList;
 
-    private TaskContainer configuration;
-
+    private final ArrayList<TaskConfiguration> tasks = new ArrayList<TaskConfiguration>();
+    
     private final YouScopeFrame frame;
     private YouScopeClient client; 
 	private YouScopeServer server;
@@ -54,10 +54,9 @@ public class TasksDefinitionPanel extends JPanel
      * @param frame Frame in which this panel is added.
      * @param configuration The element containing the tasks definitions.
      */
-    public TasksDefinitionPanel(YouScopeClient client, YouScopeServer server, YouScopeFrame frame, TaskContainer configuration)
+    public TasksDefinitionPanel(YouScopeClient client, YouScopeServer server, YouScopeFrame frame)
     {
         super(new BorderLayout());
-        this.configuration = configuration;
         this.frame = frame;
         this.client = client;
 		this.server = server;
@@ -126,7 +125,7 @@ public class TasksDefinitionPanel extends JPanel
                     int idx = taskList.getSelectedIndex();
                     if (idx == -1)
                         return;
-                    TasksDefinitionPanel.this.configuration.removeTask(idx);
+                    TasksDefinitionPanel.this.tasks.remove(idx);
                     refreshTaskList();
                 }
             });
@@ -141,7 +140,7 @@ public class TasksDefinitionPanel extends JPanel
                     int idx = taskList.getSelectedIndex();
                     if (idx == -1)
                         return;
-                    TaskConfiguration task = TasksDefinitionPanel.this.configuration.getTask(idx);
+                    TaskConfiguration task = TasksDefinitionPanel.this.tasks.get(idx);
                     
                     YouScopeFrame newFrame = TasksDefinitionPanel.this.frame.createModalChildFrame();
                 	TaskConfigurationPanel configFrame = new TaskConfigurationPanel(TasksDefinitionPanel.this.client, TasksDefinitionPanel.this.server, TasksDefinitionPanel.this.frame);
@@ -221,17 +220,40 @@ public class TasksDefinitionPanel extends JPanel
     {
         int idx = taskList.getSelectedIndex();
         if (idx == -1 || (moveUp && idx == 0)
-                || (!moveUp && idx + 1 >= configuration.getNumTasks()))
+                || (!moveUp && idx + 1 >= tasks.size()))
             return;
         int newIdx;
         if (moveUp)
             newIdx = idx - 1;
         else
             newIdx = idx + 1;
-        TaskConfiguration task = configuration.getTask(idx);
-        configuration.removeTask(idx);
-        configuration.insertTask(task, newIdx);
+        TaskConfiguration task = tasks.get(idx);
+        tasks.remove(idx);
+        tasks.add(newIdx, task);
         refreshTaskList();
+    }
+    
+    /**
+     * Sets the tasks this panel displays.
+     * @param tasks Tasks to be displayed.
+     */
+    public void setTasks(TaskConfiguration[] tasks)
+    {
+    	this.tasks.clear();
+    	for(TaskConfiguration task : tasks)
+    	{
+    		this.tasks.add(task);
+    	}
+    	refreshTaskList();
+    }
+    
+    /**
+     * Returns configured tasks.
+     * @return Tasks.
+     */
+    public TaskConfiguration[] getTasks()
+    {
+    	return tasks.toArray(new TaskConfiguration[tasks.size()]);
     }
 
     private class TaskConfigurationListenerImpl implements TaskConfigurationListener
@@ -245,11 +267,11 @@ public class TasksDefinitionPanel extends JPanel
 	    public void taskConfigurationFinished(TaskConfiguration task)
 	    {
 	    	if(idx < 0)
-	    		configuration.addTask(task);
+	    		tasks.add(task);
 	    	else
 	    	{
-	    		configuration.removeTask(idx);
-	    		configuration.insertTask(task, idx);
+	    		tasks.remove(idx);
+	    		tasks.add(idx, task);
 	    	}
 	    	refreshTaskList();
 	    }
@@ -258,10 +280,10 @@ public class TasksDefinitionPanel extends JPanel
     private void refreshTaskList()
     {
         Vector<String> taskDescriptions = new Vector<String>();
-        for (int i = 0; i < configuration.getNumTasks(); i++)
+        for (int i = 0; i < tasks.size(); i++)
         {
             taskDescriptions.add("<html><body>"
-                    + configuration.getTask(i).getDescription() + "</body></html>");
+                    + tasks.get(i).getDescription() + "</body></html>");
         }
         taskList.setListData(taskDescriptions);
     }

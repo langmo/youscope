@@ -22,7 +22,7 @@ import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.measurement.job.basicjobs.FocusingJob;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
  * @author Moritz Lang
@@ -50,7 +50,7 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 				
 
 				// Iterate over all wells and positions
-				MicroplatePositionConfigurationDTO posConf = configuration.getMicroplatePositions();
+				MicroplatePositionConfiguration posConf = configuration.getMicroplatePositions();
 				boolean isMultiPos = posConf.getWellNumPositionsX() > 1 || posConf.getWellNumPositionsY() > 1;
 				boolean isWellMeasurement = !posConf.isAliasMicroplate();
 				

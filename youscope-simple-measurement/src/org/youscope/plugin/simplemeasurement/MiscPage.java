@@ -17,7 +17,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
-class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
+class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 {
 
 	/**
@@ -40,7 +40,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
 	}
 
 	@Override
-	public void loadData(SimpleMeasurementConfigurationDTO configuration)
+	public void loadData(SimpleMeasurementConfiguration configuration)
 	{
 		String statisticsFileName = configuration.getStatisticsFileName();
 		if(statisticsFileName == null)
@@ -59,7 +59,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
 	}
 
 	@Override
-	public boolean saveData(SimpleMeasurementConfigurationDTO configuration)
+	public boolean saveData(SimpleMeasurementConfiguration configuration)
 	{
 		if(storeStatisticsField.isSelected())
 		{
@@ -74,7 +74,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
 	}
 
 	@Override
-	public void setToDefault(SimpleMeasurementConfigurationDTO configuration)
+	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}

@@ -20,7 +20,7 @@ public class SimpleMeasurementXMLConfigurationProvider implements XMLConfigurati
 	public List<Class<? extends Configuration>> getConfigurationClasses()
 	{
 		List<Class<? extends Configuration>> classes = new ArrayList<Class<? extends Configuration>>();
-		classes.add(SimpleMeasurementConfigurationDTO.class);
+		classes.add(SimpleMeasurementConfiguration.class);
 		return classes;
 	}
 

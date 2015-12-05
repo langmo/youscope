@@ -82,6 +82,7 @@
 	
 	
 	<target name="-buildJar" description="Build jar file.">
+		<echo>Creating ${ys.dist}/${folder}/${project}.jar...</echo>
         <jar jarfile="${ys.dist}/${folder}/${project}.jar" manifest="${basedir}/${ys.manifest}" >
         	<fileset dir="${basedir}/${ys.bin}"></fileset>
         	<zipfileset dir="${basedir}/${ys.meta_inf}" prefix="META-INF" />

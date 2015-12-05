@@ -32,7 +32,7 @@ import org.youscope.uielements.PeriodField;
 import org.youscope.uielements.PeriodVaryingPanel;
 import org.youscope.uielements.StandardFormats;
 
-class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
+class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 {
 
 	/**
@@ -86,7 +86,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	}
 
 	@Override
-	public void loadData(SimpleMeasurementConfigurationDTO configuration)
+	public void loadData(SimpleMeasurementConfiguration configuration)
 	{
 		nameField.setText(configuration.getName());
 		if(configuration.getMeasurementRuntime() >= 0)
@@ -140,7 +140,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	}
 
 	@Override
-	public boolean saveData(SimpleMeasurementConfigurationDTO configuration)
+	public boolean saveData(SimpleMeasurementConfiguration configuration)
 	{
 		if(periodAFAP.isSelected())
 		{
@@ -187,7 +187,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	}
 
 	@Override
-	public void setToDefault(SimpleMeasurementConfigurationDTO configuration)
+	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
 		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));

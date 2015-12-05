@@ -30,7 +30,7 @@ import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 import org.youscope.plugin.microplatemeasurement.PositionFineConfigurationFrame;
 import org.youscope.plugin.microplatemeasurement.WellPositionsTable;
 import org.youscope.plugin.microplatemeasurement.WellTable;
@@ -74,7 +74,7 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfigurationD
 	private JButton newFineConfiguration = new JButton("Run Fine-Configuration");
 	private JButton editFineConfiguration = new JButton("Edit Fine-Configuration");
 	
-	private MicroplatePositionConfigurationDTO positionConfiguration = null;
+	private MicroplatePositionConfiguration positionConfiguration = null;
 	private final YouScopeClient	client;
 	private final YouScopeServer			server;
 	private YouScopeFrame frame;

@@ -36,7 +36,7 @@ import org.youscope.uielements.LiveStreamPanel;
  */
 public class PositionFineConfigurationFrame
 {
-	private Well											well				= new Well(0,0);
+	private Well											well= new Well(0,0); 
 	private int												positionX			= -1;						// will automatically jump to the next heigher one at start.
 	private int												positionY			= 0;
 	
@@ -48,7 +48,7 @@ public class PositionFineConfigurationFrame
 	private final String										focusDevice;
 	private final String										stageDevice;
 
-	private final MicroplatePositionConfigurationDTO	configuration;
+	private final MicroplatePositionConfiguration	configuration;
 
 	private YouScopeFrame									frame;
 	
@@ -62,7 +62,7 @@ public class PositionFineConfigurationFrame
 	private final YouScopeClient client;
 	private final YouScopeServer server;
 	
-	private XYAndFocusPositionDTO zeroPosition = null;
+	private XYAndFocusPosition zeroPosition = null;
 	
 	/**
 	 * Constructor.
@@ -74,7 +74,7 @@ public class PositionFineConfigurationFrame
 	 * @param stageDevice The stage device which should be used to change the position.
 	 * @param forceNewConfiguration True, if a new path should be generated, even if the old path is still valid. Remark, that if the path is not valid, a new one will be constructed anyway.
 	 */
-	public PositionFineConfigurationFrame(YouScopeClient client, YouScopeServer server, YouScopeFrame frame, MicroplatePositionConfigurationDTO configuration, String focusDevice, String stageDevice, boolean forceNewConfiguration)
+	public PositionFineConfigurationFrame(YouScopeClient client, YouScopeServer server, YouScopeFrame frame, MicroplatePositionConfiguration configuration, String focusDevice, String stageDevice, boolean forceNewConfiguration)
 	{
 		this.frame = frame;
 		this.configuration = configuration;
@@ -515,7 +515,7 @@ public class PositionFineConfigurationFrame
 		return false;
 	}
 
-	private XYAndFocusPositionDTO askForZeroPosition(Well well)
+	private XYAndFocusPosition askForZeroPosition(Well well)
 	{
 		if(!configuration.isAliasMicroplate())
 		{
@@ -554,7 +554,7 @@ public class PositionFineConfigurationFrame
 			zeroPositionFocus = 0;
 		}
 
-		return new XYAndFocusPositionDTO(zeroPositionXY.x, zeroPositionXY.y, zeroPositionFocus);
+		return new XYAndFocusPosition(zeroPositionXY.x, zeroPositionXY.y, zeroPositionFocus);
 	}
 
 	private void saveCurrentPos()
@@ -572,7 +572,7 @@ public class PositionFineConfigurationFrame
 				focus = server.getMicroscope().getFocusDevice(focusDevice).getFocusPosition();
 			}
 
-			configuration.setPosition(new XYAndFocusPositionDTO(position.x, position.y, focus), well, positionY, positionX);
+			configuration.setPosition(new XYAndFocusPosition(position.x, position.y, focus), well, positionY, positionX);
 		}
 		catch(Exception e)
 		{
@@ -629,7 +629,7 @@ public class PositionFineConfigurationFrame
 			Well tempWell = new Well(wellY, wellX);
 			if(configuration.isMeasurePosition(positionY, positionX) && configuration.isMeasureWell(tempWell))
 			{
-				XYAndFocusPositionDTO focusConf = configuration.getPosition(tempWell, positionY, positionX);
+				XYAndFocusPosition focusConf = configuration.getPosition(tempWell, positionY, positionX);
 				focusConf.setFocus(focus);
 				configuration.setPosition(focusConf, tempWell, positionY, positionX);
 			}
@@ -796,7 +796,7 @@ public class PositionFineConfigurationFrame
 		this.positionY = positionY;
 
 		// Set XY-position
-		XYAndFocusPositionDTO position = configuration.getPosition(well, positionY, positionX);
+		XYAndFocusPosition position = configuration.getPosition(well, positionY, positionX);
 		if(position != null && !(configuration.isAliasMicroplate() && zeroPosition!=null && position.compareTo(zeroPosition) == 0))
 		{
 			double xPos = position.getX();

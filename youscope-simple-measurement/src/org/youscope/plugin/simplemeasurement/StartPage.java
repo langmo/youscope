@@ -23,7 +23,7 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author langmo
  *
  */
-class StartPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
+class StartPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 {
 
 	/**
@@ -32,20 +32,20 @@ class StartPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO
 	private static final long	serialVersionUID	= -5407788842391715831L;
 
 	@Override
-	public void loadData(SimpleMeasurementConfigurationDTO configuration)
+	public void loadData(SimpleMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}
 
 	@Override
-	public boolean saveData(SimpleMeasurementConfigurationDTO configuration)
+	public boolean saveData(SimpleMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 		return true;
 	}
 
 	@Override
-	public void setToDefault(SimpleMeasurementConfigurationDTO configuration)
+	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}

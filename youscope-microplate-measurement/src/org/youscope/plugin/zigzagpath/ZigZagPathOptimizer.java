@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
  * An optimizer which assumes no specific selected wells and positions. Just iterates over all wells in a zick-zack manner
@@ -23,7 +23,7 @@ public class ZigZagPathOptimizer implements PathOptimizer
 {
 
 	@Override
-	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfigurationDTO posConf)
+	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfiguration posConf)
 	{
 		Vector<PathOptimizerPosition> positions = new Vector<PathOptimizerPosition>();
 		
@@ -68,7 +68,7 @@ public class ZigZagPathOptimizer implements PathOptimizer
 	}
 
 	@Override
-	public boolean isApplicable(MicroplatePositionConfigurationDTO posConf)
+	public boolean isApplicable(MicroplatePositionConfiguration posConf)
 	{
 		if(!posConf.isAliasMicroplate())
 			return true;
@@ -76,7 +76,7 @@ public class ZigZagPathOptimizer implements PathOptimizer
 	}
 
 	@Override
-	public double getSpecificity(MicroplatePositionConfigurationDTO posConf)
+	public double getSpecificity(MicroplatePositionConfiguration posConf)
 	{
 		// not very specific, but better than no optimization at all...
 		if(isApplicable(posConf))

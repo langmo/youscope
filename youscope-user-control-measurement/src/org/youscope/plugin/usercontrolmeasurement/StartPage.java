@@ -75,7 +75,7 @@ class StartPage extends MeasurementAddonUIPage<UserControlMeasurementConfigurati
 		add(descriptionScrollPane, BorderLayout.CENTER);
 		
 		// Descriptive image
-		ImageIcon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
+		ImageIcon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
 		if(microplateMeasurementIcon != null)
 		{
 			JPanel imagePanel = new JPanel(new BorderLayout());

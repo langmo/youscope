@@ -38,7 +38,7 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 
 	/**
@@ -71,7 +71,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	private JButton newFineConfiguration = new JButton("Run Fine-Configuration");
 	private JButton editFineConfiguration = new JButton("Edit Fine-Configuration");
 	
-	private MicroplatePositionConfigurationDTO positionConfiguration = null;
+	private MicroplatePositionConfiguration positionConfiguration = null;
 	private final YouScopeClient	client;
 	private final YouScopeServer			server;
 	private YouScopeFrame frame;
@@ -83,7 +83,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 	
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		positionConfiguration = configuration.getMicroplatePositions();
 		if(positionConfiguration.isNoneSelected())
@@ -206,7 +206,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		wellSelection.saveToConfiguration(positionConfiguration);
 		positionSelection.saveToConfiguration(positionConfiguration);
@@ -241,7 +241,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		try
 		{	

@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -73,7 +73,7 @@ public class MicroplateJobConfigurationDTO extends JobConfiguration implements J
 	 * Type of plate.
 	 */
 	@XStreamAlias("microplate")
-	private MicroplatePositionConfigurationDTO	microplatePositions	= new MicroplatePositionConfigurationDTO();
+	private MicroplatePositionConfiguration	microplatePositions	= new MicroplatePositionConfiguration();
 
 	/**
 	 * Configuration of the focus device used for focussing the wells. Set to
@@ -124,7 +124,7 @@ public class MicroplateJobConfigurationDTO extends JobConfiguration implements J
 	 * Sets the used microplate and the measured positions therein.
 	 * @param microplatePositions the configuration of the used microplate and the measured positions therein.
 	 */
-	public void setMicroplatePositions(MicroplatePositionConfigurationDTO microplatePositions)
+	public void setMicroplatePositions(MicroplatePositionConfiguration microplatePositions)
 	{
 		this.microplatePositions = microplatePositions;
 	}
@@ -133,7 +133,7 @@ public class MicroplateJobConfigurationDTO extends JobConfiguration implements J
 	 * Returns the used microplate and the measured positions therein.
 	 * @return the configuration of the used microplate and the measured positions therein.
 	 */
-	public MicroplatePositionConfigurationDTO getMicroplatePositions()
+	public MicroplatePositionConfiguration getMicroplatePositions()
 	{
 		return microplatePositions;
 	}

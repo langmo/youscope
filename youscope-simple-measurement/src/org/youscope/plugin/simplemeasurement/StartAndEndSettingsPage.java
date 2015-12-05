@@ -26,7 +26,7 @@ import org.youscope.uielements.DeviceSettingsPanel;
  * @author Moritz Lang
  *
  */
-class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
+class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -65,14 +65,14 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementCo
 	}
 	
 	@Override
-	public void loadData(SimpleMeasurementConfigurationDTO configuration)
+	public void loadData(SimpleMeasurementConfiguration configuration)
 	{
 		deviceSettingsOn.setSettings(configuration.getDeviseSettingsOn());
 		deviceSettingsOff.setSettings(configuration.getDeviseSettingsOff());
 	}
 
 	@Override
-	public boolean saveData(SimpleMeasurementConfigurationDTO configuration)
+	public boolean saveData(SimpleMeasurementConfiguration configuration)
 	{
 		configuration.setDeviseSettingsOn(deviceSettingsOn.getSettings());
 		configuration.setDeviseSettingsOff(deviceSettingsOff.getSettings());
@@ -80,7 +80,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementCo
 	}
 
 	@Override
-	public void setToDefault(SimpleMeasurementConfigurationDTO configuration)
+	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
 		{

@@ -138,6 +138,6 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 	 */
 	public CellDetectionJobAddonFactory()
 	{
-		super(CellDetectionJobConfigurationAddon.class, CREATOR, CellDetectionJobConfigurationAddon.getMetadata());
+		super(CellDetectionJobAddonUI.class, CREATOR, CellDetectionJobAddonUI.getMetadata());
 	}
 }

@@ -33,7 +33,7 @@ class UserControlMeasurementFrame extends JPanel
 	private final ImagePanel imagePanel;
 	private final LiveStreamPanel.ChannelControl channelControl;
 
-	private final UserControlMeasurementCallbackImpl callback;
+	private final UserControlMeasurementCallbackImpl callback; 
 	
 	private final YouScopeFrame frame;
 	

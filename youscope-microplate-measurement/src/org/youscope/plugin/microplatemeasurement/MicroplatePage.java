@@ -34,7 +34,7 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 
 	/**
@@ -80,7 +80,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		String typeID = configuration.getMicroplatePositions().getMicroplateTypeID();
 		boolean foundType = false;
@@ -152,7 +152,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		if(microplatePredefined.isSelected())
 		{
@@ -177,7 +177,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 

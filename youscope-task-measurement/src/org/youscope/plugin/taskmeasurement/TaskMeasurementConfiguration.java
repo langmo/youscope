@@ -4,7 +4,6 @@
 package org.youscope.plugin.taskmeasurement;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
@@ -55,10 +54,11 @@ public class TaskMeasurementConfiguration extends MeasurementConfiguration imple
 	/**
 	 * @param tasks the tasks to set
 	 */
-	public void setTasks(Collection<TaskConfiguration> tasks)
+	public void setTasks(TaskConfiguration[] tasks)
 	{
 		this.tasks.clear();
-		this.tasks.addAll(tasks);
+		for(TaskConfiguration task : tasks)
+			this.tasks.add(task);
 	}
 
 	@Override

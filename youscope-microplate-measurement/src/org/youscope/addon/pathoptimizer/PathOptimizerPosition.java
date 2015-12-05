@@ -3,14 +3,14 @@
  */
 package org.youscope.addon.pathoptimizer;
 
-import org.youscope.plugin.microplatemeasurement.XYAndFocusPositionDTO;
+import org.youscope.plugin.microplatemeasurement.XYAndFocusPosition;
 
 /**
  * Structure to save x, y, and focus position, as well as information to which well and position the information belongs.
  * @author Moritz Lang
  *
  */
-public class PathOptimizerPosition extends XYAndFocusPositionDTO
+public class PathOptimizerPosition extends XYAndFocusPosition
 {
 	/**
 	 * Serial Version UID.
@@ -28,7 +28,7 @@ public class PathOptimizerPosition extends XYAndFocusPositionDTO
 	 * @param posY The position in well row.
 	 * @param posX The position in well column.
 	 */
-	public PathOptimizerPosition(XYAndFocusPositionDTO parent, int wellY, int wellX, int posY, int posX)
+	public PathOptimizerPosition(XYAndFocusPosition parent, int wellY, int wellX, int posY, int posX)
 	{
 		super(parent.getX(), parent.getY(), parent.getFocus());
 		this.wellX = wellX;

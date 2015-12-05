@@ -19,7 +19,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
  * @author Moritz Lang
  *
  */
-class ImagingProtocolPage extends MeasurementAddonUIPage<SimpleMeasurementConfigurationDTO>
+class ImagingProtocolPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -37,13 +37,13 @@ class ImagingProtocolPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	}
 	
 	@Override
-	public void loadData(SimpleMeasurementConfigurationDTO configuration)
+	public void loadData(SimpleMeasurementConfiguration configuration)
 	{
 		jobPanel.setJobs(configuration.getJobs());
 	}
 
 	@Override
-	public boolean saveData(SimpleMeasurementConfigurationDTO configuration)
+	public boolean saveData(SimpleMeasurementConfiguration configuration)
 	{
 		configuration.setJobs(jobPanel.getJobs());		
 		String[] collisions = ConfigurationValidation.checkImageSaveNameCollision(configuration.getJobs());
@@ -64,7 +64,7 @@ class ImagingProtocolPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	}
 
 	@Override
-	public void setToDefault(SimpleMeasurementConfigurationDTO configuration)
+	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}

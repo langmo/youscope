@@ -36,7 +36,7 @@ public class FineConfigurationConverter implements Converter
 		{                 
 			Entry entry = (Entry) obj;  
 			WellAndTileIdentifier entryKey = (WellAndTileIdentifier)entry.getKey();
-			XYAndFocusPositionDTO entryValue = (XYAndFocusPositionDTO)entry.getValue();
+			XYAndFocusPosition entryValue = (XYAndFocusPosition)entry.getValue();
 			
 			writer.startNode("position");
 			writer.addAttribute("x", Double.toString(entryValue.getX()));
@@ -53,7 +53,7 @@ public class FineConfigurationConverter implements Converter
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) 
 	{            
-		Hashtable<WellAndTileIdentifier, XYAndFocusPositionDTO> map = new Hashtable<WellAndTileIdentifier, XYAndFocusPositionDTO>(500);
+		Hashtable<WellAndTileIdentifier, XYAndFocusPosition> map = new Hashtable<WellAndTileIdentifier, XYAndFocusPosition>(500);
 		try
 		{
 			while(reader.hasMoreChildren()) 
@@ -66,7 +66,7 @@ public class FineConfigurationConverter implements Converter
 				 int wellX = Integer.parseInt(reader.getAttribute("well-x"));
 				 int tileY = Integer.parseInt(reader.getAttribute("tile-y"));
 				 int tileX = Integer.parseInt(reader.getAttribute("tile-x"));
-				 map.put(new WellAndTileIdentifier(wellY, wellX, tileY, tileX), new XYAndFocusPositionDTO(x, y, focus));         
+				 map.put(new WellAndTileIdentifier(wellY, wellX, tileY, tileX), new XYAndFocusPosition(x, y, focus));         
 				 reader.moveUp();     
 			}
 		}

@@ -32,7 +32,7 @@ import org.youscope.uielements.PeriodField;
 import org.youscope.uielements.PeriodVaryingPanel;
 import org.youscope.uielements.StandardFormats;
 
-class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 
 	/**
@@ -40,7 +40,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	 */
 	private static final long				serialVersionUID		= 885352612109223078L;
 
-	private final YouScopeClient	client;
+	private final YouScopeClient	client; 
 	private final YouScopeServer			server;
 
 	private final JLabel					fixedPeriodLabel		= new JLabel("Fixed period length:");
@@ -95,7 +95,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	}
 
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		nameField.setText(configuration.getName());
 		if(configuration.getMeasurementRuntime() >= 0)
@@ -160,7 +160,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		if(periodAFAP.isSelected())
 		{
@@ -211,7 +211,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
 		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));

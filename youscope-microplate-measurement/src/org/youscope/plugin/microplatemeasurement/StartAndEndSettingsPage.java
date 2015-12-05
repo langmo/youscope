@@ -26,7 +26,7 @@ import org.youscope.uielements.DeviceSettingsPanel;
  * @author Moritz Lang
  *
  */
-class StartAndEndSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class StartAndEndSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -65,14 +65,14 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<MicroplateMeasureme
 	}
 	
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		deviceSettingsOn.setSettings(configuration.getDeviseSettingsOn());
 		deviceSettingsOff.setSettings(configuration.getDeviseSettingsOff());
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		configuration.setDeviseSettingsOn(deviceSettingsOn.getSettings());
 		configuration.setDeviseSettingsOff(deviceSettingsOff.getSettings());
@@ -80,7 +80,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<MicroplateMeasureme
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
 		{

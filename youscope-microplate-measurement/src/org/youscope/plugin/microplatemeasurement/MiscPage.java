@@ -22,7 +22,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
-class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 
 	/**
@@ -49,7 +49,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		String statisticsFileName = configuration.getStatisticsFileName();
 		if(statisticsFileName == null)
@@ -72,8 +72,8 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	private class ComparableOptimizer implements Comparable<ComparableOptimizer>
 	{
 		private final PathOptimizer optimizer;
-		private final MicroplatePositionConfigurationDTO positionConfiguration;
-		ComparableOptimizer(PathOptimizer optimizer, MicroplatePositionConfigurationDTO positionConfiguration)
+		private final MicroplatePositionConfiguration positionConfiguration;
+		ComparableOptimizer(PathOptimizer optimizer, MicroplatePositionConfiguration positionConfiguration)
 		{
 			this.optimizer = optimizer;
 			this.positionConfiguration = positionConfiguration;
@@ -99,11 +99,11 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		}
 	}
 	
-	private void loadPathOptimizers(MicroplateMeasurementConfigurationDTO configuration)
+	private void loadPathOptimizers(MicroplateMeasurementConfiguration configuration)
 	{
 		
 		
-		MicroplatePositionConfigurationDTO positionConfiguration = configuration.getMicroplatePositions();
+		MicroplatePositionConfiguration positionConfiguration = configuration.getMicroplatePositions();
 		pathOptimizerField.removeAllItems();
 		Vector<ComparableOptimizer> optimizers = new Vector<ComparableOptimizer>();
 		for(PathOptimizer optimizer : getPathOptimizers())
@@ -139,7 +139,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		if(storeStatisticsField.isSelected())
 		{
@@ -155,7 +155,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}
@@ -202,7 +202,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
     {
         ServiceLoader<PathOptimizer> pathOptimizers =
                 ServiceLoader.load(PathOptimizer.class,
-                		MicroplateMeasurementConstructionAddon.class.getClassLoader());
+                		MicroplateMeasurementInitializer.class.getClassLoader());
         return pathOptimizers;
     }
 }

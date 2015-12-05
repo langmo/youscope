@@ -20,10 +20,10 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
-class StartPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class StartPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 
 	/**
@@ -32,20 +32,20 @@ class StartPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguratio
 	private static final long	serialVersionUID	= -5407788842391715831L;
 
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 		return true;
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}

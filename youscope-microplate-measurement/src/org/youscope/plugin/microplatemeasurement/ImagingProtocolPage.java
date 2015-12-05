@@ -19,7 +19,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
  * @author Moritz Lang
  *
  */
-class ImagingProtocolPage extends MeasurementAddonUIPage<MicroplateMeasurementConfigurationDTO>
+class ImagingProtocolPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -37,13 +37,13 @@ class ImagingProtocolPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	}
 	
 	@Override
-	public void loadData(MicroplateMeasurementConfigurationDTO configuration)
+	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
 		jobPanel.setJobs(configuration.getJobs());
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfigurationDTO configuration)
+	public boolean saveData(MicroplateMeasurementConfiguration configuration)
 	{
 		configuration.setJobs(jobPanel.getJobs());		
 		String[] collisions = ConfigurationValidation.checkImageSaveNameCollision(configuration.getJobs());
@@ -64,7 +64,7 @@ class ImagingProtocolPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfigurationDTO configuration)
+	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
 		// Do nothing.
 	}

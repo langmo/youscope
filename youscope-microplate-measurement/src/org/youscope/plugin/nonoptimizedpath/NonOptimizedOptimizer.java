@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfigurationDTO;
+import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
  * This optimizer actually does not really optimize the path in any way, but just iterates through all wells from left to right and from top to bottom.
@@ -20,7 +20,7 @@ public class NonOptimizedOptimizer implements PathOptimizer
 {
 
 	@Override
-	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfigurationDTO posConf)
+	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfiguration posConf)
 	{
 		Vector<PathOptimizerPosition> positions = new Vector<PathOptimizerPosition>();
 		
@@ -45,14 +45,14 @@ public class NonOptimizedOptimizer implements PathOptimizer
 	}
 
 	@Override
-	public boolean isApplicable(MicroplatePositionConfigurationDTO posConf)
+	public boolean isApplicable(MicroplatePositionConfiguration posConf)
 	{
 		// Always applicable.
 		return true;
 	}
 
 	@Override
-	public double getSpecificity(MicroplatePositionConfigurationDTO posConf)
+	public double getSpecificity(MicroplatePositionConfiguration posConf)
 	{
 		// absolutely not optimal.
 		return 0.0;

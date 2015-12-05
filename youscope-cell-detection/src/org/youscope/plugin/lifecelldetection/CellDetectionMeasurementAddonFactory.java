@@ -17,6 +17,6 @@ public class CellDetectionMeasurementAddonFactory extends MeasurementAddonFactor
 	 */
 	public CellDetectionMeasurementAddonFactory()
 	{
-		super(CellDetectionMeasurementConfigurationAddon.class, new CellDetectionMeasurementInitializer(), CellDetectionMeasurementConfigurationAddon.getMetadata());
+		super(CellDetectionMeasurementAddonUI.class, new CellDetectionMeasurementInitializer(), CellDetectionMeasurementAddonUI.getMetadata());
 	}
 }

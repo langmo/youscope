@@ -76,7 +76,7 @@ public class WellTable extends JPanel
 	 * Loads the configuration data into this UI element.
 	 * @param settings Configuration from which data should be loaded.
 	 */
-	public void loadFromConfiguration(MicroplatePositionConfigurationDTO settings)
+	public void loadFromConfiguration(MicroplatePositionConfiguration settings)
 	{
 		selectedCells.setDimension(settings.getNumWellsY(), settings.getNumWellsX());
 		selectedCells.setSelectedCells(settings.getMeasuredWells());
@@ -86,7 +86,7 @@ public class WellTable extends JPanel
 	 * Saves the settings into the configuration object.
 	 * @param settings Configuration to which data should be saved.
 	 */
-	public void saveToConfiguration(MicroplatePositionConfigurationDTO settings)
+	public void saveToConfiguration(MicroplatePositionConfiguration settings)
 	{
 		boolean[][] selected = selectedCells.getSelectedCells();
 		for(int y = 0; y < selected.length; y++)

@@ -45,7 +45,7 @@ public class JobsDefinitionPanel extends JPanel
     private static final String DEFAULT_IMAGING_JOB_ID_SINGLE = "CSB::ImagingJob";
     private static final String DEFAULT_IMAGING_JOB_ID_MULTI = "CSB::ParallelImagingJob";
     
-    private Vector<JobConfiguration> jobs = new Vector<JobConfiguration>();
+    private final Vector<JobConfiguration> jobs = new Vector<JobConfiguration>();
     /**
      * Constructor.
      * @param client Interface to the client.

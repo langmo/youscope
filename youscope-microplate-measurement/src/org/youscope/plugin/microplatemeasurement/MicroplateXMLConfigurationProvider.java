@@ -20,8 +20,8 @@ public class MicroplateXMLConfigurationProvider implements XMLConfigurationProvi
 	public List<Class<? extends Configuration>> getConfigurationClasses()
 	{
 		List<Class<? extends Configuration>> classes = new ArrayList<Class<? extends Configuration>>();
-		classes.add(MicroplateMeasurementConfigurationDTO.class);
-		classes.add(MicroplatePositionConfigurationDTO.class);
+		classes.add(MicroplateMeasurementConfiguration.class);
+		classes.add(MicroplatePositionConfiguration.class);
 		return classes;
 	}
 
