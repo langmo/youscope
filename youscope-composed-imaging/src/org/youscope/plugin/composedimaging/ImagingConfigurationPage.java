@@ -18,7 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.microscope.Channel;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -28,7 +30,7 @@ import org.youscope.uielements.StandardFormats;
  * @author langmo
  *
  */
-class ImagingConfigurationPage extends AbstractConfigurationPage
+class ImagingConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -58,7 +60,7 @@ class ImagingConfigurationPage extends AbstractConfigurationPage
 		this.client = client;
 	}
 	@Override
-	public void createUI()
+	public void createUI(YouScopeFrame frame)
 	{
 		GridBagLayout elementsLayout = new GridBagLayout();
 		setLayout(elementsLayout);
@@ -163,7 +165,7 @@ class ImagingConfigurationPage extends AbstractConfigurationPage
 	}
 
 	@Override
-	public void saveData(ComposedImagingMeasurementConfiguration configuration)
+	public boolean saveData(ComposedImagingMeasurementConfiguration configuration)
 	{
 		configuration.setChannel((String)configGroupField.getSelectedItem(), (String)channelField.getSelectedItem());
 		configuration.setExposure(((Number)exposureField.getValue()).doubleValue());
@@ -171,7 +173,7 @@ class ImagingConfigurationPage extends AbstractConfigurationPage
 		configuration.setImageSaveName(imageNameField.getText());
 		
 		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String) configGroupField.getSelectedItem());
-		
+		return true;
 	}
 
 	@Override

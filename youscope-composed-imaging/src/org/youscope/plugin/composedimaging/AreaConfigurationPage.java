@@ -18,7 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.PixelSize;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -28,7 +30,7 @@ import org.youscope.uielements.StandardFormats;
  * @author langmo
  * 
  */
-class AreaConfigurationPage extends AbstractConfigurationPage
+class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasurementConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -89,7 +91,7 @@ class AreaConfigurationPage extends AbstractConfigurationPage
 		this.client = client;
 	}
 	@Override
-	public void createUI()
+	public void createUI(YouScopeFrame frame)
 	{
 		// Image area panel
 		GridBagLayout partLayout = new GridBagLayout();
@@ -407,7 +409,7 @@ class AreaConfigurationPage extends AbstractConfigurationPage
 	}
 
 	@Override
-	public void saveData(ComposedImagingMeasurementConfiguration configuration)
+	public boolean saveData(ComposedImagingMeasurementConfiguration configuration)
 	{
 		// Area settings
 		double overlap = ((Number)overlapField.getValue()).doubleValue();
@@ -436,6 +438,7 @@ class AreaConfigurationPage extends AbstractConfigurationPage
 		client.getProperties().setProperty(PROPERTY_OVERLAP, overlap);
 		client.getProperties().setProperty(PROPERTY_NX, nx);
 		client.getProperties().setProperty(PROPERTY_NY, ny);
+		return true;
 	}
 
 	@Override

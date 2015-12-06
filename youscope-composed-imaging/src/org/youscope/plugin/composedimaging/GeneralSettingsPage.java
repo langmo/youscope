@@ -21,7 +21,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ImageFolderStructure;
 import org.youscope.common.configuration.RegularPeriod;
@@ -35,7 +37,7 @@ import org.youscope.uielements.StandardFormats;
  * @author langmo
  * 
  */
-class GeneralSettingsPage extends AbstractConfigurationPage
+class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurementConfiguration>
 {
 
 	/**
@@ -89,7 +91,7 @@ class GeneralSettingsPage extends AbstractConfigurationPage
 		this.client = client;
 	}
 	@Override
-	public void createUI()
+	public void createUI(YouScopeFrame frame)
 	{
 		// Get supported image types
 		String[] imageTypes;
@@ -294,7 +296,7 @@ class GeneralSettingsPage extends AbstractConfigurationPage
 	}
 
 	@Override
-	public void saveData(ComposedImagingMeasurementConfiguration configuration)
+	public boolean saveData(ComposedImagingMeasurementConfiguration configuration)
 	{
 		configuration.setName(nameField.getText());
 		if(periodAFAP.isSelected())
@@ -333,6 +335,7 @@ class GeneralSettingsPage extends AbstractConfigurationPage
 		configuration.setSaveSettings(saveSettings);
 		
 		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		return true;
 	}
 
 	@Override

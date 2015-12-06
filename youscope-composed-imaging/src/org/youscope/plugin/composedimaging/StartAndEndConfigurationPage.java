@@ -10,7 +10,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.microscope.CameraDevice;
@@ -24,7 +26,7 @@ import org.youscope.uielements.DeviceSettingsPanel;
  * @author langmo
  *
  */
-class StartAndEndConfigurationPage extends AbstractConfigurationPage
+class StartAndEndConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasurementConfiguration>
 {
 
 	/**
@@ -44,7 +46,7 @@ class StartAndEndConfigurationPage extends AbstractConfigurationPage
 		this.client = client;
 	}
 	@Override
-	public void createUI()
+	public void createUI(YouScopeFrame frame)
 	{
 		setLayout(new GridLayout(2, 1));
 		deviceSettingsOn = new DeviceSettingsPanel(client, server, true);
@@ -72,10 +74,11 @@ class StartAndEndConfigurationPage extends AbstractConfigurationPage
 	}
 
 	@Override
-	public void saveData(ComposedImagingMeasurementConfiguration configuration)
+	public boolean saveData(ComposedImagingMeasurementConfiguration configuration)
 	{
 		configuration.setDeviseSettingsOn(deviceSettingsOn.getSettings());
 		configuration.setDeviseSettingsOff(deviceSettingsOff.getSettings());
+		return true;
 	}
 
 	@Override

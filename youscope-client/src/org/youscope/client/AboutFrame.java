@@ -54,9 +54,24 @@ class AboutFrame
 					}
         	
         		};
-        		contentPane.setOpaque(true);
+		contentPane.setOpaque(true);
         
-        JTextPane  description = new JTextPane();
+        JTextPane  description = new JTextPane()
+		{
+        	/**
+			 * Serial Version UID.
+			 */
+			private static final long serialVersionUID = -4666535620525040910L;
+
+			@Override
+			protected void paintComponent(Graphics g) 
+        	{
+        		g.setColor(new Color(1.0f, 1.0f, 1.0f, 0.5f));
+        		g.fillRect(0, 0, getWidth(), getHeight());
+        		super.paintComponent(g);
+        	}
+
+		};
         
         description.setContentType("text/html");
         description.setText("<html><p style=\"margin:0px;padding:0px;font-weight:bold;\">"
@@ -70,7 +85,6 @@ class AboutFrame
                 + "</p></html>");
         
         description.setEditable(false);
-        description.setBackground(new Color(1.0f, 1.0f, 1.0f, 0.5f));
         description.setOpaque(false);
         contentPane.add(description);
         Dimension preferredSize = description.getPreferredSize();

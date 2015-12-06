@@ -32,22 +32,22 @@ import org.youscope.clientinterfaces.YouScopeFrame;
  */
 class DocumentationFrame
 {
-	protected String	baseUrl			= "";
-	protected final static String NAVIGATION_PAGE = "navigation.html";
+	private String	baseUrl			= "";
+	private final static String NAVIGATION_PAGE = "navigation.html";
 
-	protected String				startPage;
+	private String				startPage;
 
-	protected JEditorPane			htmlPage			= new JEditorPane();
+	private JEditorPane			htmlPage			= new JEditorPane();
 
-	protected JEditorPane			navigationPage		= new JEditorPane();
+	private JEditorPane			navigationPage		= new JEditorPane();
 
-	protected Vector<URL>			forwardURLs			= new Vector<URL>();
-	protected Vector<URL>			backwardURLs		= new Vector<URL>();
+	private Vector<URL>			forwardURLs			= new Vector<URL>();
+	private Vector<URL>			backwardURLs		= new Vector<URL>();
 
-	protected JButton				forwardButton		= null;
-	protected JButton				backwardButton		= null;
+	private JButton				forwardButton		= null;
+	private JButton				backwardButton		= null;
 
-	protected YouScopeFrame									frame;
+	private YouScopeFrame									frame;
 	
 	DocumentationFrame(YouScopeFrame frame)
 	{
@@ -93,7 +93,7 @@ class DocumentationFrame
 		frame.setSize(new Dimension(760, 500));
 	}
 
-	protected void initializeFrame()
+	private void initializeFrame()
 	{
 		htmlPage.setContentType("text/html");
 		htmlPage.setEditable(false);
@@ -132,7 +132,6 @@ class DocumentationFrame
 			catch(MalformedURLException e1)
 			{
 				ClientSystem.err.println("Navigation page URL is malformed.", e1);
-				navigationPageURL = null;
 			}
 		}
 		if(navigationPageURL != null)
@@ -166,7 +165,6 @@ class DocumentationFrame
 			catch(MalformedURLException e1)
 			{
 				ClientSystem.err.println("Start page URL is malformed.", e1);
-				startPageURL = null;
 			}
 		}
 		setPage(startPageURL);
@@ -246,7 +244,7 @@ class DocumentationFrame
 		frame.setContentPane(splitPane);
 	}
 
-	protected void setPage(URL page)
+	private void setPage(URL page)
 	{
 		
 		if(page != null)
@@ -307,7 +305,7 @@ class DocumentationFrame
 		}
 	}
 
-	protected void historyUpdated()
+	private void historyUpdated()
 	{
 		forwardButton.setEnabled(forwardURLs.size() > 0);
 		backwardButton.setEnabled(backwardURLs.size() > 0);

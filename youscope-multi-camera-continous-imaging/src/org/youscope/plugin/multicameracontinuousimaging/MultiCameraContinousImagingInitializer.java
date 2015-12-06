@@ -5,16 +5,15 @@ package org.youscope.plugin.multicameracontinuousimaging;
 
 import java.rmi.RemoteException;
 
+import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.MeasurementConstructionAddon;
+import org.youscope.addon.measurement.CustomMeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.JobCreationException;
 import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.task.MeasurementTask;
 
@@ -22,19 +21,11 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-public class MultiCameraContinousImagingMeasurementConstructionAddon implements MeasurementConstructionAddon
-{
+public class MultiCameraContinousImagingInitializer implements CustomMeasurementInitializer<MultiCameraContinousImagingConfiguration>{
 
 	@Override
-	public void initializeMeasurement(Measurement measurement, MeasurementConfiguration measurementConfiguration, ConstructionContext jobInitializer) throws ConfigurationException, RemoteException, JobCreationException
-	{
-		if(!(measurementConfiguration instanceof MultiCameraContinousImagingConfigurationDTO))
-		{
-			throw new ConfigurationException("Measurement configuration is not a multi camera continous imaging measurement.");
-		}
-		MultiCameraContinousImagingConfigurationDTO configuration = (MultiCameraContinousImagingConfigurationDTO)measurementConfiguration;
-
-		
+	public void initializeMeasurement(Measurement measurement, MultiCameraContinousImagingConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException
+	{		
 		RegularPeriod period = new RegularPeriod();
 		int taskPeriod = configuration.getImagingPeriod();
 		if(taskPeriod <= 0)
@@ -59,7 +50,7 @@ public class MultiCameraContinousImagingMeasurementConstructionAddon implements 
 			try {
 				job = jobInitializer.getComponentProvider().createJob(new PositionInformation(),ContinuousImagingJob.DEFAULT_TYPE_IDENTIFIER,  ContinuousImagingJob.class);
 			} catch (ComponentCreationException e) {
-				throw new JobCreationException("Multi camera continuous imaging measurement needs the continuous imaging plugin.", e);
+				throw new AddonException("Multi camera continuous imaging measurement needs the continuous imaging plugin.", e);
 			}
 			job.setChannel(configuration.getChannelGroup(), configuration.getChannel());
 			job.setCameras(configuration.getCameras());
@@ -71,7 +62,11 @@ public class MultiCameraContinousImagingMeasurementConstructionAddon implements 
 		}
 		catch(MeasurementRunningException e)
 		{
-			throw new ConfigurationException("Could not create measurement since it is already running.", e);
+			throw new AddonException("Could not create measurement since it is already running.", e);
+		}
+		catch (RemoteException e1)
+		{
+			throw new AddonException("Could not create measurement due to remote exception.", e1);
 		}
 	}
 }

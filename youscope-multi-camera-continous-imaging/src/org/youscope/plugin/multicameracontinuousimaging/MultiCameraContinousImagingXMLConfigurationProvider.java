@@ -20,7 +20,7 @@ public class MultiCameraContinousImagingXMLConfigurationProvider implements XMLC
 	public List<Class<? extends Configuration>> getConfigurationClasses()
 	{
 		List<Class<? extends Configuration>> classes = new ArrayList<Class<? extends Configuration>>();
-		classes.add(MultiCameraContinousImagingConfigurationDTO.class);
+		classes.add(MultiCameraContinousImagingConfiguration.class);
 		return classes;
 	}
 

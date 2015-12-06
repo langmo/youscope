@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("multi-camera-continuous-imaging-measurement")
-public class MultiCameraContinousImagingConfigurationDTO extends MeasurementConfiguration
+public class MultiCameraContinousImagingConfiguration extends MeasurementConfiguration
 {
 	/**
 	 * Serial Version UID.

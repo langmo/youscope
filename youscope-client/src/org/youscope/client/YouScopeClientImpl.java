@@ -69,6 +69,7 @@ import org.youscope.common.microscope.Microscope;
 import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.common.tools.RMIReader;
 import org.youscope.common.tools.RMIWriter;
+import org.youscope.common.tools.TextTools;
 import org.youscope.serverinterfaces.YouScopeLogin;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.serverinterfaces.YouScopeServerConfiguration;
@@ -317,7 +318,7 @@ public class YouScopeClientImpl extends JFrame
 		});
 		fileMenu.add(exitMenuItem);
 				
-		JMenu measurementMenu = new JMenu("Run Measurement");
+		JMenu measurementMenu = new JMenu("Create Measurement");
 		measurementMenu.setMnemonic(KeyEvent.VK_M);
 		ImageIcon defaultNewMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new protocol");
 		ImageIcon measurementFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Job Folder");
@@ -336,9 +337,9 @@ public class YouScopeClientImpl extends JFrame
 				String addonName = metadata.getTypeName();
 				if(addonName == null || addonName.length() <= 0)
 					addonName = "Unnamed Measurement";
-				String[] addonFolder = addonName.split("/");
+				String[] addonFolder = metadata.getConfigurationClassification();
 				
-				JMenuItem newMeasurementMenuItem = new JMenuItem(addonFolder[addonFolder.length - 1]);
+				JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
 				
 				ImageIcon newMeasurementIcon = metadata.getIcon();
 				if(newMeasurementIcon == null)
@@ -394,7 +395,7 @@ public class YouScopeClientImpl extends JFrame
 				
 				// Setup folder structure
 				JMenu parentMenu = measurementMenu;
-				for(int i=0; i<addonFolder.length-1;i++)
+				for(int i=0; i<addonFolder.length;i++)
 				{
 					// Iterate over all menus to check if it already exists
 					boolean found = false;
@@ -411,7 +412,7 @@ public class YouScopeClientImpl extends JFrame
 					}
 					if(!found)
 					{
-						JMenu newMenu = new JMenu(addonFolder[i]);
+						JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
 						if(measurementFolderIcon != null)
 							newMenu.setIcon(measurementFolderIcon);
 						if(parentMenu == measurementMenu)

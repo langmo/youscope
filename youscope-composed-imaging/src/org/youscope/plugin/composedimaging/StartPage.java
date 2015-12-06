@@ -15,13 +15,15 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
  * @author langmo
  * 
  */
-class StartPage extends AbstractConfigurationPage
+class StartPage extends MeasurementAddonUIPage<ComposedImagingMeasurementConfiguration>
 {
 
 	/**
@@ -30,7 +32,7 @@ class StartPage extends AbstractConfigurationPage
 	private static final long	serialVersionUID	= 2394617369656492466L;
 
 	@Override
-	public void createUI()
+	public void createUI(YouScopeFrame frame)
 	{
 		setLayout(new BorderLayout(5, 5));
 		setOpaque(false);
@@ -68,9 +70,10 @@ class StartPage extends AbstractConfigurationPage
 	}
 
 	@Override
-	public void saveData(ComposedImagingMeasurementConfiguration configuration)
+	public boolean saveData(ComposedImagingMeasurementConfiguration configuration)
 	{
 		// Do nothing.
+		return true;
 	}
 
 	@Override
