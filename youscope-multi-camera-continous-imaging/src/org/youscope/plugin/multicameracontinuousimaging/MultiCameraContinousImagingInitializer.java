@@ -6,11 +6,11 @@ package org.youscope.plugin.multicameracontinuousimaging;
 import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.measurement.CustomMeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;

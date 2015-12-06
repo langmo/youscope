@@ -1,12 +1,14 @@
-package org.youscope.common.measurement;
+package org.youscope.addon.component;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.ComponentCreationException;
+import org.youscope.common.measurement.Component;
+import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
 
 /**

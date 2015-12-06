@@ -3,8 +3,7 @@
  */
 package org.youscope.addon.tool;
 
-import javax.swing.ImageIcon;
-
+import org.youscope.addon.AddonException;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -15,50 +14,38 @@ public interface ToolAddonFactory
 {
 
     /**
-     * Returns a new ToolAddon for the given ID, or null if addon does not support tools with the given ID.
+     * Returns the UI of a Tool for the given type identifier.
+     * If tools with the given type identifier are not supported by this factory, throws an {@link AddonException}.
      * 
-     * Remark: tool IDs are not case dependent.
+     * @param typeIdentifier The type identifier of the tool.
+     * @param client YouScope client.
+     * @param server YouScope server.
      * 
-     * @param toolID The ID for which a tool should be created.
-     * @param client Interface to allow the addon to communicate with the client.
-     * @param server Interface to the server.
-     * 
-     * @return New Addon.
+     * @return The created tool UI.
+     * @throws AddonException Thrown if tools with given type identifier are not supported by this factory.* 
      */
-    ToolAddon createToolAddon(String toolID, YouScopeClient client, YouScopeServer server);    
+    ToolAddonUI createToolUI(String typeIdentifier, YouScopeClient client, YouScopeServer server) throws AddonException;
     
     /**
-	 * Returns a list of all tool types supported by this addon
+	 * Returns all tool type identifiers supported by this addon
 	 * 
-	 * @return List of supported tool types.
+	 * @return Tool type identifiers.
 	 */
-	String[] getSupportedToolIDs();
+	String[] getSupportedTypeIdentifiers();
 
 	/**
-	 * Returns true if this addon supports tools with the given ID, false otherwise.
+	 * Returns true if this addon supports tools with the given type identifier, false otherwise.
 	 * 
-	 * Remark: tool IDs are not case dependent.
-	 * 
-	 * @param toolID The ID of the tool for which it should be queried if this addon supports it.
-	 * @return True if this addon supports tools with the given ID, false otherwise.
+	 * @param typeIdentifier The type identifier of the tool for which it should be queried if this addon supports it.
+	 * @return True if this addon supports tools with the given type identifier, false otherwise.
 	 */
-	boolean supportsToolID(String toolID);
-
-    /**
-     * Should return a short human readable name of the tool which corresponds to the given ID. If the addon does
-     * not support tools with the given ID, null should be returned.
-     * The name may or may not consist of sub-strings separated by slashes (e.g. "Misc/Foo"). The last string corresponds to the base name.
-     * In this case, a client may or may not display some kind of folder structure to navigate to a given addon.
-     * @param toolID The ID of the tool for which the human readable name should be returned.
-     * 
-     * @return Human readable name of the tool.
-     */
-    String getToolName(String toolID);
+	boolean isSupportingTypeIdentifier(String typeIdentifier);
     
     /**
-     * Returns an icon for this tool, or null, if this tool does not have an own icon.
-     * @param toolID The ID of the tool for which the icon should be returned.
-     * @return Icon for the tool, or null.
-     */
-    ImageIcon getToolIcon(String toolID);
+	 * Returns the metadata (like human readable name) for the tool with the given type identifier.
+	 * @param typeIdentifier The type identifier of the tool for which the metadata should be returned.
+	 * @return The metadata of the given tool.
+	 * @throws AddonException Thrown if type identifier is not supported by the factory.
+	 */
+	ToolMetadata getToolMetadata(String typeIdentifier) throws AddonException;
 }

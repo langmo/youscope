@@ -16,7 +16,9 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -25,7 +27,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
  * @author Moritz Lang
  *
  */
-class ScriptingTool implements ToolAddon, EditFileListener
+class ScriptingTool implements ToolAddonUI, EditFileListener
 {
 	/**
 	 * The default script engine (JavaScript).
@@ -59,6 +61,13 @@ class ScriptingTool implements ToolAddon, EditFileListener
 	 * Vector of URLs to files which get loaded at startup of this tool.
 	 */
 	private Vector<URL> scriptURLs = new Vector<URL>();
+	
+	public final static String TYPE_IDENTIFIER = "CSB::YouScopeScripting";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Console", new String[0], "icons/script-block.png");
+	}
 	
 	/**
 	 * Constructor.

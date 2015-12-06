@@ -6,10 +6,10 @@ package org.youscope.serverinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.common.ImageListener;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
 

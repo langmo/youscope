@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.PrintStream;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
@@ -22,11 +23,13 @@ import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolAddonFactory;
+import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.tools.TextTools;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
@@ -65,12 +68,11 @@ class YouScopeToolBar extends JToolBar
 			String addonName = metadata.getTypeName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unnamed Measurement";
-			String[] addonFolder = addonName.split("/");
 			
-			JButton measurementButton = new JButton(addonFolder[addonFolder.length - 1]);
+			JButton measurementButton = new JButton(TextTools.capitalize(addonName));
 			measurementButton.setOpaque(false);
 			measurementButton.setFocusPainted(false); 
-			ImageIcon measurementIcon = metadata.getIcon();
+			Icon measurementIcon = metadata.getIcon();
 			if(measurementIcon == null)
 				measurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new measurement");
 			if(measurementIcon != null)
@@ -134,14 +136,23 @@ class YouScopeToolBar extends JToolBar
 		ToolAddonFactory toolAddon = ClientSystem.getToolAddon(addonID);
 		if(toolAddon != null)
 		{
-			String addonName = toolAddon.getToolName(addonID);
+			ToolMetadata metadata;
+			try
+			{
+				metadata = toolAddon.getToolMetadata(addonID);
+			}
+			catch (AddonException e)
+			{
+				ClientSystem.err.println("Could not load tool metadata.", e);
+				return;
+			}
+			String addonName = metadata.getTypeName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unknown Tool";
-			String[] addonFolder = addonName.split("/");
-			JButton toolButton = new JButton(addonFolder[addonFolder.length-1]);
+			JButton toolButton = new JButton(TextTools.capitalize(addonName));
 			toolButton.setOpaque(false);
 			toolButton.setFocusPainted(false);
-			ImageIcon toolIcon = toolAddon.getToolIcon(addonID);
+			Icon toolIcon = metadata.getIcon();
 			if(toolIcon == null)
 				toolIcon = ImageLoadingTools.getResourceIcon("icons/application-form.png", "New Tool");
 			if(toolIcon != null)
@@ -166,7 +177,16 @@ class YouScopeToolBar extends JToolBar
 				}
 				private void openAddon()
 				{
-					ToolAddon addon = addonFactory.createToolAddon(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+					ToolAddonUI addon;
+					try
+					{
+						addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+					}
+					catch (AddonException e)
+					{
+						ClientSystem.err.println("Error creating tool UI.", e);
+						return;
+					}
 					YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
 					addon.createUI(toolFrame);
 					toolFrame.setVisible(true);

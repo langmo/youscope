@@ -26,11 +26,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.youscope.addon.component.ComponentProvider;
 import org.youscope.addon.microscopeaccess.MicroscopeConnectionException;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.common.YouScopeMessageListener;
 import org.youscope.common.YouScopeVersion;
-import org.youscope.common.measurement.ComponentProvider;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.microscope.Microscope;

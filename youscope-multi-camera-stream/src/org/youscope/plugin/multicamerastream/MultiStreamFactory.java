@@ -3,55 +3,19 @@
  */
 package org.youscope.plugin.multicamerastream;
 
-import javax.swing.ImageIcon;
-
-import org.youscope.addon.tool.ToolAddon;
-import org.youscope.addon.tool.ToolAddonFactory;
-import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.ImageLoadingTools;
+import org.youscope.addon.tool.ToolAddonFactoryAdapter;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
-public class MultiStreamFactory implements ToolAddonFactory
+public class MultiStreamFactory extends ToolAddonFactoryAdapter
 {
 	/**
-	 * The ID used by this addon to identify itself.
+	 * Constructor.
 	 */
-	public final static String addonID = "CSB::YouScopeMultiStream";
-	@Override
-	public ToolAddon createToolAddon(String ID, YouScopeClient client, YouScopeServer server)
+	public MultiStreamFactory()
 	{
-		return new MultiStream(client, server);
-	}
-
-	@Override
-	public String[] getSupportedToolIDs()
-	{
-		return new String[] {addonID};
-	}
-
-	@Override
-	public boolean supportsToolID(String ID)
-	{
-		if(addonID.compareToIgnoreCase(ID) == 0)
-			return true;
-		return false;
-	}
-
-	@Override
-	public String getToolName(String ID)
-	{
-		if(addonID.compareToIgnoreCase(ID) == 0)
-			return "Multi-Camera/Multi-Camera Stream";
-		return null;
-	}
-	
-	@Override
-	public ImageIcon getToolIcon(String toolID)
-	{
-		return ImageLoadingTools.getResourceIcon("icons/films.png", "Multi-Camera Stream");
+		super(MultiStream.class, MultiStream.getMetadata());
 	}
 }

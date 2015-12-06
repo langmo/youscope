@@ -7,14 +7,14 @@ import java.util.ServiceLoader;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactory;
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ComponentMetadata;
+import org.youscope.addon.component.ComponentProvider;
 import org.youscope.addon.component.ConstructionContext;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.measurement.Component;
-import org.youscope.common.measurement.ComponentCreationException;
-import org.youscope.common.measurement.ComponentProvider;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
 

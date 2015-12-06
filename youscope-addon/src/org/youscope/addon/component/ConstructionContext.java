@@ -9,7 +9,6 @@ import java.util.UUID;
 import javax.script.ScriptEngineManager;
 
 import org.youscope.common.MessageListener;
-import org.youscope.common.measurement.ComponentProvider;
 import org.youscope.common.measurement.MeasurementSaver;
 import org.youscope.common.measurement.callback.CallbackProvider;
 

@@ -23,7 +23,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.MicroplateType;
@@ -35,7 +37,7 @@ import org.youscope.uielements.StandardFormats;
  * @author langmo
  *
  */
-class CustomMicroplates implements ToolAddon, ActionListener
+class CustomMicroplatesTool implements ToolAddonUI, ActionListener
 {
 	protected YouScopeServer server;
 	protected YouScopeClient client;
@@ -47,10 +49,16 @@ class CustomMicroplates implements ToolAddon, ActionListener
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
 	 */
-	public CustomMicroplates(YouScopeClient client, YouScopeServer server)
+	public CustomMicroplatesTool(YouScopeClient client, YouScopeServer server)
 	{
 		this.server = server;
 		this.client = client;
+	}
+	public final static String TYPE_IDENTIFIER = "CSB::CustomMicroplates";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Microplates", null, "icons/table.png");
 	}
 	@Override
 	public void createUI(YouScopeFrame frame)
@@ -84,9 +92,9 @@ class CustomMicroplates implements ToolAddon, ActionListener
 	                @Override
 	                public void actionPerformed(ActionEvent e)
 	                {
-	                	YouScopeFrame newFrame = CustomMicroplates.this.frame.createModalChildFrame();
+	                	YouScopeFrame newFrame = CustomMicroplatesTool.this.frame.createModalChildFrame();
 	                	CustomMicroplatesConfigurationFrame configFrame = new CustomMicroplatesConfigurationFrame(client, newFrame);
-	                	configFrame.addActionListener(CustomMicroplates.this);
+	                	configFrame.addActionListener(CustomMicroplatesTool.this);
 	                	newFrame.setVisible(true);
 	                }
 	            });
@@ -113,7 +121,7 @@ class CustomMicroplates implements ToolAddon, ActionListener
 							client.sendError("Could not delete microplate type definition.", e1);
 							return;
 						}
-						CustomMicroplates.this.actionPerformed(e);
+						CustomMicroplatesTool.this.actionPerformed(e);
 	                }
 	            });
 
@@ -128,9 +136,9 @@ class CustomMicroplates implements ToolAddon, ActionListener
 	                    if (microplateType == null)
 	                        return;
 	               
-	                    YouScopeFrame newFrame = CustomMicroplates.this.frame.createModalChildFrame();
+	                    YouScopeFrame newFrame = CustomMicroplatesTool.this.frame.createModalChildFrame();
 	                    CustomMicroplatesConfigurationFrame configFrame = new CustomMicroplatesConfigurationFrame(client, newFrame, microplateType);
-	                	configFrame.addActionListener(CustomMicroplates.this);
+	                	configFrame.addActionListener(CustomMicroplatesTool.this);
 	                    newFrame.setVisible(true);
 	                }
 	            });
@@ -185,7 +193,7 @@ class CustomMicroplates implements ToolAddon, ActionListener
 	                @Override
 	                public void actionPerformed(ActionEvent e)
 	                {
-	                	CustomMicroplates.this.frame.setVisible(false);
+	                	CustomMicroplatesTool.this.frame.setVisible(false);
 	                }
 	            });
 			

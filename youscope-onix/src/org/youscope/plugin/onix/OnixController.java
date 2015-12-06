@@ -24,7 +24,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -52,7 +54,7 @@ import javax.swing.border.TitledBorder;
  * @author Moritz Lang
  *
  */
-class OnixController implements ToolAddon, YouScopeFrameListener
+class OnixController implements ToolAddonUI, YouScopeFrameListener
 {
 	private final YouScopeServer server;
 	private final YouScopeClient client;
@@ -100,6 +102,13 @@ class OnixController implements ToolAddon, YouScopeFrameListener
 	private final DoubleTextField pwmyFraction6Field = new DoubleTextField(0.0);
 	private final JButton pwmyStartField = new JButton("Start");
 	private final JButton pwmyStopField = new JButton("Stop");
+	
+	public final static String TYPE_IDENTIFIER = "CSB::OnixController";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Onix Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+	}
 	
 	private final YouScopeMessageListener onixListener = new YouScopeMessageListener()
 	{

@@ -19,7 +19,6 @@ import org.youscope.common.ImageEvent;
 import org.youscope.common.ImageListener;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.JobCreationException;
 import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.task.MeasurementTask;
 import org.youscope.common.tools.ImageConvertException;
@@ -417,8 +416,6 @@ class MultiStreamPanel extends JPanel
 
 			// Create continuous pulling job.
 			ContinuousImagingJob job = server.getComponentProvider(measurement.getUUID(), null).createJob(new PositionInformation(null), ContinuousImagingJob.DEFAULT_TYPE_IDENTIFIER, ContinuousImagingJob.class);
-			if(job == null)
-				throw new JobCreationException("The multi-camera and -color stream needs the continuous imaging plugin.");
 			job.setCameras(usedCameras);
 			job.setExposures(usedExposures);
 			job.setBurstImaging(false);

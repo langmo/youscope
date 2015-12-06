@@ -5,7 +5,9 @@ package org.youscope.plugin.livestream;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -14,7 +16,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
 /**
  * @author Moritz Lang
  */
-class LiveStreamOld implements YouScopeFrameListener, ToolAddon
+class LiveStreamOld implements YouScopeFrameListener, ToolAddonUI
 {
 	private ContinousMeasurementAndControlsPanel	mainPanel;
 
@@ -28,6 +30,13 @@ class LiveStreamOld implements YouScopeFrameListener, ToolAddon
 		this.client = client;
 	}
 
+	public final static String TYPE_IDENTIFIER = "CSB::YouScopeLiveStreamOld ";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Old LiveStream", new String[]{"misc"}, "icons/film.png");
+	}
+	
 	@Override
 	public void frameClosed()
 	{

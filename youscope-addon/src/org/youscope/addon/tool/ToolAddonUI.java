@@ -8,7 +8,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 /**
  * @author langmo Interface for addons which implement custom jobs.
  */
-public interface ToolAddon
+public interface ToolAddonUI
 {
 	/**
 	 * Is called when the tool should start to do whatever it is made to do.

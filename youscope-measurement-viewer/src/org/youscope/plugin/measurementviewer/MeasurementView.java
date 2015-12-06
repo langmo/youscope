@@ -168,7 +168,7 @@ class MeasurementView extends JPanel implements Runnable, ImageFolderListener
 			PostProcessorAddonFactory factory = factories.next();
 			for(String addonID : factory.getSupportedPostProcessorIDs())
 			{
-				if(addonID.equals(MeasurementViewerFactory.ADDON_ID))
+				if(addonID.equals(MeasurementViewer.TYPE_IDENTIFIER))
 					continue;
 				JPanel pluginPanel = new JPanel(new GridLayout(1, 2, 2, 2));
 				pluginPanel.setOpaque(false);

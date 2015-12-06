@@ -290,7 +290,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		Element(ComponentMetadata<? extends C> metadata)
 		{
 			super(TextTools.capitalize(metadata.getTypeName()));
-			ImageIcon icon = metadata.getIcon();
+			Icon icon = metadata.getIcon();
 			if(icon == null)
 			{
 				setIcon(ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Component"));
@@ -305,7 +305,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		}
 		String[] getConfigurationClassification()
 		{
-			return metadata.getConfigurationClassification();
+			return metadata.getClassification();
 		}
 	}
 	

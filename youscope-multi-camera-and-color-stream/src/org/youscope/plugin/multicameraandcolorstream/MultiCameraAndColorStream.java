@@ -5,7 +5,9 @@ package org.youscope.plugin.multicameraandcolorstream;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -14,7 +16,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
 /**
  * @author Moritz Lang
  */
-class MultiCameraAndColorStream implements YouScopeFrameListener, ToolAddon
+class MultiCameraAndColorStream implements YouScopeFrameListener, ToolAddonUI
 {
 	private MultiStreamAndControlsPanel	mainPanel;
 
@@ -27,6 +29,13 @@ class MultiCameraAndColorStream implements YouScopeFrameListener, ToolAddon
 	{
 		this.server = server;
 		this.client = client;
+	}
+	
+	public final static String TYPE_IDENTIFIER = "CSB::MultiCameraAndColorStream";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Camera & -Color Stream", new String[]{"multi-cam"}, "icons/film-cast.png");
 	}
 
 	@Override

@@ -20,7 +20,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -31,7 +33,7 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author Moritz Lang
  *
  */
-class CustomJobTool implements ToolAddon, ActionListener
+class CustomJobTool implements ToolAddonUI, ActionListener
 {
 	private final YouScopeClient client;
 	private final YouScopeServer server;
@@ -47,6 +49,12 @@ class CustomJobTool implements ToolAddon, ActionListener
 	{
 		this.client = client;
 		this.server = server;
+	}
+	public final static String TYPE_IDENTIFIER = "CSB::YouScopeCustomJob";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Job Configuration", null, "icons/block-share.png");
 	}
 	@Override
 	public void createUI(YouScopeFrame frame)

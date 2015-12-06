@@ -8,6 +8,7 @@ import java.util.ServiceLoader;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
@@ -15,7 +16,6 @@ import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;

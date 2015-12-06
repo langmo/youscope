@@ -5,7 +5,9 @@ package org.youscope.plugin.multicolorstream;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -14,14 +16,19 @@ import org.youscope.serverinterfaces.YouScopeServer;
 /**
  * @author Moritz Lang
  */
-class MultiColorStream implements YouScopeFrameListener, ToolAddon
+class MultiColorStream implements YouScopeFrameListener, ToolAddonUI
 {
 	private MultiStreamAndControlsPanel	mainPanel;
 
 	private final YouScopeServer server;
 	private final YouScopeClient client;
 	
+	public final static String TYPE_IDENTIFIER = "CSB::MultiColorLiveStream";
 	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Color Stream", new String[]{"misc"}, "icons/film-cast.png");
+	}
 	
 	MultiColorStream(YouScopeClient client, YouScopeServer server)
 	{

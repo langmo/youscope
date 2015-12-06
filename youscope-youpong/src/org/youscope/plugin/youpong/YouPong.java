@@ -5,7 +5,9 @@ package org.youscope.plugin.youpong;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -15,12 +17,20 @@ import org.youscope.serverinterfaces.YouScopeServer;
  * @author langmo
  *
  */
-class YouPong implements ToolAddon, YouScopeFrameListener
+class YouPong implements ToolAddonUI, YouScopeFrameListener
 {
 	private YouScopeServer server;
 	private YouScopeClient client;
 	private YouScopeFrame						frame;
 	private YouPongField field;
+	
+	public final static String TYPE_IDENTIFIER = "CSB::YouPong";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouPong", new String[]{"misc"}, "icons/game.png");
+	}
+	
 	/**
 	 * Constructor.
 	 * @param client Interface to the YouScope client.

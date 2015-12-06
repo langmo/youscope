@@ -440,7 +440,7 @@ class ClientSystem
     {
         for (ToolAddonFactory addon : getToolAddons())
         {
-        	if(addon.supportsToolID(addonID))
+        	if(addon.isSupportingTypeIdentifier(addonID))
                 return addon;
         }
         return null;

@@ -40,9 +40,11 @@ public interface ComponentAddonFactory
     ComponentAddonUI<?> createComponentUI(String typeIdentifier, YouScopeClient client, YouScopeServer server) throws AddonException;
 
     /**
-	 * Returns a list of all configuration type identifiers supported by this factory.
+	 * Returns a list of all component type identifiers supported by this factory.
+	 * A type identifier is a string unique for a given component type, with which the component type
+	 * is identified.
 	 * 
-	 * @return List of supported configuration types.
+	 * @return List of supported component types.
 	 */
 	String[] getSupportedTypeIdentifiers();
 

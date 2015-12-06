@@ -28,13 +28,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.client.MeasurementControl.MeasurementControlListener;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.uielements.ImageLoadingTools;
 

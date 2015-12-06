@@ -8,12 +8,12 @@ import java.util.UUID;
 
 import javax.script.ScriptEngineManager;
 
+import org.youscope.addon.component.ComponentProvider;
 import org.youscope.addon.component.ConstructionContext;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.ImageListener;
 import org.youscope.common.MessageListener;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.ComponentProvider;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.common.measurement.MeasurementSaver;
 import org.youscope.common.measurement.callback.Callback;

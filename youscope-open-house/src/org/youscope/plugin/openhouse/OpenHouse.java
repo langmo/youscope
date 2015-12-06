@@ -15,7 +15,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.Device;
@@ -28,7 +30,7 @@ import org.youscope.uielements.DynamicPanel;
  * @author Moritz Lang
  *
  */
-public class OpenHouse implements ToolAddon
+class OpenHouse implements ToolAddonUI
 {
 	private final YouScopeServer server;
 	private final YouScopeClient client;
@@ -38,6 +40,13 @@ public class OpenHouse implements ToolAddon
 	private final double TOTAL_FLOW = 10.0;
 	private final double MAX_STRESS = 0.5;
 	private final JLabel stressLabel = new JLabel("Stressintensität: 0%");
+	
+	public final static String TYPE_IDENTIFIER = "CSB::OpenHouse";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open House", new String[]{"misc"}, "icons/beaker.png");
+	}
 	
 	private void setFlowRate(int dosingUnit, double flowRate)
 	{

@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -58,8 +59,9 @@ import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolAddonFactory;
+import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.YouScopeVersion;
@@ -337,11 +339,11 @@ public class YouScopeClientImpl extends JFrame
 				String addonName = metadata.getTypeName();
 				if(addonName == null || addonName.length() <= 0)
 					addonName = "Unnamed Measurement";
-				String[] addonFolder = metadata.getConfigurationClassification();
+				String[] addonFolder = metadata.getClassification();
 				
 				JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
 				
-				ImageIcon newMeasurementIcon = metadata.getIcon();
+				Icon newMeasurementIcon = metadata.getIcon();
 				if(newMeasurementIcon == null)
 					newMeasurementIcon = defaultNewMeasurementIcon;
 				if(newMeasurementIcon != null)
@@ -475,14 +477,25 @@ public class YouScopeClientImpl extends JFrame
 		Vector<JMenuItem> toolMenuItems = new Vector<JMenuItem>();
 		for(ToolAddonFactory addonFactory : ClientSystem.getToolAddons())
 		{
-			for(String addonID : addonFactory.getSupportedToolIDs())
+			for(String addonID : addonFactory.getSupportedTypeIdentifiers())
 			{
-				String addonName = addonFactory.getToolName(addonID);
+				ToolMetadata metadata;
+				try
+				{
+					metadata = addonFactory.getToolMetadata(addonID);
+				}
+				catch (AddonException e1)
+				{
+					ClientSystem.err.println("Cannot get metadata of tool with ID "+addonID+". Continuing without tool.", e1);
+					continue;
+				}
+				
+				String addonName = metadata.getTypeName();
 				if(addonName == null || addonName.length() <= 0)
 					addonName = "Unknown Tool";
-				String[] addonFolder = addonName.split("/");
-				JMenuItem newToolMenuItem = new JMenuItem(addonFolder[addonFolder.length-1]);
-				ImageIcon toolIcon = addonFactory.getToolIcon(addonID);
+				String[] addonFolder = metadata.getClassification();
+				JMenuItem newToolMenuItem = new JMenuItem(TextTools.capitalize(addonName));
+				Icon toolIcon = metadata.getIcon();
 				if(toolIcon != null)
 				{
 					newToolMenuItem.setIcon(toolIcon);
@@ -505,7 +518,16 @@ public class YouScopeClientImpl extends JFrame
 					}
 					private void openAddon()
 					{
-						ToolAddon addon = addonFactory.createToolAddon(addonID, new YouScopeClientConnectionImpl(), getServer());
+						ToolAddonUI addon;
+						try
+						{
+							addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), getServer());
+						}
+						catch (AddonException e)
+						{
+							ClientSystem.err.println("Error creating tool UI.", e);
+							return;
+						}
 						YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
 						addon.createUI(toolFrame);
 						toolFrame.setVisible(true);
@@ -515,7 +537,7 @@ public class YouScopeClientImpl extends JFrame
 				
 				// Setup folder structure
 				JMenu parentMenu = toolsMenu;
-				for(int i=0; i<addonFolder.length-1;i++)
+				for(int i=0; i<addonFolder.length;i++)
 				{
 					// Iterate over all menus to check if it already exists
 					boolean found = false;
@@ -532,7 +554,7 @@ public class YouScopeClientImpl extends JFrame
 					}
 					if(!found)
 					{
-						JMenu newMenu = new JMenu(addonFolder[i]);
+						JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
 						if(toolFolderIcon != null)
 							newMenu.setIcon(toolFolderIcon);
 						if(toolsMenu == parentMenu)
@@ -1102,8 +1124,8 @@ public class YouScopeClientImpl extends JFrame
                 try
                 {
                     
-                    final ToolAddon addon = 
-                            toolFactory.createToolAddon(autoStartID, new YouScopeClientConnectionImpl(), getServer());
+                    final ToolAddonUI addon = 
+                            toolFactory.createToolUI(autoStartID, new YouScopeClientConnectionImpl(), getServer());
                     final YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
                     addon.createUI(toolFrame);
                     toolFrame.setVisible(true);

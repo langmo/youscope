@@ -18,7 +18,7 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 	@Override
 	public PostProcessorAddon createMeasurementConfigurationAddon(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder)
 	{
-		if(MeasurementViewerFactory.ADDON_ID.compareTo(ID) == 0)
+		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
 		{
 			return new MeasurementViewer(client, server, measurementFolder);
 		}
@@ -28,13 +28,13 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 	@Override
 	public String[] getSupportedPostProcessorIDs()
 	{
-		return new String[]{MeasurementViewerFactory.ADDON_ID};		
+		return new String[]{MeasurementViewer.TYPE_IDENTIFIER};		
 	}
 
 	@Override
 	public boolean supportsPostProcessorID(String ID)
 	{
-		if(MeasurementViewerFactory.ADDON_ID.compareTo(ID) == 0)
+		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
 			return true;
 		return false;
 	}
@@ -42,7 +42,7 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 	@Override
 	public String getPostProcessorName(String ID)
 	{
-		if(MeasurementViewerFactory.ADDON_ID.compareTo(ID) == 0)
+		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
 			return "Open in Measurement Viewer";
 		return null;
 	}

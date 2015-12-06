@@ -136,7 +136,7 @@ public class ComponentMetadataAdapter<C extends Configuration>  implements Compo
 	}
 
 	@Override
-	public String[] getConfigurationClassification() {
+	public String[] getClassification() {
 		if(configurationClassification == null || configurationClassification.length <=0)
 			return new String[0];
 		// Make copy of classification for user.

@@ -75,7 +75,7 @@ public class GenericComponentMetadata<C extends Configuration> implements Compon
 	}
 
 	@Override
-	public String[] getConfigurationClassification() {
+	public String[] getClassification() {
 		YSConfigClassification classification = configurationClass.getAnnotation(YSConfigClassification.class);
 		if(classification != null)
 			return classification.value();

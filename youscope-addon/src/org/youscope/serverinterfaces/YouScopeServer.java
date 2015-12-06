@@ -7,8 +7,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
 
+import org.youscope.addon.component.ComponentProvider;
 import org.youscope.common.YouScopeMessageListener;
-import org.youscope.common.measurement.ComponentProvider;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.microscope.Microscope;

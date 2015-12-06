@@ -14,7 +14,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -29,7 +31,7 @@ import org.youscope.uielements.StateButton;
  * @author Moritz Lang
  *
  */
-class NemesysController implements ToolAddon, YouScopeFrameListener
+class NemesysController implements ToolAddonUI, YouScopeFrameListener
 {
 	private final YouScopeServer server;
 	private final YouScopeClient client;
@@ -38,6 +40,13 @@ class NemesysController implements ToolAddon, YouScopeFrameListener
 	private final JPanel syringeFieldsContainer = new JPanel();
 	private boolean continueQuery = true;
 	private SyringeField[] syringeFields = new SyringeField[0]; 
+	
+	public final static String TYPE_IDENTIFIER = "CSB::NemesysController";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Nemesys Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+	}
 	
 	private class SyringeField extends DynamicPanel
 	{

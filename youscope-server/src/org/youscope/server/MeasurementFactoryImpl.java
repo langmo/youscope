@@ -7,11 +7,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.common.ImageListener;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.ComponentCreationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;

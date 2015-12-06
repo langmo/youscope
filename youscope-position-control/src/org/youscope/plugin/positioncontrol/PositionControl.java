@@ -28,7 +28,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -42,7 +44,7 @@ import org.youscope.uielements.StandardFormats;
  * @author langmo
  *
  */
-class PositionControl implements ToolAddon, Runnable, YouScopeFrameListener
+class PositionControl implements ToolAddonUI, Runnable, YouScopeFrameListener
 {
 	private final YouScopeServer server;
 	private final YouScopeClient client;
@@ -71,6 +73,13 @@ class PositionControl implements ToolAddon, Runnable, YouScopeFrameListener
 	private volatile boolean isChangingMove = false;
 	
 	private volatile boolean isChangingFocus = false;
+	
+	public final static String TYPE_IDENTIFIER = "CSB::YouScopePositionControl";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Stage and Focus Position", new String[0], "icons/map.png");
+	}
 	
 	/**
 	 * Constructor.

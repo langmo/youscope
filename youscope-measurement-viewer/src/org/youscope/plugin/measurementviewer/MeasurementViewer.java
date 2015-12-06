@@ -14,7 +14,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.youscope.addon.postprocessing.PostProcessorAddon;
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -24,7 +26,7 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author langmo
  *
  */
-public class MeasurementViewer implements ToolAddon, PostProcessorAddon, ViewMeasurementListener
+class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurementListener
 {
 	private final YouScopeClient client;
 	private final YouScopeServer server;
@@ -46,6 +48,13 @@ public class MeasurementViewer implements ToolAddon, PostProcessorAddon, ViewMea
 		this.openFolder = openFolder;
 		fileSystem = new FileSystem(client);
 		fileSystem.addViewMeasurementListener(this);
+	}
+	
+	public final static String TYPE_IDENTIFIER = "CSB::YouScopeMeasurementViewer::1.0";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Measurement Viewer", new String[0], "icons/eye.png");
 	}
 	
 	/**

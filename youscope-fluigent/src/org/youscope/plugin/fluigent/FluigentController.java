@@ -21,7 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddon;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -36,7 +38,7 @@ import org.youscope.uielements.StateButton;
  * @author Moritz Lang
  *
  */
-public class FluigentController implements ToolAddon, YouScopeFrameListener
+class FluigentController implements ToolAddonUI, YouScopeFrameListener
 {
 	private final YouScopeServer server;
 	private final YouScopeClient client;
@@ -46,6 +48,13 @@ public class FluigentController implements ToolAddon, YouScopeFrameListener
 	private PumpControl pumpControl = null;
 	private PressureControl pressureControl = null;
 	private JTabbedPane centralPanel = null;
+	
+	public final static String TYPE_IDENTIFIER = "CSB::FluigentController";
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Fluigent Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+	}
 	
 	private class PressureControl extends DynamicPanel
 	{

@@ -1,4 +1,4 @@
-package org.youscope.common.measurement;
+package org.youscope.addon.component;
 
 /**
  * Exception thrown if creation of a measurement component failed
