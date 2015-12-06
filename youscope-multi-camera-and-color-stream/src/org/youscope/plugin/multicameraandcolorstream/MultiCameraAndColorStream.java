@@ -5,30 +5,24 @@ package org.youscope.plugin.multicameraandcolorstream;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
  * @author Moritz Lang
  */
-class MultiCameraAndColorStream implements YouScopeFrameListener, ToolAddonUI
+class MultiCameraAndColorStream extends ToolAddonUIAdapter implements YouScopeFrameListener
 {
-	private MultiStreamAndControlsPanel	mainPanel;
-
-	private final YouScopeServer server;
-	private final YouScopeClient client;
+	private MultiStreamAndControlsPanel	mainPanel;	
 	
-	
-	
-	MultiCameraAndColorStream(YouScopeClient client, YouScopeServer server)
+	MultiCameraAndColorStream(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
-		this.client = client;
+		super(getMetadata(), client, server);
 	}
 	
 	public final static String TYPE_IDENTIFIER = "CSB::MultiCameraAndColorStream";
@@ -51,26 +45,23 @@ class MultiCameraAndColorStream implements YouScopeFrameListener, ToolAddonUI
 	}
 
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI() throws AddonException
 	{
-		frame.setTitle("Multi-Camera and -Color Stream");
-		frame.setResizable(true);
-		frame.setClosable(true);
-		frame.setMaximizable(true);
+		setTitle("Multi-Camera and -Color Stream");
+		setResizable(true);
+		setMaximizable(true);
+		getContainingFrame().addFrameListener(this);
+		setPreferredSize(new Dimension(800, 600));
 		
 		try
 		{
-			mainPanel = new MultiStreamAndControlsPanel(client, server);
+			mainPanel = new MultiStreamAndControlsPanel(getClient(), getServer());
 		}
 		catch(Exception e)
 		{
-			frame.setToErrorState("Could not establish continuous measurement.", e);
-			return;
+			throw new AddonException("Could not establish continuous measurement.", e);
 		}
 		
-		frame.setContentPane(mainPanel);
-		frame.addFrameListener(this);
-		frame.setSize(new Dimension(800, 600));
-		frame.setMaximum(true);
+		return mainPanel;
 	}	
 }

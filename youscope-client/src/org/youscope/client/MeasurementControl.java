@@ -732,7 +732,7 @@ class MeasurementControl
 			}
 			
 			YouScopeFrame frame = YouScopeFrameImpl.createTopLevelFrame();
-			PostProcessorAddon addon = addonFactory.createMeasurementConfigurationAddon(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
+			PostProcessorAddon addon = addonFactory.createPostProcessorUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
 			addon.createUI(frame);
 			frame.setVisible(true);
 		}

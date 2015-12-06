@@ -13,12 +13,11 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
 
@@ -26,10 +25,8 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author langmo
  *
  */
-class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurementListener
+class MeasurementViewer extends ToolAddonUIAdapter implements ViewMeasurementListener
 {
-	private final YouScopeClient client;
-	private final YouScopeServer server;
 	private final FileSystem fileSystem;
 	private final String openFolder;
 	
@@ -40,11 +37,11 @@ class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurem
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
 	 * @param openFolder The folder which should be opened at startup. If null, the default folder is opened.
+	 * @throws AddonException 
 	 */
-	public MeasurementViewer(YouScopeClient client, YouScopeServer server, String openFolder)
+	public MeasurementViewer(YouScopeClient client, YouScopeServer server, String openFolder) throws AddonException
 	{
-		this.client = client;
-		this.server = server;
+		super(getMetadata(), client, server);
 		this.openFolder = openFolder;
 		fileSystem = new FileSystem(client);
 		fileSystem.addViewMeasurementListener(this);
@@ -61,19 +58,21 @@ class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurem
 	 * Convenient constructor. Same as MeasurementViewer(client, server, null).
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public MeasurementViewer(YouScopeClient client, YouScopeServer server)
+	public MeasurementViewer(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
 		this(client, server, null);
 	}
 	
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		frame.setClosable(true);
-		frame.setMaximizable(true);
-		frame.setResizable(true);
-		frame.setTitle("MeasurementViewer");
+		setMaximizable(true);
+		setResizable(true);
+		setTitle("MeasurementViewer");
+		setPreferredSize(new Dimension(900, 500));
+		
 		
 		File measurementFolder = null;
 		if(openFolder != null)
@@ -108,7 +107,7 @@ class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurem
 		}
 		else
 		{
-			MeasurementView measurementView = new MeasurementView(client, server, measurementFolder);
+			MeasurementView measurementView = new MeasurementView(getClient(), getServer(), measurementFolder);
 			contentSplitPane.setRightComponent(measurementView);
 			fileSystem.setSelectedMeasurement(measurementFolder);
 		}
@@ -124,14 +123,13 @@ class MeasurementViewer implements ToolAddonUI, PostProcessorAddon, ViewMeasurem
 		ImageIO.scanForPlugins();
         
         // End initializing
-        frame.setContentPane(contentSplitPane);
-        frame.setSize(new Dimension(900, 500));
-	}
+        return contentSplitPane;
+    }
 
 	@Override
 	public void viewMeasurement(String measurementPath)
 	{
-		MeasurementView measurementView = new MeasurementView(client, server, new File(measurementPath));
+		MeasurementView measurementView = new MeasurementView(getClient(), getServer(), new File(measurementPath));
 		contentSplitPane.setRightComponent(measurementView);
 		contentSplitPane.revalidate();
 	}

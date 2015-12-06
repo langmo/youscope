@@ -18,9 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -30,11 +32,9 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class OpenCellX implements PostProcessorAddon
+class OpenCellX extends ToolAddonUIAdapter
 {
-	public static final String ADDON_ID = "CSB::OpenCellX::1.0";
-	
-	private final YouScopeClient client;
+	public static final String TYPE_IDENTIFIER = "CSB::OpenCellX::1.0";
 	
 	private final JTextField measurementIDField = new JTextField();
 	private final JTextField measurementFolderField = new JTextField();
@@ -45,19 +45,25 @@ class OpenCellX implements PostProcessorAddon
 
 	private final String measurementFolder;
 	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open with CellX", new String[]{"Cell Detection"});
+	}
+	
 	/**
 	 * Constructor.
 	 * @param client
 	 * @param server
 	 * @param measurementFolder
+	 * @throws AddonException 
 	 */
-	OpenCellX(YouScopeClient client, YouScopeServer server, String measurementFolder)
+	OpenCellX(YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
 	{
-		this.measurementFolder = measurementFolder;
-		this.client = client;
+		super(getMetadata(), client, server);
+		this.measurementFolder = measurementFolder;	
 	}
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI() throws AddonException
 	{
 		// Initialize fields.
 		String measurementName;
@@ -68,13 +74,11 @@ class OpenCellX implements PostProcessorAddon
 			MeasurementConfiguration configuration = ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
 			measurementName = configuration.getName();
 			measurementIDField.setText(measurementName);
-			localServer = client.isLocalServer();
+			localServer = getClient().isLocalServer();
 		}
 		catch(Exception e)
 		{
-			frame.setToErrorState("Could not get measurement information. Leaving respective fields empty.",e);
-			frame.pack();
-			return;
+			throw new AddonException("Could not get measurement information.",e);
 		}
 		
 		// Measurement identification
@@ -121,21 +125,17 @@ class OpenCellX implements PostProcessorAddon
 		
 		// Set frame properties
 		if(localServer)
-			frame.setTitle("CellX is starting");
+			setTitle("CellX is starting");
 		else
-			frame.setTitle("Cannot start CellX");
-		frame.setResizable(false);
-		frame.setClosable(true);
-		frame.setMaximizable(false);
+			setTitle("Cannot start CellX");
+		setResizable(false);
+		setMaximizable(false);
 		
 		// Create content pane
 		JPanel contentPane = new JPanel(new BorderLayout());
 		contentPane.add(elementsPanel, BorderLayout.CENTER);
 		if(localServer)
 			contentPane.add(openCellXButton, BorderLayout.SOUTH);
-		frame.setContentPane(contentPane);
-		frame.pack();
-		
 		(new Thread(new Runnable()
 		{
 			@Override
@@ -153,6 +153,7 @@ class OpenCellX implements PostProcessorAddon
 				openCellX();
 			}
 		})).start();
+		return contentPane;
 	}
 	
 	private void openCellX()
@@ -161,14 +162,14 @@ class OpenCellX implements PostProcessorAddon
 		File cellxDirectory = new File("cellx");
 		if(!cellxDirectory.exists() || !cellxDirectory.isDirectory())
 		{
-			client.sendError("Directory " + cellxDirectory.getAbsolutePath() + " does not exist. Check the CellX addon installation for consistency.");
+			sendErrorMessage("Directory " + cellxDirectory.getAbsolutePath() + " does not exist. Check the CellX addon installation for consistency.", null);
 			return;
 		}
 		
 		File cellxFile = new File(cellxDirectory, "CellXGui.jar");
 		if(!cellxFile.exists() || !cellxFile.isFile())
 		{
-			client.sendError("CellX Gui " + cellxFile.getAbsolutePath() + " does not exist. Check the CellX addon installation for consistency.");
+			sendErrorMessage("CellX Gui " + cellxFile.getAbsolutePath() + " does not exist. Check the CellX addon installation for consistency.", null);
 			return;
 		}
     	try
@@ -177,7 +178,7 @@ class OpenCellX implements PostProcessorAddon
 		}
 		catch(IOException e)
 		{
-			client.sendError("Error while starting CellX Gui (" + cellxFile.getAbsolutePath() + ").", e);
+			sendErrorMessage("Error while starting CellX Gui (" + cellxFile.getAbsolutePath() + ").", e);
 			return;
 		}
 	}

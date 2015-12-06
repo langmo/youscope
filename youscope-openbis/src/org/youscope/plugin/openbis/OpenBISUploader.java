@@ -17,7 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
@@ -29,14 +32,11 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class OpenBISUploader implements PostProcessorAddon
+class OpenBISUploader extends ToolAddonUIAdapter
 {
-	public static final String ADDON_ID = "CSB::OpenBISUploader::1.0";
+	public static final String TYPE_IDENTIFIER = "CSB::OpenBISUploader::1.0";
 	
-	private final YouScopeClient client;
-	private final YouScopeServer server;
 	private final String measurementFolder;
-	private YouScopeFrame frame = null;
 	
 	private final JTextField measurementIDField = new JTextField();
 	private final JButton configButton = new JButton("Configuration");
@@ -51,17 +51,19 @@ class OpenBISUploader implements PostProcessorAddon
 	public static final String OPEN_BIS_USER_PROPERTY = "CSB_CISD::OpenBIS::OpenBISUserID";
 	public static final String OPEN_BIS_PROJECT_PROPERTY = "CSB_CISD::OpenBIS::OpenBISProjectID";
 	
-	OpenBISUploader(YouScopeClient client, YouScopeServer server, String measurementFolder)
+	static ToolMetadata getMetadata()
 	{
-		this.client = client;
-		this.server = server;
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Send to OpenBIS", new String[0]);
+	}
+	
+	OpenBISUploader(YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
+	{
+		super(getMetadata(), client, server);
 		this.measurementFolder = measurementFolder;
 	}
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		this.frame = frame;
-		
 		// Initialize fields.
 		try
 		{
@@ -70,7 +72,7 @@ class OpenBISUploader implements PostProcessorAddon
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not load measurement configuration.\nLeaving measurement ID field empty.",e);
+			sendErrorMessage("Could not load measurement configuration.\nLeaving measurement ID field empty.",e);
 		}
 		measurementFolderField.setText(measurementFolder);
 		
@@ -105,9 +107,6 @@ class OpenBISUploader implements PostProcessorAddon
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if(OpenBISUploader.this.frame == null)
-					return;
-				
 				// Read out settings
 				settings.measurementFolder = measurementFolderField.getText();
 				settings.measurementID = measurementIDField.getText();
@@ -115,14 +114,15 @@ class OpenBISUploader implements PostProcessorAddon
 				settings.userID = userIDField.getText();
 				
 				// Save settings
-				client.getProperties().setProperty(OPEN_BIS_USER_PROPERTY, settings.userID);
-				client.getProperties().setProperty(OPEN_BIS_PROJECT_PROPERTY, settings.projectID);
+				getClient().getProperties().setProperty(OPEN_BIS_USER_PROPERTY, settings.userID);
+				getClient().getProperties().setProperty(OPEN_BIS_PROJECT_PROPERTY, settings.projectID);
 				
 				// Start up transfer and show waitbar frame
-				YouScopeFrame childFrame = OpenBISUploader.this.frame.createModalChildFrame();
+				YouScopeFrame childFrame = getContainingFrame().createModalChildFrame();
 				@SuppressWarnings("unused")
-				TransferStateFrame transferStateFrame = new TransferStateFrame(childFrame, server, client, settings);
+				TransferStateFrame transferStateFrame = new TransferStateFrame(childFrame, getServer(), getClient(), settings);
 				childFrame.setVisible(true);
+				closeTool();
 			}
 		});
 		
@@ -131,11 +131,8 @@ class OpenBISUploader implements PostProcessorAddon
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if(OpenBISUploader.this.frame == null)
-					return;
-				
-				YouScopeFrame childFrame = OpenBISUploader.this.frame.createModalChildFrame();
-				ConnectionConfigurationFrame config = new ConnectionConfigurationFrame(childFrame, client);
+				YouScopeFrame childFrame = getContainingFrame().createModalChildFrame();
+				ConnectionConfigurationFrame config = new ConnectionConfigurationFrame(childFrame, getClient());
 				config.addConfigurationChangeListener(new ActionListener()
 				{
 					@Override
@@ -153,31 +150,30 @@ class OpenBISUploader implements PostProcessorAddon
 		buttonPanel.add(commitButton);
 		
 		// Set frame properties
-		frame.setTitle("OpenBIS Uploader");
-		frame.setResizable(false);
-		frame.setClosable(true);
-		frame.setMaximizable(false);
+		setTitle("OpenBIS Uploader");
+		setResizable(false);
+		setMaximizable(false);
 		
 		// Load SSH settings
 		loadSSHSettings();
 		
 		// Load last settings
-		userIDField.setText(client.getProperties().getProperty(OPEN_BIS_USER_PROPERTY, ""));
-		projectIDField.setText(client.getProperties().getProperty(OPEN_BIS_PROJECT_PROPERTY, ""));
+		userIDField.setText(getClient().getProperties().getProperty(OPEN_BIS_USER_PROPERTY, ""));
+		projectIDField.setText(getClient().getProperties().getProperty(OPEN_BIS_PROJECT_PROPERTY, ""));
 		
 		// Create content pane
 		JPanel contentPane = new JPanel(new BorderLayout());
 		contentPane.add(elementsPanel, BorderLayout.CENTER);
 		contentPane.add(buttonPanel, BorderLayout.SOUTH);
-		frame.setContentPane(contentPane);
-		frame.pack();
+
+		return contentPane;
 
 	}
 	private void loadSSHSettings()
 	{
-		settings.sshUser = client.getProperties().getProperty(ConnectionConfigurationFrame.SSH_USER_PROPERTY, "");
-		settings.sshServer = client.getProperties().getProperty(ConnectionConfigurationFrame.SSH_SERVER_PROPERTY, "");
-		settings.sshDirectory = client.getProperties().getProperty(ConnectionConfigurationFrame.SSH_PATH_PROPERTY, "");
+		settings.sshUser = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_USER_PROPERTY, "");
+		settings.sshServer = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_SERVER_PROPERTY, "");
+		settings.sshDirectory = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_PATH_PROPERTY, "");
 		
 		if(settings.sshDirectory.length() > 0 && settings.sshUser.length() > 0  && settings.sshServer.length() > 0)
 		{

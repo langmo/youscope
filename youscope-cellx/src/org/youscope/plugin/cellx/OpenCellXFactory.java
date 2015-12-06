@@ -5,8 +5,9 @@ package org.youscope.plugin.cellx;
 
 import java.awt.Desktop;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -18,9 +19,9 @@ public class OpenCellXFactory implements PostProcessorAddonFactory
 {
 
 	@Override
-	public PostProcessorAddon createMeasurementConfigurationAddon(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder)
+	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
 	{
-		if(OpenCellX.ADDON_ID.compareTo(ID) == 0)
+		if(OpenCellX.TYPE_IDENTIFIER.equals(ID))
 		{
 			return new OpenCellX(client, server, measurementFolder);
 		}
@@ -31,14 +32,14 @@ public class OpenCellXFactory implements PostProcessorAddonFactory
 	public String[] getSupportedPostProcessorIDs()
 	{
 		if(Desktop.isDesktopSupported())
-			return new String[]{OpenCellX.ADDON_ID};
+			return new String[]{OpenCellX.TYPE_IDENTIFIER};
 		return new String[0];
 	}
 
 	@Override
 	public boolean supportsPostProcessorID(String ID)
 	{
-		if(OpenCellX.ADDON_ID.compareTo(ID) == 0)
+		if(OpenCellX.TYPE_IDENTIFIER.equals(ID))
 			return true;
 		return false;
 	}
@@ -46,7 +47,7 @@ public class OpenCellXFactory implements PostProcessorAddonFactory
 	@Override
 	public String getPostProcessorName(String ID)
 	{
-		if(OpenCellX.ADDON_ID.compareTo(ID) == 0)
+		if(OpenCellX.TYPE_IDENTIFIER.equals(ID))
 			return "Detect Cells (CellX)";
 		return null;
 	}

@@ -19,9 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -31,11 +33,9 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class OpenMeasurementFolder implements PostProcessorAddon
+class OpenMeasurementFolder extends ToolAddonUIAdapter
 {
-	public static final String ADDON_ID = "CSB::OpenMeasurementFolder::1.0";
-	
-	private final YouScopeClient client;
+	public static final String TYPE_IDENTIFIER = "CSB::OpenMeasurementFolder::1.0";
 	
 	private final JTextField measurementIDField = new JTextField();
 	private final JTextField measurementFolderField = new JTextField();
@@ -45,19 +45,26 @@ class OpenMeasurementFolder implements PostProcessorAddon
 	private final static GridBagConstraints newLineCnstr = StandardFormats.getNewLineConstraint();
 
 	private final String measurementFolder;
+	
+	static ToolMetadata getMetadata()
+	{
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open Folder", new String[0]);
+	}
+	
 	/**
 	 * Constructor.
 	 * @param client
 	 * @param server
 	 * @param measurementFolder
+	 * @throws AddonException 
 	 */
-	OpenMeasurementFolder(YouScopeClient client, YouScopeServer server, String measurementFolder)
+	OpenMeasurementFolder(YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
 	{
+		super(getMetadata(), client, server);
 		this.measurementFolder = measurementFolder;
-		this.client = client;
 	}
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI() throws AddonException
 	{
 		// Initialize fields.
 		String measurementName;
@@ -68,13 +75,11 @@ class OpenMeasurementFolder implements PostProcessorAddon
 			MeasurementConfiguration configuration = ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
 			measurementName = configuration.getName();
 			measurementIDField.setText(measurementName);
-			localServer = client.isLocalServer();
+			localServer = getClient().isLocalServer();
 		}
 		catch(Exception e)
 		{
-			frame.setToErrorState("Could not get measurement information. Leaving respective fields empty.",e);
-			frame.pack();
-			return;
+			throw new AddonException("Could not get measurement information. Leaving respective fields empty.",e);
 		}
 		
 		// Measurement identification
@@ -121,20 +126,17 @@ class OpenMeasurementFolder implements PostProcessorAddon
 		
 		// Set frame properties
 		if(localServer)
-			frame.setTitle("Folder is opening");
+			setTitle("Folder is opening");
 		else
-			frame.setTitle("Cannot open folder");
-		frame.setResizable(false);
-		frame.setClosable(true);
-		frame.setMaximizable(false);
+			setTitle("Cannot open folder");
+		setResizable(false);
+		setMaximizable(false);
 		
 		// Create content pane
 		JPanel contentPane = new JPanel(new BorderLayout());
 		contentPane.add(elementsPanel, BorderLayout.CENTER);
 		if(localServer)
 			contentPane.add(openMeasurementButton, BorderLayout.SOUTH);
-		frame.setContentPane(contentPane);
-		frame.pack();
 		
 		(new Thread(new Runnable()
 		{
@@ -153,6 +155,8 @@ class OpenMeasurementFolder implements PostProcessorAddon
 				openFolder();
 			}
 		})).start();
+		
+		return contentPane;
 	}
 	
 	private void openFolder()
@@ -160,10 +164,11 @@ class OpenMeasurementFolder implements PostProcessorAddon
 		try
 		{
 			Desktop.getDesktop().open(new File(measurementFolder));
+			closeTool();
 		}
 		catch(IOException e1)
 		{
-			client.sendError("Could not open folder " + measurementFolder + ".", e1);
+			sendErrorMessage("Could not open folder " + measurementFolder + ".", e1);
 		}
 	}
 }

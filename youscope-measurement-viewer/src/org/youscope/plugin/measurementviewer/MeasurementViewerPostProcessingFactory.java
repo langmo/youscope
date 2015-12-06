@@ -3,8 +3,9 @@
  */
 package org.youscope.plugin.measurementviewer;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -16,7 +17,7 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 {
 
 	@Override
-	public PostProcessorAddon createMeasurementConfigurationAddon(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder)
+	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
 	{
 		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
 		{

@@ -21,11 +21,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.microscope.Device;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -38,10 +38,8 @@ import org.youscope.uielements.StateButton;
  * @author Moritz Lang
  *
  */
-class FluigentController implements ToolAddonUI, YouScopeFrameListener
+class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameListener
 {
-	private final YouScopeServer server;
-	private final YouScopeClient client;
 	private Device fluigentDevice = null;
 	private final JComboBox<String> fluigentDeviceField = new JComboBox<String>();	
 	private boolean continueQuery = true;
@@ -80,7 +78,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				}
 				catch(Exception e)
 				{
-					client.sendError("Could not get name of flow unit " + Integer.toString(i+1) + ".", e);
+					sendErrorMessage("Could not get name of flow unit " + Integer.toString(i+1) + ".", e);
 				}
 				pressureFields[i] = new PressureField(i, pressureUnitName, pressureUnitUnit);
 				pressureFieldsContainer.add(pressureFields[i]);
@@ -114,7 +112,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 						}
 						catch(Exception e1)
 						{
-							client.sendError("Could not set ez pressure unit name.", e1);
+							sendErrorMessage("Could not set ez pressure unit name.", e1);
 						}
 					}
 				});
@@ -171,7 +169,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 			Device fluigentDevice = FluigentController.this.fluigentDevice;
 			if(fluigentDevice == null)
 			{
-				client.sendError("Cannot set pressure since Fluigent device not set.");
+				sendErrorMessage("Cannot set pressure since Fluigent device not set.", null);
 				return;
 			}
 			try
@@ -180,7 +178,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 			}
 			catch(Exception e)
 			{
-				client.sendError("Could not set pressure.", e);
+				sendErrorMessage("Could not set pressure.", e);
 			}
 		}
 		public int getNumPressureUnits()
@@ -216,7 +214,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				}
 				catch(Exception e)
 				{
-					client.sendError("Could not get name of flow unit " + Integer.toString(i+1) + ".", e);
+					sendErrorMessage("Could not get name of flow unit " + Integer.toString(i+1) + ".", e);
 				}
 				pumpFields[i] = new PumpField(i, flowUnitName, flowUnitRateUnit);
 				pumpFieldsContainer.add(pumpFields[i]);
@@ -235,12 +233,12 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				{
 					Device fluigentDevice = FluigentController.this.fluigentDevice;
 					if(fluigentDevice == null)
-						client.sendError("No Fluigent device selected");
+						sendErrorMessage("No Fluigent device selected", null);
 					try {
 						fluigentDevice.getProperty("startIdentificationWizard").setValue("start");
 					} 
 					catch (Exception  e) {
-						client.sendError("Could not start Fluigent advanced identification wizard.",e);
+						sendErrorMessage("Could not start Fluigent advanced identification wizard.",e);
 					}
 				}
 			});
@@ -255,9 +253,9 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				{
 					Device fluigentDevice = FluigentController.this.fluigentDevice;
 					if(fluigentDevice == null)
-						client.sendError("No Fluigent device selected");
+						sendErrorMessage("No Fluigent device selected", null);
 
-					String lastIdentFile = client.getProperties().getProperty(PROPERTY_LAST_IDENTIFICATION_FILE, "");
+					String lastIdentFile = getClient().getProperties().getProperty(PROPERTY_LAST_IDENTIFICATION_FILE, "");
                     JFileChooser fileChooser = new JFileChooser(lastIdentFile);
                     fileChooser.setSelectedFile(new File(lastIdentFile)); 
                     
@@ -283,12 +281,12 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 					} catch (@SuppressWarnings("unused") IOException e) {
 						path = file.getAbsolutePath();
 					}
-                    client.getProperties().setProperty(PROPERTY_LAST_IDENTIFICATION_FILE, path);
+					getClient().getProperties().setProperty(PROPERTY_LAST_IDENTIFICATION_FILE, path);
                     
                     try {
 						fluigentDevice.getProperty("IdentificationFilePath").setValue(path);
 					} catch (Exception e) {
-						client.sendError("Could not load Fluigent identification file.",e);
+						sendErrorMessage("Could not load Fluigent identification file.",e);
 					}
 				}
 			});
@@ -340,7 +338,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 						}
 						catch(Exception e1)
 						{
-							client.sendError("Could not set pump name.", e1);
+							sendErrorMessage("Could not set pump name.", e1);
 						}
 					}
 				});
@@ -391,7 +389,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 			Device fluigentDevice = FluigentController.this.fluigentDevice;
 			if(fluigentDevice == null)
 			{
-				client.sendError("Cannot set flow rate since Fluigent device not set.");
+				sendErrorMessage("Cannot set flow rate since Fluigent device not set.", null);
 				return;
 			}
 			try
@@ -400,7 +398,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 			}
 			catch(Exception e)
 			{
-				client.sendError("Could not set flow rate.", e);
+				sendErrorMessage("Could not set flow rate.", e);
 			}
 		}
 	}
@@ -409,11 +407,11 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public FluigentController(YouScopeClient client, YouScopeServer server)
+	public FluigentController(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
-		this.client = client;
+		super(getMetadata(), client, server);
 	}
 	/**
 	 * Runnable to query the Fluigent device for its current state.
@@ -448,7 +446,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 							}
 							catch(Exception e)
 							{
-								client.sendError("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
+								sendErrorMessage("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
 								continueQuery = false;
 								break outerActualizationLoop;
 							}
@@ -461,7 +459,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 						}
 						catch(Exception e)
 						{
-							client.sendError("Error while querrying if Fluigent flow is reachable. Stoping actualizing fields", e);
+							sendErrorMessage("Error while querrying if Fluigent flow is reachable. Stoping actualizing fields", e);
 							continueQuery = false;
 							break outerActualizationLoop;
 						}
@@ -479,7 +477,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 						}
 						catch(Exception e)
 						{
-							client.sendError("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
+							sendErrorMessage("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
 							continueQuery = false;
 							break outerActualizationLoop;
 						}
@@ -493,7 +491,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				}
 				catch(InterruptedException e)
 				{
-					client.sendError("Fluigent state updater interrupted. Stoping querying.", e);
+					sendErrorMessage("Fluigent state updater interrupted. Stoping querying.", e);
 					continueQuery = false;
 				}
 			}
@@ -514,18 +512,17 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 	}
 	
 	@Override
-	public void createUI(final YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		frame.setClosable(true);
-		frame.setMaximizable(false);
-		frame.setResizable(false);
-		frame.setTitle("Fluigent Controller");
-		frame.addFrameListener(this);
+		setMaximizable(false);
+		setResizable(false);
+		setTitle("Fluigent Controller");
+		getContainingFrame().addFrameListener(this);
 	
 		DynamicPanel mainPanel = new DynamicPanel();
 		try
 		{
-			Device[] devices = server.getMicroscope().getDevices();
+			Device[] devices = getMicroscope().getDevices();
 			for(Device device : devices)
 			{
 				if(device.getDriverID().equals("Fluigent") && device.getLibraryID().equals("FluigentPump"))
@@ -536,7 +533,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not load Fluigent device IDs.", e);
+			sendErrorMessage("Could not load Fluigent device IDs.", e);
 		}
 		fluigentDeviceField.setOpaque(false);
 		fluigentDeviceField.addActionListener(new ActionListener()
@@ -548,7 +545,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				centralPanel.setComponentAt(0, pumpControl);
 				centralPanel.setComponentAt(1, pressureControl);
 				centralPanel.revalidate();
-				frame.pack();
+				notifyLayoutChanged();
 			}
 		});
 		if(fluigentDeviceField.getItemCount() > 1)
@@ -562,8 +559,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
         centralPanel.addTab("EZ Pressure Unit Control", pressureControl);
 		
 		mainPanel.addFill(centralPanel);
-		frame.setContentPane(mainPanel);
-		frame.pack();
+		return mainPanel;
 	}
 	
 	private synchronized void fluigentDeviceChanged()
@@ -575,7 +571,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 		{
 			try
 			{
-				fluigentDevice = server.getMicroscope().getDevice(fluigentDeviceName);
+				fluigentDevice = getMicroscope().getDevice(fluigentDeviceName);
 				numFlowUnits = Integer.parseInt(fluigentDevice.getProperty("numFlowUnits").getValue());
 				numEZPressureUnits = Integer.parseInt(fluigentDevice.getProperty("numEZPressureUnits").getValue());
 				
@@ -585,7 +581,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				fluigentDevice = null;
 				numFlowUnits = 0;
 				numEZPressureUnits = 0;
-				client.sendError("Could not parse number of flow units.", e);
+				sendErrorMessage("Could not parse number of flow units.", e);
 				return;
 			}
 			catch(Exception e)
@@ -593,7 +589,7 @@ class FluigentController implements ToolAddonUI, YouScopeFrameListener
 				fluigentDevice = null;
 				numFlowUnits = 0;
 				numEZPressureUnits = 0;
-				client.sendError("Could not obtain number of flow units.", e);
+				sendErrorMessage("Could not obtain number of flow units.", e);
 				return;
 			}
 		}

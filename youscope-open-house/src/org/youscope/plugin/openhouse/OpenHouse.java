@@ -15,11 +15,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.Device;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DescriptionPanel;
@@ -30,10 +30,8 @@ import org.youscope.uielements.DynamicPanel;
  * @author Moritz Lang
  *
  */
-class OpenHouse implements ToolAddonUI
+class OpenHouse extends ToolAddonUIAdapter
 {
-	private final YouScopeServer server;
-	private final YouScopeClient client;
 	private Device nemesysDevice = null;
 	private JSlider	stressSlider = new JSlider(0, 100, 0);
 	private JToggleButton stressButton = new JToggleButton("<html><center><font size=\"30\" color=\"#008800\"><b>Zellen<br />am relaxen</b></font></center></html>");
@@ -53,7 +51,7 @@ class OpenHouse implements ToolAddonUI
 		Device nemesysDevice = this.nemesysDevice;
 		if(nemesysDevice == null)
 		{
-			client.sendError("Cannot set flow rate since Nemesys device not set.");
+			sendErrorMessage("Cannot set flow rate since Nemesys device not set.", null);
 			return;
 		}
 		try
@@ -62,7 +60,7 @@ class OpenHouse implements ToolAddonUI
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not set flow rate.", e);
+			sendErrorMessage("Could not set flow rate.", e);
 		}
 	}
 	
@@ -70,24 +68,23 @@ class OpenHouse implements ToolAddonUI
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public OpenHouse(YouScopeClient client, YouScopeServer server)
+	public OpenHouse(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
-		this.client = client;
+		super(getMetadata(), client, server);
 	}
 	
 	@Override
-	public void createUI(final YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		frame.setClosable(true);
-		frame.setMaximizable(false);
-		frame.setResizable(true);
-		frame.setTitle("Der Zellstressautomat");
+		setMaximizable(false);
+		setResizable(true);
+		setTitle("Der Zellstressautomat");
 		
 		try
 		{
-			Device[] devices = server.getMicroscope().getDevices();
+			Device[] devices = getMicroscope().getDevices();
 			for(Device device : devices)
 			{
 				if(device.getDriverID().equals("Nemesys") && device.getLibraryID().equals("Nemesys"))
@@ -99,7 +96,7 @@ class OpenHouse implements ToolAddonUI
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not load Nemesys device IDs.", e);
+			sendErrorMessage("Could not load Nemesys device IDs.", e);
 		}
 		
 		DescriptionPanel descPanel = new DescriptionPanel("Gestresste Zellen", "Wählen Sie zuerst, wie stark Sie die Zellen stressen wollen, und drücken Sie dann den Knopf, damit die Zellen leiden!\nSeien Sie rücksichtsvoll: Genauso wie Menschen tut Zellen ein bischen Stress für kürzere Zeit auch mal ganz gut, permanenter Stress (länger als 10-15min) führt aber zu Burnouts. Lassen Sie also bitte die armen Geschöpfe immer mal wieder für 10 bis 15 Minuten verschnaufen...");
@@ -125,7 +122,7 @@ class OpenHouse implements ToolAddonUI
 				stressLabel.setText("Stressintensität: " + Integer.toString(stressSlider.getValue()) + "%");
 				if(relStress > 1.0 || relStress < 0.0)
 				{
-					client.sendError("Programming Error: cell stress is " + Double.toString(relStress) + " (must be 0<=stress<=1)");
+					sendErrorMessage("Programming Error: cell stress is " + Double.toString(relStress) + " (must be 0<=stress<=1)", null);
 					return;
 				}
 				
@@ -154,7 +151,7 @@ class OpenHouse implements ToolAddonUI
 				
 				if(relStress > 1.0 || relStress < 0.0)
 				{
-					client.sendError("Programming Error: cell stress is " + Double.toString(relStress) + " (must be 0<=stress<=1)");
+					sendErrorMessage("Programming Error: cell stress is " + Double.toString(relStress) + " (must be 0<=stress<=1)", null);
 					return;
 				}
 				setFlowRate(0, TOTAL_FLOW * (1-relStress*MAX_STRESS));
@@ -162,7 +159,6 @@ class OpenHouse implements ToolAddonUI
 			}
 		});
 		
-		frame.setContentPane(contentPane);
-		frame.pack();
+		return contentPane;
 	}
 }

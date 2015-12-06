@@ -26,8 +26,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -237,10 +238,17 @@ class MeasurementView extends JPanel implements Runnable, ImageFolderListener
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			YouScopeFrame frame = client.createFrame();
-			PostProcessorAddon addon = addonFactory.createMeasurementConfigurationAddon(addonID, client, server, measurementFolder.getAbsolutePath());
-			addon.createUI(frame);
-			frame.setVisible(true);
+			try
+			{
+				ToolAddonUI addon = addonFactory.createPostProcessorUI(addonID, client, server, measurementFolder.getAbsolutePath());
+				YouScopeFrame frame = addon.toFrame();
+				frame.setVisible(true);
+			}
+			catch(AddonException e)
+			{
+				client.sendError("Could not start post processing addon.", e);
+				return;
+			}
 		}
 	}
 }

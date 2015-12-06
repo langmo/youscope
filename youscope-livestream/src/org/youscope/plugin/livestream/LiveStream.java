@@ -3,6 +3,9 @@
  */
 package org.youscope.plugin.livestream;
 
+import java.awt.Component;
+
+import org.youscope.addon.AddonException;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
@@ -16,14 +19,13 @@ import org.youscope.uielements.LiveStreamPanel;
  */
 class LiveStream implements ToolAddonUI
 {
-	private LiveStreamPanel liveStreamPanel = null;
-	private final YouScopeServer server;
 	private final YouScopeClient client;
-	
-	LiveStream(YouScopeClient client, YouScopeServer server)
+	private final YouScopeServer server;
+	private LiveStreamPanel liveStreamPanel = null;
+	LiveStream(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
 		this.client = client;
+		this.server = server;
 	}
 
 	public final static String TYPE_IDENTIFIER = "CSB::YouScopeLiveStream";
@@ -32,13 +34,29 @@ class LiveStream implements ToolAddonUI
 	{
 		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouScope LiveStream", new String[0], "icons/film.png");
 	}
-	
+
 	@Override
-	public void createUI(final YouScopeFrame frame)
+	public YouScopeFrame toFrame() throws AddonException
 	{
 		liveStreamPanel = new LiveStreamPanel(client, server);
 		liveStreamPanel.setAutoStartStream(true);
 		liveStreamPanel.setUserChoosesFullScreen(true);
-		frame.relocateFrameTo(liveStreamPanel.toFrame());
+		return liveStreamPanel.toFrame();
+	}
+
+	@Override
+	public Component toPanel(YouScopeFrame containingFrame) throws AddonException
+	{
+		liveStreamPanel = new LiveStreamPanel(client, server);
+		liveStreamPanel.setAutoStartStream(true);
+		liveStreamPanel.setUserChoosesFullScreen(false);
+		containingFrame.addFrameListener(liveStreamPanel.getFrameListener());
+		return liveStreamPanel;
+	}
+
+	@Override
+	public ToolMetadata getToolMetadata()
+	{
+		return getMetadata();
 	}
 }

@@ -5,29 +5,24 @@ package org.youscope.plugin.livestream;
 
 import java.awt.Dimension;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
  * @author Moritz Lang
  */
-class LiveStreamOld implements YouScopeFrameListener, ToolAddonUI
+class LiveStreamOld extends ToolAddonUIAdapter implements YouScopeFrameListener
 {
 	private ContinousMeasurementAndControlsPanel	mainPanel;
 
-	private final YouScopeServer server;
-	private final YouScopeClient client;
-	
-	
-	LiveStreamOld(YouScopeClient client, YouScopeServer server)
+	LiveStreamOld(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
-		this.client = client;
+		super(getMetadata(), client, server);
 	}
 
 	public final static String TYPE_IDENTIFIER = "CSB::YouScopeLiveStreamOld ";
@@ -50,26 +45,23 @@ class LiveStreamOld implements YouScopeFrameListener, ToolAddonUI
 	}
 
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI() throws AddonException
 	{
-		frame.setTitle("YouScope LiveStream");
-		frame.setResizable(true);
-		frame.setClosable(true);
-		frame.setMaximizable(true);
+		setTitle("YouScope LiveStream");
+		setResizable(true);
+		setMaximizable(true);
 		
 		try
 		{
-			mainPanel = new ContinousMeasurementAndControlsPanel(client, server);
+			mainPanel = new ContinousMeasurementAndControlsPanel(getClient(), getServer());
 		}
 		catch(Exception e)
 		{
-			frame.setToErrorState("Could not establish continuous measurement.", e);
-			return;
+			throw new AddonException("Could not establish continuous measurement.", e);
 		}
 
-		frame.addFrameListener(this);
-		frame.setContentPane(mainPanel);
-		frame.setSize(new Dimension(800, 600));
-		frame.setMaximum(true);
+		getContainingFrame().addFrameListener(this);
+		setPreferredSize(new Dimension(800, 600));
+		return mainPanel;
 	}
 }

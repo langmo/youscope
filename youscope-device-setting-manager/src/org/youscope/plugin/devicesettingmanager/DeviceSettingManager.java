@@ -11,18 +11,18 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
-class DeviceSettingManager implements ToolAddonUI
+class DeviceSettingManager extends ToolAddonUIAdapter
 {
 	private final DevicesPanel devicesPanel;
 	private final PropertiesPanel proertiesPanel;
@@ -31,9 +31,11 @@ class DeviceSettingManager implements ToolAddonUI
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public DeviceSettingManager(YouScopeClient client, YouScopeServer server)
+	public DeviceSettingManager(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
+		super(getMetadata(), client, server);
 		devicesPanel = new DevicesPanel(client, server);
 		proertiesPanel = new PropertiesPanel(client, server);
 		devicesPanel.addActionListener(new ActionListener()
@@ -55,12 +57,12 @@ class DeviceSettingManager implements ToolAddonUI
 	}
 	
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		frame.setTitle("Device Setting Manager");
-		frame.setResizable(true);
-		frame.setClosable(true);
-		frame.setMaximizable(true);
+		setTitle("Device Setting Manager");
+		setResizable(true);
+		setMaximizable(true);
+		setPreferredSize(new Dimension(600, 600));
 		
 		JButton refreshButton = new JButton("Refresh");
 		refreshButton.addActionListener(new ActionListener()
@@ -81,7 +83,6 @@ class DeviceSettingManager implements ToolAddonUI
 		proertiesPanel.setSelectedDevice(null);
 		devicesPanel.actualize();
 		
-		frame.setContentPane(contentPane);
-		frame.setSize(new Dimension(600, 600));
+		return contentPane;
 	}
 }

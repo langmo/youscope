@@ -14,11 +14,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.microscope.Device;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -31,10 +31,8 @@ import org.youscope.uielements.StateButton;
  * @author Moritz Lang
  *
  */
-class NemesysController implements ToolAddonUI, YouScopeFrameListener
+class NemesysController extends ToolAddonUIAdapter implements YouScopeFrameListener
 {
-	private final YouScopeServer server;
-	private final YouScopeClient client;
 	private Device nemesysDevice = null;
 	private final JComboBox<String> nemesysDeviceField = new JComboBox<String>();	
 	private final JPanel syringeFieldsContainer = new JPanel();
@@ -76,7 +74,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 					}
 					catch(Exception e1)
 					{
-						client.sendError("Could not set syringe name.", e1);
+						sendErrorMessage("Could not set syringe name.", e1);
 					}
 				}
 			});
@@ -137,7 +135,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 		Device nemesysDevice = this.nemesysDevice;
 		if(nemesysDevice == null)
 		{
-			client.sendError("Cannot set flow rate since Nemesys device not set.");
+			sendErrorMessage("Cannot set flow rate since Nemesys device not set.", null);
 			return;
 		}
 		try
@@ -146,7 +144,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not set flow rate.", e);
+			sendErrorMessage("Could not set flow rate.", e);
 		}
 	}
 	
@@ -154,11 +152,11 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public NemesysController(YouScopeClient client, YouScopeServer server)
+	public NemesysController(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		this.server = server;
-		this.client = client;
+		super(getMetadata(), client, server);
 	}
 	/**
 	 * Runnable to query the Nemesys device for its current state.
@@ -195,7 +193,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 						}
 						catch(Exception e)
 						{
-							client.sendError("Error while obtaining Nemesys state. Stoping actualizing fields", e);
+							sendErrorMessage("Error while obtaining Nemesys state. Stoping actualizing fields", e);
 							continueQuery = false;
 							break outerActualizationLoop;
 						}
@@ -209,7 +207,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 				}
 				catch(InterruptedException e)
 				{
-					client.sendError("State updater interrupted. Stoping querying.", e);
+					sendErrorMessage("State updater interrupted. Stoping querying.", e);
 					continueQuery = false;
 				}
 			}
@@ -230,18 +228,17 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 	}
 	
 	@Override
-	public void createUI(final YouScopeFrame frame)
+	public java.awt.Component createUI()
 	{
-		frame.setClosable(true);
-		frame.setMaximizable(false);
-		frame.setResizable(false);
-		frame.setTitle("Nemesys Controller");
-		frame.addFrameListener(this);
+		setMaximizable(false);
+		setResizable(false);
+		setTitle("Nemesys Controller");
+		getContainingFrame().addFrameListener(this);
 	
 		DynamicPanel mainPanel = new DynamicPanel();
 		try
 		{
-			Device[] devices = server.getMicroscope().getDevices();
+			Device[] devices = getMicroscope().getDevices();
 			for(Device device : devices)
 			{
 				if(device.getDriverID().equals("Nemesys") && device.getLibraryID().equals("NemesysPump"))
@@ -252,7 +249,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 		}
 		catch(Exception e)
 		{
-			client.sendError("Could not load Nemesys device IDs.", e);
+			sendErrorMessage("Could not load Nemesys device IDs.", e);
 		}
 		nemesysDeviceField.setOpaque(false);
 		nemesysDeviceField.addActionListener(new ActionListener()
@@ -261,7 +258,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 			public void actionPerformed(ActionEvent arg0)
 			{
 				nemesysDeviceChanged();
-				frame.pack();
+				notifyLayoutChanged();;
 			}
 		});
 		mainPanel.add(new JLabel("Nemesys Device:"));
@@ -269,8 +266,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 		mainPanel.add(syringeFieldsContainer);
 		
 		nemesysDeviceChanged();
-		frame.setContentPane(mainPanel);
-		frame.pack();
+		return mainPanel;
 	}
 	
 	private synchronized void nemesysDeviceChanged()
@@ -281,21 +277,21 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 		{
 			try
 			{
-				nemesysDevice = server.getMicroscope().getDevice(nemesysDeviceName);
+				nemesysDevice = getMicroscope().getDevice(nemesysDeviceName);
 				numDosingUnits = Integer.parseInt(nemesysDevice.getProperty("numDosingUnits").getValue());
 			}
 			catch(NumberFormatException e)
 			{
 				nemesysDevice = null;
 				numDosingUnits = 0;
-				client.sendError("Could not parse number of volume or flow rate units.", e);
+				sendErrorMessage("Could not parse number of volume or flow rate units.", e);
 				return;
 			}
 			catch(Exception e)
 			{
 				nemesysDevice = null;
 				numDosingUnits = 0;
-				client.sendError("Could not obtain number of dosing units.", e);
+				sendErrorMessage("Could not obtain number of dosing units.", e);
 				return;
 			}
 		}
@@ -316,7 +312,7 @@ class NemesysController implements ToolAddonUI, YouScopeFrameListener
 			}
 			catch(Exception e)
 			{
-				client.sendError("Could not get name of syringe " + Integer.toString(i+1) + ".", e);
+				sendErrorMessage("Could not get name of syringe " + Integer.toString(i+1) + ".", e);
 			}
 			syringeFields[i] = new SyringeField(i, syringeName);
 			syringeFieldsContainer.add(syringeFields[i]);

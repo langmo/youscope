@@ -5,8 +5,9 @@ package org.youscope.plugin.openmeasurementfolder;
 
 import java.awt.Desktop;
 
-import org.youscope.addon.postprocessing.PostProcessorAddon;
+import org.youscope.addon.AddonException;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
+import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -18,9 +19,9 @@ public class OpenMeasurementFolderFactory implements PostProcessorAddonFactory
 {
 
 	@Override
-	public PostProcessorAddon createMeasurementConfigurationAddon(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder)
+	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
 	{
-		if(OpenMeasurementFolder.ADDON_ID.compareTo(ID) == 0)
+		if(OpenMeasurementFolder.TYPE_IDENTIFIER.equals(ID))
 		{
 			return new OpenMeasurementFolder(client, server, measurementFolder);
 		}
@@ -31,14 +32,14 @@ public class OpenMeasurementFolderFactory implements PostProcessorAddonFactory
 	public String[] getSupportedPostProcessorIDs()
 	{
 		if(Desktop.isDesktopSupported())
-			return new String[]{OpenMeasurementFolder.ADDON_ID};
+			return new String[]{OpenMeasurementFolder.TYPE_IDENTIFIER};
 		return new String[0];
 	}
 
 	@Override
 	public boolean supportsPostProcessorID(String ID)
 	{
-		if(OpenMeasurementFolder.ADDON_ID.compareTo(ID) == 0)
+		if(OpenMeasurementFolder.TYPE_IDENTIFIER.equals(ID))
 			return true;
 		return false;
 	}
@@ -46,7 +47,7 @@ public class OpenMeasurementFolderFactory implements PostProcessorAddonFactory
 	@Override
 	public String getPostProcessorName(String ID)
 	{
-		if(OpenMeasurementFolder.ADDON_ID.compareTo(ID) == 0)
+		if(OpenMeasurementFolder.TYPE_IDENTIFIER.equals(ID))
 			return "Open Folder";
 		return null;
 	}
