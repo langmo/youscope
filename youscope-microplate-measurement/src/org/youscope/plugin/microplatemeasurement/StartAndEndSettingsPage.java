@@ -82,7 +82,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<MicroplateMeasureme
 	@Override
 	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
-		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
+		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, false))
 		{
 			try
 			{

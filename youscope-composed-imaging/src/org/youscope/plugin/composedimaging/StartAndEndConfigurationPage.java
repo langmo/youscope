@@ -84,7 +84,7 @@ class StartAndEndConfigurationPage extends MeasurementAddonUIPage<ComposedImagin
 	@Override
 	public void setToDefault(ComposedImagingMeasurementConfiguration configuration)
 	{
-		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
+		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, false))
 		{
 			try
 			{

@@ -52,7 +52,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<ContinousImagingMea
 	@Override
 	public void setToDefault(ContinousImagingMeasurementConfiguration configuration)
 	{
-		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
+		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, false))
 		{
 			try
 			{

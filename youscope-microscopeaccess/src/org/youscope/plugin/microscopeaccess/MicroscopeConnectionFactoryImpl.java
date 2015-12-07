@@ -15,14 +15,14 @@ import org.youscope.addon.microscopeaccess.MicroscopeInternal;
  */
 public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFactory
 {
-	private final static String CONNECTION_TYPE_STANDALONE_64 = "YouScope::StandAlone64";
-	private final static String CONNECTION_TYPE_STANDALONE_32 = "YouScope::StandAlone32";
+	private final static String CONNECTION_TYPE_STANDALONE = "YouScope::StandAlone";
 	private final static String CONNECTION_TYPE_EXTERNAL_WINDOWS = "YouScope::External_Windows";
 	private final static String CONNECTION_TYPE_EXTERNAL = "YouScope::External";
 	
 	// Parameters for standalone type
 	private static final String STANDALONE_64_DLL_LOCATION = "drivers64/";
 	private static final String STANDALONE_32_DLL_LOCATION = "drivers32/";
+	private static final String STANDALONE_POSIX_DLL_LOCATION = "drivers/";
 	private static final String STANDALONE_JAR_LOCATION = "lib/MMCoreJ.jar";
 	
 	// Parameters for external type
@@ -31,13 +31,14 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
 	@Override
 	public MicroscopeInternal createMicroscopeConnection(String microscopeConnectionID, String driverPath) throws MicroscopeConnectionException
 	{
-		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_64))
+		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE))
 		{
-			return ConnectionEstablisher.createMicroscopeConnection(new File(STANDALONE_64_DLL_LOCATION), new File(STANDALONE_JAR_LOCATION), false, false, true);
-		}
-		else if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_32))
-		{
-			return ConnectionEstablisher.createMicroscopeConnection(new File(STANDALONE_32_DLL_LOCATION), new File(STANDALONE_JAR_LOCATION), false, false, true);
+			if(isWindows64())
+				return ConnectionEstablisher.createMicroscopeConnection(new File(STANDALONE_64_DLL_LOCATION), new File(STANDALONE_JAR_LOCATION), false, false, true);
+			else if(isWindows32())
+				return ConnectionEstablisher.createMicroscopeConnection(new File(STANDALONE_32_DLL_LOCATION), new File(STANDALONE_JAR_LOCATION), false, false, true);
+			else
+				return ConnectionEstablisher.createMicroscopeConnection(new File(STANDALONE_POSIX_DLL_LOCATION), new File(STANDALONE_JAR_LOCATION), false, false, true);
 		}
 		else if(microscopeConnectionID.equals(CONNECTION_TYPE_EXTERNAL_WINDOWS))
 		{
@@ -97,7 +98,7 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
 		{
 			if(new File(STANDALONE_64_DLL_LOCATION).exists())
 			{
-				return new String[]{CONNECTION_TYPE_STANDALONE_64, CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};
+				return new String[]{CONNECTION_TYPE_STANDALONE, CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};
 			}
 			return new String[]{CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};	
 		}
@@ -105,17 +106,13 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
 		{
 			if(new File(STANDALONE_32_DLL_LOCATION).exists())
 			{
-				return new String[]{CONNECTION_TYPE_STANDALONE_32, CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};
+				return new String[]{CONNECTION_TYPE_STANDALONE, CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};
 			}
 			return new String[]{CONNECTION_TYPE_EXTERNAL_WINDOWS, CONNECTION_TYPE_EXTERNAL};	
 		}
-		else if(new File(STANDALONE_64_DLL_LOCATION).exists())
+		else if(new File(STANDALONE_POSIX_DLL_LOCATION).exists())
 		{
-			return new String[]{CONNECTION_TYPE_STANDALONE_64, CONNECTION_TYPE_EXTERNAL};
-		}
-		else if(new File(STANDALONE_32_DLL_LOCATION).exists())
-		{
-			return new String[]{CONNECTION_TYPE_STANDALONE_32, CONNECTION_TYPE_EXTERNAL};
+			return new String[]{CONNECTION_TYPE_STANDALONE, CONNECTION_TYPE_EXTERNAL};
 		}
 		return new String[]{CONNECTION_TYPE_EXTERNAL};
 	}
@@ -132,14 +129,9 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
 	@Override
 	public String getMicroscopeConnectionDescription(String microscopeConnectionID)
 	{
-		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_64))
+		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE))
 		{
-			return "Connects to the microscope directly through Windows 64bit drivers supplied by YouScope.\n"
-				+ "No additional installations necessary.";
-		}
-		else if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_32))
-		{
-			return "Connects to the microscope directly through Windows 32bit drivers supplied by YouScope.\n"
+			return "Connects to the microscope directly through Windows 32bit or 64bit drivers or POSIX drivers supplied with YouScope.\nThe drivers wich are selected (either in drivers32/ or drivers64/ for Windows, or drivers/ for POSIX) depend on the started Java Virtual machine.\n"
 				+ "No additional installations necessary.";
 		}
 		else if(microscopeConnectionID.equals(CONNECTION_TYPE_EXTERNAL_WINDOWS))
@@ -170,13 +162,9 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
 	@Override
 	public String getShortMicroscopeConnectionDescription(String microscopeConnectionID)
 	{
-		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_64))
+		if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE))
 		{
-			return "YouScope standalone 64bit Windows (standard).";
-		}
-		else if(microscopeConnectionID.equals(CONNECTION_TYPE_STANDALONE_32))
-		{
-			return "YouScope standalone 32bit Windows (standard).";
+			return "YouScope standalone (standard).";
 		}
 		else if(microscopeConnectionID.equals(CONNECTION_TYPE_EXTERNAL_WINDOWS))
 		{

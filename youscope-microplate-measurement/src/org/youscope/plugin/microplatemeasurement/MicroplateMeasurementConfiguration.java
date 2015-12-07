@@ -6,6 +6,7 @@ package org.youscope.plugin.microplatemeasurement;
 import java.io.Serializable;
 import java.util.Vector;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.JobContainerConfiguration;
@@ -129,6 +130,19 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 		return clone;
 	}
 
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		super.checkConfiguration();
+		if(microplatePositions!=null && microplatePositions.isNoneSelected())
+		{
+			throw new ConfigurationException("No wells or positions selected.\nPlease select at least one well/position to measure.");
+		}
+		else if(microplatePositions==null || microplatePositions.isInitialized() == false)
+		{
+			throw new ConfigurationException("Position/well configuration not yet run.\nThe position fine configuration has to be run in order for the measurement to obtain valid stage positions.");
+		}
+	}
+	
 	@Override
 	public void removeJobAt(int index)
 	{

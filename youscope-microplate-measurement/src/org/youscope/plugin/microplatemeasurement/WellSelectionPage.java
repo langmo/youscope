@@ -17,7 +17,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
@@ -225,17 +224,6 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 		}
 		
 		configuration.setStageDevice(stageDeviceField.getSelectedItem().toString());
-		
-		if(configuration.getMicroplatePositions().isInitialized() == false)
-		{
-			JOptionPane.showMessageDialog(null, "Position/well configuration not yet run.\nPlease run it first before finishing configuration.", "Position configuration not yet run", JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
-		else if(configuration.getMicroplatePositions().isNoneSelected())
-		{
-			JOptionPane.showMessageDialog(null, "No wells or positions selected.\nPlease select at least one well/position to measure.", "No well/position selected", JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		}
 		
 		return true;
 	}

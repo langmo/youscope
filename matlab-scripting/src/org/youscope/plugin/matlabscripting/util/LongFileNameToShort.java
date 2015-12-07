@@ -32,7 +32,7 @@ public class LongFileNameToShort
     /**
      *  Base name of native library (the DLL).
      */
-    private static final String LIBRARY_BASE_NAME = "ch_ethz_csb_matlabscripting_util_LongFileNameToShort";
+    private static final String LIBRARY_BASE_NAME = "EightDotThreeFileNames";
 
     /**
      * Converts a Windows long file name to its short file name (8.3 DOS-like file names). If
@@ -67,8 +67,10 @@ public class LongFileNameToShort
                 }
                 fileOutputStream.close();
             } 
-            catch (@SuppressWarnings("unused") Exception e)
+            catch (Exception e)
             {
+            	System.err.println(e.getMessage());
+            	e.printStackTrace();
                 return longFileName;
             }
             finally

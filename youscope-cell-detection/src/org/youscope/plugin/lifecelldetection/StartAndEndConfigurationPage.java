@@ -83,7 +83,7 @@ class StartAndEndConfigurationPage extends MeasurementAddonUIPage<CellDetectionM
 	@Override
 	public void setToDefault(CellDetectionMeasurementConfiguration configuration)
 	{
-		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, true))
+		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, false))
 		{
 			try
 			{

@@ -77,12 +77,12 @@ class JMIWrapper
     private static final String CLASS_NAME = JMIWrapper.class.getName();
 
     /**
-     * Gets the variable value stored by {@link #setVariable(String, Object)}.
+     * Gets the variable value stored by setVariable(String, Object).
      * 
      * @param variableName
      * @return variable value
      */
-    static Object retrieveVariableValue(String variableName)
+    public static Object retrieveVariableValue(String variableName)
     {
         Object result = VARIABLES.get(variableName);
         VARIABLES.remove(variableName);

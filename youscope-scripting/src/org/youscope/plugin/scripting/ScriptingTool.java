@@ -64,7 +64,7 @@ class ScriptingTool extends ToolAddonUIAdapter implements EditFileListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Console", new String[0], "icons/script-block.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Scripting Console", new String[0], "icons/script-block.png");
 	}
 	
 	/**

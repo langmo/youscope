@@ -61,8 +61,7 @@ public class YouScopeServerImpl implements YouScopeServer
 
 	private static final String				PROPERTY_SERVER_PORT					= "CSB::server::lastPort";
 
-	private static final String CONNECTION_TYPE_WIN32_DEFAULT = "YouScope::StandAlone32";
-	private static final String CONNECTION_TYPE_WIN64_DEFAULT = "YouScope::StandAlone64";
+	private static final String CONNECTION_TYPE_DEFAULT = "YouScope::StandAlone";
 	
 	/**
 	 * The name under which the server is exported to the registry.
@@ -276,30 +275,18 @@ public class YouScopeServerImpl implements YouScopeServer
 				// try win32 and win64 default types
 				try 
 				{
-					MicroscopeInternal microscope = tryMicroscopeConnection(CONNECTION_TYPE_WIN64_DEFAULT, driverFolder);
+					MicroscopeInternal microscope = tryMicroscopeConnection(CONNECTION_TYPE_DEFAULT, driverFolder);
 					configuration = ConfigurationSettings.loadProperties();
-					configuration.setProperty(PROPERTY_MICROSCOPE_CONNECTION_TYPE, CONNECTION_TYPE_WIN64_DEFAULT);
+					configuration.setProperty(PROPERTY_MICROSCOPE_CONNECTION_TYPE, CONNECTION_TYPE_DEFAULT);
 					configuration.saveProperties();
 					return microscope;
 				} 
 				catch (@SuppressWarnings("unused") MicroscopeConnectionException e) 
 				{
 					// probably not win64
+					// OK, now, process normally by forcing user decision
+					connectionType = null;
 				}
-				try 
-				{
-					MicroscopeInternal microscope = tryMicroscopeConnection(CONNECTION_TYPE_WIN32_DEFAULT, driverFolder);
-					configuration = ConfigurationSettings.loadProperties();
-					configuration.setProperty(PROPERTY_MICROSCOPE_CONNECTION_TYPE, CONNECTION_TYPE_WIN32_DEFAULT);
-					configuration.saveProperties();
-					return microscope;
-				} 
-				catch (@SuppressWarnings("unused") MicroscopeConnectionException e) 
-				{
-					// probably not win32
-				}
-				// OK, now, process normally by forcing user decision
-				connectionType = null;
 			}
 			else if(connectionType!=null)
 			{

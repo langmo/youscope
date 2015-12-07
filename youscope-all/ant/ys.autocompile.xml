@@ -34,7 +34,7 @@
 		project.setProperty('project', s.substring(lastIdx+1));
 	</script>
 
-    <target name="autocompile" depends="-autocompile.init, -buildMainJar, -buildClientJar, -buildServerJar, -buildSharedJar, -buildPluginJar">
+    <target name="autocompile" depends="-autocompile.init, -buildMainJar, -buildClientJar, -buildServerJar, -buildSharedJar, -buildPluginJar, -buildMatlabJar">
         <!-- Calls appropriate target based on -autocompile.init results by depends mechanism. -->
     </target>
 	<target name="-autocompile.init">
@@ -56,9 +56,16 @@
 				<equals arg1="${project}" arg2="youscope-starter" />
 			</or>
 		</condition>   
+		<condition property="isMatlabScripting">
+					<or>
+						<equals arg1="${project}" arg2="matlab-scripting" />
+					</or>
+				</condition>   
 		<condition property="isPluginJar">
 			<not>
 				<or>
+					<!-- isMatlabScripting -->
+					<equals arg1="${project}" arg2="matlab-scripting" />
 					<!-- isClientJar -->
 					<equals arg1="${project}" arg2="youscope-client" />
 					
@@ -98,7 +105,7 @@
 	</target>
 	
 	<target name="-buildMainJar" if="isMainJar"> 
-			<echo>Compiling ${project} to client directory...</echo>
+			<echo>Compiling ${project} to main directory...</echo>
 			<antcall target="-buildJar">
 				<param name="folder" value="." />
 				<param name="project" value="${project}" />	
@@ -114,7 +121,7 @@
 	</target>
 	
 	<target name="-buildSharedJar" if="isSharedJar"> 
-		<echo>Compiling ${project} to shared directory...</echo>
+		<echo>Compiling ${project} to common directory...</echo>
 		<antcall target="-buildJar">
 			<param name="folder" value="${ys.shared}" />
 			<param name="project" value="${project}" />	
@@ -127,6 +134,15 @@
 			<param name="folder" value="${ys.plugins}" />
 			<param name="project" value="${project}" />	
 		</antcall>		
+	</target>
+	
+	<target name="-buildMatlabJar" if="isMatlabScripting"> 
+		<echo>Compiling Matlab file ${project} to plugin directory...</echo>
+		<jar jarfile="${ys.dist}/${ys.plugins}/${project}.jar" manifest="${basedir}/${ys.manifest}" >
+        	<fileset dir="${basedir}/${ys.bin}"></fileset>
+        	<zipfileset dir="${basedir}/${ys.meta_inf}" prefix="META-INF" />
+			<zipfileset dir="${basedir}/lib" prefix="lib" />
+        </jar> 
 	</target>
 
 </project>
