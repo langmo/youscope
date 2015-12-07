@@ -21,19 +21,6 @@ public interface DeviceLoader extends Remote
 	public AvailableDeviceDriver[] getAvailableDeviceDrivers() throws RemoteException, MicroscopeDriverException;
 
 	/**
-	 * Adds a new device with the given name. To get information about the library, the identifier and the pre-initialization settings
-	 * necessary to add the driver, see getAvailableDeviceDrivers().
-	 * @param name Name the device should have.
-	 * @param library Library The library where the device driver is specified.
-	 * @param identifier Identifier of the device driver.
-	 * @param preInitSettings Device properties necessary to be set prior to the initialization of the device. Can be null if no settings are necessary.
-	 * @throws RemoteException
-	 * @throws MicroscopeDriverException
-	 * @throws MicroscopeLockedException
-	 */
-	// public void addDevice(String name, String library, String identifier, DeviceSettingDTO[] preInitSettings) throws RemoteException, MicroscopeDriverException, MicroscopeLockedException;
-
-	/**
 	 * Removes a previously added device.
 	 * @param name Name of the device.
 	 * @throws RemoteException

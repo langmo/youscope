@@ -91,4 +91,9 @@ public class ControllerJobConfigurationAddon extends ComponentAddonUIAdapter<Con
 		miscConfigurationPanel.commitChanges(configuration);
 		algorithmConfigurationPanel.commitChanges(configuration);
     }
+
+	@Override
+	protected void initializeDefaultConfiguration(ControllerJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.Property;
@@ -144,7 +144,7 @@ class XMLMeasurementDescription
 				Element channelElement = document.createElement(CHANNEL);
 				channelsElement.appendChild(channelElement);
 				channelElement.setAttribute(ATTR_CHANNEL_NAME, channels[i].getChannelID());
-				DeviceSettingDTO[] channelSettings = channels[i].getChannelOnSettings();
+				DeviceSetting[] channelSettings = channels[i].getChannelOnSettings();
 				for(int j = 0; j < channelSettings.length; j++)
 				{
 					Element channelSettingElement = document.createElement(CHANNEL_SETTING_ON);

@@ -70,4 +70,9 @@ class LiveModifiableJobConfigurationAddon  extends ComponentAddonUIAdapter<LiveM
 		configuration.setEnabledAtStartup(enabledAtStartField.isSelected());
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(LiveModifiableJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

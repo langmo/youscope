@@ -7,7 +7,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.TableConsumerConfiguration;
 import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.table.TableDefinition;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -30,13 +30,13 @@ public class DeviceJobConfiguration extends JobConfiguration implements TableCon
 	 * The device settings which should be applied when the microscope switches to the ON-state.
 	 */
 	@XStreamAlias("device-settings")
-	private DeviceSettingDTO[]	deviceSettings	= new DeviceSettingDTO[0];
+	private DeviceSetting[]	deviceSettings	= new DeviceSetting[0];
 
 	@Override
 	public String getDescription()
 	{
 		String description = "";
-		for(DeviceSettingDTO setting : getDeviceSettings())
+		for(DeviceSetting setting : getDeviceSettings())
 		{
 			description += "<p>";
 			if(setting.isAbsoluteValue())
@@ -68,11 +68,11 @@ public class DeviceJobConfiguration extends JobConfiguration implements TableCon
 	 * @param deviceSettings Device settings which should be set when job is activated.
 	 * @throws NullPointerException Thrown if deviceSettings is null, or element of deviceSettings is null.
 	 */
-	public void setDeviceSettings(DeviceSettingDTO... deviceSettings) throws NullPointerException
+	public void setDeviceSettings(DeviceSetting... deviceSettings) throws NullPointerException
 	{
 		if(deviceSettings == null)
 			throw new NullPointerException();
-		this.deviceSettings = new DeviceSettingDTO[deviceSettings.length];
+		this.deviceSettings = new DeviceSetting[deviceSettings.length];
 		for(int i=0;i<deviceSettings.length; i++)
 		{
 			if(deviceSettings[i] == null)
@@ -85,9 +85,9 @@ public class DeviceJobConfiguration extends JobConfiguration implements TableCon
 	 * Returns the device settings which should be activated by the job.
 	 * @return settings which should be set when job is activated.
 	 */
-	public DeviceSettingDTO[] getDeviceSettings()
+	public DeviceSetting[] getDeviceSettings()
 	{
-		DeviceSettingDTO[] returnVal = new DeviceSettingDTO[deviceSettings.length];
+		DeviceSetting[] returnVal = new DeviceSetting[deviceSettings.length];
 		for(int i=0;i<deviceSettings.length; i++)
 		{
 			returnVal[i] =deviceSettings[i].clone();

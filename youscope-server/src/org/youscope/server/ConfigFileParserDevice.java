@@ -8,7 +8,7 @@ import java.util.Vector;
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeLockedException;
 
@@ -23,7 +23,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 	private final String					libraryID;
 	private final String					driverID;
 	private final MicroscopeInternal		microscope;
-	private final Vector<DeviceSettingDTO>	settings				= new Vector<DeviceSettingDTO>();
+	private final Vector<DeviceSetting>	settings				= new Vector<DeviceSetting>();
 	private final static String				LIBRARY_SERIAL_MANAGER	= "SerialManager";
 
 	ConfigFileParserDevice(String deviceID, String libraryID, String driverID, MicroscopeInternal microscope)
@@ -34,7 +34,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 		this.driverID = driverID;
 	}
 
-	void addPreInitDeviceSetting(DeviceSettingDTO setting)
+	void addPreInitDeviceSetting(DeviceSetting setting)
 	{
 		settings.addElement(setting);
 	}
@@ -57,7 +57,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 	void initializeDevice(int accessID) throws MicroscopeLockedException, MicroscopeDriverException, DeviceException
 	{
 		// check settings
-		for(DeviceSettingDTO setting : settings)
+		for(DeviceSetting setting : settings)
 		{
 			if(setting.isAbsoluteValue() == false)
 				throw new MicroscopeDriverException("Relative values are not allowed for properties when initializing a device.");
@@ -70,7 +70,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 
 		// initialize device
 		driver.loadDevice(deviceID, accessID);
-		driver.initializeDevice(settings.toArray(new DeviceSettingDTO[0]), accessID);
+		driver.initializeDevice(settings.toArray(new DeviceSetting[0]), accessID);
 	}
 
 	@Override

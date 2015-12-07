@@ -684,4 +684,9 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		getClient().getProperties().setProperty(PROPERTY_NY, ny);
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ComposedImagingJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

@@ -17,7 +17,7 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.script.ScriptEngineFactory;
 
-import org.youscope.serverinterfaces.GeneralPurposeAddon;
+import org.youscope.serverinterfaces.ServerAddon;
 import org.youscope.serverinterfaces.YouScopeServerConfiguration;
 
 /**
@@ -73,21 +73,21 @@ class ServerConfigurationImpl extends UnicastRemoteObject implements YouScopeSer
     }
 
     @Override
-	public <T extends GeneralPurposeAddon> T getGeneralAddon(Class<T> addonInterface)
+	public <T extends ServerAddon> T getServerAddon(Class<T> addonInterface)
             throws RemoteException
     {
         return ServerSystem.getGeneralAddon(addonInterface);
     }
 
     @Override
-	public <T extends GeneralPurposeAddon> T[] getGeneralAddons(Class<T> addonInterface)
+	public <T extends ServerAddon> T[] getServerAddons(Class<T> addonInterface)
             throws RemoteException
     {
         return ServerSystem.getGeneralAddons(addonInterface);
     }
 
     @Override
-	public GeneralPurposeAddon[] getGeneralAddons() throws RemoteException
+	public ServerAddon[] getGeneralAddons() throws RemoteException
     {
         return ServerSystem.getGeneralAddons();
     }

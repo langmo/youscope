@@ -33,7 +33,7 @@ class ScriptDefinitionManagerFrame implements ActionListener
 {
 	protected YouScopeFrame									frame;
 	    
-	protected JList<ScriptDefinitionDTO> scriptList;
+	protected JList<ScriptDefinition> scriptList;
 	
 	private Vector<ActionListener> listeners = new Vector<ActionListener>();
 	
@@ -70,7 +70,7 @@ class ScriptDefinitionManagerFrame implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	ScriptDefinitionDTO scriptDefinition = scriptList.getSelectedValue();
+                	ScriptDefinition scriptDefinition = scriptList.getSelectedValue();
                     if (scriptDefinition == null)
                         return;
                     int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the script shortcut \"" + scriptDefinition.getName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
@@ -88,7 +88,7 @@ class ScriptDefinitionManagerFrame implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    ScriptDefinitionDTO scriptDefinition = scriptList.getSelectedValue();
+                    ScriptDefinition scriptDefinition = scriptList.getSelectedValue();
                     if (scriptDefinition == null)
                         return;
                
@@ -110,7 +110,7 @@ class ScriptDefinitionManagerFrame implements ActionListener
         StandardFormats.addGridBagElement(deleteShortcutButton, elementsLayout, newLineConstr, buttonPanel);
         StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, buttonPanel);
 
-        scriptList = new JList<ScriptDefinitionDTO>();
+        scriptList = new JList<ScriptDefinition>();
         scriptList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane shortcutListPane = new JScrollPane(scriptList);

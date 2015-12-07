@@ -55,6 +55,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
@@ -68,7 +69,6 @@ import org.youscope.common.YouScopeVersion;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.common.tools.RMIReader;
 import org.youscope.common.tools.RMIWriter;
 import org.youscope.common.tools.TextTools;
@@ -522,15 +522,14 @@ public class YouScopeClientImpl extends JFrame
 						try
 						{
 							addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), getServer());
+							YouScopeFrame toolFrame = addon.toFrame();
+							toolFrame.setVisible(true);
 						}
 						catch (AddonException e)
 						{
 							ClientSystem.err.println("Error creating tool UI.", e);
 							return;
 						}
-						YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
-						addon.createUI(toolFrame);
-						toolFrame.setVisible(true);
 					}
 				}
 				newToolMenuItem.addActionListener(new NewToolListener(addonFactory, addonID));
@@ -845,9 +844,9 @@ public class YouScopeClientImpl extends JFrame
 	{
 		class ScriptsMenuItemActivationListener implements ActionListener
 		{
-			private ScriptDefinitionDTO	scriptDefinition;
+			private ScriptDefinition	scriptDefinition;
 
-			ScriptsMenuItemActivationListener(ScriptDefinitionDTO	scriptDefinition)
+			ScriptsMenuItemActivationListener(ScriptDefinition	scriptDefinition)
 			{
 				this.scriptDefinition = scriptDefinition;
 			}
@@ -862,7 +861,7 @@ public class YouScopeClientImpl extends JFrame
 		scriptsMenu.removeAll();
 		ImageIcon scriptsIcon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "execute script");
 		
-		for(ScriptDefinitionDTO scriptDefinition : ScriptDefinitionManager.getScriptDefinitions())
+		for(ScriptDefinition scriptDefinition : ScriptDefinitionManager.getScriptDefinitions())
 		{
 			JMenuItem scriptsMenuItem = new JMenuItem(scriptDefinition.getName());
 			if(scriptsIcon != null)
@@ -1126,8 +1125,7 @@ public class YouScopeClientImpl extends JFrame
                     
                     final ToolAddonUI addon = 
                             toolFactory.createToolUI(autoStartID, new YouScopeClientConnectionImpl(), getServer());
-                    final YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
-                    addon.createUI(toolFrame);
+                    final YouScopeFrame toolFrame = addon.toFrame();
                     toolFrame.setVisible(true);
                 } catch (final Exception ex)
                 {
@@ -1482,9 +1480,9 @@ public class YouScopeClientImpl extends JFrame
 		MeasurementConfiguration configuration;
 		try
 		{
-			configuration = ConfigurationManagement.loadConfiguration(fileName);
+			configuration = (MeasurementConfiguration) ConfigurationManagement.loadConfiguration(fileName);
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			JOptionPane.showMessageDialog(getMainProgram(), "Could not load measurement Configuration!\n\nError Message is:\n" + e.getMessage(), "Measurement Configuration Load Error", JOptionPane.ERROR_MESSAGE);
 			return;

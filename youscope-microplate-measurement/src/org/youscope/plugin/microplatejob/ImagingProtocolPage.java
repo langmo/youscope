@@ -18,7 +18,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
  * @author Moritz Lang
  *
  */
-class ImagingProtocolPage extends JobConfigurationPage<MicroplateJobConfigurationDTO>
+class ImagingProtocolPage extends JobConfigurationPage<MicroplateJobConfiguration>
 {
 	/**
 	 * Serial Version UID.
@@ -36,13 +36,13 @@ class ImagingProtocolPage extends JobConfigurationPage<MicroplateJobConfiguratio
 	}
 	
 	@Override
-	public void loadData(MicroplateJobConfigurationDTO configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		jobPanel.setJobs(configuration.getJobs());
 	}
 
 	@Override
-	public boolean saveData(MicroplateJobConfigurationDTO configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		configuration.setJobs(jobPanel.getJobs());		
 		String[] collisions = ConfigurationValidation.checkImageSaveNameCollision(configuration.getJobs());
@@ -63,7 +63,7 @@ class ImagingProtocolPage extends JobConfigurationPage<MicroplateJobConfiguratio
 	}
 
 	@Override
-	public void setToDefault(MicroplateJobConfigurationDTO configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		// Do nothing.
 	}

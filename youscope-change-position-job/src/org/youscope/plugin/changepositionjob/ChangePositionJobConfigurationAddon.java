@@ -116,5 +116,10 @@ class ChangePositionJobConfigurationAddon extends ComponentAddonUIAdapter<Change
 		configuration.setY(((Number)yPositionField.getValue()).doubleValue());
 		configuration.setAbsolute(absoluteValueCheckBox.isSelected());
 		
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ChangePositionJobConfiguration configuration) throws AddonException {
+		// do nothing.
 	}	
 }

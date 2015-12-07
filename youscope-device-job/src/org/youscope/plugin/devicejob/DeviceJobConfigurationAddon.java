@@ -62,4 +62,9 @@ class DeviceJobConfigurationAddon extends ComponentAddonUIAdapter<DeviceJobConfi
 	{
 		configuration.setDeviceSettings(deviceSettingsField.getSettings());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(DeviceJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

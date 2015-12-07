@@ -9,7 +9,7 @@ import org.youscope.common.ImageEvent;
 import org.youscope.common.table.Table;
 
 /**
- * DTO to save the result of a cell detection algorithm.
+ * Result of a cell detection algorithm.
  * @author Moritz Lang
  *
  */

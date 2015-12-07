@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.util.Date;
 
 import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 /**
  * Represents a measurement a microscope should do.
@@ -247,7 +247,7 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws MeasurementRunningException
 	 */
-	void setStartupDeviceSettings(DeviceSettingDTO[] settings) throws RemoteException, MeasurementRunningException;
+	void setStartupDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
 
 	/**
 	 * Sets the device settings which should be applied (once) the measurement ends.
@@ -256,7 +256,7 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws MeasurementRunningException
 	 */
-	void setFinishDeviceSettings(DeviceSettingDTO[] settings) throws RemoteException, MeasurementRunningException;
+	void setFinishDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
 
 	/**
 	 * Adds a device setting which should be applied (once) the measurement starts.
@@ -265,7 +265,7 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws MeasurementRunningException
 	 */
-	void addStartupDeviceSetting(DeviceSettingDTO setting) throws RemoteException, MeasurementRunningException;
+	void addStartupDeviceSetting(DeviceSetting setting) throws RemoteException, MeasurementRunningException;
 
 	/**
 	 * Adds a device settings which should be applied (once) the measurement ends.
@@ -274,5 +274,5 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws MeasurementRunningException
 	 */
-	void addFinishDeviceSetting(DeviceSettingDTO setting) throws RemoteException, MeasurementRunningException;
+	void addFinishDeviceSetting(DeviceSetting setting) throws RemoteException, MeasurementRunningException;
 }

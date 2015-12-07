@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.tools.ConfigurationManagement;
 
 class LastMeasurementManager
 {
@@ -49,7 +49,7 @@ class LastMeasurementManager
             MeasurementConfiguration configuration;
             try
             {
-                configuration = ConfigurationManagement.loadConfiguration(lastConfig.getAbsolutePath());
+                configuration = (MeasurementConfiguration) ConfigurationManagement.loadConfiguration(lastConfig.getAbsolutePath());
             } catch (@SuppressWarnings("unused") Throwable e)
             {
                 continue;

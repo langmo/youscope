@@ -15,7 +15,7 @@ import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainerAdapter;
+import org.youscope.common.measurement.job.EditableJobContainerAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
@@ -24,7 +24,7 @@ import org.youscope.common.microscope.Microscope;
 /**
  * @author Moritz Lang
  */
-class SlimJobImpl extends JobContainerAdapter implements SlimJob
+class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 {
 	
 	/**

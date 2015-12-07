@@ -12,7 +12,7 @@ import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.measurement.Measurement;
@@ -25,7 +25,7 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-public class CellDetectionMeasurementInitializer implements CustomMeasurementInitializer<CellDetectionMeasurementConfiguration>
+public class CellDetectionMeasurementInitializer implements MeasurementInitializer<CellDetectionMeasurementConfiguration>
 {
 
 	@Override

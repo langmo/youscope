@@ -16,7 +16,8 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonException;
+import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
@@ -27,7 +28,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
  * @author Moritz Lang
  *
  */
-class ScriptingTool implements ToolAddonUI, EditFileListener
+class ScriptingTool extends ToolAddonUIAdapter implements EditFileListener
 {
 	/**
 	 * The default script engine (JavaScript).
@@ -44,13 +45,10 @@ class ScriptingTool implements ToolAddonUI, EditFileListener
 	 */
 	public static final String FUNCTION_DEBUG_SCRIPT = "debugScript";
 	
-	private YouScopeFrame frame = null;
 	private final Workspace workspace;
 	private final FileSystem fileSystem;
 	private final Console console;
 	private final ScriptExcecuter scriptExecuter;
-	
-	private final YouScopeClient client;
 	
 	/**
 	 * Engine which is loaded when tool is started. Set to a different value if a certain engine is e.g. needed for debugging.
@@ -73,100 +71,88 @@ class ScriptingTool implements ToolAddonUI, EditFileListener
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
+	 * @throws AddonException 
 	 */
-	public ScriptingTool(YouScopeClient client, YouScopeServer server)
+	public ScriptingTool(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
+		super(getMetadata(), client, server);
 		// Initialize sub-elements
 		scriptExecuter = new ScriptExcecuter(client, server);
 		fileSystem = new FileSystem(client);
 		workspace = new Workspace();
 		console = new Console();
-		this.client = client;
-		
+	}
+	@Override
+	public java.awt.Component createUI()
+	{	
 		// Connect elements
 		scriptExecuter.addMessageListener(console);
 		console.addEvaluationListener(scriptExecuter);
 		fileSystem.addEvaluationListener(scriptExecuter);
 		fileSystem.addEditFileListener(this);
 		scriptExecuter.addVariablesListener(workspace);
-	}
-	@Override
-	public void createUI(YouScopeFrame frame)
-	{
-		this.frame = frame;
-		frame.setClosable(true);
-		frame.setMaximizable(true);
-		frame.setResizable(true);
-		frame.setTitle("YouScope Scripting");
 		
-		frame.startInitializing();
-		(new Thread(new FrameInitializer())).start();
-	}
-	private class FrameInitializer implements Runnable
-	{
-		@Override
-		public void run()
+		setMaximizable(true);
+		setResizable(true);
+		setTitle("Script Console");
+		
+		// Initialize engine chooser
+		JComboBox<String> engineNamesField = new JComboBox<String>(scriptExecuter.getScriptEngines());
+     	
+		for(int engineID = 0; engineID < engineNamesField.getItemCount(); engineID ++)
 		{
-			// Initialize engine chooser
-			JComboBox<String> engineNamesField = new JComboBox<String>(scriptExecuter.getScriptEngines());
-	     	
-			for(int engineID = 0; engineID < engineNamesField.getItemCount(); engineID ++)
+			if(engineNamesField.getItemAt(engineID).toString().compareToIgnoreCase(engineToLoad) == 0)
 			{
-				if(engineNamesField.getItemAt(engineID).toString().compareToIgnoreCase(engineToLoad) == 0)
-				{
-					engineNamesField.setSelectedIndex(engineID);
-					break;
-				}
+				engineNamesField.setSelectedIndex(engineID);
+				break;
 			}
-			engineNamesField.addActionListener(new ActionListener()
-			{
-				@Override
-			    public void actionPerformed(ActionEvent arg0)
-			    {
-					if(!(arg0.getSource() instanceof JComboBox))
-						return;
-			    	String engineName = ((JComboBox<?>)arg0.getSource()).getSelectedItem().toString();
-			      	loadEngine(engineName);            
-			    }
-			});
-			JPanel engineNames = new JPanel(new BorderLayout());
-			engineNames.add(engineNamesField, BorderLayout.CENTER);
-			engineNames.setBorder(new TitledBorder("Active Script Engine"));
-	        
-	        // Initialize split panes
-			JPanel rightPanel = new JPanel(new BorderLayout());
-			rightPanel.add(engineNames, BorderLayout.NORTH);
-			rightPanel.add(workspace, BorderLayout.CENTER);
-	        JSplitPane commandWorkspaceSplitMane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT , false, console, rightPanel);
-	        commandWorkspaceSplitMane.setResizeWeight(1.0);
-	        commandWorkspaceSplitMane.setOneTouchExpandable(true);
-	        commandWorkspaceSplitMane.setBorder(new EmptyBorder(2, 2, 2, 2));
-	        
-	        JSplitPane fileSystemCommandSplitMane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT , false, fileSystem, commandWorkspaceSplitMane);
-	        fileSystemCommandSplitMane.setResizeWeight(0.0);
-	        fileSystemCommandSplitMane.setOneTouchExpandable(true);
-	        fileSystemCommandSplitMane.setBorder(new EmptyBorder(2, 2, 2, 2));
-	        
-	        // Open files which should have been opened.
-	        for(URL url : scriptURLs)
-			{
-				try
-				{
-					editFile(new File(url.toURI()));
-				}
-				catch(Exception e)
-				{
-					client.sendError("Could not obtain file from script job where script is saved.", e);
-				}
-			}
-			
-	        // Load the script engine.
-			loadEngine((String)engineNamesField.getSelectedItem());
-	        
-			frame.setContentPane(fileSystemCommandSplitMane);
-			frame.pack();
-			frame.endLoading();
 		}
+		engineNamesField.addActionListener(new ActionListener()
+		{
+			@Override
+		    public void actionPerformed(ActionEvent arg0)
+		    {
+				if(!(arg0.getSource() instanceof JComboBox))
+					return;
+		    	String engineName = ((JComboBox<?>)arg0.getSource()).getSelectedItem().toString();
+		      	loadEngine(engineName);            
+		    }
+		});
+		JPanel engineNames = new JPanel(new BorderLayout());
+		engineNames.add(engineNamesField, BorderLayout.CENTER);
+		engineNames.setBorder(new TitledBorder("Active Script Engine"));
+        
+        // Initialize split panes
+		JPanel rightPanel = new JPanel(new BorderLayout());
+		rightPanel.add(engineNames, BorderLayout.NORTH);
+		rightPanel.add(workspace, BorderLayout.CENTER);
+        JSplitPane commandWorkspaceSplitMane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT , false, console, rightPanel);
+        commandWorkspaceSplitMane.setResizeWeight(1.0);
+        commandWorkspaceSplitMane.setOneTouchExpandable(true);
+        commandWorkspaceSplitMane.setBorder(new EmptyBorder(2, 2, 2, 2));
+        
+        JSplitPane fileSystemCommandSplitMane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT , false, fileSystem, commandWorkspaceSplitMane);
+        fileSystemCommandSplitMane.setResizeWeight(0.0);
+        fileSystemCommandSplitMane.setOneTouchExpandable(true);
+        fileSystemCommandSplitMane.setBorder(new EmptyBorder(2, 2, 2, 2));
+        
+        // Open files which should have been opened.
+        for(URL url : scriptURLs)
+		{
+			try
+			{
+				editFile(new File(url.toURI()));
+			}
+			catch(Exception e)
+			{
+				sendErrorMessage("Could not obtain file from script job where script is saved.", e);
+			}
+		}
+		
+        // Load the script engine.
+		loadEngine((String)engineNamesField.getSelectedItem());
+        
+		return fileSystemCommandSplitMane;
 	}
 	
 	private void loadEngine(String engineName)
@@ -212,10 +198,8 @@ class ScriptingTool implements ToolAddonUI, EditFileListener
 	@Override
 	public void editFile(File file)
 	{
-		if(frame == null)
-			return;
-		YouScopeFrame clientFrame = frame.createChildFrame();
-		ScriptEditorFrame editor = new ScriptEditorFrame(client, clientFrame, file);
+		YouScopeFrame clientFrame = getContainingFrame().createChildFrame();
+		ScriptEditorFrame editor = new ScriptEditorFrame(getClient(), clientFrame, file);
 		editor.addEvaluationListener(scriptExecuter);
 	}
 }

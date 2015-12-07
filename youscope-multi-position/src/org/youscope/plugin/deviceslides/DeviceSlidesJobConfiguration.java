@@ -5,7 +5,7 @@ package org.youscope.plugin.deviceslides;
 
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -32,7 +32,7 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	 * for each device setting must be the same.
 	 */
 	@XStreamAlias("settings")
-	private DeviceSettingDTO[][]		multiPosDeviceSettings	= new DeviceSettingDTO[0][];
+	private DeviceSetting[][]		multiPosDeviceSettings	= new DeviceSetting[0][];
 
 	/**
 	 * Sets the list of device settings which should be applied to the positions. The number of
@@ -40,7 +40,7 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	 * 
 	 * @param multiPosDeviceSettings
 	 */
-	public void setMultiPosDeviceSettings(DeviceSettingDTO[][] multiPosDeviceSettings)
+	public void setMultiPosDeviceSettings(DeviceSetting[][] multiPosDeviceSettings)
 	{
 		this.multiPosDeviceSettings = multiPosDeviceSettings;
 	}
@@ -50,7 +50,7 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	 * 
 	 * @return The settings.
 	 */
-	public DeviceSettingDTO[][] getMultiPosDeviceSettings()
+	public DeviceSetting[][] getMultiPosDeviceSettings()
 	{
 		return multiPosDeviceSettings;
 	}
@@ -92,10 +92,10 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 			job.jobs[i] = (JobConfiguration)jobs[i].clone();
 		}
 
-		job.multiPosDeviceSettings = new DeviceSettingDTO[multiPosDeviceSettings.length][];
+		job.multiPosDeviceSettings = new DeviceSetting[multiPosDeviceSettings.length][];
 		for(int i = 0; i < multiPosDeviceSettings.length; i++)
 		{
-			job.multiPosDeviceSettings[i] = new DeviceSettingDTO[multiPosDeviceSettings[i].length];
+			job.multiPosDeviceSettings[i] = new DeviceSetting[multiPosDeviceSettings[i].length];
 			for(int j=0; j < multiPosDeviceSettings[i].length; j++)
 			{
 				job.multiPosDeviceSettings[i][j] = multiPosDeviceSettings[i][j].clone();

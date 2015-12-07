@@ -196,4 +196,10 @@ public class GenericComponentAddonUI<C extends Configuration> extends ComponentA
 			}
 		}
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(C configuration) throws AddonException {
+		// do nothing.
+		
+	}
 }

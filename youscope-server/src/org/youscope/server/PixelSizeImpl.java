@@ -8,7 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.PixelSize;
@@ -22,7 +22,7 @@ import org.youscope.common.microscope.SettingException;
 class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<PixelSizeImpl>
 {
 	private final String					pixelSizeID;
-	private final Vector<DeviceSettingDTO>	pixelSizeSettings	= new Vector<DeviceSettingDTO>();
+	private final Vector<DeviceSetting>	pixelSizeSettings	= new Vector<DeviceSetting>();
 	private double							pixelSize			= 6.45;
 	private final MicroscopeInternal		microscope;
 
@@ -37,13 +37,13 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 		return pixelSizeID;
 	}
 
-	public DeviceSettingDTO[] getPixelSizeSettings()
+	public DeviceSetting[] getPixelSizeSettings()
 	{
 		// Clone every element...
-		DeviceSettingDTO[] newArray = new DeviceSettingDTO[pixelSizeSettings.size()];
+		DeviceSetting[] newArray = new DeviceSetting[pixelSizeSettings.size()];
 		for(int i = 0; i < newArray.length; i++)
 		{
-			newArray[i] = new DeviceSettingDTO(pixelSizeSettings.elementAt(i));
+			newArray[i] = new DeviceSetting(pixelSizeSettings.elementAt(i));
 		}
 
 		return newArray;
@@ -59,7 +59,7 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 	{
 		for(int i = 0; i < pixelSizeSettings.size(); i++)
 		{
-			DeviceSettingDTO setting = pixelSizeSettings.elementAt(i);
+			DeviceSetting setting = pixelSizeSettings.elementAt(i);
 			if(setting.getDevice().equals(deviceID))
 			{
 				pixelSizeSettings.remove(setting);
@@ -68,7 +68,7 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 		}
 	}
 
-	public void setPixelSizeSettings(DeviceSettingDTO[] newSettings, int accessID) throws MicroscopeLockedException, SettingException
+	public void setPixelSizeSettings(DeviceSetting[] newSettings, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
@@ -76,9 +76,9 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 
 			SettingsValidator.areSettingsValid(newSettings, true, microscope, accessID);
 			pixelSizeSettings.clear();
-			for(DeviceSettingDTO setting : newSettings)
+			for(DeviceSetting setting : newSettings)
 			{
-				pixelSizeSettings.add(new DeviceSettingDTO(setting));
+				pixelSizeSettings.add(new DeviceSetting(setting));
 			}
 		}
 		finally
@@ -89,7 +89,7 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 		ServerSystem.out.println("Settings of pixel size configuration " + pixelSizeID + " changed.");
 	}
 
-	public void addPixelSizeSetting(DeviceSettingDTO setting, int accessID) throws MicroscopeLockedException, SettingException
+	public void addPixelSizeSetting(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
@@ -128,7 +128,7 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 	}
 
 	@Override
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		for(int i = 0; i < pixelSizeSettings.size(); i++)
 		{
@@ -171,19 +171,19 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 		}
 
 		@Override
-		public DeviceSettingDTO[] getPixelSizeSettings() throws RemoteException
+		public DeviceSetting[] getPixelSizeSettings() throws RemoteException
 		{
 			return PixelSizeImpl.this.getPixelSizeSettings();
 		}
 
 		@Override
-		public void setPixelSizeSettings(DeviceSettingDTO[] newSettings) throws MicroscopeLockedException, SettingException, RemoteException
+		public void setPixelSizeSettings(DeviceSetting[] newSettings) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			PixelSizeImpl.this.setPixelSizeSettings(newSettings, accessID);
 		}
 
 		@Override
-		public void addPixelSizeSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException
+		public void addPixelSizeSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			PixelSizeImpl.this.addPixelSizeSetting(setting, accessID);
 		}

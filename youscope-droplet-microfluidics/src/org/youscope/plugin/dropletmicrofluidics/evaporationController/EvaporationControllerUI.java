@@ -142,4 +142,10 @@ class EvaporationControllerUI extends ComponentAddonUIAdapter<EvaporationControl
 	    	getContainingFrame().pack();
 		}
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(EvaporationControllerConfiguration configuration)
+			throws AddonException {
+		// do nothing.
+	}
 }

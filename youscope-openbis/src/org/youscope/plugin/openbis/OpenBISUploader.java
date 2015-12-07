@@ -18,13 +18,13 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
@@ -67,10 +67,10 @@ class OpenBISUploader extends ToolAddonUIAdapter
 		// Initialize fields.
 		try
 		{
-			MeasurementConfiguration configuration = ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
+			MeasurementConfiguration configuration = (MeasurementConfiguration) ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
 			measurementIDField.setText(configuration.getName());
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			sendErrorMessage("Could not load measurement configuration.\nLeaving measurement ID field empty.",e);
 		}
@@ -122,7 +122,7 @@ class OpenBISUploader extends ToolAddonUIAdapter
 				@SuppressWarnings("unused")
 				TransferStateFrame transferStateFrame = new TransferStateFrame(childFrame, getServer(), getClient(), settings);
 				childFrame.setVisible(true);
-				closeTool();
+				closeAddon();
 			}
 		});
 		

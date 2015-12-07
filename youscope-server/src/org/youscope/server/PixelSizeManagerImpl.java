@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.PixelSize;
@@ -114,7 +114,7 @@ class PixelSizeManagerImpl implements MicroscopeConfigurationListener
 	}
 
 	@Override
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		for(PixelSizeImpl pixelSize : pixelSizes.values())
 		{

@@ -110,7 +110,7 @@ public class SingleComponentDefinitionPanel<C extends Configuration> extends Dyn
 	{
 		if(currentAddon == null)
 			return null;
-		return currentAddon.getComponentMetadata().getTypeIdentifier();
+		return currentAddon.getAddonMetadata().getTypeIdentifier();
 	}
 	
 	/**
@@ -121,7 +121,7 @@ public class SingleComponentDefinitionPanel<C extends Configuration> extends Dyn
 	{
 		if(currentAddon == null)
 			return null;
-		return currentAddon.getComponentMetadata();
+		return currentAddon.getAddonMetadata();
 	}
 	
 	private Component createErrorUI(String message, Exception exception)
@@ -147,7 +147,7 @@ public class SingleComponentDefinitionPanel<C extends Configuration> extends Dyn
 	{
 		if(currentAddon != null)
 		{
-			ComponentMetadata<?> currentMetadata = currentAddon.getComponentMetadata();
+			ComponentMetadata<?> currentMetadata = currentAddon.getAddonMetadata();
 			if(currentMetadata!= null && metadata!= null && currentMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
 				return;
 			currentAddon = null;

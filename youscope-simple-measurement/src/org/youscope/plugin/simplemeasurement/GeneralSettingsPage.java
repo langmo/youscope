@@ -24,7 +24,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ImageFolderStructure;
 import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriodDTO;
+import org.youscope.common.configuration.VaryingPeriod;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.FileNameComboBox;
@@ -117,9 +117,9 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 			periodField.setDuration(((RegularPeriod)configuration.getPeriod()).getPeriod());
 			periodFixed.doClick();
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriodDTO)
+		else if(configuration.getPeriod() instanceof VaryingPeriod)
 		{
-			VaryingPeriodDTO period = (VaryingPeriodDTO)configuration.getPeriod();
+			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
 			periodVaryingDataPanel.setPeriod(period);
 			periodField.setDuration(10 * 60 * 1000);
 			periodVarying.doClick();

@@ -93,7 +93,7 @@ class FocusScoreAlgorithmPanel extends JPanel
 	{
 		if(currentAddon != null)
 		{
-			ComponentMetadata<?> currentmetadata = currentAddon.getComponentMetadata();
+			ComponentMetadata<?> currentmetadata = currentAddon.getAddonMetadata();
 			if(currentmetadata!= null && metadata != null && currentmetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
 				return;
 		}

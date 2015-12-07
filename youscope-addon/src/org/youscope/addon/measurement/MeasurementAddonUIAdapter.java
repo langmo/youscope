@@ -50,7 +50,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	public MeasurementAddonUIAdapter(final ComponentMetadata<T> metadata,  final YouScopeClient client, final YouScopeServer server) throws AddonException 
 	{
 		super(metadata, client, server);
-		setCommitButton(false);
+		setShowCloseButton(false);
 	}
 	
 	/**
@@ -59,7 +59,6 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	 */
 	public void addPage(MeasurementAddonUIPage<T> page)
 	{
-		page.setToDefault(getConfiguration());
 		pages.add(page);
 	}
 	
@@ -71,7 +70,6 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	 */
 	public void insertPage(MeasurementAddonUIPage<T> page, int index) throws IndexOutOfBoundsException
 	{
-		page.setToDefault(getConfiguration());
 		pages.add(index, page);
 	}
 	
@@ -142,7 +140,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 					return;
 				if(currentPage >= pages.size() - 1)
 				{
-					configurationFinished();
+					closeAddon();
 					return;
 				}
 				
@@ -176,6 +174,14 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 		for(MeasurementAddonUIPage<T> page : pages)
 		{
 			page.saveData(configuration);
+		}
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(T configuration) throws AddonException {
+		for(MeasurementAddonUIPage<T> page : pages)
+		{
+			page.setToDefault(configuration);
 		}
 	}
 }

@@ -75,7 +75,7 @@ public interface AvailableDeviceDriver extends Remote
 	 * @throws MicroscopeLockedException
 	 * @throws RemoteException
 	 */
-	public void initializeDevice(DeviceSettingDTO[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException, RemoteException;
+	public void initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException, RemoteException;
 
 	/**
 	 * Unloads a previously loaded, but yet not initialized device. Should be called to clean up if a device was loaded, but it was decided to not initialize it.

@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.measurement.Measurement;
@@ -21,7 +21,7 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-public class MultiCameraContinousImagingInitializer implements CustomMeasurementInitializer<MultiCameraContinousImagingConfiguration>{
+public class MultiCameraContinousImagingInitializer implements MeasurementInitializer<MultiCameraContinousImagingConfiguration>{
 
 	@Override
 	public void initializeMeasurement(Measurement measurement, MultiCameraContinousImagingConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException

@@ -114,7 +114,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 			{
 				description += "<li>wait(deltaT &lt; " + Integer.toString(((RegularPeriod)getPeriod()).getPeriod()) + "ms)</li>";
 			}
-			else if(getPeriod() instanceof VaryingPeriodDTO)
+			else if(getPeriod() instanceof VaryingPeriod)
 			{
 				description += "<li>wait(deltaT &lt; periods[n])</li>";
 			}

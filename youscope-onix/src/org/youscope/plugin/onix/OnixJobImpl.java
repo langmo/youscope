@@ -5,9 +5,8 @@ package org.youscope.plugin.onix;
 
 import java.io.StringReader;
 import java.rmi.RemoteException;
-import java.util.Date;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.measurement.ExecutionInformation;
 import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.MeasurementRunningException;
@@ -38,18 +37,18 @@ class OnixJobImpl extends JobAdapter implements OnixJob
 	
 	private volatile Table tableToEvaluate = null;
 	
-	private final YouScopeMessageListener messageForwarder = new YouScopeMessageListener()
+	private final MessageListener messageForwarder = new MessageListener()
 	{
 		@Override
-		public void consumeMessage(String message, Date time) throws RemoteException
+		public void sendMessage(String message) throws RemoteException
 		{
 			OnixJobImpl.this.sendMessage("Onix Message: " + message);
 		}
 
 		@Override
-		public void consumeError(String message, Throwable exception, Date time) throws RemoteException
+		public void sendErrorMessage(String message, Throwable error) throws RemoteException
 		{
-			OnixJobImpl.this.sendErrorMessage("Onix Error: " + message, exception);
+			OnixJobImpl.this.sendErrorMessage("Onix Error: " + message, error);
 		}
 	};
 	

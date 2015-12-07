@@ -26,15 +26,15 @@ public class AnsiSBSMicroplateTypeFactory implements MicroplateAddonFactory
 	}
 
 	@Override
-	public String[] getSupportedMicroplateIDs()
+	public String[] getSupportedTypeIdentifiers()
 	{
 		return new String[]{AnsiSBS96MicroplateType.TYPE_ID, AnsiSBS384MicroplateType.TYPE_ID, AnsiSBS1536MicroplateType.TYPE_ID};
 	}
 
 	@Override
-	public boolean supportsMicroplateID(String ID)
+	public boolean isSupportingTypeIdentifier(String ID)
 	{
-		for(String addonID : getSupportedMicroplateIDs())
+		for(String addonID : getSupportedTypeIdentifiers())
 		{
 			if(addonID.compareToIgnoreCase(ID) == 0)
 				return true;

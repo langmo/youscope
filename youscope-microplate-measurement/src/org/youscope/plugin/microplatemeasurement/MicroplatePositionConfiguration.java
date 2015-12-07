@@ -29,9 +29,6 @@ public class MicroplatePositionConfiguration extends Microplate
 	@XStreamConverter(FineConfigurationConverter.class)
 	private Hashtable<WellAndTileIdentifier, XYAndFocusPosition> hashPositions = new Hashtable<WellAndTileIdentifier, XYAndFocusPosition>(500);
 	
-	//@XStreamAlias("fine-configuration")
-	//private XYAndFocusPositionDTO[][][][]	positions;
-	
 	@XStreamAlias("measured-wells")
 	@XStreamConverter(MeasuredWellsAndPositionsConverter.class)
 	private boolean[][]						measuredWells;
@@ -171,7 +168,6 @@ public class MicroplatePositionConfiguration extends Microplate
 			return false;
 		if(hashPositions != null)
 			hashPositions.clear();
-		//positions = new XYAndFocusPositionDTO[getNumWellsY()][getNumWellsX()][getWellNumPositionsY()][getWellNumPositionsX()];
 		if(measuredWells == null || measuredWells.length < 1 || measuredWells.length != getNumWellsY() || measuredWells[0].length != getNumWellsX())
 		{
 			measuredWells = new boolean[getNumWellsY()][getNumWellsX()];

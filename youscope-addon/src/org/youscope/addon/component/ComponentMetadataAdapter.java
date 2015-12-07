@@ -1,9 +1,6 @@
 package org.youscope.addon.component;
 
-import java.net.URL;
-
-import javax.swing.ImageIcon;
-
+import org.youscope.addon.AddonMetadataAdapter;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.measurement.Component;
 
@@ -13,16 +10,12 @@ import org.youscope.common.measurement.Component;
  *
  * @param <C>
  */
-public class ComponentMetadataAdapter<C extends Configuration>  implements ComponentMetadata<C> 
+public class ComponentMetadataAdapter<C extends Configuration> extends AddonMetadataAdapter implements ComponentMetadata<C> 
 {
 	
-	private final String typeName;
 	private final Class<C> configurationClass;
-	private final String typeIdentifier;
-	private final String iconPath;
 	private final Class<? extends Component> componentInterface;
-	private final String[] configurationClassification;
-
+	
 	/**
 	 * Constructor.
 	 * @param typeIdentifier Type identifier of the configuration.
@@ -39,11 +32,8 @@ public class ComponentMetadataAdapter<C extends Configuration>  implements Compo
 			final String[] configurationClassification,
 			final String iconPath) 
 	{
-		this.typeIdentifier = typeIdentifier;
+		super(typeIdentifier, typeName, configurationClassification, iconPath);
 		this.configurationClass = configurationClass;
-		this.typeName = typeName;
-		this.configurationClassification = configurationClassification;
-		this.iconPath = iconPath;
 		this.componentInterface = componentInterface;
 	}
 	
@@ -109,40 +99,9 @@ public class ComponentMetadataAdapter<C extends Configuration>  implements Compo
 	}
 
 	@Override
-	public String getTypeName() {
-		return typeName;
-	}
-
-	@Override
 	public Class<C> getConfigurationClass() 
 	{
 		return configurationClass;
-	}
-
-	@Override
-	public String getTypeIdentifier() 
-	{
-		return typeIdentifier;
-	}
-
-	@Override
-	public ImageIcon getIcon() {
-		if(iconPath == null)
-			return null;
-		URL iconURL = ComponentMetadataAdapter.class.getClassLoader().getResource(iconPath);
-		if (iconURL != null)
-			return new ImageIcon(iconURL, getTypeName());
-		return null;
-	}
-
-	@Override
-	public String[] getClassification() {
-		if(configurationClassification == null || configurationClassification.length <=0)
-			return new String[0];
-		// Make copy of classification for user.
-		String[] copy = new String[configurationClassification.length];
-		System.arraycopy(configurationClassification, 0, copy, 0, configurationClassification.length);
-		return copy;
 	}
 
 	@Override
@@ -150,5 +109,4 @@ public class ComponentMetadataAdapter<C extends Configuration>  implements Compo
 	{
 		return componentInterface;
 	}
-
 }

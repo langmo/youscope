@@ -65,5 +65,10 @@ class WaitJobConfigurationAddon extends ComponentAddonUIAdapter<WaitJobConfigura
 		configuration.setWaitTime(waitTimeField.getDuration());
 	}
 
+	@Override
+	protected void initializeDefaultConfiguration(WaitJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
+
     
 }

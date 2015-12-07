@@ -80,4 +80,9 @@ class RepeatJobConfigurationAddon extends ComponentAddonUIAdapter<RepeatJobConfi
 		configuration.setJobs(jobPanel.getJobs());
 		configuration.setNumRepeats(numRepeatsField.getValue());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(RepeatJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

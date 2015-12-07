@@ -50,7 +50,7 @@ public interface YouScopeServerConfiguration extends Remote
 	 * @return An addon implementing the given interface, or null, if no addon could be found.
 	 * @throws RemoteException
 	 */
-	public <T extends GeneralPurposeAddon> T getGeneralAddon(Class<T> addonInterface) throws RemoteException;
+	public <T extends ServerAddon> T getServerAddon(Class<T> addonInterface) throws RemoteException;
 
 	/**
 	 * Returns all remote addon providers implementing the given interface.
@@ -64,12 +64,12 @@ public interface YouScopeServerConfiguration extends Remote
 	 * @return An array of addons implementing the given interface, or an empty array, if no addon could be found.
 	 * @throws RemoteException
 	 */
-	public <T extends GeneralPurposeAddon> T[] getGeneralAddons(Class<T> addonInterface) throws RemoteException;
+	public <T extends ServerAddon> T[] getServerAddons(Class<T> addonInterface) throws RemoteException;
 
 	/**
 	 * Returns an array of all general purpose addons known by the server.
 	 * @return Array of general purpose addons, or an empty list, if no addon is known.
 	 * @throws RemoteException
 	 */
-	public GeneralPurposeAddon[] getGeneralAddons() throws RemoteException;
+	public ServerAddon[] getGeneralAddons() throws RemoteException;
 }

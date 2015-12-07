@@ -409,4 +409,9 @@ class ParallelImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Paral
 		configuration.setChannel(configGroupField.getSelectedItem().toString(), channelField.getSelectedItem().toString());
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ParallelImagingJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

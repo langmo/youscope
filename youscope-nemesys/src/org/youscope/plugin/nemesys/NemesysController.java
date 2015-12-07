@@ -258,7 +258,7 @@ class NemesysController extends ToolAddonUIAdapter implements YouScopeFrameListe
 			public void actionPerformed(ActionEvent arg0)
 			{
 				nemesysDeviceChanged();
-				notifyLayoutChanged();;
+				notifyLayoutChanged();
 			}
 		});
 		mainPanel.add(new JLabel("Nemesys Device:"));

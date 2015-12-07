@@ -349,4 +349,9 @@ class OutOfFocusJobConfigurationAddon  extends ComponentAddonUIAdapter<OutOfFocu
         configuration.setPosition(offset);
         configuration.setSaveImages(saveImages);
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(OutOfFocusJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

@@ -16,7 +16,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.microscope.CameraDevice;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.Property;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -92,10 +92,10 @@ class StartAndEndConfigurationPage extends MeasurementAddonUIPage<ComposedImagin
 				CameraDevice camera = microscope.getCameraDevice();
 				String deviceName = camera.getDeviceID();
 				Property[] properties = camera.getEditableProperties();
-				DeviceSettingDTO[] cameraDeviceSettings = new DeviceSettingDTO[properties.length];
+				DeviceSetting[] cameraDeviceSettings = new DeviceSetting[properties.length];
 				for(int i=0; i< properties.length; i++)
 				{
-					cameraDeviceSettings[i] = new DeviceSettingDTO();
+					cameraDeviceSettings[i] = new DeviceSetting();
 					cameraDeviceSettings[i].setAbsoluteValue(true);
 					cameraDeviceSettings[i].setDeviceProperty(deviceName, properties[i].getPropertyID());
 					cameraDeviceSettings[i].setValue(properties[i].getValue());
@@ -105,7 +105,7 @@ class StartAndEndConfigurationPage extends MeasurementAddonUIPage<ComposedImagin
 			catch (Exception e)
 			{
 				client.sendError("Could not pre-initialize measurement startup settings. Letting these settings empty and continuing.", e);
-				configuration.setDeviseSettingsOn(new DeviceSettingDTO[0]);
+				configuration.setDeviseSettingsOn(new DeviceSetting[0]);
 			}
 		}
 		

@@ -501,4 +501,9 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 		}
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(FluigentJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

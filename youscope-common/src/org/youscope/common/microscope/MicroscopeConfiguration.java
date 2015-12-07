@@ -52,7 +52,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @return Settings applied at startup.
 	 * @throws RemoteException
 	 */
-	public DeviceSettingDTO[] getSystemStartupSettings() throws RemoteException;
+	public DeviceSetting[] getSystemStartupSettings() throws RemoteException;
 
 	/**
 	 * Set the setting which will be applied at startup. If settings == null, no settings will be applied.
@@ -61,7 +61,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @throws SettingException
 	 * @throws MicroscopeLockedException
 	 */
-	public void setSystemStartupSettings(DeviceSettingDTO[] settings) throws RemoteException, SettingException, MicroscopeLockedException;
+	public void setSystemStartupSettings(DeviceSetting[] settings) throws RemoteException, SettingException, MicroscopeLockedException;
 
 	/**
 	 * Adds a setting to the list of settings which will be applied at startup. If the value of the device property
@@ -71,7 +71,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @throws SettingException
 	 * @throws MicroscopeLockedException
 	 */
-	public void addSystemStartupSetting(DeviceSettingDTO setting) throws RemoteException, SettingException, MicroscopeLockedException;
+	public void addSystemStartupSetting(DeviceSetting setting) throws RemoteException, SettingException, MicroscopeLockedException;
 
 	/**
 	 * Gets the timeout between in the communication with the devices.
@@ -110,7 +110,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @return Settings applied at shutdown.
 	 * @throws RemoteException
 	 */
-	public DeviceSettingDTO[] getSystemShutdownSettings() throws RemoteException;
+	public DeviceSetting[] getSystemShutdownSettings() throws RemoteException;
 
 	/**
 	 * Set the setting which will be applied at shutdown. If settings == null, no settings will be applied.
@@ -119,7 +119,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @throws RemoteException
 	 * @throws MicroscopeLockedException
 	 */
-	public void setSystemShutdownSettings(DeviceSettingDTO[] settings) throws SettingException, RemoteException, MicroscopeLockedException;
+	public void setSystemShutdownSettings(DeviceSetting[] settings) throws SettingException, RemoteException, MicroscopeLockedException;
 
 	/**
 	 * Adds a setting to the list of settings which will be applied at shutdown. If the value of the device property
@@ -129,7 +129,7 @@ public interface MicroscopeConfiguration extends Remote
 	 * @throws RemoteException
 	 * @throws MicroscopeLockedException
 	 */
-	public void addSystemShutdownSetting(DeviceSettingDTO setting) throws SettingException, RemoteException, MicroscopeLockedException;
+	public void addSystemShutdownSetting(DeviceSetting setting) throws SettingException, RemoteException, MicroscopeLockedException;
 
 	/**
 	 * Sets the size of an internally used image buffer.

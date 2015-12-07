@@ -18,7 +18,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.AccessControlException;
-import java.util.Date;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -29,7 +28,7 @@ import javax.swing.UIManager;
 import org.youscope.addon.component.ComponentProvider;
 import org.youscope.addon.microscopeaccess.MicroscopeConnectionException;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.YouScopeVersion;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
@@ -229,18 +228,16 @@ public class YouScopeServerImpl implements YouScopeServer
 		configuration.saveProperties();
 
 		// Initialize microscope
-		microscope.addMessageListener(new YouScopeMessageListener()
+		microscope.addMessageListener(new MessageListener()
 		{
 			@Override
-			public void consumeMessage(String message, Date time)
-			{
-				ServerSystem.out.println(message, time);
+			public void sendMessage(String message) throws RemoteException {
+				ServerSystem.out.println(message);
 			}
 
 			@Override
-			public void consumeError(String message, Throwable exception, Date time) throws RemoteException
-			{
-				ServerSystem.err.println(message, exception, time);
+			public void sendErrorMessage(String message, Throwable error) throws RemoteException {
+				ServerSystem.err.println(message, error);
 			}
 		});
 		return microscope;
@@ -771,14 +768,14 @@ public class YouScopeServerImpl implements YouScopeServer
 	}
 
 	@Override
-	public void addMessageListener(YouScopeMessageListener listener)
+	public void addMessageListener(MessageListener listener)
 	{
 		ServerSystem.addMessageOutListener(listener);
 		ServerSystem.addMessageErrListener(listener);
 	}
 
 	@Override
-	public void removeMessageListener(YouScopeMessageListener listener)
+	public void removeMessageListener(MessageListener listener)
 	{
 		ServerSystem.removeMessageOutListener(listener);
 		ServerSystem.removeMessageErrListener(listener);

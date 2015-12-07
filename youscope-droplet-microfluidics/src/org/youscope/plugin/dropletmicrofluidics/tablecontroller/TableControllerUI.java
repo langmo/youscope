@@ -121,4 +121,9 @@ class TableControllerUI extends ComponentAddonUIAdapter<TableControllerConfigura
 		if(isInitialized())
 			syringeTableField.setNumSyringes(this.numFlowUnits);
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(TableControllerConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

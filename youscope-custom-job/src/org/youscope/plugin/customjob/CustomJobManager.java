@@ -4,31 +4,11 @@
 package org.youscope.plugin.customjob;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.ServiceLoader;
 
-import org.youscope.addon.XMLConfigurationProvider;
-import org.youscope.common.Microplate;
-import org.youscope.common.Well;
-import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.ImageFolderStructure;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.Period;
-import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriodDTO;
-import org.youscope.common.measurement.MeasurementSaveSettings;
-import org.youscope.common.microscope.DeviceSettingDTO;
-import org.youscope.common.tools.ConfigurationManagement;
-
-import com.thoughtworks.xstream.XStream;
+import org.youscope.addon.ConfigurationManagement;
 
 /**
  * @author Moritz Lang
@@ -99,102 +79,25 @@ class CustomJobManager
 			}
 		}
 		
-		XStream xstream = getSerializerInstance();
-		FileOutputStream fos = null;
-		try
-		{
-			fos = new FileOutputStream(new File(folder, customJob.getCustomJobName() + ".csb"));
-			OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
-			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-			xstream.toXML(customJob, writer);
-			writer.close();
-		}
-		catch(FileNotFoundException e)
-		{
-			throw new CustomJobException("Could not create custom job file.", e);
-		}
-		catch(IOException e)
+		try {
+			ConfigurationManagement.saveConfiguration(new File(folder, customJob.getCustomJobName() + ".csb").toString(), customJob);
+		} catch(IOException e)
 		{
 			throw new CustomJobException("Could not save custom job file.", e);
 		}
-		finally
-		{
-			if(fos != null)
-			{
-				try
-				{
-					fos.close();
-				}
-				catch(IOException e)
-				{
-					throw new CustomJobException("Could not close custom job file.", e);
-				}
-			}
-		}
+		
 		return true;
-	}
-	
-	private static XStream getSerializerInstance() throws CustomJobException
-	{
-		XStream xstream = new XStream();
-		xstream.aliasSystemAttribute("type", "class");
-
-		// First, process the annotations of the classes in this package.
-		xstream.processAnnotations(new Class<?>[] {MeasurementSaveSettings.class, Well.class, Microplate.class, FocusConfiguration.class, FocusConfiguration.class, ImageFolderStructure.class, JobConfiguration.class, MeasurementConfiguration.class, Period.class, RegularPeriod.class, TaskConfiguration.class, VaryingPeriodDTO.class, DeviceSettingDTO.class});
-
-		// Now, process all classes provided by the service providers
-		ServiceLoader<XMLConfigurationProvider> xmlConfigurationProviders = ServiceLoader.load(XMLConfigurationProvider.class, ConfigurationManagement.class.getClassLoader());
-
-		for(XMLConfigurationProvider provider : xmlConfigurationProviders)
-		{
-			try
-			{
-				xstream.processAnnotations(provider.getConfigurationClasses().toArray(new Class<?>[0]));
-			}
-			catch(Throwable e)
-			{
-				throw new CustomJobException("Cannot process addon provider " + provider.getClass().getName() + ". Repair or delete respective plug-in.", e);
-			}
-		}
-
-		return xstream;
 	}
 	
 	private static CustomJobConfiguration getCustomJob(File xmlFile) throws CustomJobException
 	{
-		FileInputStream fis = null;
 		try
 		{
-			fis = new FileInputStream(xmlFile);
-			XStream xstream = getSerializerInstance();
-			CustomJobConfiguration job = (CustomJobConfiguration)xstream.fromXML(fis);
-			// Change name to file name
-			String name = xmlFile.getName(); 
-			int idx = name.lastIndexOf(".csb");
-			if(idx > 0)
-			{
-				name = name.substring(0, idx);
-			}
-			job.setCustomJobName(name);
-			return job;
+			return (CustomJobConfiguration) ConfigurationManagement.loadConfiguration(xmlFile.toString());
 		}
-		catch(FileNotFoundException e)
+		catch(Throwable e)
 		{
-			throw new CustomJobException("Could not locate custom job.", e);
-		}
-		finally
-		{
-			if(fis != null)
-			{
-				try
-				{
-					fis.close();
-				}
-				catch(IOException e)
-				{
-					throw new CustomJobException("Could not close custom job file.", e);
-				}
-			}
+			throw new CustomJobException("Could not load custom job.", e);
 		}
 	}
 }

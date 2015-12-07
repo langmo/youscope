@@ -28,7 +28,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.AvailableDeviceDriver;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceLoader;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.PreInitDeviceProperty;
 import org.youscope.uielements.StandardFormats;
@@ -105,7 +105,7 @@ class ManageEditDeviceFrame implements ActionListener
 			ClientSystem.err.println("Could not determine library and driver of device.", e);
 			return;
 		}
-		DeviceSettingDTO[] deviceSettings = new DeviceSettingDTO[preInitProperties.length];
+		DeviceSetting[] deviceSettings = new DeviceSetting[preInitProperties.length];
 		for(int i=0; i<deviceSettings.length; i++)
 		{
 			
@@ -119,7 +119,7 @@ class ManageEditDeviceFrame implements ActionListener
 				ClientSystem.err.println("Could not determine ID of pre-initialization property.", e);
 				return;
 			}
-			deviceSettings[i] = new DeviceSettingDTO();
+			deviceSettings[i] = new DeviceSetting();
 			deviceSettings[i].setAbsoluteValue(true);
 			deviceSettings[i].setDeviceProperty(deviceName, propertyName);
 			String value;

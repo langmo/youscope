@@ -12,7 +12,7 @@ import java.util.Vector;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.ChannelManager;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.SettingException;
@@ -146,7 +146,7 @@ class ChannelManagerImpl implements MicroscopeConfigurationListener
 	}
 
 	@Override
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		for(ChannelImpl channel : channels)
 		{

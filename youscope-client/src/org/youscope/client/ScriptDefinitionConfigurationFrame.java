@@ -37,14 +37,14 @@ class ScriptDefinitionConfigurationFrame
 	private JTextField nameField = new JTextField();
 	protected JTextField								scriptFileField				= new JTextField();
 	
-	private ScriptDefinitionDTO scriptDefinition;
+	private ScriptDefinition scriptDefinition;
 	private Vector<ActionListener> listeners = new Vector<ActionListener>();
 	
 	ScriptDefinitionConfigurationFrame(YouScopeFrame frame)
 	{
 		this(frame, null);
 	}
-	ScriptDefinitionConfigurationFrame(YouScopeFrame frame, ScriptDefinitionDTO scriptDefinition)
+	ScriptDefinitionConfigurationFrame(YouScopeFrame frame, ScriptDefinition scriptDefinition)
 	{
 		this.frame = frame;
 		this.scriptDefinition = scriptDefinition;
@@ -171,7 +171,7 @@ class ScriptDefinitionConfigurationFrame
 					}
                 	if(ScriptDefinitionConfigurationFrame.this.scriptDefinition != null)
                 		ScriptDefinitionManager.deleteScriptDefinition(ScriptDefinitionConfigurationFrame.this.scriptDefinition);
-                	ScriptDefinitionManager.saveScriptDefinition(new ScriptDefinitionDTO(name, engine, file));
+                	ScriptDefinitionManager.saveScriptDefinition(new ScriptDefinition(name, engine, file));
                     ScriptDefinitionConfigurationFrame.this.frame.setVisible(false); 
                     for(ActionListener listener : listeners)
                     {

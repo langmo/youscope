@@ -4,6 +4,7 @@
 package org.youscope.plugin.measurementviewer;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
@@ -23,17 +24,17 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 		{
 			return new MeasurementViewer(client, server, measurementFolder);
 		}
-		return null;
+		throw new AddonException("Type identifer "+ID+" not supported by this factory.");
 	}
 
 	@Override
-	public String[] getSupportedPostProcessorIDs()
+	public String[] getSupportedTypeIdentifiers()
 	{
 		return new String[]{MeasurementViewer.TYPE_IDENTIFIER};		
 	}
 
 	@Override
-	public boolean supportsPostProcessorID(String ID)
+	public boolean isSupportingTypeIdentifier(String ID)
 	{
 		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
 			return true;
@@ -41,11 +42,10 @@ public class MeasurementViewerPostProcessingFactory implements PostProcessorAddo
 	}
 
 	@Override
-	public String getPostProcessorName(String ID)
-	{
-		if(MeasurementViewer.TYPE_IDENTIFIER.equals(ID))
-			return "Open in Measurement Viewer";
-		return null;
+	public AddonMetadata getPostProcessorMetadata(String typeIdentifier) throws AddonException {
+		if(MeasurementViewer.TYPE_IDENTIFIER.equals(typeIdentifier))
+			return MeasurementViewer.getMetadata();
+		throw new AddonException("Type identifer "+typeIdentifier+" not supported by this factory.");
 	}
 
 }

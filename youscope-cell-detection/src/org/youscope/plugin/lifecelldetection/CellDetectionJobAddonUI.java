@@ -11,6 +11,8 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.measurement.job.basicjobs.ImagingJob;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -73,5 +75,15 @@ public class CellDetectionJobAddonUI extends ComponentAddonUIAdapter<CellDetecti
 		visualizationAlgorithmConfigurationPanel.commitChanges(configuration);
 		quantificationPanel.commitChanges(configuration);
 		miscPanel.commitChanges(configuration);
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(CellDetectionJobConfiguration configuration) throws AddonException 
+	{
+		try {
+			configuration.setDetectionJob(getClient().getAddonProvider().getComponentMetadata(ImagingJob.DEFAULT_TYPE_IDENTIFIER, JobConfiguration.class).getConfigurationClass().newInstance());
+		} catch (@SuppressWarnings("unused") Exception e) {
+			// do nothing, let the user choose instead...
+		}
 	}
 }

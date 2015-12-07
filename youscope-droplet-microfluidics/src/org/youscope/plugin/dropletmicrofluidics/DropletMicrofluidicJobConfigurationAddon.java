@@ -152,7 +152,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		{
 			if(currentAddon != null)
 			{
-				ComponentMetadata<?> metadata = currentAddon.getComponentMetadata();
+				ComponentMetadata<?> metadata = currentAddon.getAddonMetadata();
 				if(metadata!= null && controllerOption!= null && metadata.getTypeIdentifier().equals(controllerOption.getTypeIdentifier()))
 					return;
 				currentAddon = null;
@@ -255,7 +255,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		{
 			if(currentAddon != null)
 			{
-				ComponentMetadata<?> metadata = currentAddon.getComponentMetadata();
+				ComponentMetadata<?> metadata = currentAddon.getAddonMetadata();
 				if(metadata!= null && observerOption!= null && metadata.getTypeIdentifier().equals(observerOption.getTypeIdentifier()))
 					return;
 				currentAddon = null;
@@ -358,5 +358,11 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		configuration.setAutofocusConfiguration(autofocusAddon.getConfiguration());
 		controllerConfigurationPanel.commitChanges(configuration);
 		observerConfigurationPanel.commitChanges(configuration);
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(DropletMicrofluidicJobConfiguration configuration)
+			throws AddonException {
+		// do nothing.
 	}
 }

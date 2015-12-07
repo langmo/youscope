@@ -4,7 +4,8 @@
 package org.youscope.addon.postprocessing;
 
 import org.youscope.addon.AddonException;
-import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.AddonMetadata;
+import org.youscope.addon.AddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -22,30 +23,29 @@ public interface PostProcessorAddonFactory
 	 * @param measurementFolder The folder where the measurement is saved which should be post-processed.
      * 
      * @return The created addon UI.
-	 * @throws AddonException 
+	 * @throws AddonException  Thrown if type identifier is not supported by this factory, or if an error in the UI construction occured.
      */
-    ToolAddonUI createPostProcessorUI(String typeIdentifier, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException;
+	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException;
 
     /**
-	 * Returns a list of all measurement post-processor types supported by this addon.
+	 * Returns all measurement post-processor type identifiers supported by this addon.
 	 * 
-	 * @return List of supported post-processors.
+	 * @return post-processor type identifiers.
 	 */
-	String[] getSupportedPostProcessorIDs();
+	String[] getSupportedTypeIdentifiers();
 
 	/**
-	 * Returns true if this addon supports post-processors with the given ID, false otherwise.
-	 * @param ID The ID of the measurement post-processor for which it should be queried if this addon supports its construction.
-	 * @return True if this addon supports post-processors with the given ID, false otherwise.
+	 * Returns true if this factory supports creation of post-processors with the given type identifiers, and false otherwise.
+	 * @param typeIdentifier The type identifier of the measurement post-processor for which it should be queried if this factory supports its construction.
+	 * @return True if this factory supports post-processors with the given type identifier, and false otherwise.
 	 */
-	boolean supportsPostProcessorID(String ID);
+	boolean isSupportingTypeIdentifier(String typeIdentifier);
 
-    /**
-     * Should return a short human readable name of the post-processor which corresponds to the given ID. If the addon does
-     * not support the post-processor with the given ID, null should be returned.
-     * @param ID The ID of the post-processor for which the human readable name should be returned.
-     * 
-     * @return Human readable name of the post-processor.
-     */
-    String getPostProcessorName(String ID);
+	/**
+	 * Returns the metadata (like human readable name) for a given post processor type identifier.
+	 * @param typeIdentifier The type identifier of the post processor for which the metadata should be returned.
+	 * @return The metadata of the given post processor.
+	 * @throws AddonException Thrown if identifier is not supported by the factory.
+	 */
+	AddonMetadata getPostProcessorMetadata(String typeIdentifier) throws AddonException;
 }

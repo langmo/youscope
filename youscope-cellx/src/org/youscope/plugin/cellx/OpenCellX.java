@@ -19,12 +19,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
@@ -71,12 +71,12 @@ class OpenCellX extends ToolAddonUIAdapter
 		measurementFolderField.setText(measurementFolder);
 		try
 		{
-			MeasurementConfiguration configuration = ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
+			MeasurementConfiguration configuration = (MeasurementConfiguration) ConfigurationManagement.loadConfiguration(measurementFolder + File.separator + "configuration.csb");
 			measurementName = configuration.getName();
 			measurementIDField.setText(measurementName);
 			localServer = getClient().isLocalServer();
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			throw new AddonException("Could not get measurement information.",e);
 		}

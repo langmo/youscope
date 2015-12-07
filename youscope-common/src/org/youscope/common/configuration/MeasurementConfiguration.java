@@ -4,7 +4,7 @@
 package org.youscope.common.configuration;
 
 import org.youscope.common.measurement.MeasurementSaveSettings;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -52,7 +52,7 @@ public abstract class MeasurementConfiguration implements Configuration
 	/**
 	 * @return the deviseSettingsOn
 	 */
-	public DeviceSettingDTO[] getDeviseSettingsOn()
+	public DeviceSetting[] getDeviseSettingsOn()
 	{
 		return deviseSettingsOn;
 	}
@@ -61,7 +61,7 @@ public abstract class MeasurementConfiguration implements Configuration
 	 * @param deviseSettingsOn
 	 *            the deviseSettingsOn to set
 	 */
-	public void setDeviseSettingsOn(DeviceSettingDTO[] deviseSettingsOn)
+	public void setDeviseSettingsOn(DeviceSetting[] deviseSettingsOn)
 	{
 		this.deviseSettingsOn = deviseSettingsOn;
 	}
@@ -69,7 +69,7 @@ public abstract class MeasurementConfiguration implements Configuration
 	/**
 	 * @return the deviseSettingsOff
 	 */
-	public DeviceSettingDTO[] getDeviseSettingsOff()
+	public DeviceSetting[] getDeviseSettingsOff()
 	{
 		return deviseSettingsOff;
 	}
@@ -78,7 +78,7 @@ public abstract class MeasurementConfiguration implements Configuration
 	 * @param deviseSettingsOff
 	 *            the deviseSettingsOff to set
 	 */
-	public void setDeviseSettingsOff(DeviceSettingDTO[] deviseSettingsOff)
+	public void setDeviseSettingsOff(DeviceSetting[] deviseSettingsOff)
 	{
 		this.deviseSettingsOff = deviseSettingsOff;
 	}
@@ -109,24 +109,24 @@ public abstract class MeasurementConfiguration implements Configuration
 	 * simulation
 	 */
 	@XStreamAlias("start-device-settings")
-	private DeviceSettingDTO[]		deviseSettingsOn	= new DeviceSettingDTO[0];
+	private DeviceSetting[]		deviseSettingsOn	= new DeviceSetting[0];
 
 	/**
 	 * Device Settings which should be activated at the end of the simulation
 	 */
 	@XStreamAlias("end-device-settings")
-	private DeviceSettingDTO[]		deviseSettingsOff	= new DeviceSettingDTO[0];
+	private DeviceSetting[]		deviseSettingsOff	= new DeviceSetting[0];
 
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{
 		MeasurementConfiguration clone = (MeasurementConfiguration)super.clone();
-		clone.deviseSettingsOff = new DeviceSettingDTO[deviseSettingsOff.length];
+		clone.deviseSettingsOff = new DeviceSetting[deviseSettingsOff.length];
 		for(int i = 0; i < deviseSettingsOff.length; i++)
 		{
 			clone.deviseSettingsOff[i] = deviseSettingsOff[i].clone();
 		}
-		clone.deviseSettingsOn = new DeviceSettingDTO[deviseSettingsOn.length];
+		clone.deviseSettingsOn = new DeviceSetting[deviseSettingsOn.length];
 		for(int i = 0; i < deviseSettingsOn.length; i++)
 		{
 			clone.deviseSettingsOn[i] = deviseSettingsOn[i].clone();

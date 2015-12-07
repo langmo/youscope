@@ -302,4 +302,9 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
         configuration.setScriptFile(scriptURL);
         configuration.setUseClientScriptEngine(clientScriptEngine);
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ScriptingJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

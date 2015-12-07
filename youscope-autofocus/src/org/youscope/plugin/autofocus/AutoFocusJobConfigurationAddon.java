@@ -456,5 +456,10 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 		}
 	}
 
+	@Override
+	protected void initializeDefaultConfiguration(AutoFocusJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
+
 	
 }

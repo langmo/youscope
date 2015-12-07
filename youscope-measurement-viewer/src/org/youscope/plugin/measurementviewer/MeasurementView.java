@@ -27,8 +27,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonUI;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
-import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -167,13 +167,17 @@ class MeasurementView extends JPanel implements Runnable, ImageFolderListener
 		for(;factories.hasNext();)
 		{
 			PostProcessorAddonFactory factory = factories.next();
-			for(String addonID : factory.getSupportedPostProcessorIDs())
+			for(String addonID : factory.getSupportedTypeIdentifiers())
 			{
 				if(addonID.equals(MeasurementViewer.TYPE_IDENTIFIER))
 					continue;
 				JPanel pluginPanel = new JPanel(new GridLayout(1, 2, 2, 2));
 				pluginPanel.setOpaque(false);
-				pluginPanel.add(new JLabel(factory.getPostProcessorName(addonID)));
+				try {
+					pluginPanel.add(new JLabel(factory.getPostProcessorMetadata(addonID).getTypeName()));
+				} catch (@SuppressWarnings("unused") AddonException e) {
+					continue;
+				}
 				pluginPanel.add(new StartProcessorButton(factory, addonID));
 				StandardFormats.addGridBagElement(pluginPanel, pluginLayout, newLineConstr, pluginsPanel);
 			}
@@ -240,7 +244,7 @@ class MeasurementView extends JPanel implements Runnable, ImageFolderListener
 		{
 			try
 			{
-				ToolAddonUI addon = addonFactory.createPostProcessorUI(addonID, client, server, measurementFolder.getAbsolutePath());
+				AddonUI<?> addon = addonFactory.createPostProcessorUI(addonID, client, server, measurementFolder.getAbsolutePath());
 				YouScopeFrame frame = addon.toFrame();
 				frame.setVisible(true);
 			}

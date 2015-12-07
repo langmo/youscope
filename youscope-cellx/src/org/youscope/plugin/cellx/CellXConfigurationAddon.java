@@ -274,4 +274,9 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
     	configuration.setTrackCells(trackCellsField.isSelected());
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(CellXConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

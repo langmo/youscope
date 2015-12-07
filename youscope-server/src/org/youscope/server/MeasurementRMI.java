@@ -17,7 +17,7 @@ import org.youscope.common.measurement.MeasurementSaver;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 /**
  * @author Moritz Lang
@@ -182,14 +182,14 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void setFinishDeviceSettings(DeviceSettingDTO[] settings)
+	public void setFinishDeviceSettings(DeviceSetting[] settings)
             throws MeasurementRunningException
     {
         measurement.setFinishDeviceSettings(settings);
     }
 
     @Override
-	public void setStartupDeviceSettings(DeviceSettingDTO[] settings)
+	public void setStartupDeviceSettings(DeviceSetting[] settings)
             throws MeasurementRunningException
     {
         measurement.setStartupDeviceSettings(settings);
@@ -214,13 +214,13 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void addStartupDeviceSetting(DeviceSettingDTO setting) throws MeasurementRunningException
+	public void addStartupDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
     {
         measurement.addStartupDeviceSetting(setting);
     }
 
     @Override
-	public void addFinishDeviceSetting(DeviceSettingDTO setting) throws MeasurementRunningException
+	public void addFinishDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
     {
         measurement.addFinishDeviceSetting(setting);
     }

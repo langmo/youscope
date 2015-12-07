@@ -64,12 +64,12 @@ public abstract class JobConfigurationPage<T extends JobConfiguration> extends J
 	 */
 	private static final long	serialVersionUID	= -3439300870691181358L;
 	/**
-	 * Loads the configuration data from the given DTO.
+	 * Loads the configuration dataO.
 	 * @param configuration
 	 */
 	public abstract void loadData(T configuration);
 	/**
-	 * Saves the configuration data to the given DTO.
+	 * Saves the configuration data.
 	 * If the configuration is invalid, a message should be displayed to the user.
 	 * @param configuration
 	 * @return Returns true if data is valid, false otherwise.

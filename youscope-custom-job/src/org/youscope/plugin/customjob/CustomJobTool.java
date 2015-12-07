@@ -59,7 +59,7 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
 		setMaximizable(false);
 		setResizable(true);
 		setTitle("Custom Job Templates");
-		setCloseButton(true);
+		setShowCloseButton(true);
 		
 		ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add");
         ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete");

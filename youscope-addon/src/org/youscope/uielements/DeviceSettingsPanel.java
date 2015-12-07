@@ -34,7 +34,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.microscope.Device;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.FloatProperty;
 import org.youscope.common.microscope.IntegerProperty;
 import org.youscope.common.microscope.Property;
@@ -60,7 +60,7 @@ public class DeviceSettingsPanel extends JPanel
 
     private final DeviceTableModel model;
 
-    private final Vector<DeviceSettingDTO> settings = new Vector<DeviceSettingDTO>();
+    private final Vector<DeviceSetting> settings = new Vector<DeviceSetting>();
 
     private final YouScopeClient client;
     
@@ -90,7 +90,7 @@ public class DeviceSettingsPanel extends JPanel
      * @param client Interface to the UI.
      * @param server Interface to the microscope.
      */
-    public DeviceSettingsPanel(DeviceSettingDTO[] settings, YouScopeClient client, YouScopeServer server)
+    public DeviceSettingsPanel(DeviceSetting[] settings, YouScopeClient client, YouScopeServer server)
     {
         this(client, server, false);
         setSettings(settings);
@@ -174,13 +174,13 @@ public class DeviceSettingsPanel extends JPanel
                     	DeviceSettingsPanel.this.client.sendError("No devices initialized.");
                     	return;
                     }
-                    DeviceSettingDTO deviceSetting = null;
+                    DeviceSetting deviceSetting = null;
                     for(Device device : devices)
                     {
                     	Property[] properties = loadDeviceProperties(device);
                     	if(properties.length > 0)
                     	{
-                    		deviceSetting = new DeviceSettingDTO();
+                    		deviceSetting = new DeviceSetting();
                     		deviceSetting.setAbsoluteValue(true);
                     		try
                     		{
@@ -219,7 +219,7 @@ public class DeviceSettingsPanel extends JPanel
                 {
                     int minRow = 99999;
                     int maxRow = -1;
-                    Vector<DeviceSettingDTO> selectedSettings = new Vector<DeviceSettingDTO>();
+                    Vector<DeviceSetting> selectedSettings = new Vector<DeviceSetting>();
                     for (int row : table.getSelectedRows())
                     {
                         selectedSettings.add(DeviceSettingsPanel.this.settings.elementAt(row));
@@ -310,9 +310,9 @@ public class DeviceSettingsPanel extends JPanel
      * Returns all initialized settings.
      * @return List of initialized settings.
      */
-    public DeviceSettingDTO[] getSettings()
+    public DeviceSetting[] getSettings()
     {
-        return settings.toArray(new DeviceSettingDTO[settings.size()]);
+        return settings.toArray(new DeviceSetting[settings.size()]);
     }
     
     /**
@@ -320,12 +320,12 @@ public class DeviceSettingsPanel extends JPanel
      * All previously defined settings are removed.
      * @param newSettings List of settings.
      */
-    public void setSettings(DeviceSettingDTO[] newSettings)
+    public void setSettings(DeviceSetting[] newSettings)
     {
     	settings.removeAllElements();
     	if(newSettings != null)
     	{
-	    	for(DeviceSettingDTO setting : newSettings)
+	    	for(DeviceSetting setting : newSettings)
 	    	{
 	    		if(onlyAbsoluteSettings && setting.isAbsoluteValue() != true)
 	    		{
@@ -348,7 +348,7 @@ public class DeviceSettingsPanel extends JPanel
             newIdx = idx - 1;
         else
             newIdx = idx + 1;
-        DeviceSettingDTO deviceSetting = settings.get(idx);
+        DeviceSetting deviceSetting = settings.get(idx);
         settings.removeElementAt(idx);
         settings.add(newIdx, deviceSetting);
 
@@ -430,7 +430,7 @@ public class DeviceSettingsPanel extends JPanel
             } 
             else // column == 3
             {
-                DeviceSettingDTO setting = settings.elementAt(row);
+                DeviceSetting setting = settings.elementAt(row);
                 try
                 {
 	                Device device = server.getMicroscope().getDevice(setting.getDevice());
@@ -528,7 +528,7 @@ public class DeviceSettingsPanel extends JPanel
                 	client.sendError("Device name is null.");
                     return;
                 }
-                DeviceSettingDTO setting;
+                DeviceSetting setting;
                 try
                 {
 	                Device device = server.getMicroscope().getDevice(deviceName);
@@ -538,7 +538,7 @@ public class DeviceSettingsPanel extends JPanel
 	                	client.sendError("Device does not have properties.");
 	                    return;
 	                }
-	                setting = new DeviceSettingDTO();
+	                setting = new DeviceSetting();
 	                setting.setAbsoluteValue(true);
 	                setting.setDeviceProperty(device.getDeviceID(), properties[0].getPropertyID());
 	                setting.setValue(properties[0].getValue());
@@ -572,7 +572,7 @@ public class DeviceSettingsPanel extends JPanel
             {
                 String device = settings.elementAt(row).getDevice();
                 String property = (String) propertyField.getSelectedItem();
-                DeviceSettingDTO setting = new DeviceSettingDTO();
+                DeviceSetting setting = new DeviceSetting();
                 setting.setAbsoluteValue(true);
                 setting.setDeviceProperty(device, property);
                 try
@@ -643,7 +643,7 @@ public class DeviceSettingsPanel extends JPanel
 		public Component getTableCellRendererComponent(JTable table, Object object,
                 boolean isSelected, boolean hasFocus, int row, int column)
         {
-            DeviceSettingDTO setting = settings.elementAt(row);
+            DeviceSetting setting = settings.elementAt(row);
             JLabel label = new JLabel(object.toString());
             label.setBorder(new EmptyBorder(2, 2, 2, 2));
             if (column == 2 && !onlyAbsoluteSettings)
@@ -759,7 +759,7 @@ public class DeviceSettingsPanel extends JPanel
         {
         	if(onlyAbsoluteSettings || col == 0 || col == 1 || col == 3)
         		return true;
-            DeviceSettingDTO setting = settings.elementAt(row);
+            DeviceSetting setting = settings.elementAt(row);
             try
             {
 	            Device device = server.getMicroscope().getDevice(setting.getDevice());

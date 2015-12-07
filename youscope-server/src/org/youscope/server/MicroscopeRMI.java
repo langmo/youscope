@@ -15,14 +15,14 @@ import org.youscope.addon.microscopeaccess.SerialDeviceInternal;
 import org.youscope.addon.microscopeaccess.ShutterDeviceInternal;
 import org.youscope.addon.microscopeaccess.StageDeviceInternal;
 import org.youscope.addon.microscopeaccess.StateDeviceInternal;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.microscope.AutoFocusDevice;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.ChannelManager;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceLoader;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.FocusDevice;
 import org.youscope.common.microscope.Microscope;
@@ -174,25 +174,25 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	}
 
 	@Override
-	public void applyDeviceSetting(DeviceSettingDTO setting) throws RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
+	public void applyDeviceSetting(DeviceSetting setting) throws RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
 	{
 		microscope.applyDeviceSetting(setting, accessID);
 	}
 
 	@Override
-	public void applyDeviceSettings(DeviceSettingDTO[] settings) throws RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
+	public void applyDeviceSettings(DeviceSetting[] settings) throws RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
 	{
 		microscope.applyDeviceSettings(settings, accessID);
 	}
 
 	@Override
-	public void applyDeviceSettingAsync(DeviceSettingDTO setting) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException
+	public void applyDeviceSettingAsync(DeviceSetting setting) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException
 	{
 		microscope.applyDeviceSettingAsync(setting, accessID);
 	}
 
 	@Override
-	public void applyDeviceSettingsAsync(DeviceSettingDTO[] settings) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException
+	public void applyDeviceSettingsAsync(DeviceSetting[] settings) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException
 	{
 		microscope.applyDeviceSettingsAsync(settings, accessID);
 	}
@@ -354,13 +354,13 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	}
 
 	@Override
-	public void addMessageListener(YouScopeMessageListener listener) throws RemoteException
+	public void addMessageListener(MessageListener listener) throws RemoteException
 	{
 		microscope.addMessageListener(listener);
 	}
 
 	@Override
-	public void removeMessageListener(YouScopeMessageListener listener) throws RemoteException
+	public void removeMessageListener(MessageListener listener) throws RemoteException
 	{
 		microscope.removeMessageListener(listener);
 	}

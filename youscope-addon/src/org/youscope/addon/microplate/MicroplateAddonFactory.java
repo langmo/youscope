@@ -3,35 +3,36 @@
  */
 package org.youscope.addon.microplate;
 
+import org.youscope.addon.AddonException;
 import org.youscope.common.MicroplateType;
 
 /**
- * @author langmo
+ * Factory to create layouts of microplates, i.e. how many wells they have, how they are layouted, and how big they are.
+ * @author Moritz Lang
  */
 public interface MicroplateAddonFactory
 {
 
     /**
-     * Returns a new MicroplateType for the given ID, or null if addon does not support tools with the given ID.
-     * @param ID The ID for which a tool should be created.
-     * @param client Interface describing microplate properties with for the given id.
-     * @param server Interface to the server.
+     * Returns a new MicroplateType for the given type identifier, or throws an {@link AddonException} if this factory does not support microplates with the given type identifier.
+     * @param typeIdentifier The type identifier of a microplate for which the definition should be returned.
      * 
-     * @return New Addon.
+     * @return Information about the microplate type.
+     * @throws AddonException Thrown if factory does not support microplate types with the given type identifier.
      */
-    MicroplateType createMicroplateType(String ID);    
+    MicroplateType createMicroplateType(String typeIdentifier) throws AddonException;    
     
     /**
-	 * Returns a list of all microplate types supported by this addon
+	 * Returns the type identifiers of all microplate types supported by this addon
 	 * 
-	 * @return List of supported tool types.
+	 * @return Supported microplates' type identifiers.
 	 */
-	String[] getSupportedMicroplateIDs();
+	String[] getSupportedTypeIdentifiers();
 
 	/**
-	 * Returns true if this addon supports microplates with the given ID, false otherwise.
-	 * @param ID The ID of the microplate type for which it should be queried if this addon supports it.
-	 * @return True if this addon supports tools with the given ID, false otherwise.
+	 * Returns true if this addon supports microplates with the given type identifier, and false otherwise.
+	 * @param typeIdentifier The type identifier of the microplate type for which it should be queried if this addon supports it.
+	 * @return True if this addon supports microplates with the given type identifier, and false otherwise.
 	 */
-	boolean supportsMicroplateID(String ID);
+	boolean isSupportingTypeIdentifier(String typeIdentifier);
 }

@@ -1,1 +1,1 @@
-"C:\Program Files\Java\jdk1.6.0_23\bin\javah" -jni -classpath ../bin/ org.matlabscripting.util.LongFileNameToShort
+"C:\Program Files\Java\jdk1.8.0_60\bin\javah" -jni -classpath ../bin/ org.youscope.plugin.matlabscripting.util.LongFileNameToShort

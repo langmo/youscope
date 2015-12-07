@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.util.UUID;
 
 import org.youscope.addon.component.ComponentProvider;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.microscope.Microscope;
@@ -62,7 +62,7 @@ public interface YouScopeServer extends Remote
 	 * @param listener Listener which detects new messages.
 	 * @throws RemoteException
 	 */
-	void addMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	void addMessageListener(MessageListener listener) throws RemoteException;
 
 	/**
 	 * Removes a previously added listener.
@@ -70,7 +70,7 @@ public interface YouScopeServer extends Remote
 	 * @param listener the listener.
 	 * @throws RemoteException
 	 */
-	void removeMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	void removeMessageListener(MessageListener listener) throws RemoteException;
 
 	/**
 	 * Adds a listener which detects state changes from the server/microscope.

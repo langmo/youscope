@@ -23,7 +23,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.Period;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriodDTO;
+import org.youscope.common.configuration.VaryingPeriod;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -222,9 +222,9 @@ public class TaskConfigurationPanel extends JPanel
     			}
     		}
 		}
-		else if(period instanceof VaryingPeriodDTO)
+		else if(period instanceof VaryingPeriod)
 		{
-			VaryingPeriodDTO varyingPeriod = (VaryingPeriodDTO)period;
+			VaryingPeriod varyingPeriod = (VaryingPeriod)period;
 			periodVaryingDataPanel.setPeriod(varyingPeriod);
 			periodField.setDuration(10 * 1000);
 			varyingPeriodRadio.doClick();

@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.rmi.RemoteException;
-import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,7 +29,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.tools.RMIReader;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DoubleTextField;
@@ -107,20 +106,19 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Onix Controller", new String[]{"microfluidics"}, "icons/beaker.png");
 	}
 	
-	private final YouScopeMessageListener onixListener = new YouScopeMessageListener()
+	private final MessageListener onixListener = new MessageListener()
 	{
 		@Override
-		public void consumeMessage(String message, Date time) throws RemoteException
+		public void sendMessage(String message) throws RemoteException 
 		{
-			sendErrorMessage(message, null);
+			OnixController.this.sendErrorMessage(message, null);
 		}
 
 		@Override
-		public void consumeError(String message, Throwable exception, Date time) throws RemoteException
+		public void sendErrorMessage(String message, Throwable exception) throws RemoteException
 		{
-			sendErrorMessage(message, exception);
-		}
-		
+			OnixController.this.sendErrorMessage(message, exception);
+		}		
 	};
 	
 	/**
@@ -400,7 +398,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 		// get onix addon.
 		try
 		{
-			onix = getServer().getConfiguration().getGeneralAddon(OnixAddon.class);
+			onix = getServer().getConfiguration().getServerAddon(OnixAddon.class);
 			onix.addMessageListener(onixListener);
 			onix.initialize();
 		}

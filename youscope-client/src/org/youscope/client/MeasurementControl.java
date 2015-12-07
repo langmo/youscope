@@ -30,10 +30,10 @@ import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonUI;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.postprocessing.PostProcessorAddon;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -357,9 +357,13 @@ class MeasurementControl
 		for(;factories.hasNext();)
 		{
 			PostProcessorAddonFactory factory = factories.next();
-			for(String addonID : factory.getSupportedPostProcessorIDs())
+			for(String addonID : factory.getSupportedTypeIdentifiers())
 			{
-				measurementProcessorChooser.add(new StartProcessorMenuItem(factory, addonID));
+				try {
+					measurementProcessorChooser.add(new StartProcessorMenuItem(factory, addonID));
+				} catch (@SuppressWarnings("unused") AddonException e1) {
+					continue;
+				}
 			}
 		}
 		
@@ -707,9 +711,9 @@ class MeasurementControl
 		private static final long	serialVersionUID	= -1089398454827661984L;
 		private final PostProcessorAddonFactory addonFactory;
 		private final String addonID;
-		StartProcessorMenuItem(PostProcessorAddonFactory addonFactory, String addonID)
+		StartProcessorMenuItem(PostProcessorAddonFactory addonFactory, String addonID) throws AddonException
 		{
-			super(addonFactory.getPostProcessorName(addonID));
+			super(addonFactory.getPostProcessorMetadata(addonID).getTypeName());
 			this.addonFactory = addonFactory;
 			this.addonID = addonID;
 			addActionListener(this);
@@ -730,11 +734,16 @@ class MeasurementControl
 				ClientSystem.err.println("Could not obtain measurement save options from measurement.", e);
 				return;
 			}
-			
-			YouScopeFrame frame = YouScopeFrameImpl.createTopLevelFrame();
-			PostProcessorAddon addon = addonFactory.createPostProcessorUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
-			addon.createUI(frame);
-			frame.setVisible(true);
+			try
+			{
+				AddonUI<?> addon = addonFactory.createPostProcessorUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
+				YouScopeFrame frame = addon.toFrame();
+				frame.setVisible(true);
+			}
+			catch(AddonException e)
+			{
+				ClientSystem.err.println("Could not start measurement post processor.", e);
+			}
 		}
 	}
 }

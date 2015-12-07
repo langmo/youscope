@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -224,7 +224,7 @@ class LogPanel extends JPanel
 		}
 	}
 	
-	YouScopeMessageListener getMessageListener()
+	MessageListener getMessageListener()
     {
         try
 		{
@@ -236,7 +236,7 @@ class LogPanel extends JPanel
 			return null;
 		}
     }
-	private class LogListener extends UnicastRemoteObject implements YouScopeMessageListener
+	private class LogListener extends UnicastRemoteObject implements MessageListener
 	{
 		/**
 		 * SerializableVersionVersion UID.
@@ -249,18 +249,18 @@ class LogPanel extends JPanel
 		}
 		
 		@Override
-		public void consumeMessage(String message, Date time) throws RemoteException
+		public void sendMessage(String message) throws RemoteException
 		{
-		    addMessage(message, time);
+		    addMessage(message, new Date());
 		}
 		
 		@Override
-		public void consumeError(String message, Throwable exception, Date time) throws RemoteException
+		public void sendErrorMessage(String message, Throwable exception) throws RemoteException
 		{
 		    addMessage(		message
 		    				+ "\n"
 		                    + (exception != null ? exception.getMessage()
-		                            : "No further information"), time);
+		                            : "No further information"), new Date());
 		}
 	}
 	

@@ -4,7 +4,7 @@
 package org.youscope.plugin.onoffdevicejob;
 
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -33,19 +33,19 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	 * The device settings which should be applied when the microscope switches to the ON-state.
 	 */
 	@XStreamAlias("device-settings-on")
-	private DeviceSettingDTO[]	deviceSettingsOn	= new DeviceSettingDTO[0];
+	private DeviceSetting[]	deviceSettingsOn	= new DeviceSetting[0];
 
 	/**
 	 * The device settings which should be applied when the microscope switches to the OFF-state.
 	 */
 	@XStreamAlias("device-settings-off")
-	private DeviceSettingDTO[]	deviceSettingsOff	= new DeviceSettingDTO[0];
+	private DeviceSetting[]	deviceSettingsOff	= new DeviceSetting[0];
 
 	@Override
 	public String getDescription()
 	{
 		String description = "";
-		for(DeviceSettingDTO setting : getDeviceSettingsOn())
+		for(DeviceSetting setting : getDeviceSettingsOn())
 		{
 			description += "<p>";
 			if(setting.isAbsoluteValue())
@@ -58,7 +58,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 		{
 			description += "<p>wait(" + Double.toString(getExposure()) + "ms)</p>";
 		}
-		for(DeviceSettingDTO setting : getDeviceSettingsOff())
+		for(DeviceSetting setting : getDeviceSettingsOff())
 		{
 			description += "<p>";
 			if(setting.isAbsoluteValue())
@@ -76,8 +76,8 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	public Object clone() throws CloneNotSupportedException
 	{
 		OnOffDeviceJobConfiguration clone = (OnOffDeviceJobConfiguration)super.clone();
-		clone.setDeviceSettingsOn(new DeviceSettingDTO[getDeviceSettingsOn().length]);
-		clone.setDeviceSettingsOff(new DeviceSettingDTO[getDeviceSettingsOff().length]);
+		clone.setDeviceSettingsOn(new DeviceSetting[getDeviceSettingsOn().length]);
+		clone.setDeviceSettingsOff(new DeviceSetting[getDeviceSettingsOff().length]);
 		for(int i = 0; i < getDeviceSettingsOn().length; i++)
 		{
 			clone.getDeviceSettingsOn()[i] = getDeviceSettingsOn()[i].clone();
@@ -92,7 +92,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * @param deviceSettingsOn the deviceSettingsOn to set
 	 */
-	public void setDeviceSettingsOn(DeviceSettingDTO[] deviceSettingsOn)
+	public void setDeviceSettingsOn(DeviceSetting[] deviceSettingsOn)
 	{
 		if(deviceSettingsOn == null)
 			throw new NullPointerException();
@@ -102,7 +102,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * @return the deviceSettingsOn
 	 */
-	public DeviceSettingDTO[] getDeviceSettingsOn()
+	public DeviceSetting[] getDeviceSettingsOn()
 	{
 		return deviceSettingsOn;
 	}
@@ -110,7 +110,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * @param deviceSettingsOff the deviceSettingsOff to set
 	 */
-	public void setDeviceSettingsOff(DeviceSettingDTO[] deviceSettingsOff)
+	public void setDeviceSettingsOff(DeviceSetting[] deviceSettingsOff)
 	{
 		if(deviceSettingsOff == null)
 			throw new NullPointerException();
@@ -120,7 +120,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * @return the deviceSettingsOff
 	 */
-	public DeviceSettingDTO[] getDeviceSettingsOff()
+	public DeviceSetting[] getDeviceSettingsOff()
 	{
 		return deviceSettingsOff;
 	}

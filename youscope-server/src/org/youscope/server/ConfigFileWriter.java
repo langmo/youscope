@@ -18,7 +18,7 @@ import org.youscope.addon.microscopeaccess.StageDeviceInternal;
 import org.youscope.addon.microscopeaccess.StateDeviceInternal;
 import org.youscope.common.YouScopeVersion;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationException;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeException;
@@ -187,7 +187,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 				writeEmptyLine(writer);
 			}
 			writeComment(writer, "Pixel Size setting " + pixelSize.getPixelSizeID() + ".");
-			for(DeviceSettingDTO setting : pixelSize.getPixelSizeSettings())
+			for(DeviceSetting setting : pixelSize.getPixelSizeSettings())
 			{
 				writeCommand(writer, COMMAND_CONFIG_PIXEL_SIZE, pixelSize.getPixelSizeID(), setting.getDevice(), setting.getProperty(), setting.getStringValue());
 			}
@@ -219,11 +219,11 @@ class ConfigFileWriter extends ConfigFileManipulator
 				String channelOffID = channel.getChannelID() + (useSuffix ? "_off" : "");
 
 				writeComment(writer, "Channel " + channelGroupID + "." + channel.getChannelID());
-				for(DeviceSettingDTO setting : channel.getChannelOnSettings())
+				for(DeviceSetting setting : channel.getChannelOnSettings())
 				{
 					writeCommand(writer, COMMAND_CHANNEL, channelGroupID, channelOnID, setting.getDevice(), setting.getProperty(), setting.getStringValue());
 				}
-				for(DeviceSettingDTO setting : channel.getChannelOffSettings())
+				for(DeviceSetting setting : channel.getChannelOffSettings())
 				{
 					writeCommand(writer, COMMAND_CHANNEL, channelGroupID, channelOffID, setting.getDevice(), setting.getProperty(), setting.getStringValue());
 				}
@@ -482,7 +482,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 	private void writeSystemStartup(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Startup settings (executed when config file loads).");
-		for(DeviceSettingDTO setting : microscope.getMicroscopeConfiguration().getSystemStartupSettings())
+		for(DeviceSetting setting : microscope.getMicroscopeConfiguration().getSystemStartupSettings())
 		{
 			writeCommand(writer, COMMAND_SYSTEM_STARTUP, setting.getDevice(), setting.getProperty(), setting.getStringValue());
 		}
@@ -491,7 +491,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 	private void writeSystemShutdown(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Shutdown settings (executed when config file loads).");
-		for(DeviceSettingDTO setting : microscope.getMicroscopeConfiguration().getSystemShutdownSettings())
+		for(DeviceSetting setting : microscope.getMicroscopeConfiguration().getSystemShutdownSettings())
 		{
 			writeCommand(writer, COMMAND_SYSTEM_SHUTDOWN, setting.getDevice(), setting.getProperty(), setting.getStringValue());
 		}

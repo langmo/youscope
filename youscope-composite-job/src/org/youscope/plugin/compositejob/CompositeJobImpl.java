@@ -9,7 +9,7 @@ import org.youscope.common.measurement.ExecutionInformation;
 import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainerAdapter;
+import org.youscope.common.measurement.job.EditableJobContainerAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.microscope.Microscope;
@@ -17,7 +17,7 @@ import org.youscope.common.microscope.Microscope;
 /**
  * @author Moritz Lang
  */
-class CompositeJobImpl extends JobContainerAdapter implements CompositeJob
+class CompositeJobImpl extends EditableJobContainerAdapter implements CompositeJob
 {
 
 	/**

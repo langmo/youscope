@@ -9,9 +9,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Date;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.tools.RMIReader;
 
 import onix.ONIXDevice;
@@ -39,7 +38,7 @@ class OnixAddonImpl extends UnicastRemoteObject implements OnixAddon
 	private static volatile boolean protocolRunning = false;
 	private static volatile boolean abortProtocol = false;
 	
-	private static final ArrayList<YouScopeMessageListener> messageListeners = new ArrayList<YouScopeMessageListener>();
+	private static final ArrayList<MessageListener> messageListeners = new ArrayList<MessageListener>();
 	
 	private static final String NATIVE_LIBRARY_NAME = "K8055D";
 	
@@ -371,7 +370,7 @@ class OnixAddonImpl extends UnicastRemoteObject implements OnixAddon
 	}
 
 	@Override
-	public void addMessageListener(YouScopeMessageListener listener) throws RemoteException
+	public void addMessageListener(MessageListener listener) throws RemoteException
 	{
 		synchronized(messageListeners)
 		{
@@ -380,7 +379,7 @@ class OnixAddonImpl extends UnicastRemoteObject implements OnixAddon
 	}
 
 	@Override
-	public void removeMessageListener(YouScopeMessageListener listener) throws RemoteException
+	public void removeMessageListener(MessageListener listener) throws RemoteException
 	{
 		synchronized(messageListeners)
 		{
@@ -390,15 +389,14 @@ class OnixAddonImpl extends UnicastRemoteObject implements OnixAddon
 	
 	private static void sendMessage(String message)
 	{
-		final Date currentDate = new Date();
 		synchronized(messageListeners)
 		{
 			for(int i=0; i<messageListeners.size(); i++)
 			{
-				YouScopeMessageListener listener = messageListeners.get(i);
+				MessageListener listener = messageListeners.get(i);
 				try
 				{
-					listener.consumeMessage(message, currentDate);
+					listener.sendMessage(message);
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{

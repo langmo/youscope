@@ -8,11 +8,11 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriodDTO;
+import org.youscope.common.configuration.VaryingPeriod;
 import org.youscope.common.measurement.ComponentException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
@@ -27,7 +27,7 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-class SimpleMeasurementInitializer implements CustomMeasurementInitializer<SimpleMeasurementConfiguration>
+class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasurementConfiguration>
 {
 
 	@Override
@@ -50,9 +50,9 @@ class SimpleMeasurementInitializer implements CustomMeasurementInitializer<Simpl
 				throw new AddonException("Could not create measurement due to remote exception.", e);
 			}
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriodDTO)
+		else if(configuration.getPeriod() instanceof VaryingPeriod)
 		{
-			VaryingPeriodDTO period = (VaryingPeriodDTO)configuration.getPeriod();
+			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
 			try
 			{
 				mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());

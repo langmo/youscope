@@ -52,11 +52,6 @@ class DeviceLoaderRMI extends UnicastRemoteObject implements DeviceLoader
 		return drivers;
 	}
 
-	/* @Override public void addDevice(String name, String library, String identifier,
-	 * DeviceSettingDTO[] preInitSettings) throws MicroscopeDriverException,
-	 * MicroscopeLockedException { deviceManager.addDevice(name, library, identifier,
-	 * preInitSettings, accessID); } */
-
 	@Override
 	public void removeDevice(String name) throws MicroscopeDriverException, MicroscopeLockedException
 	{

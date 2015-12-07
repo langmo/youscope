@@ -65,4 +65,9 @@ class ExecuteAndWaitJobConfigurationAddon extends ComponentAddonUIAdapter<Execut
 		configuration.setJobs(jobPanel.getJobs());
 		configuration.setWaitTime(waitTimeField.getDuration());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ExecuteAndWaitJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

@@ -181,15 +181,14 @@ class YouScopeToolBar extends JToolBar
 					try
 					{
 						addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+						YouScopeFrame toolFrame = addon.toFrame();
+						toolFrame.setVisible(true);
 					}
 					catch (AddonException e)
 					{
 						ClientSystem.err.println("Error creating tool UI.", e);
 						return;
 					}
-					YouScopeFrame toolFrame = YouScopeFrameImpl.createTopLevelFrame();
-					addon.createUI(toolFrame);
-					toolFrame.setVisible(true);
 				}
 			}
 			toolButton.addActionListener(new NewToolListener(toolAddon, addonID));
@@ -197,8 +196,8 @@ class YouScopeToolBar extends JToolBar
 			return;
 		}
 		
-		ScriptDefinitionDTO[] scriptDefinitions = ScriptDefinitionManager.getScriptDefinitions();
-		for(ScriptDefinitionDTO scriptDefinition : scriptDefinitions)
+		ScriptDefinition[] scriptDefinitions = ScriptDefinitionManager.getScriptDefinitions();
+		for(ScriptDefinition scriptDefinition : scriptDefinitions)
 		{
 			if(scriptDefinition.getName().equals(addonID))
 			{
@@ -214,8 +213,8 @@ class YouScopeToolBar extends JToolBar
 				}
 				class NewScriptListener implements ActionListener
 				{
-					private final ScriptDefinitionDTO scriptDefinition;
-					NewScriptListener(ScriptDefinitionDTO scriptDefinition)
+					private final ScriptDefinition scriptDefinition;
+					NewScriptListener(ScriptDefinition scriptDefinition)
 					{
 						this.scriptDefinition = scriptDefinition;
 					}

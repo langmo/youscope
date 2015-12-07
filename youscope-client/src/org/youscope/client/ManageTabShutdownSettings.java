@@ -7,7 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.uielements.DescriptionPanel;
 import org.youscope.uielements.DeviceSettingsPanel;
 
@@ -65,7 +65,7 @@ class ManageTabShutdownSettings extends ManageTabElement
 		if(somethingChanged)
 		{
 			// Send settings to server.
-			DeviceSettingDTO[] settings = deviceSettingPanel.getSettings();
+			DeviceSetting[] settings = deviceSettingPanel.getSettings();
 			try
 			{
 				YouScopeClientImpl.getMicroscope().getMicroscopeConfiguration().setSystemShutdownSettings(settings);

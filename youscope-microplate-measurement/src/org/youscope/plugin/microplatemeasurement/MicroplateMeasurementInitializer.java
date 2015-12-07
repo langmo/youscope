@@ -9,14 +9,14 @@ import java.util.ServiceLoader;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriodDTO;
+import org.youscope.common.configuration.VaryingPeriod;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
@@ -27,13 +27,13 @@ import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.measurement.job.basicjobs.FocusingJob;
 import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 
 /**
  * @author Moritz Lang
  * 
  */
-public class MicroplateMeasurementInitializer implements CustomMeasurementInitializer<MicroplateMeasurementConfiguration>
+public class MicroplateMeasurementInitializer implements MeasurementInitializer<MicroplateMeasurementConfiguration>
 {
 
 	@Override
@@ -64,9 +64,9 @@ public class MicroplateMeasurementInitializer implements CustomMeasurementInitia
 					throw new AddonException("Could not create measurement due to remote exception.", e);
 				}
 			}
-			else if(configuration.getPeriod() instanceof VaryingPeriodDTO)
+			else if(configuration.getPeriod() instanceof VaryingPeriod)
 			{
-				VaryingPeriodDTO period = (VaryingPeriodDTO)configuration.getPeriod();
+				VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
 				try
 				{
 					mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
@@ -114,10 +114,10 @@ public class MicroplateMeasurementInitializer implements CustomMeasurementInitia
 					// Add zero position to startup and shutdown settings
 					try
 					{
-						measurement.addStartupDeviceSetting(new DeviceSettingDTO(stageDeviceID, "PositionX", (float)position.getX()));
-						measurement.addStartupDeviceSetting(new DeviceSettingDTO(stageDeviceID, "PositionY", (float)position.getY()));
-						measurement.addFinishDeviceSetting(new DeviceSettingDTO(stageDeviceID, "PositionX", (float)position.getX()));
-						measurement.addFinishDeviceSetting(new DeviceSettingDTO(stageDeviceID, "PositionY", (float)position.getY()));
+						measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
+						measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
+						measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
+						measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
 					}
 					catch(MeasurementRunningException e)
 					{
@@ -198,9 +198,9 @@ public class MicroplateMeasurementInitializer implements CustomMeasurementInitia
 							throw new AddonException("Could not create measurement due to remote exception.", e);
 						}
 					}
-					else if(configuration.getPeriod() instanceof VaryingPeriodDTO)
+					else if(configuration.getPeriod() instanceof VaryingPeriod)
 					{
-						VaryingPeriodDTO period = (VaryingPeriodDTO)configuration.getPeriod();
+						VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
 						try
 						{
 							wellTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), startTime, period.getNumExecutions());

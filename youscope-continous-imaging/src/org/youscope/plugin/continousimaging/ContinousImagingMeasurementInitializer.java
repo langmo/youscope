@@ -5,7 +5,7 @@ package org.youscope.plugin.continousimaging;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.RegularPeriod;
 import org.youscope.common.measurement.Measurement;
@@ -17,7 +17,7 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-public class ContinousImagingMeasurementInitializer implements CustomMeasurementInitializer<ContinousImagingMeasurementConfiguration>
+public class ContinousImagingMeasurementInitializer implements MeasurementInitializer<ContinousImagingMeasurementConfiguration>
 {
 
 	@Override

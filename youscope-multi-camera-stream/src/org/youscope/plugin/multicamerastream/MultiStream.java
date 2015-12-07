@@ -115,7 +115,7 @@ class MultiStream extends ToolAddonUIAdapter
 			if(cameraCheckBoxes[i].isSelected())
 				cameras.addElement(cameraDevices[i]);
 		}
-		closeTool();
+		closeAddon();
 				
 		// Start main window.
 		@SuppressWarnings("unused")

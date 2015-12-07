@@ -12,7 +12,7 @@ import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.JobAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -31,7 +31,7 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	 */
 	private static final long	serialVersionUID	= -115321069638111069L;
 
-	private DeviceSettingDTO[]	settings			= new DeviceSettingDTO[0];
+	private DeviceSetting[]	settings			= new DeviceSetting[0];
 
 	private volatile Table tableToEvaluate = null;
 	
@@ -41,16 +41,16 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	}
 
 	@Override
-	public synchronized void setDeviceSettings(DeviceSettingDTO[] settings) throws MeasurementRunningException
+	public synchronized void setDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
 	{
 		assertRunning();
 		if(settings == null)
 		{
-			this.settings = new DeviceSettingDTO[0];
+			this.settings = new DeviceSetting[0];
 			return;
 		}
 
-		this.settings = new DeviceSettingDTO[settings.length];
+		this.settings = new DeviceSetting[settings.length];
 		for(int i = 0; i < settings.length; i++)
 		{
 			this.settings[i] = settings[i].clone();
@@ -59,7 +59,7 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	}
 
 	@Override
-	public DeviceSettingDTO[] getDeviceSettings()
+	public DeviceSetting[] getDeviceSettings()
 	{
 		return settings;
 	}
@@ -74,9 +74,9 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	public void addDeviceSetting(String device, String property, String value) throws MeasurementRunningException
 	{
 		assertRunning();
-		DeviceSettingDTO[] newSettings = new DeviceSettingDTO[settings.length + 1];
+		DeviceSetting[] newSettings = new DeviceSetting[settings.length + 1];
 		System.arraycopy(settings, 0, newSettings, 0, settings.length);
-		DeviceSettingDTO newSetting = new DeviceSettingDTO();
+		DeviceSetting newSetting = new DeviceSetting();
 		newSetting.setDeviceProperty(device, property);
 		newSetting.setValue(value);
 		newSettings[newSettings.length - 1] = newSetting;
@@ -130,11 +130,11 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 		}
 		if(tableToEvaluate != null)
 		{
-			DeviceSettingDTO[] settings = new DeviceSettingDTO[tableToEvaluate.getNumRows()];
+			DeviceSetting[] settings = new DeviceSetting[tableToEvaluate.getNumRows()];
 			for(int row = 0;row<tableToEvaluate.getNumRows(); row++)
 			{
 				try {
-					settings[row] = new DeviceSettingDTO(
+					settings[row] = new DeviceSetting(
 							tableToEvaluate.getValue(row, DeviceTable.COLUMN_DEVICE.getColumnName(),String.class),
 							tableToEvaluate.getValue(row, DeviceTable.COLUMN_PROPERTY.getColumnName(),String.class),
 							tableToEvaluate.getValue(row, DeviceTable.COLUMN_VALUE.getColumnName(),String.class));

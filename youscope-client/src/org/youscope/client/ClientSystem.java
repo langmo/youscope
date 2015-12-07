@@ -10,12 +10,12 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.ServiceLoader;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
@@ -24,7 +24,7 @@ import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.addon.tool.ToolAddonFactory;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 /**
  * Static class providing similar functionality as System.out.println() and System.err.println(), only that the messages are displayed
  * inside YouScope instead of in the console. Since we do not want to display thousand lines of "unimportant debug messages", we only use
@@ -37,11 +37,11 @@ class ClientSystem
 
     private static final String fileNameErr = "error_client.txt";
 
-    private Vector<YouScopeMessageListener> messageErrListener =
-            new Vector<YouScopeMessageListener>();
+    private ArrayList<MessageListener> messageErrListener =
+            new ArrayList<MessageListener>();
 
-    private Vector<YouScopeMessageListener> messageOutListener =
-            new Vector<YouScopeMessageListener>();
+    private ArrayList<MessageListener> messageOutListener =
+            new ArrayList<MessageListener>();
 
     private PrintStream logOut = null;
 
@@ -53,7 +53,7 @@ class ClientSystem
 
     public static final ClientErrorStream err = new ClientErrorStream();
 
-    private YouScopeMessageListener microscopeListener = null;
+    private MessageListener microscopeListener = null;
 
     static
     {
@@ -226,14 +226,14 @@ class ClientSystem
 
         for (int i = 0; i < messageOutListener.size(); i++)
         {
-            YouScopeMessageListener listener = messageOutListener.elementAt(i);
+            MessageListener listener = messageOutListener.get(i);
             try
             {
-                listener.consumeMessage(message, time);
+                listener.sendMessage(message);
             } catch (@SuppressWarnings("unused") RemoteException e)
             {
                 // Remove the listener
-                messageOutListener.removeElementAt(i);
+                messageOutListener.remove(i);
             }
         }
     }
@@ -284,21 +284,21 @@ class ClientSystem
         // Print message to listeners.
         for (int i = 0; i < messageErrListener.size(); i++)
         {
-            YouScopeMessageListener listener = messageErrListener.elementAt(i);
+            MessageListener listener = messageErrListener.get(i);
             try
             {
-                listener.consumeError(message, e, time);
+                listener.sendErrorMessage(message, e);
             } catch (@SuppressWarnings("unused") RemoteException e1)
             {
                 // Remove the listener
-                messageErrListener.removeElementAt(i);
+                messageErrListener.remove(i);
                 i--;
             }
         }
         
     }
 
-    static void addMessageOutListener(YouScopeMessageListener listener)
+    static void addMessageOutListener(MessageListener listener)
     {
         synchronized (ClientSystem.class)
         {
@@ -306,7 +306,7 @@ class ClientSystem
         }
     }
 
-    static void addMessageErrListener(YouScopeMessageListener listener)
+    static void addMessageErrListener(MessageListener listener)
     {
         synchronized (ClientSystem.class)
         {
@@ -314,7 +314,7 @@ class ClientSystem
         }
     }
 
-    static YouScopeMessageListener getMicroscopeMessageListener()
+    static MessageListener getMicroscopeMessageListener()
     {
         synchronized (ClientSystem.class)
         {
@@ -323,7 +323,7 @@ class ClientSystem
                 try
                 {
                     class MicroscopeListener extends UnicastRemoteObject implements
-                            YouScopeMessageListener
+                            MessageListener
                     {
                         /**
 						 * 
@@ -336,16 +336,15 @@ class ClientSystem
                         }
 
                         @Override
-                        public void consumeMessage(String message, Date time) throws RemoteException
+						public void sendMessage(String message) throws RemoteException
                         {
-                            ClientSystem.out.println(message, time);
+                            ClientSystem.out.println(message);
                         }
 
                         @Override
-                        public void consumeError(String message, Throwable exception, Date time)
-                                throws RemoteException
+						public void sendErrorMessage(String message, Throwable error) throws RemoteException
                         {
-                            ClientSystem.err.println(message, exception, time);
+                            ClientSystem.err.println(message, error);
                         }
                     }
                     getClientSystem().microscopeListener = new MicroscopeListener();
@@ -430,7 +429,7 @@ class ClientSystem
     {
     	for (PostProcessorAddonFactory addon : getMeasurementPostProcessorAddons())
         {
-        	if(addon.supportsPostProcessorID(addonID))
+        	if(addon.isSupportingTypeIdentifier(addonID))
                 return addon;
         }
         return null;
@@ -459,7 +458,7 @@ class ClientSystem
 	{
 		for (MicroplateAddonFactory addon : getMicroplateTypeAddons())
         {
-        	if(addon.supportsMicroplateID(addonID))
+        	if(addon.isSupportingTypeIdentifier(addonID))
                 return addon;
         }
         return null;

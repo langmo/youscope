@@ -76,4 +76,8 @@ class StatisticsJobConfigurationAddon extends ComponentAddonUIAdapter<Statistics
 		configuration.setJobs(jobPanel.getJobs());
 		configuration.setFileName(fileNameField.getText());
 	}
+	@Override
+	protected void initializeDefaultConfiguration(StatisticsJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

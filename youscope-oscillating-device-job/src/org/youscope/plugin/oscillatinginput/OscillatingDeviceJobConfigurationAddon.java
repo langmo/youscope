@@ -224,4 +224,10 @@ class OscillatingDeviceJobConfigurationAddon extends ComponentAddonUIAdapter<Osc
         configuration.setPeriodLength(periodLength);
         configuration.setProperty(property);
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(OscillatingDeviceJobConfiguration configuration)
+			throws AddonException {
+		// do nothing.
+	}
 }

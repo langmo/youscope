@@ -27,7 +27,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -273,12 +273,12 @@ class ErrorFrame
 		}
 	}
 
-	YouScopeMessageListener getMicroscopeMessageListener()
+	MessageListener getMicroscopeMessageListener()
 	{
 		return microscopeListener;
 	}
 
-	private class MicroscopeListener extends UnicastRemoteObject implements YouScopeMessageListener
+	private class MicroscopeListener extends UnicastRemoteObject implements MessageListener
 	{
 		/**
 		 * Serial Version UID.
@@ -291,15 +291,15 @@ class ErrorFrame
 		}
 
 		@Override
-		public void consumeMessage(String message, Date time) throws RemoteException
+		public void sendMessage(String message) throws RemoteException
 		{
-			addError(message, null, time);
+			addError(message, null, new Date());
 		}
 
 		@Override
-		public void consumeError(String message, Throwable exception, Date time) throws RemoteException
+		public void sendErrorMessage(String message, Throwable exception) throws RemoteException
 		{
-			addError(message, exception, time);
+			addError(message, exception, new Date());
 		}
 	}
 	

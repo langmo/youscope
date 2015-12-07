@@ -3,9 +3,9 @@
  */
 package org.youscope.addon.microscopeaccess;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeException;
@@ -234,7 +234,7 @@ public interface MicroscopeInternal
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSetting(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
+	void applyDeviceSetting(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
 
 	/**
 	 * Sets the given device properties to the given values. Same as calling
@@ -252,7 +252,7 @@ public interface MicroscopeInternal
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSettings(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
+	void applyDeviceSettings(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
 	
 	/**
 	 * Sets the given device property to the given value.
@@ -265,7 +265,7 @@ public interface MicroscopeInternal
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSettingAsync(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
+	void applyDeviceSettingAsync(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
 
 	/**
 	 * Sets the given device properties to the given values. Same as calling
@@ -283,7 +283,7 @@ public interface MicroscopeInternal
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSettingsAsync(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
+	void applyDeviceSettingsAsync(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException;
 
 	/**
 	 * Locks the microscope for a longer time (e.g. for the duration of a
@@ -351,7 +351,7 @@ public interface MicroscopeInternal
 	 * @param listener
 	 *            The listener.
 	 */
-	void addMessageListener(YouScopeMessageListener listener);
+	void addMessageListener(MessageListener listener);
 
 	/**
 	 * Removes a previously added listener.
@@ -359,7 +359,7 @@ public interface MicroscopeInternal
 	 * @param listener
 	 *            The listener.
 	 */
-	void removeMessageListener(YouScopeMessageListener listener);
+	void removeMessageListener(MessageListener listener);
 	
 	/**
 	 * Returns the state device with the given name.

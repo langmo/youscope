@@ -33,5 +33,5 @@ public interface MicroscopeConfigurationListener extends EventListener, Remote
 	 * @param newLabel Setting containing the new label.
 	 * @throws RemoteException 
 	 */
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel) throws RemoteException;
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel) throws RemoteException;
 }

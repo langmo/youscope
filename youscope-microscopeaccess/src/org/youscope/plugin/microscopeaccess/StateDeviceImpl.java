@@ -7,7 +7,7 @@ package org.youscope.plugin.microscopeaccess;
 import java.util.Arrays;
 
 import org.youscope.addon.microscopeaccess.StateDeviceInternal;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -157,8 +157,8 @@ class StateDeviceImpl extends DeviceImpl implements StateDeviceInternal
 		if(state < 0 || state >= getNumStates())
 			throw new ArrayIndexOutOfBoundsException("State number is invalid (allowed values: 0.."+Integer.toString(getNumStates())+", provided value: "+Integer.toString(state)+").");
 		
-		DeviceSettingDTO oldLabelSetting = new DeviceSettingDTO(getDeviceID(), LABEL_PROPERTY_ID, new String(stateLabels[state]));
-		DeviceSettingDTO newLabelSetting = new DeviceSettingDTO(getDeviceID(), LABEL_PROPERTY_ID, new String(label));
+		DeviceSetting oldLabelSetting = new DeviceSetting(getDeviceID(), LABEL_PROPERTY_ID, new String(stateLabels[state]));
+		DeviceSetting newLabelSetting = new DeviceSetting(getDeviceID(), LABEL_PROPERTY_ID, new String(label));
 		try
 		{
 			microscope.lockWrite(accessID);

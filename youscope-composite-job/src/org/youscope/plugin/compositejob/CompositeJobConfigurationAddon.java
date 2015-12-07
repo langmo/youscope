@@ -53,4 +53,9 @@ class CompositeJobConfigurationAddon extends ComponentAddonUIAdapter<CompositeJo
 	{
 		configuration.setJobs(jobPanel.getJobs());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(CompositeJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

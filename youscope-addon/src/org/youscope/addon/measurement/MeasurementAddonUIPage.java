@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import org.youscope.addon.AddonException;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
 
@@ -64,12 +65,12 @@ public abstract class MeasurementAddonUIPage<T extends MeasurementConfiguration>
 	 */
 	private static final long	serialVersionUID	= -3439343870691181358L;
 	/**
-	 * Loads the configuration data from the given DTO.
+	 * Loads the configuration data.
 	 * @param configuration
 	 */
 	public abstract void loadData(T configuration);
 	/**
-	 * Saves the configuration data to the given DTO.
+	 * Saves the configuration data.
 	 * If the configuration is invalid, a message should be displayed to the user.
 	 * @param configuration
 	 * @return Returns true if data is valid, false otherwise.
@@ -78,9 +79,10 @@ public abstract class MeasurementAddonUIPage<T extends MeasurementConfiguration>
 	
 	/**
 	 * Sets the values corresponding to this page to their default values.
-	 * @param configuration
+	 * @param configuration The configuration to set to default values.
+	 * @throws AddonException Thrown if error occurs while setting configuration to default values.
 	 */
-	public abstract void setToDefault(T configuration);
+	public abstract void setToDefault(T configuration) throws AddonException;
 	
 	/**
 	 * Returns a short name/description what the page does.

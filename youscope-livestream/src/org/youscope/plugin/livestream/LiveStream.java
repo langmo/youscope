@@ -55,7 +55,7 @@ class LiveStream implements ToolAddonUI
 	}
 
 	@Override
-	public ToolMetadata getToolMetadata()
+	public ToolMetadata getAddonMetadata()
 	{
 		return getMetadata();
 	}

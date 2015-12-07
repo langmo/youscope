@@ -23,6 +23,7 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.AddonException;
 import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
@@ -33,7 +34,7 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class MicroplatePage extends JobConfigurationPage<MicroplateJobConfigurationDTO>
+class MicroplatePage extends JobConfigurationPage<MicroplateJobConfiguration>
 {
 
 	/**
@@ -79,7 +80,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public void loadData(MicroplateJobConfigurationDTO configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		String typeID = configuration.getMicroplatePositions().getMicroplateTypeID();
 		boolean foundType = false;
@@ -151,7 +152,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public boolean saveData(MicroplateJobConfigurationDTO configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		if(microplatePredefined.isSelected())
 		{
@@ -176,7 +177,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	}
 
 	@Override
-	public void setToDefault(MicroplateJobConfigurationDTO configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		// Do nothing.
 
@@ -230,12 +231,15 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 		Vector<MicroplateType> microplateTypes = new Vector<MicroplateType>();
 		for(MicroplateAddonFactory factory :client.getMicroplateTypeAddons())
 		{
-			String[] microplateIDs = factory.getSupportedMicroplateIDs();
+			String[] microplateIDs = factory.getSupportedTypeIdentifiers();
 			for(String microplateID : microplateIDs)
 			{
-				MicroplateType microplateType = factory.createMicroplateType(microplateID);
-				if(microplateType == null)
+				MicroplateType microplateType;
+				try {
+					microplateType = factory.createMicroplateType(microplateID);
+				} catch (@SuppressWarnings("unused") AddonException e) {
 					continue;
+				}
 				microplateTypes.add(microplateType);
 				
 			}

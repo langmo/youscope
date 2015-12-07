@@ -222,7 +222,7 @@ class TransferStateFrame implements Runnable
 		// Create a new OpenBIS addon for the transfer.
 		try
 		{
-			addon = server.getConfiguration().getGeneralAddon(OpenBISAddon.class);
+			addon = server.getConfiguration().getServerAddon(OpenBISAddon.class);
 			if(addon == null)
 			{
 				throw new Exception("YouScope server does not know the OpenBIS addon. Check if the OpenBIS addon is installed on both, the YouScope client and the YouScope server computer.");

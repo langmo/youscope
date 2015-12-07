@@ -104,7 +104,7 @@ class OutputConfigurationPanel extends DynamicPanel
 	{
 		if(currentAddon != null)
 		{
-			ComponentMetadata<?> metadata = currentAddon.getComponentMetadata();
+			ComponentMetadata<?> metadata = currentAddon.getAddonMetadata();
 			if(metadata!= null && outputOption!= null && metadata.getTypeIdentifier().equals(outputOption.getTypeIdentifier()))
 				return;
 			currentAddon = null;

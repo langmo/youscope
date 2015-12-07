@@ -19,7 +19,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.uielements.StandardFormats;
 
 class ConsolePanel extends JPanel
@@ -223,13 +223,13 @@ class ConsolePanel extends JPanel
         return output;
     }
 
-    YouScopeMessageListener getMicroscopeMessageListener()
+    MessageListener getMicroscopeMessageListener()
     {
         return microscopeListener;
     }
 
     protected class MicroscopeListener extends UnicastRemoteObject implements
-            YouScopeMessageListener
+            MessageListener
     {
         /**
 		 * 
@@ -242,20 +242,20 @@ class ConsolePanel extends JPanel
         }
 
         @Override
-        public void consumeMessage(String message, Date time) throws RemoteException
+		public void sendMessage(String message) throws RemoteException 
         {
-            addMessage(message, ConsolePanel.MessageType.SERVER_MESSAGE, time);
+            addMessage(message, ConsolePanel.MessageType.SERVER_MESSAGE, new Date());
         }
 
         @Override
-        public void consumeError(String message, Throwable exception, Date time) throws RemoteException
+		public void sendErrorMessage(String message, Throwable exception) throws RemoteException 
         {
             addMessage(
                     message
                             + " ("
                             + (exception != null ? exception.getMessage()
                                     : "no further information") + ")",
-                    ConsolePanel.MessageType.SERVER_ERROR, time);
+                    ConsolePanel.MessageType.SERVER_ERROR, new Date());
         }
     }
 }

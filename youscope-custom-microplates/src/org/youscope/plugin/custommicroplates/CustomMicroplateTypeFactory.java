@@ -32,7 +32,7 @@ public class CustomMicroplateTypeFactory implements MicroplateAddonFactory
 	}
 
 	@Override
-	public String[] getSupportedMicroplateIDs()
+	public String[] getSupportedTypeIdentifiers()
 	{
 		String[] ids = new String[microplateTypes.length];
 		for(int i=0; i<microplateTypes.length; i++)
@@ -43,9 +43,9 @@ public class CustomMicroplateTypeFactory implements MicroplateAddonFactory
 	}
 
 	@Override
-	public boolean supportsMicroplateID(String ID)
+	public boolean isSupportingTypeIdentifier(String ID)
 	{
-		for(String addonID : getSupportedMicroplateIDs())
+		for(String addonID : getSupportedTypeIdentifiers())
 		{
 			if(addonID.compareToIgnoreCase(ID) == 0)
 				return true;

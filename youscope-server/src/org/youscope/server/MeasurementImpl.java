@@ -26,7 +26,7 @@ import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.measurement.task.MeasurementTask;
 import org.youscope.common.measurement.task.TaskListener;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 
@@ -49,9 +49,9 @@ class MeasurementImpl
 	private volatile boolean						shouldMeasurementStop		= false;
 	private volatile boolean shouldMeasurementQuickStop = false;
 
-	DeviceSettingDTO[]								startUpDeviceSettings		= new DeviceSettingDTO[0];
+	DeviceSetting[]								startUpDeviceSettings		= new DeviceSetting[0];
 
-	DeviceSettingDTO[]								shutDownDeviceSettings		= new DeviceSettingDTO[0];
+	DeviceSetting[]								shutDownDeviceSettings		= new DeviceSetting[0];
 
 	private volatile boolean						lockMicroscopeWhileRunning	= true;
 
@@ -628,33 +628,33 @@ class MeasurementImpl
 		}
 	}
 
-	synchronized void setStartupDeviceSettings(DeviceSettingDTO[] settings) throws MeasurementRunningException
+	synchronized void setStartupDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
 	{
 		assertRunning();
 		startUpDeviceSettings = settings;
 	}
 
-	synchronized void addStartupDeviceSetting(DeviceSettingDTO setting) throws MeasurementRunningException
+	synchronized void addStartupDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
 	{
 		assertRunning();
-		DeviceSettingDTO[] newSettings = new DeviceSettingDTO[startUpDeviceSettings.length + 1];
+		DeviceSetting[] newSettings = new DeviceSetting[startUpDeviceSettings.length + 1];
 		System.arraycopy(startUpDeviceSettings, 0, newSettings, 0, startUpDeviceSettings.length);
-		newSettings[startUpDeviceSettings.length] = new DeviceSettingDTO(setting);
+		newSettings[startUpDeviceSettings.length] = new DeviceSetting(setting);
 		startUpDeviceSettings = newSettings;
 	}
 
-	synchronized void setFinishDeviceSettings(DeviceSettingDTO[] settings) throws MeasurementRunningException
+	synchronized void setFinishDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
 	{
 		assertRunning();
 		shutDownDeviceSettings = settings;
 	}
 
-	synchronized void addFinishDeviceSetting(DeviceSettingDTO setting) throws MeasurementRunningException
+	synchronized void addFinishDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
 	{
 		assertRunning();
-		DeviceSettingDTO[] newSettings = new DeviceSettingDTO[shutDownDeviceSettings.length + 1];
+		DeviceSetting[] newSettings = new DeviceSetting[shutDownDeviceSettings.length + 1];
 		System.arraycopy(shutDownDeviceSettings, 0, newSettings, 0, shutDownDeviceSettings.length);
-		newSettings[shutDownDeviceSettings.length] = new DeviceSettingDTO(setting);
+		newSettings[shutDownDeviceSettings.length] = new DeviceSetting(setting);
 		shutDownDeviceSettings = newSettings;
 	}
 

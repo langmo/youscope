@@ -9,14 +9,14 @@ import org.youscope.common.measurement.ExecutionInformation;
 import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainerAdapter;
+import org.youscope.common.measurement.job.EditableJobContainerAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
 
 /**
  * @author Moritz Lang
  */
-class CustomJobImpl extends JobContainerAdapter implements CustomJob
+class CustomJobImpl extends EditableJobContainerAdapter implements CustomJob
 {
 
 	/**

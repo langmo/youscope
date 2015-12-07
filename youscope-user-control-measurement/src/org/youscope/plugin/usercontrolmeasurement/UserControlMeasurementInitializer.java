@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ConstructionContext;
-import org.youscope.addon.measurement.CustomMeasurementInitializer;
+import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
@@ -19,7 +19,7 @@ import org.youscope.common.measurement.task.MeasurementTask;
  * @author langmo
  * 
  */
-class UserControlMeasurementInitializer implements CustomMeasurementInitializer<UserControlMeasurementConfiguration>
+class UserControlMeasurementInitializer implements MeasurementInitializer<UserControlMeasurementConfiguration>
 {
 
 	@Override

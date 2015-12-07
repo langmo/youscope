@@ -5,16 +5,16 @@ package org.youscope.plugin.onix;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.tools.RMIReader;
-import org.youscope.serverinterfaces.GeneralPurposeAddon;
+import org.youscope.serverinterfaces.ServerAddon;
 
 /**
  * Addon allowing to control the CellAsic Onix microfluidic device.
  * @author Moritz Lang
  *
  */
-public interface OnixAddon extends GeneralPurposeAddon
+public interface OnixAddon extends ServerAddon
 {
 	/**
 	 * Initialize the onix device. Must be called before any other function of this device.
@@ -37,14 +37,14 @@ public interface OnixAddon extends GeneralPurposeAddon
 	 * @param listener Listener to be added.
 	 * @throws RemoteException
 	 */
-	public void addMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	public void addMessageListener(MessageListener listener) throws RemoteException;
 	
 	/**
 	 * Removes a previously added listener.
 	 * @param listener Listener to be removed.
 	 * @throws RemoteException
 	 */
-	public void removeMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	public void removeMessageListener(MessageListener listener) throws RemoteException;
 	
 	/**
 	 * Returns the x-pressure.

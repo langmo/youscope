@@ -5,13 +5,14 @@ package org.youscope.common;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.EventListener;
 
 /**
  * Interface to allow an object to send messages, e.g. to the YouScope logging mechanism or to whomever is interested.
  * @author Moritz Lang
  * 
  */
-public interface MessageListener extends Remote
+public interface MessageListener extends EventListener, Remote
 {
 	/**
 	 * Sends a message to the listener.

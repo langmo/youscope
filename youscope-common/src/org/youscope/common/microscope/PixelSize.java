@@ -25,7 +25,7 @@ public interface PixelSize extends Remote
 	 * @return Set of device settings necessary for the pixel size setting to get active.
 	 * @throws RemoteException
 	 */
-	DeviceSettingDTO[] getPixelSizeSettings() throws RemoteException;
+	DeviceSetting[] getPixelSizeSettings() throws RemoteException;
 
 	/**
 	 * Sets all device settings corresponding to this pixel size. All previously set settings get deleted.
@@ -35,7 +35,7 @@ public interface PixelSize extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void setPixelSizeSettings(DeviceSettingDTO[] newSettings) throws MicroscopeLockedException, SettingException, RemoteException;
+	void setPixelSizeSettings(DeviceSetting[] newSettings) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Adds a setting to the list of settings.
@@ -45,7 +45,7 @@ public interface PixelSize extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void addPixelSizeSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException;
+	void addPixelSizeSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Returns the pixel size in micro meters.

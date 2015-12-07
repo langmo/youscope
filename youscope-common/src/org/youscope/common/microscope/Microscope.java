@@ -6,7 +6,7 @@ package org.youscope.common.microscope;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.tools.RMIReader;
 import org.youscope.common.tools.RMIWriter;
 
@@ -266,7 +266,7 @@ public interface Microscope extends Remote
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSetting(DeviceSettingDTO setting) throws SettingException, MicroscopeLockedException, RemoteException, MicroscopeException, InterruptedException;
+	void applyDeviceSetting(DeviceSetting setting) throws SettingException, MicroscopeLockedException, RemoteException, MicroscopeException, InterruptedException;
 
 	/**
 	 * Sets the given device properties to the given values. Same as calling
@@ -283,7 +283,7 @@ public interface Microscope extends Remote
 	 * @throws MicroscopeException
 	 * @throws InterruptedException
 	 */
-	void applyDeviceSettings(DeviceSettingDTO[] settings) throws SettingException, RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException;
+	void applyDeviceSettings(DeviceSetting[] settings) throws SettingException, RemoteException, MicroscopeLockedException, MicroscopeException, InterruptedException;
 
 	/**
 	 * Sets the given device property to the given value.
@@ -296,7 +296,7 @@ public interface Microscope extends Remote
 	 * @throws InterruptedException
 	 * @throws RemoteException
 	 */
-	void applyDeviceSettingAsync(DeviceSettingDTO setting) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException;
+	void applyDeviceSettingAsync(DeviceSetting setting) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException;
 
 	/**
 	 * Sets the given device properties to the given values. Same as calling
@@ -314,7 +314,7 @@ public interface Microscope extends Remote
 	 * @throws InterruptedException
 	 * @throws RemoteException
 	 */
-	void applyDeviceSettingsAsync(DeviceSettingDTO[] settings) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException;
+	void applyDeviceSettingsAsync(DeviceSetting[] settings) throws SettingException, MicroscopeLockedException, MicroscopeException, InterruptedException, RemoteException;
 
 	/**
 	 * Locks the microscope for a longer time (e.g. for the duration of a
@@ -413,7 +413,7 @@ public interface Microscope extends Remote
 	 *            The listener.
 	 * @throws RemoteException
 	 */
-	void addMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	void addMessageListener(MessageListener listener) throws RemoteException;
 
 	/**
 	 * Removes a previously added listener.
@@ -422,7 +422,7 @@ public interface Microscope extends Remote
 	 *            The listener.
 	 * @throws RemoteException
 	 */
-	void removeMessageListener(YouScopeMessageListener listener) throws RemoteException;
+	void removeMessageListener(MessageListener listener) throws RemoteException;
 
 	/**
 	 * Returns the state device with the given name.

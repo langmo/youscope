@@ -86,5 +86,4 @@ public class GenericComponentMetadata<C extends Configuration> implements Compon
 	public Class<? extends Component> getComponentInterface() {
 		return componentInterface;
 	}
-
 }

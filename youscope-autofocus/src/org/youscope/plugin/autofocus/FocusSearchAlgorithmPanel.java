@@ -93,7 +93,7 @@ class FocusSearchAlgorithmPanel extends JPanel
 	{
 		if(currentAddon != null)
 		{
-			ComponentMetadata<?> currentMetadata = currentAddon.getComponentMetadata();
+			ComponentMetadata<?> currentMetadata = currentAddon.getAddonMetadata();
 			if(currentMetadata!= null && metadata != null &&currentMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
 				return;
 		}

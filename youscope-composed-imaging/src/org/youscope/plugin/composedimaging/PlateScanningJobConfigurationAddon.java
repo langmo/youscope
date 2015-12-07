@@ -432,4 +432,9 @@ class PlateScanningJobConfigurationAddon  extends ComponentAddonUIAdapter<PlateS
 		configuration.setJobs(jobPanel.getJobs());
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(PlateScanningJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

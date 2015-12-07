@@ -16,8 +16,8 @@ import java.util.Vector;
 import javax.script.ScriptEngineManager;
 
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.common.YouScopeMessageListener;
-import org.youscope.serverinterfaces.GeneralPurposeAddon;
+import org.youscope.common.MessageListener;
+import org.youscope.serverinterfaces.ServerAddon;
 
 /**
  * @author Moritz Lang
@@ -28,9 +28,9 @@ final class ServerSystem
 
 	private static final String								fileNameErr			= "error_server.txt";
 
-	private static volatile Vector<YouScopeMessageListener>	messageErrListener	= new Vector<YouScopeMessageListener>();
+	private static volatile ArrayList<MessageListener>	messageErrListener	= new ArrayList<MessageListener>();
 
-	private static volatile Vector<YouScopeMessageListener>	messageOutListener	= new Vector<YouScopeMessageListener>();
+	private static volatile ArrayList<MessageListener>	messageOutListener	= new ArrayList<MessageListener>();
 
 	private static PrintStream								logOut				= null;
 
@@ -128,15 +128,15 @@ final class ServerSystem
 		{
 			for(int i = 0; i < messageOutListener.size(); i++)
 			{
-				YouScopeMessageListener listener = messageOutListener.elementAt(i);
+				MessageListener listener = messageOutListener.get(i);
 				try
 				{
-					listener.consumeMessage(message, time);
+					listener.sendMessage(message);
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{
 					// Remove the listener
-					messageOutListener.removeElementAt(i);
+					messageOutListener.remove(i);
 				}
 			}
 		}
@@ -191,22 +191,22 @@ final class ServerSystem
 		{
 			for(int i = 0; i < messageErrListener.size(); i++)
 			{
-				YouScopeMessageListener listener = messageErrListener.elementAt(i);
+				MessageListener listener = messageErrListener.get(i);
 				try
 				{
-					listener.consumeError(message, e, time);
+					listener.sendErrorMessage(message, e);
 				}
 				catch(@SuppressWarnings("unused") RemoteException e1)
 				{
 					// Remove the listener
-					messageErrListener.removeElementAt(i);
+					messageErrListener.remove(i);
 					i--;
 				}
 			}
 		}
 	}
 
-	static void addMessageOutListener(YouScopeMessageListener listener)
+	static void addMessageOutListener(MessageListener listener)
 	{
 		synchronized(messageOutListener)
 		{
@@ -214,7 +214,7 @@ final class ServerSystem
 		}
 	}
 
-	static void addMessageErrListener(YouScopeMessageListener listener)
+	static void addMessageErrListener(MessageListener listener)
 	{
 		synchronized(messageErrListener)
 		{
@@ -222,7 +222,7 @@ final class ServerSystem
 		}
 	}
 
-	static void removeMessageOutListener(YouScopeMessageListener listener)
+	static void removeMessageOutListener(MessageListener listener)
 	{
 		synchronized(messageOutListener)
 		{
@@ -230,7 +230,7 @@ final class ServerSystem
 		}
 	}
 
-	static void removeMessageErrListener(YouScopeMessageListener listener)
+	static void removeMessageErrListener(MessageListener listener)
 	{
 		synchronized(messageErrListener)
 		{
@@ -254,18 +254,18 @@ final class ServerSystem
 		return null;
 	}
 
-	public static GeneralPurposeAddon[] getGeneralAddons()
+	public static ServerAddon[] getGeneralAddons()
 	{
-		Iterator<GeneralPurposeAddon> addonFactories = ServiceLoader.load(GeneralPurposeAddon.class, ServerSystem.class.getClassLoader()).iterator();
-		Vector<GeneralPurposeAddon> result = new Vector<GeneralPurposeAddon>();
+		Iterator<ServerAddon> addonFactories = ServiceLoader.load(ServerAddon.class, ServerSystem.class.getClassLoader()).iterator();
+		Vector<ServerAddon> result = new Vector<ServerAddon>();
 		for(; addonFactories.hasNext();)
 		{
 			result.addElement(addonFactories.next());
 		}
-		return result.toArray(new GeneralPurposeAddon[0]);
+		return result.toArray(new ServerAddon[0]);
 	}
 
-	public static <T extends GeneralPurposeAddon> T getGeneralAddon(Class<T> addonInterface) throws RemoteException
+	public static <T extends ServerAddon> T getGeneralAddon(Class<T> addonInterface) throws RemoteException
 	{
 		T[] results = getGeneralAddons(addonInterface);
 		if(results.length <= 0)
@@ -274,10 +274,10 @@ final class ServerSystem
 	}
 
 	
-	public static <T extends GeneralPurposeAddon> T[] getGeneralAddons(Class<T> addonInterface) throws RemoteException
+	public static <T extends ServerAddon> T[] getGeneralAddons(Class<T> addonInterface) throws RemoteException
 	{
 		ArrayList<T> result = new ArrayList<T>(10);
-		for(GeneralPurposeAddon addon : getGeneralAddons())
+		for(ServerAddon addon : getGeneralAddons())
 		{
 			if(addonInterface.isInstance(addon))
 			{

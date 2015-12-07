@@ -520,4 +520,9 @@ class ZSlidesJobConfigurationAddon extends ComponentAddonUIAdapter<ZSlidesJobCon
         configuration.setFocusConfiguration(focusConfiguration);
         configuration.setJobs(jobPanel.getJobs());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ZSlidesJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

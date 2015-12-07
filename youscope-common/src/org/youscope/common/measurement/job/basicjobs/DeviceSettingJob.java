@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.job.Job;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.table.TableConsumer;
 
 /**
@@ -35,7 +35,7 @@ public interface DeviceSettingJob extends Job, TableConsumer
 	 * @return List of device settings.
 	 * @throws RemoteException
 	 */
-	DeviceSettingDTO[] getDeviceSettings() throws RemoteException;
+	DeviceSetting[] getDeviceSettings() throws RemoteException;
 
 	/**
 	 * Sets the device settings made when job runs.
@@ -44,7 +44,7 @@ public interface DeviceSettingJob extends Job, TableConsumer
 	 * @throws RemoteException
 	 * @throws MeasurementRunningException
 	 */
-	void setDeviceSettings(DeviceSettingDTO[] settings) throws RemoteException, MeasurementRunningException;
+	void setDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
 
 	/**
 	 * Removes all settings.

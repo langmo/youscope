@@ -788,4 +788,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		getClient().getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)configGroupField.getSelectedItem());
 		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(SlimJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

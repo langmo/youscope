@@ -49,7 +49,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.microscope.Device;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.FloatProperty;
 import org.youscope.common.microscope.IntegerProperty;
 import org.youscope.common.microscope.Property;
@@ -70,7 +70,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
     private MultiPosDeviceTableModel multiPosSettingsTableModel;
 
     private Vector<Vector<Object>> settings = new Vector<Vector<Object>>();
-    private Vector<DeviceSettingDTO> headers = new Vector<DeviceSettingDTO>();
+    private Vector<DeviceSetting> headers = new Vector<DeviceSetting>();
 
     private String[] devices;
 	
@@ -106,7 +106,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 		setMaximizable(false);
 		
 		// Load state
-        DeviceSettingDTO[][] orgSettings = configuration.getMultiPosDeviceSettings();
+        DeviceSetting[][] orgSettings = configuration.getMultiPosDeviceSettings();
         if(orgSettings.length == 0)
         {
         	// Do nothing.
@@ -117,14 +117,14 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         }
         else
         {
-        	for(DeviceSettingDTO setting : orgSettings[0])
+        	for(DeviceSetting setting : orgSettings[0])
         	{
         		headers.add(setting);
         	}
-        	for(DeviceSettingDTO[] subSettings : orgSettings)
+        	for(DeviceSetting[] subSettings : orgSettings)
         	{
         		Vector<Object> values = new Vector<Object>();
-        		for(DeviceSettingDTO setting : subSettings)
+        		for(DeviceSetting setting : subSettings)
         		{
         			if(getPropertyType(setting) == PropertyType.PROPERTY_FLOAT)
         				values.add(setting.getFloatValue());
@@ -151,8 +151,8 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         multiPosSettingsTable.setTableHeader(null);
         multiPosSettingsTable.setSurrendersFocusOnKeystroke(true);
         MultiPosDeviceTableEditor editor = new MultiPosDeviceTableEditor();
-        multiPosSettingsTable.setDefaultRenderer(DeviceSettingDTO.class, editor);
-        multiPosSettingsTable.setDefaultEditor(DeviceSettingDTO.class, editor);
+        multiPosSettingsTable.setDefaultRenderer(DeviceSetting.class, editor);
+        multiPosSettingsTable.setDefaultEditor(DeviceSetting.class, editor);
         TableColumn col = multiPosSettingsTable.getColumnModel().getColumn(0);
         col.setPreferredWidth(40);
         col.setMaxWidth(40);
@@ -314,7 +314,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 	private void addRow()
 	{
 		Vector<Object> newSetting = new Vector<Object>();
-    	for(DeviceSettingDTO setting : headers)
+    	for(DeviceSetting setting : headers)
     	{
     		newSetting.add(getCurrentValue(setting));
     	}
@@ -331,7 +331,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 			{
 				for(Property property : getServer().getMicroscope().getDevice(devices[i]).getEditableProperties())
 				{
-					DeviceSettingDTO newHeader = new DeviceSettingDTO();
+					DeviceSetting newHeader = new DeviceSetting();
 					newHeader.setDeviceProperty(devices[i], property.getPropertyID());
 					Object value = getCurrentValue(newHeader);
 					headers.add(newHeader);
@@ -353,7 +353,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 			}
     	}
 	}
-	private static boolean isValid(DeviceSettingDTO[][] settings)
+	private static boolean isValid(DeviceSetting[][] settings)
 	{
 		if(settings.length == 0)
 			return true;
@@ -399,7 +399,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 		}
 	}
 	
-	private PropertyType getPropertyType(DeviceSettingDTO setting)
+	private PropertyType getPropertyType(DeviceSetting setting)
 	{
 		try
 		{
@@ -412,7 +412,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 		}
 	}
 	
-	private boolean canPropertyBeRelative(DeviceSettingDTO setting)
+	private boolean canPropertyBeRelative(DeviceSetting setting)
 	{
 		Property property;
 		try
@@ -429,7 +429,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 		return false;
 	}
 	
-	private String[] getAllowedPropertyValues(DeviceSettingDTO setting)
+	private String[] getAllowedPropertyValues(DeviceSetting setting)
 	{
 		try
 		{
@@ -447,7 +447,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 		}
 	}
 	
-	private Object getCurrentValue(DeviceSettingDTO setting)
+	private Object getCurrentValue(DeviceSetting setting)
 	{
 		try
 		{
@@ -490,12 +490,12 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         multiPosSettingsTableModel.fireTableDataChanged();
         multiPosSettingsTable.setRowSelectionInterval(newIdx+1, newIdx+1);
     }
-    private void applySetting(DeviceSettingDTO setting, int column)
+    private void applySetting(DeviceSetting setting, int column)
 	{
 		if(column < 0 || column >= headers.size())
 			return;
 		// Check if setting changed.
-		DeviceSettingDTO oldSetting = headers.elementAt(column);
+		DeviceSetting oldSetting = headers.elementAt(column);
 		if(setting.getDevice().compareToIgnoreCase(oldSetting.getDevice()) == 0
 				&& setting.getProperty().compareToIgnoreCase(oldSetting.getProperty()) == 0
 				&& setting.isAbsoluteValue() == oldSetting.isAbsoluteValue())
@@ -529,7 +529,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 
         private JButton getHeaderButton(int idx)
         {
-        	DeviceSettingDTO setting = headers.get(idx);
+        	DeviceSetting setting = headers.get(idx);
         	PropertyType type = getPropertyType(setting);
         	String text = setting.getDevice() + "." + setting.getProperty();
     		if(type == PropertyType.PROPERTY_STRING || type == PropertyType.PROPERTY_FLOAT)
@@ -543,9 +543,9 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
     		class ButtonActionListener implements ActionListener
     		{
     			private JComponent parent;
-    			private DeviceSettingDTO setting;
+    			private DeviceSetting setting;
     			private int idx;
-    			ButtonActionListener(JComponent parent, DeviceSettingDTO setting, int idx)
+    			ButtonActionListener(JComponent parent, DeviceSetting setting, int idx)
     			{
     				this.parent = parent;
     				this.setting = setting;
@@ -571,7 +571,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
             {
                 return getHeaderButton(column - 1);
             }
-			DeviceSettingDTO setting = headers.get(column - 1);
+			DeviceSetting setting = headers.get(column - 1);
 			PropertyType type = getPropertyType(setting);
 			Object valueObject = settings.get(row - 1).get(column - 1);
 			
@@ -842,7 +842,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         	private Popup popup;
         	private JButton okButton;
             private JButton cancelButton;
-        	DevicePropertyChooser(JComponent parent, DeviceSettingDTO setting, int idx)
+        	DevicePropertyChooser(JComponent parent, DeviceSetting setting, int idx)
         	{
         		GridBagLayout layout = new GridBagLayout();
         		setLayout(layout);
@@ -893,7 +893,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 	                	@Override
 	            		public void actionPerformed(ActionEvent e)
 	            		{
-	                		DeviceSettingDTO setting = new DeviceSettingDTO();
+	                		DeviceSetting setting = new DeviceSetting();
 	                		setting.setDeviceProperty(deviceField.getSelectedItem().toString(), propertyField.getSelectedItem().toString());
 	                		setting.setAbsoluteValue(absoluteValueField.getSelectedIndex()==0);
 	                		
@@ -976,7 +976,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         		Object currentProperty = propertyField.getSelectedItem();
         		if(currentProperty == null || currentDevice == null)
         			return;
-        		DeviceSettingDTO temp = new DeviceSettingDTO();
+        		DeviceSetting temp = new DeviceSetting();
         		temp.setDeviceProperty(currentDevice.toString(), currentProperty.toString());
         		if(canPropertyBeRelative(temp))
         		{
@@ -1079,7 +1079,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         @Override
 		public Class<?> getColumnClass(int column)
         {
-            return DeviceSettingDTO.class;
+            return DeviceSetting.class;
         }
 
         @Override
@@ -1131,13 +1131,13 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 
 	@Override
 	protected void commitChanges(DeviceSlidesJobConfiguration configuration) {
-		DeviceSettingDTO[][] multiSettings = new DeviceSettingDTO[settings.size()][];
+		DeviceSetting[][] multiSettings = new DeviceSetting[settings.size()][];
         for(int i = 0; i < multiSettings.length; i++)
         {
-        	multiSettings[i] = new DeviceSettingDTO[headers.size()];
+        	multiSettings[i] = new DeviceSetting[headers.size()];
         	for(int j = 0; j < multiSettings[i].length; j++)
         	{
-        		DeviceSettingDTO setting;
+        		DeviceSetting setting;
 				setting = headers.get(j).clone();
         		setting.setValue(settings.get(i).get(j).toString());
         		multiSettings[i][j] = setting;
@@ -1146,5 +1146,10 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         configuration.setMultiPosDeviceSettings(multiSettings);
 
         configuration.setJobs(jobPanel.getJobs());
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(DeviceSlidesJobConfiguration configuration) throws AddonException {
+		// do nothing.
 	}
 }

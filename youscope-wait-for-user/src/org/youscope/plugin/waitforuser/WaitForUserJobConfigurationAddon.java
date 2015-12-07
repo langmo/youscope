@@ -64,4 +64,9 @@ class WaitForUserJobConfigurationAddon extends ComponentAddonUIAdapter<WaitForUs
 	protected void commitChanges(WaitForUserJobConfiguration configuration) {
 		configuration.setMessage(messageField.getText());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(WaitForUserJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

@@ -30,7 +30,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
  * Panel which allows the user to add, remove and edit tasks of e.g. an advanced measurement.
- * @author langmo
+ * @author Moritz Lang
  */
 public class TasksDefinitionPanel extends JPanel
 {
@@ -52,7 +52,6 @@ public class TasksDefinitionPanel extends JPanel
      * @param client Interface to the client.
      * @param server Interface to the server.
      * @param frame Frame in which this panel is added.
-     * @param configuration The element containing the tasks definitions.
      */
     public TasksDefinitionPanel(YouScopeClient client, YouScopeServer server, YouScopeFrame frame)
     {

@@ -223,4 +223,9 @@ class ImagingJobConfigurationAddon extends ComponentAddonUIAdapter<ImagingJobCon
 		configuration.setImageSaveName(nameField.getText());
 		configuration.setCameraConfiguration(cameraField.getCameraConfiguration());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(ImagingJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

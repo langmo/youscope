@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import org.youscope.addon.microscopeaccess.MicroscopeConfigurationInternal;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfiguration;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.SettingException;
@@ -64,19 +64,19 @@ class MicroscopeConfigurationImpl extends UnicastRemoteObject implements Microsc
 	}
 
 	@Override
-	public DeviceSettingDTO[] getSystemStartupSettings() throws RemoteException
+	public DeviceSetting[] getSystemStartupSettings() throws RemoteException
 	{
 		return microscopeConfiguration.getSystemStartupSettings();
 	}
 
 	@Override
-	public void setSystemStartupSettings(DeviceSettingDTO[] settings) throws RemoteException, SettingException, MicroscopeLockedException
+	public void setSystemStartupSettings(DeviceSetting[] settings) throws RemoteException, SettingException, MicroscopeLockedException
 	{
 		microscopeConfiguration.setSystemStartupSettings(settings, accessID);
 	}
 
 	@Override
-	public void addSystemStartupSetting(DeviceSettingDTO setting) throws RemoteException, SettingException, MicroscopeLockedException
+	public void addSystemStartupSetting(DeviceSetting setting) throws RemoteException, SettingException, MicroscopeLockedException
 	{
 		microscopeConfiguration.addSystemStartupSetting(setting, accessID);
 	}
@@ -94,19 +94,19 @@ class MicroscopeConfigurationImpl extends UnicastRemoteObject implements Microsc
 	}
 
 	@Override
-	public DeviceSettingDTO[] getSystemShutdownSettings()
+	public DeviceSetting[] getSystemShutdownSettings()
 	{
 		return microscopeConfiguration.getSystemShutdownSettings();
 	}
 
 	@Override
-	public void setSystemShutdownSettings(DeviceSettingDTO[] settings) throws SettingException, MicroscopeLockedException
+	public void setSystemShutdownSettings(DeviceSetting[] settings) throws SettingException, MicroscopeLockedException
 	{
 		microscopeConfiguration.setSystemShutdownSettings(settings, accessID);
 	}
 
 	@Override
-	public void addSystemShutdownSetting(DeviceSettingDTO setting) throws SettingException, MicroscopeLockedException
+	public void addSystemShutdownSetting(DeviceSetting setting) throws SettingException, MicroscopeLockedException
 	{
 		microscopeConfiguration.addSystemShutdownSetting(setting, accessID);
 	}

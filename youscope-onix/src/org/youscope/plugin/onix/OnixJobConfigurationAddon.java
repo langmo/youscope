@@ -213,4 +213,9 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
 		configuration.setOnixProtocol(protocolArea.getText());
 		configuration.setWaitUntilFinished(waitCheckBox.isSelected());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(OnixJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

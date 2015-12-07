@@ -28,8 +28,8 @@ public class MeasurementAddonFactoryAdapter implements MeasurementAddonFactory
 		public final ComponentMetadata<C> metadata; 
 		public final Class<C> configurationClass;
 		public final String typeIdentifier;
-		public final CustomMeasurementInitializer<C> customInitializer;
-		SupportedAddon(Class<? extends ComponentAddonUI<C>> addonClass, CustomMeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
+		public final MeasurementInitializer<C> customInitializer;
+		SupportedAddon(Class<? extends ComponentAddonUI<C>> addonClass, MeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
 		{
 			if(addonClass == null || metadata == null||customInitializer==null)
 				throw new NullPointerException();
@@ -90,7 +90,7 @@ public class MeasurementAddonFactoryAdapter implements MeasurementAddonFactory
 	 * @param customInitializer Object for measurement initialization.
 	 * @param metadata Metadata about this addon.
 	 */
-	public <C extends MeasurementConfiguration> MeasurementAddonFactoryAdapter(Class<? extends ComponentAddonUI<C>> configurationAddonClass, CustomMeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
+	public <C extends MeasurementConfiguration> MeasurementAddonFactoryAdapter(Class<? extends ComponentAddonUI<C>> configurationAddonClass, MeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
 	{
 		addAddon(configurationAddonClass, customInitializer, metadata);
 	}
@@ -108,7 +108,7 @@ public class MeasurementAddonFactoryAdapter implements MeasurementAddonFactory
 	 * @param customInitializer A custom initializer for the measurement.
 	 * @param metadata Metadata of the measurement.
 	 */
-	public <C extends MeasurementConfiguration> void addAddon(Class<? extends ComponentAddonUI<C>> configurationAddonClass, CustomMeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
+	public <C extends MeasurementConfiguration> void addAddon(Class<? extends ComponentAddonUI<C>> configurationAddonClass, MeasurementInitializer<C> customInitializer, ComponentMetadata<C> metadata)
 	{
 		supportedAddons.add(new SupportedAddon<C>(configurationAddonClass, customInitializer, metadata));
 	}

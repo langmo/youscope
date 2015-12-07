@@ -105,7 +105,7 @@ class InputConfigurationPanel extends DynamicPanel
 	{
 		if(currentAddon != null)
 		{
-			ComponentMetadata<?> metadata = currentAddon.getComponentMetadata();
+			ComponentMetadata<?> metadata = currentAddon.getAddonMetadata();
 			if(metadata!= null && inputOption!= null && metadata.getTypeIdentifier().equals(inputOption.getTypeIdentifier()))
 				return;
 			currentAddon = null;

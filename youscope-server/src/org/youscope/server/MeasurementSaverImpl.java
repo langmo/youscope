@@ -25,10 +25,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.imageio.ImageIO;
 
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.ImageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.Well;
-import org.youscope.common.YouScopeMessageListener;
 import org.youscope.common.configuration.ImageFolderStructure;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementListener;
@@ -43,7 +44,6 @@ import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableException;
 import org.youscope.common.table.TableListener;
 import org.youscope.common.table.TableProducer;
-import org.youscope.common.tools.ConfigurationManagement;
 import org.youscope.common.tools.ImageConvertException;
 import org.youscope.common.tools.ImageTools;
 import org.youscope.common.tools.RMIWriter;
@@ -81,27 +81,30 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 
 	private PrintStream										errStream				= null;
 
-	private final YouScopeMessageListener					logListener				= new YouScopeMessageListener()
+	private final MessageListener					logListener				= new MessageListener()
 																					{
 
 																						@Override
-																						public synchronized void consumeMessage(String message, Date time) throws RemoteException
-																						{
+																						public synchronized void sendMessage(
+																								String message)
+																										throws RemoteException {
 																							if(logStream == null)
 																								return;
 																							String NL = System.getProperty("line.separator");
-																							logStream.println(time.toString() + ": " + message.replace("\n", NL + "\t"));
+																							logStream.println(new Date().toString() + ": " + message.replace("\n", NL + "\t"));
 																						}
 
 																						@Override
-																						public synchronized void consumeError(String message, Throwable exception, Date time) throws RemoteException
-																						{
+																						public synchronized void sendErrorMessage(
+																								String message,
+																								Throwable exception)
+																										throws RemoteException {
 																							if(errStream == null)
 																								return;
 
 																							String NL = System.getProperty("line.separator");
 																							NL = (NL == null ? "\n" : NL);
-																							String errorMessage = "************************************************************************" + NL + "Error occured." + NL + "Time: " + time.toString() + NL + "Message: " + message.replace("\n", NL + "\t\t") + NL;
+																							String errorMessage = "************************************************************************" + NL + "Error occured." + NL + "Time: " + new Date().toString() + NL + "Message: " + message.replace("\n", NL + "\t\t") + NL;
 																							if(exception != null)
 																							{
 																								errorMessage += "Cause: ";
@@ -126,7 +129,6 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 																							// Print message in file
 																							errStream.println(errorMessage);
 																						}
-
 																					};
 
 	/**

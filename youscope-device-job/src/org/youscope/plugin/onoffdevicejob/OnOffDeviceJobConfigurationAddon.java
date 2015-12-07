@@ -15,7 +15,7 @@ import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DeviceSettingsPanel;
 import org.youscope.uielements.DynamicPanel;
@@ -120,13 +120,13 @@ class OnOffDeviceJobConfigurationAddon extends ComponentAddonUIAdapter<OnOffDevi
 		{
 			configuration.setDeviceSettingsOn(deviceSettingsOnField.getSettings());
 			configuration.setExposure(0);
-			configuration.setDeviceSettingsOff(new DeviceSettingDTO[0]);
+			configuration.setDeviceSettingsOff(new DeviceSetting[0]);
 		}
 		else if(typeChooserBox.getSelectedIndex() == 1)
 		{
 			configuration.setDeviceSettingsOn(deviceSettingsOnField.getSettings());
 			configuration.setExposure(exposureField.getDuration());
-			configuration.setDeviceSettingsOff(new DeviceSettingDTO[0]);
+			configuration.setDeviceSettingsOff(new DeviceSetting[0]);
 		}
 		else
 		{
@@ -134,5 +134,10 @@ class OnOffDeviceJobConfigurationAddon extends ComponentAddonUIAdapter<OnOffDevi
 			configuration.setExposure(exposureField.getDuration());
 			configuration.setDeviceSettingsOff(deviceSettingsOffField.getSettings());
 		}
+	}
+
+	@Override
+	protected void initializeDefaultConfiguration(OnOffDeviceJobConfiguration configuration) throws AddonException {
+		// do nothing.
 	}
 }

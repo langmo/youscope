@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.MicroscopeConfigurationInternal;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -23,8 +23,8 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 {
 	private final MicroscopeImpl microscope;
 	private final Vector<String> imageSynchronizationDevices = new Vector<String>();
-	private final Vector<DeviceSettingDTO> systemStartupSettings = new Vector<DeviceSettingDTO>();
-	private final Vector<DeviceSettingDTO> systemShutdownSettings = new Vector<DeviceSettingDTO>();
+	private final Vector<DeviceSetting> systemStartupSettings = new Vector<DeviceSetting>();
+	private final Vector<DeviceSetting> systemShutdownSettings = new Vector<DeviceSetting>();
 	private int communicationTimeout = 5000; // [ms]
 	private int communicationPingPeriod = 10; // [ms]
 	private int imageBufferSize = -1;
@@ -197,13 +197,13 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	
 
 	@Override
-	public DeviceSettingDTO[] getSystemStartupSettings()
+	public DeviceSetting[] getSystemStartupSettings()
 	{
-		return systemStartupSettings.toArray(new DeviceSettingDTO[systemStartupSettings.size()]);
+		return systemStartupSettings.toArray(new DeviceSetting[systemStartupSettings.size()]);
 	}
 
 	@Override
-	public void setSystemStartupSettings(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException
+	public void setSystemStartupSettings(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException
 	{
 		try
 		{
@@ -214,7 +214,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 			microscope.stateChanged("All startup device settings removed.");
 			if(settings != null)
 			{
-				for(DeviceSettingDTO setting : settings)
+				for(DeviceSetting setting : settings)
 				{
 					addSystemStartupSetting(setting, accessID);
 				}
@@ -227,7 +227,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	}
 
 	@Override
-	public void addSystemStartupSetting(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException
+	public void addSystemStartupSetting(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException
 	{
 		try
 		{
@@ -237,7 +237,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 			// Remove old settings for the same device property.
 			for(int i=0; i<systemStartupSettings.size(); i++)
 			{
-				DeviceSettingDTO oldSetting = systemStartupSettings.elementAt(i);
+				DeviceSetting oldSetting = systemStartupSettings.elementAt(i);
 				if(oldSetting.getDevice().equals(setting.getDevice()) && oldSetting.getProperty().equals(setting.getProperty()))
 				{
 					systemStartupSettings.removeElementAt(i);
@@ -286,7 +286,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	}
 
 	@Override
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		for(int i=0; i<systemStartupSettings.size(); i++)
 		{
@@ -296,13 +296,13 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	}
 
 	@Override
-	public DeviceSettingDTO[] getSystemShutdownSettings()
+	public DeviceSetting[] getSystemShutdownSettings()
 	{
-		return systemShutdownSettings.toArray(new DeviceSettingDTO[systemShutdownSettings.size()]);
+		return systemShutdownSettings.toArray(new DeviceSetting[systemShutdownSettings.size()]);
 	}
 
 	@Override
-	public void setSystemShutdownSettings(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException
+	public void setSystemShutdownSettings(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException
 	{
 		try
 		{
@@ -312,7 +312,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 			microscope.stateChanged("All shutdown device settings removed.");
 			if(settings != null)
 			{
-				for(DeviceSettingDTO setting : settings)
+				for(DeviceSetting setting : settings)
 				{
 					addSystemShutdownSetting(setting, accessID);
 				}
@@ -325,7 +325,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	}
 
 	@Override
-	public void addSystemShutdownSetting(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException
+	public void addSystemShutdownSetting(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException
 	{
 		try
 		{
@@ -335,7 +335,7 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 			// Remove old settings for the same device property.
 			for(int i=0; i<systemShutdownSettings.size(); i++)
 			{
-				DeviceSettingDTO oldSetting = systemShutdownSettings.elementAt(i);
+				DeviceSetting oldSetting = systemShutdownSettings.elementAt(i);
 				if(oldSetting.getDevice().equals(setting.getDevice()) && oldSetting.getProperty().equals(setting.getProperty()))
 				{
 					systemShutdownSettings.removeElementAt(i);

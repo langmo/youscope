@@ -10,7 +10,7 @@ import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainerAdapter;
+import org.youscope.common.measurement.job.EditableJobContainerAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
 
@@ -18,7 +18,7 @@ import org.youscope.common.microscope.Microscope;
  * Implementation of the repeat job.
  * @author Moritz Lang
  */
-class RepeatJobImpl extends JobContainerAdapter implements RepeatJob
+class RepeatJobImpl extends EditableJobContainerAdapter implements RepeatJob
 {
 
 	/**

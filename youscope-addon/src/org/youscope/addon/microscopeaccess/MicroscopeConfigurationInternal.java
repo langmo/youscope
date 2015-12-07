@@ -4,7 +4,7 @@
 package org.youscope.addon.microscopeaccess;
 
 
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.SettingException;
 
@@ -50,7 +50,7 @@ public interface MicroscopeConfigurationInternal
 	 * Returns the settings which will be applied when the system starts up.
 	 * @return Settings applied at startup.
 	 */
-	public DeviceSettingDTO[] getSystemStartupSettings();
+	public DeviceSetting[] getSystemStartupSettings();
 	/**
 	 * Set the setting which will be applied at startup. If settings == null, no settings will be applied.
 	 * @param settings Settings which will be applied at startup.
@@ -58,7 +58,7 @@ public interface MicroscopeConfigurationInternal
 	 * @throws SettingException 
 	 * @throws MicroscopeLockedException 
 	 */
-	public void setSystemStartupSettings(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException;
+	public void setSystemStartupSettings(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException;
 	/**
 	 * Adds a setting to the list of settings which will be applied at startup. If the value of the device property
 	 * is already defined by another setting, this overwrites the old setting.
@@ -67,13 +67,13 @@ public interface MicroscopeConfigurationInternal
 	 * @throws SettingException 
 	 * @throws MicroscopeLockedException 
 	 */
-	public void addSystemStartupSetting(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException;
+	public void addSystemStartupSetting(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException;
 	
 	/**
 	 * Returns the settings which will be applied when the system shuts down.
 	 * @return Settings applied at shutdown.
 	 */
-	public DeviceSettingDTO[] getSystemShutdownSettings();
+	public DeviceSetting[] getSystemShutdownSettings();
 	/**
 	 * Set the setting which will be applied at shutdown. If settings == null, no settings will be applied.
 	 * @param settings Settings which will be applied at shutdown.
@@ -81,7 +81,7 @@ public interface MicroscopeConfigurationInternal
 	 * @throws SettingException 
 	 * @throws MicroscopeLockedException 
 	 */
-	public void setSystemShutdownSettings(DeviceSettingDTO[] settings, int accessID) throws SettingException, MicroscopeLockedException;
+	public void setSystemShutdownSettings(DeviceSetting[] settings, int accessID) throws SettingException, MicroscopeLockedException;
 	/**
 	 * Adds a setting to the list of settings which will be applied at shutdown. If the value of the device property
 	 * is already defined by another setting, this overwrites the old setting.
@@ -90,7 +90,7 @@ public interface MicroscopeConfigurationInternal
 	 * @throws SettingException 
 	 * @throws MicroscopeLockedException 
 	 */
-	public void addSystemShutdownSetting(DeviceSettingDTO setting, int accessID) throws SettingException, MicroscopeLockedException;
+	public void addSystemShutdownSetting(DeviceSetting setting, int accessID) throws SettingException, MicroscopeLockedException;
 	
 	/**
 	 * Gets the timeout between in the communication with the devices.

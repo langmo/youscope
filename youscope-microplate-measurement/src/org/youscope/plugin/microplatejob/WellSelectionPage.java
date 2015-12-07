@@ -41,7 +41,7 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfigurationDTO>
+class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 {
 
 	/**
@@ -86,7 +86,7 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfigurationD
 	}
 	
 	@Override
-	public void loadData(MicroplateJobConfigurationDTO configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		positionConfiguration = configuration.getMicroplatePositions();
 		if(positionConfiguration.isNoneSelected())
@@ -209,7 +209,7 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfigurationD
 	}
 
 	@Override
-	public boolean saveData(MicroplateJobConfigurationDTO configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		wellSelection.saveToConfiguration(positionConfiguration);
 		positionSelection.saveToConfiguration(positionConfiguration);
@@ -244,7 +244,7 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfigurationD
 	}
 
 	@Override
-	public void setToDefault(MicroplateJobConfigurationDTO configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		try
 		{	

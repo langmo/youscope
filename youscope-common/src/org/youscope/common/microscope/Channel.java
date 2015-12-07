@@ -17,14 +17,14 @@ public interface Channel extends Remote
 	 * @return Set of device settings which get set if this channel is activated.
 	 * @throws RemoteException
 	 */
-	DeviceSettingDTO[] getChannelOnSettings() throws RemoteException;
+	DeviceSetting[] getChannelOnSettings() throws RemoteException;
 
 	/**
 	 * Returns all device settings which get set if this channel is deactivated.
 	 * @return Set of device settings which get set if this channel is activated.
 	 * @throws RemoteException
 	 */
-	DeviceSettingDTO[] getChannelOffSettings() throws RemoteException;
+	DeviceSetting[] getChannelOffSettings() throws RemoteException;
 
 	/**
 	 * Sets all device settings which get set if this channel is activated. All previous settings get deleted.
@@ -34,7 +34,7 @@ public interface Channel extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void setChannelOnSettings(DeviceSettingDTO[] settings) throws MicroscopeLockedException, SettingException, RemoteException;
+	void setChannelOnSettings(DeviceSetting[] settings) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Sets all device settings which get set if this channel is deactivated. All previous settings get deleted.
@@ -44,7 +44,7 @@ public interface Channel extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void setChannelOffSettings(DeviceSettingDTO[] settings) throws MicroscopeLockedException, SettingException, RemoteException;
+	void setChannelOffSettings(DeviceSetting[] settings) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Adds a setting to the list of settings which get activated if this channel gets activated.
@@ -54,7 +54,7 @@ public interface Channel extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void addChannelOnSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException;
+	void addChannelOnSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Adds a setting to the list of settings which get deactivated if this channel gets deactivated.
@@ -64,7 +64,7 @@ public interface Channel extends Remote
 	 * @throws SettingException
 	 * @throws RemoteException
 	 */
-	void addChannelOffSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException;
+	void addChannelOffSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException;
 
 	/**
 	 * Returns the ID of the channel group where this channel belongs to.

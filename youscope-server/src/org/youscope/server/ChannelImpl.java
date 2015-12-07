@@ -12,7 +12,7 @@ import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.addon.microscopeaccess.ShutterDeviceInternal;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -27,8 +27,8 @@ import org.youscope.common.microscope.SettingException;
 class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, Comparable<ChannelImpl>
 {
 	private MicroscopeInternal					microscope;
-	private final ArrayList<DeviceSettingDTO>	settingsOn		= new ArrayList<DeviceSettingDTO>();
-	private final ArrayList<DeviceSettingDTO>	settingsOff		= new ArrayList<DeviceSettingDTO>();
+	private final ArrayList<DeviceSetting>	settingsOn		= new ArrayList<DeviceSetting>();
+	private final ArrayList<DeviceSetting>	settingsOff		= new ArrayList<DeviceSetting>();
 	private final String						channelGroupID;
 	private final String						channelID;
 	private int									channelTimeout	= 0;
@@ -73,38 +73,38 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 			shutterDeviceID = null;
 	}
 
-	DeviceSettingDTO[] getChannelOnSettings()
+	DeviceSetting[] getChannelOnSettings()
 	{
 		// clone values.
-		DeviceSettingDTO[] returnVal = new DeviceSettingDTO[settingsOn.size()];
+		DeviceSetting[] returnVal = new DeviceSetting[settingsOn.size()];
 		for(int i = 0; i < returnVal.length; i++)
 		{
-			returnVal[i] = new DeviceSettingDTO(settingsOn.get(i));
+			returnVal[i] = new DeviceSetting(settingsOn.get(i));
 		}
 		return returnVal;
 	}
 
-	DeviceSettingDTO[] getChannelOffSettings()
+	DeviceSetting[] getChannelOffSettings()
 	{
 		// clone values.
-		DeviceSettingDTO[] returnVal = new DeviceSettingDTO[settingsOff.size()];
+		DeviceSetting[] returnVal = new DeviceSetting[settingsOff.size()];
 		for(int i = 0; i < returnVal.length; i++)
 		{
-			returnVal[i] = new DeviceSettingDTO(settingsOff.get(i));
+			returnVal[i] = new DeviceSetting(settingsOff.get(i));
 		}
 		return returnVal;
 	}
 
-	private void setChannelOnSettings(DeviceSettingDTO[] settings, int accessID) throws MicroscopeLockedException, SettingException
+	private void setChannelOnSettings(DeviceSetting[] settings, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
 		{
 			SettingsValidator.areSettingsValid(settings, true, microscope, accessID);
 			this.settingsOn.clear();
-			for(DeviceSettingDTO setting : settings)
+			for(DeviceSetting setting : settings)
 			{
-				this.settingsOn.add(new DeviceSettingDTO(setting));
+				this.settingsOn.add(new DeviceSetting(setting));
 			}
 		}
 		finally
@@ -115,16 +115,16 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 		ServerSystem.out.println("Settings for activation of channel " + this.toString() + " updated.");
 	}
 
-	private void setChannelOffSettings(DeviceSettingDTO[] settings, int accessID) throws MicroscopeLockedException, SettingException
+	private void setChannelOffSettings(DeviceSetting[] settings, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
 		{
 			SettingsValidator.areSettingsValid(settings, true, microscope, accessID);
 			this.settingsOff.clear();
-			for(DeviceSettingDTO setting : settings)
+			for(DeviceSetting setting : settings)
 			{
-				this.settingsOff.add(new DeviceSettingDTO(setting));
+				this.settingsOff.add(new DeviceSetting(setting));
 			}
 		}
 		finally
@@ -185,7 +185,7 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 		shutter.waitForDevice();
 	}
 
-	void addChannelOnSetting(DeviceSettingDTO setting, int accessID) throws MicroscopeLockedException, SettingException
+	void addChannelOnSetting(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
@@ -200,7 +200,7 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 		System.out.println("Added setting " + setting.toString() + " to activation settings of channel " + this.toString() + ".");
 	}
 
-	void addChannelOffSetting(DeviceSettingDTO setting, int accessID) throws MicroscopeLockedException, SettingException
+	void addChannelOffSetting(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try
@@ -244,7 +244,7 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 	}
 
 	@Override
-	public void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		for(int i = 0; i < settingsOn.size(); i++)
 		{
@@ -314,37 +314,37 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 		}
 
 		@Override
-		public DeviceSettingDTO[] getChannelOnSettings() throws RemoteException
+		public DeviceSetting[] getChannelOnSettings() throws RemoteException
 		{
 			return ChannelImpl.this.getChannelOnSettings();
 		}
 
 		@Override
-		public DeviceSettingDTO[] getChannelOffSettings() throws RemoteException
+		public DeviceSetting[] getChannelOffSettings() throws RemoteException
 		{
 			return ChannelImpl.this.getChannelOffSettings();
 		}
 
 		@Override
-		public void setChannelOnSettings(DeviceSettingDTO[] settings) throws MicroscopeLockedException, SettingException, RemoteException
+		public void setChannelOnSettings(DeviceSetting[] settings) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			ChannelImpl.this.setChannelOnSettings(settings, accessID);
 		}
 
 		@Override
-		public void setChannelOffSettings(DeviceSettingDTO[] settings) throws MicroscopeLockedException, SettingException, RemoteException
+		public void setChannelOffSettings(DeviceSetting[] settings) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			ChannelImpl.this.setChannelOffSettings(settings, accessID);
 		}
 
 		@Override
-		public void addChannelOnSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException
+		public void addChannelOnSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			ChannelImpl.this.addChannelOnSetting(setting, accessID);
 		}
 
 		@Override
-		public void addChannelOffSetting(DeviceSettingDTO setting) throws MicroscopeLockedException, SettingException, RemoteException
+		public void addChannelOffSetting(DeviceSetting setting) throws MicroscopeLockedException, SettingException, RemoteException
 		{
 			ChannelImpl.this.addChannelOffSetting(setting, accessID);
 		}

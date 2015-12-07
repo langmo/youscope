@@ -24,9 +24,9 @@ import org.youscope.serverinterfaces.YouScopeServer;
  * @author Moritz Lang
  *
  */
-public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<MicroplateJobConfigurationDTO>
+public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<MicroplateJobConfiguration>
 {
-	private final JobConfigurationPanel<MicroplateJobConfigurationDTO> contentPane;
+	private final JobConfigurationPanel<MicroplateJobConfiguration> contentPane;
 	/**
 	 * Constructor.
 	 * @param client Interface to the client.
@@ -36,17 +36,17 @@ public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<Mi
 	public MicroplateJobConfigurationAddon(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
 		super(getMetadata(),  client, server);
-		ArrayList<JobConfigurationPage<MicroplateJobConfigurationDTO>> pages = new ArrayList<JobConfigurationPage<MicroplateJobConfigurationDTO>>();
+		ArrayList<JobConfigurationPage<MicroplateJobConfiguration>> pages = new ArrayList<JobConfigurationPage<MicroplateJobConfiguration>>();
 		pages.add(new MicroplatePage(client));
 		pages.add(new WellSelectionPage(client, server));
 		pages.add(new ImagingProtocolPage(client, server));
 		
-		contentPane = new JobConfigurationPanel<MicroplateJobConfigurationDTO>(pages);
+		contentPane = new JobConfigurationPanel<MicroplateJobConfiguration>(pages);
 	}
-	static ComponentMetadataAdapter<MicroplateJobConfigurationDTO> getMetadata()
+	static ComponentMetadataAdapter<MicroplateJobConfiguration> getMetadata()
 	{
-		return new ComponentMetadataAdapter<MicroplateJobConfigurationDTO>(MicroplateJobConfigurationDTO.TYPE_IDENTIFIER, 
-				MicroplateJobConfigurationDTO.class, 
+		return new ComponentMetadataAdapter<MicroplateJobConfiguration>(MicroplateJobConfiguration.TYPE_IDENTIFIER, 
+				MicroplateJobConfiguration.class, 
 				Job.class, 
 				"Microplate", 
 				new String[]{"containers"},
@@ -54,12 +54,12 @@ public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<Mi
 	}
 	
 	@Override
-	protected Component createUI(MicroplateJobConfigurationDTO configuration) throws AddonException
+	protected Component createUI(MicroplateJobConfiguration configuration) throws AddonException
 	{
 		setTitle("Microplate Job Configuration");
 		setResizable(true);
 		setMaximizable(false);
-		this.setCommitButton(false);
+		this.setShowCloseButton(false);
 		
 		// Initialize configuration data for content pane, if yet not done...
 		getConfiguration();
@@ -70,7 +70,7 @@ public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<Mi
 		{
 			@Override
 			public void configurationFinished(JobConfiguration configuration) {
-				MicroplateJobConfigurationAddon.this.configurationFinished();
+				MicroplateJobConfigurationAddon.this.closeAddon();
 			}
 		});
 		contentPane.addSizeChangeListener(new ActionListener()
@@ -87,19 +87,19 @@ public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<Mi
 	@Override
 	public void setConfiguration(Configuration jobConfiguration) throws AddonException, ConfigurationException 
 	{
-		if(!(jobConfiguration instanceof MicroplateJobConfigurationDTO))
+		if(!(jobConfiguration instanceof MicroplateJobConfiguration))
 			throw new AddonException("Only microplate job configurations accepted by this addon.");
-		contentPane.setConfigurationData((MicroplateJobConfigurationDTO)jobConfiguration);
+		contentPane.setConfigurationData((MicroplateJobConfiguration)jobConfiguration);
 	}
 	
 	@Override
-	public MicroplateJobConfigurationDTO getConfiguration()
+	public MicroplateJobConfiguration getConfiguration()
 	{
-		MicroplateJobConfigurationDTO jobConfiguration = contentPane.getConfigurationData();
+		MicroplateJobConfiguration jobConfiguration = contentPane.getConfigurationData();
 		if(jobConfiguration == null)
 		{
 			// Set to standard configuration if not set from somebody else
-			jobConfiguration = new MicroplateJobConfigurationDTO();
+			jobConfiguration = new MicroplateJobConfiguration();
 			contentPane.setToDefault(jobConfiguration);
 			
 			contentPane.setConfigurationData(jobConfiguration);
@@ -108,8 +108,12 @@ public class MicroplateJobConfigurationAddon  extends ComponentAddonUIAdapter<Mi
 	}
 	
 	@Override
-	protected void commitChanges(MicroplateJobConfigurationDTO configuration) {
+	protected void commitChanges(MicroplateJobConfiguration configuration) {
 		// do nothing; we use our own configuration management, thus, this function is not called.
 		
+	}
+	@Override
+	protected void initializeDefaultConfiguration(MicroplateJobConfiguration configuration) throws AddonException {
+		contentPane.setToDefault(configuration);
 	}
 }

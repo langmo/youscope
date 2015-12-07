@@ -55,7 +55,7 @@ class ScriptDefinitionManager
 		}
 		return scriptDefinitionFolder.getAbsolutePath();
 	}
-	static boolean deleteScriptDefinition(ScriptDefinitionDTO scriptDefinition)
+	static boolean deleteScriptDefinition(ScriptDefinition scriptDefinition)
 	{
 		if(scriptDefinition == null || scriptDefinition.getShortCutFile() == null)
 			return false;
@@ -74,7 +74,7 @@ class ScriptDefinitionManager
 		
 		return file.delete();
 	}
-	static boolean saveScriptDefinition(ScriptDefinitionDTO scriptDefinition)
+	static boolean saveScriptDefinition(ScriptDefinition scriptDefinition)
 	{
 		if(scriptDefinitionFolder == null)
 		{
@@ -138,11 +138,11 @@ class ScriptDefinitionManager
 
 	}
 	
-	static ScriptDefinitionDTO[] getScriptDefinitions()
+	static ScriptDefinition[] getScriptDefinitions()
 	{
 		if(scriptDefinitionFolder==null || !scriptDefinitionFolder.exists() || !scriptDefinitionFolder.isDirectory())
 		{
-			return new ScriptDefinitionDTO[0];
+			return new ScriptDefinition[0];
 		}
 		File[] xmlFiles = scriptDefinitionFolder.listFiles(new FilenameFilter()
 		{
@@ -152,16 +152,16 @@ class ScriptDefinitionManager
 		    }
 
 		});
-		Vector<ScriptDefinitionDTO> scriptDefinitions = new Vector<ScriptDefinitionDTO>();
+		Vector<ScriptDefinition> scriptDefinitions = new Vector<ScriptDefinition>();
 		for(File xmlFile :xmlFiles)
 		{
-			ScriptDefinitionDTO scriptDefinition = getScriptDefinition(xmlFile);
+			ScriptDefinition scriptDefinition = getScriptDefinition(xmlFile);
 			if(scriptDefinition != null)
 				scriptDefinitions.add(scriptDefinition);
 		}
-		return scriptDefinitions.toArray(new ScriptDefinitionDTO[scriptDefinitions.size()]);
+		return scriptDefinitions.toArray(new ScriptDefinition[scriptDefinitions.size()]);
 	}
-	private static ScriptDefinitionDTO getScriptDefinition(File xmlFile)
+	private static ScriptDefinition getScriptDefinition(File xmlFile)
 	{
 		Document document;
 		try
@@ -184,7 +184,7 @@ class ScriptDefinitionManager
 			ClientSystem.err.println("Script file \"" + xmlFile.getAbsolutePath() + "\" is not valid since at least one node or its value attribute is missing.");
 			return null;
 		}
-		ScriptDefinitionDTO scriptDefinition = new ScriptDefinitionDTO(name, engine, file);
+		ScriptDefinition scriptDefinition = new ScriptDefinition(name, engine, file);
 		scriptDefinition.setShortCutFile(xmlFile.getName());
 		return scriptDefinition;
 	}
@@ -205,12 +205,12 @@ class ScriptDefinitionManager
 		return null;
 	}
 	
-	public static void runScript(ScriptDefinitionDTO scriptDefinition)
+	public static void runScript(ScriptDefinition scriptDefinition)
 	{
 		class ScriptRunner implements Runnable
 		{
-			private ScriptDefinitionDTO scriptDefinition;
-			ScriptRunner(ScriptDefinitionDTO scriptDefinition)
+			private ScriptDefinition scriptDefinition;
+			ScriptRunner(ScriptDefinition scriptDefinition)
 			{
 				this.scriptDefinition = scriptDefinition;
 			}
@@ -222,7 +222,7 @@ class ScriptDefinitionManager
 		}
 		(new Thread(new ScriptRunner(scriptDefinition))).start();
 	}
-	private static void runScriptInternal(ScriptDefinitionDTO scriptDefinition)
+	private static void runScriptInternal(ScriptDefinition scriptDefinition)
 	{
 		String engineName = scriptDefinition.getEngine();
 		ScriptEngineFactory factory = ClientSystem.getScriptEngine(engineName);

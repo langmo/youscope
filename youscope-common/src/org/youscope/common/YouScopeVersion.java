@@ -51,8 +51,8 @@ public class YouScopeVersion
 	public YouScopeVersion(String applicationName)
 	{
 		this.applicationName = applicationName;
-		String extractedMajorVersion = "1.5";
-		String extractedVersion = "R2015-01";
+		String extractedMajorVersion = "2.0";
+		String extractedVersion = "R2016-01";
 		String extractedRevision = UNKNOWN;
 		boolean extractedCleanFlag = false;
 		final InputStream stream = YouScopeVersion.class.getResourceAsStream("/BUILD-" + applicationName + ".INFO");

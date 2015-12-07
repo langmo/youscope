@@ -297,7 +297,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 			client.sendError("Error loading cell visualization configuration UI.", e1);
 			return;
 		}
-		if(cellVisualizationConfiguration != null && cellVisualizationConfiguration.getTypeIdentifier().equals(addon.getComponentMetadata().getTypeIdentifier()))
+		if(cellVisualizationConfiguration != null && cellVisualizationConfiguration.getTypeIdentifier().equals(addon.getAddonMetadata().getTypeIdentifier()))
 		{
 			try {
 				addon.setConfiguration(cellVisualizationConfiguration);

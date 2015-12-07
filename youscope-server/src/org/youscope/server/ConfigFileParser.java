@@ -13,7 +13,7 @@ import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.addon.microscopeaccess.StageDeviceInternal;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationException;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -328,7 +328,7 @@ class ConfigFileParser extends ConfigFileManipulator
 		}
 		else
 		{
-			getPreInitDevice(tokens[1]).addPreInitDeviceSetting(new DeviceSettingDTO(tokens[1], tokens[2], tokens[3]));
+			getPreInitDevice(tokens[1]).addPreInitDeviceSetting(new DeviceSetting(tokens[1], tokens[2], tokens[3]));
 		}
 	}
 
@@ -355,12 +355,12 @@ class ConfigFileParser extends ConfigFileManipulator
 
 	private void parseSystemStartup(String[] tokens, int accessID) throws SettingException, MicroscopeLockedException
 	{
-		microscope.getMicroscopeConfiguration().addSystemStartupSetting(new DeviceSettingDTO(tokens[3], tokens[4], tokens[5]), accessID);
+		microscope.getMicroscopeConfiguration().addSystemStartupSetting(new DeviceSetting(tokens[3], tokens[4], tokens[5]), accessID);
 	}
 
 	private void parseSystemShutdown(String[] tokens, int accessID) throws SettingException, MicroscopeLockedException
 	{
-		microscope.getMicroscopeConfiguration().addSystemShutdownSetting(new DeviceSettingDTO(tokens[3], tokens[4], tokens[5]), accessID);
+		microscope.getMicroscopeConfiguration().addSystemShutdownSetting(new DeviceSetting(tokens[3], tokens[4], tokens[5]), accessID);
 	}
 
 	private void parseImageSynchro(String[] tokens, int accessID) throws SettingException, MicroscopeLockedException
@@ -381,7 +381,7 @@ class ConfigFileParser extends ConfigFileManipulator
 			tokens[2] = tokens[2].substring(0, tokens[2].length() - 4);
 			onSettings = false;
 		}
-		DeviceSettingDTO setting = new DeviceSettingDTO(tokens[3], tokens[4], tokens[5]);
+		DeviceSetting setting = new DeviceSetting(tokens[3], tokens[4], tokens[5]);
 		if(onSettings)
 			channelManager.addChannel(tokens[1], tokens[2], accessID).addChannelOnSetting(setting, accessID);
 		else
@@ -430,7 +430,7 @@ class ConfigFileParser extends ConfigFileManipulator
 
 	private void parseConfigPixelSize(String[] tokens, int accessID) throws MicroscopeLockedException, SettingException
 	{
-		pixelSizeManager.addPixelSize(tokens[1], accessID).addPixelSizeSetting(new DeviceSettingDTO(tokens[2], tokens[3], tokens[4]), accessID);
+		pixelSizeManager.addPixelSize(tokens[1], accessID).addPixelSizeSetting(new DeviceSetting(tokens[2], tokens[3], tokens[4]), accessID);
 	}
 
 	private void parsePixelSize(String[] tokens, int accessID) throws NumberFormatException, MicroscopeLockedException, SettingException, DeviceException

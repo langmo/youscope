@@ -23,6 +23,7 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.clientinterfaces.YouScopeClient;
@@ -231,12 +232,15 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 		Vector<MicroplateType> microplateTypes = new Vector<MicroplateType>();
 		for(MicroplateAddonFactory factory :client.getMicroplateTypeAddons())
 		{
-			String[] microplateIDs = factory.getSupportedMicroplateIDs();
+			String[] microplateIDs = factory.getSupportedTypeIdentifiers();
 			for(String microplateID : microplateIDs)
 			{
-				MicroplateType microplateType = factory.createMicroplateType(microplateID);
-				if(microplateType == null)
+				MicroplateType microplateType;
+				try {
+					microplateType = factory.createMicroplateType(microplateID);
+				} catch (@SuppressWarnings("unused") AddonException e) {
 					continue;
+				}
 				microplateTypes.add(microplateType);
 				
 			}

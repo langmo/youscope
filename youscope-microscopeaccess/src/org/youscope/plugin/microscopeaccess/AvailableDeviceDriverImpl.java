@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.PreInitDevicePropertyInternal;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeException;
@@ -63,188 +63,12 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 		return library;
 	}
 
-	/**
-	 * Loads the pre-initialization properties for a given device.
-	 * This is a little bit tricky: Micro Manager does not allow to access the pre-init-properties of
-	 * a driver directly, but needs to load the device. We thus first try to find a device which is already loaded and from the same driver.
-	 * If this is not true, we load a dummy device, get the needed information and afterwards unload it again.
-	 * @param accessID The access-ID
-	 * @throws MicroscopeDriverException
-	 */
-	/*private void loadProperties(int accessID) throws MicroscopeDriverException
-	{
-		if(deviceProperties != null)
-			return;
-	
-		String deviceName = TEMP_DEVICE_NAME;
-		boolean dummyDevice = true;
-		
-		// First, try to find a loaded device from the same driver.
-		for(DeviceInternal loadedDevice : microscope.getDevices())
-		{
-			if(loadedDevice.getLibraryID().equals(library) && loadedDevice.getDriverID().equals(identifier))
-			{
-				deviceName = loadedDevice.getDeviceID();
-				dummyDevice = false;
-				break;
-			}
-		}
-		
-		
-		// Now, get the properties.
-		Vector<PreInitDevicePropertyInternal> preInitProps;
-		CMMCore core = null;
-		try
-		{
-			// Get access to microManager
-			core = microscope.startWrite(accessID);
-			
-			// Construct a temporal device, if needed.
-			if(dummyDevice)
-			{
-				core.loadDevice(deviceName, getLibraryID(), getDriverID());
-			}
-			
-			// Try finally block to make sure that the dummy device is unloaded again.
-			try
-			{
-				// Get properties which must be pre-initialized
-				StrVector propertyNames = core.getDevicePropertyNames(deviceName);
-				preInitProps = new Vector<PreInitDevicePropertyInternal>();
-				for(String propertyName : propertyNames)
-				{
-					if(core.isPropertyPreInit(deviceName, propertyName))
-					{
-						// Get property type.
-						PropertyType propertyType;
-						mmcorej.PropertyType mmPropertyType = core.getPropertyType(deviceName, propertyName);
-						if(mmPropertyType == mmcorej.PropertyType.Float)
-							propertyType = PropertyType.PROPERTY_FLOAT;
-						else if(mmPropertyType == mmcorej.PropertyType.Integer)
-							propertyType = PropertyType.PROPERTY_INTEGER;
-						else
-							propertyType = PropertyType.PROPERTY_STRING;
-						
-						// Get allowed values.
-						String currentValue = core.getProperty(deviceName, propertyName);
-						String[] propertyValues;
-						StrVector mmPropertyValues = core.getAllowedPropertyValues(deviceName, propertyName);
-						if(mmPropertyValues == null || mmPropertyValues.size() == 0)
-						{
-							propertyValues = null;
-						}
-						else
-						{
-							propertyValues = new String[(int)mmPropertyValues.size()];
-							for(int i = 0; i < propertyValues.length; i++)
-							{
-								propertyValues[i] = mmPropertyValues.get(i);
-							}
-							propertyType = PropertyType.PROPERTY_SELECTABLE;
-						}
-						preInitProps.add(new PreInitDevicePropertyImpl(microscope, propertyName, propertyType, propertyValues, currentValue));
-					}
-				} 
-			}
-			finally
-			{
-				// Unload temporal device
-				if(core != null && dummyDevice)
-				{
-					try
-					{
-						core.unloadDevice(deviceName);
-					}
-					catch(Exception e)
-					{
-						throw new MicroscopeDriverException("Could not unload temporarly constructed device \""+TEMP_DEVICE_NAME+"\". Unload it manually.", e);
-					}
-				}
-			}
-		}
-		catch(MicroscopeLockedException e)
-		{
-			throw new MicroscopeDriverException("Could not get driver information since microscope is locked.", e);
-		}
-		catch(Exception e)
-		{
-			throw new MicroscopeDriverException("Could not load driver information. ", e);
-		}
-		finally
-		{
-			microscope.unlockWrite();
-		}
-		
-		deviceProperties = preInitProps.toArray(new PreInitDevicePropertyInternal[preInitProps.size()]);
-	}*/
-	
-	/*@Override
-	public PreInitDevicePropertyInternal[] getPreInitDeviceProperties(int accessID) throws MicroscopeDriverException
-	{
-		loadProperties(accessID);
-		return deviceProperties;
-	}
-	
-	@Override
-	public void addDevice(String name, String library, String identifier, DeviceSettingDTO[] preInitSettings, int accessID) throws MicroscopeDriverException
-	{
-		if(name == null || name.length() < 1
-				|| library == null || library.length() < 1
-				|| identifier == null || identifier.length() <1)
-			throw new MicroscopeDriverException("Either the name, the library or the identifier of the driver which should be loaded is invalid");
-		
-		if(preInitSettings == null)
-			preInitSettings = new DeviceSettingDTO[0];
-		
-		try
-		{
-			// Get access to microManager
-			CMMCore core = microscope.startWrite(accessID);
-			
-			// Construct a device
-			core.loadDevice(name, library, identifier);
-			
-			// Set pre-init settings
-			for(DeviceSettingDTO setting : preInitSettings)
-			{
-				if(setting.isAbsoluteValue() == false)
-					throw new MicroscopeDriverException("Relative values are not allowed for properties when initializing a device.");
-				core.setProperty(setting.getDevice(), setting.getProperty(), setting.getStringValue());
-			}
-			
-			// Initialize device.
-			core.initializeDevice(name);
-			microscope.initializeDevice(name, library, identifier, accessID);
-		}
-		catch(MicroscopeLockedException e)
-		{
-			throw new MicroscopeDriverException("Could not add driver since microscope is locked.", e);
-		}
-		catch(MicroscopeException e)
-		{
-			throw new MicroscopeDriverException("Could not add driver information.", e);
-		}
-		catch(Exception e)
-		{
-			throw new MicroscopeDriverException("Could not add driver: " + e.getMessage());
-		}
-		finally
-		{
-			microscope.unlockWrite();
-		}
-	}*/
 
 	@Override
 	public boolean isSerialPortDriver(int accessID) throws MicroscopeLockedException, MicroscopeDriverException
 	{
 		if(currentlyLoadedDeviceID == null)
 			throw new MicroscopeDriverException("Device driver must be loaded before properties of the device can be queried.");
-		/*for(PreInitDevicePropertyInternal property : getPreInitDeviceProperties(accessID))
-		{
-			if(property.getPropertyID().equals("Port"))
-				return true;
-		}
-		return false;*/
 		return serialPort;
 	}
 
@@ -286,12 +110,12 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 	}
 
 	@Override
-	public synchronized void initializeDevice(DeviceSettingDTO[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException
+	public synchronized void initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException
 	{
 		if(currentlyLoadedDeviceID == null)
 			throw new MicroscopeDriverException("Device driver must be loaded before device is initialized.");
 		if(preInitSettings == null)
-			preInitSettings = new DeviceSettingDTO[0];
+			preInitSettings = new DeviceSetting[0];
 		
 		try
 		{
@@ -299,7 +123,7 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 			CMMCore core = microscope.startWrite(accessID);
 			
 			// Set pre-init settings
-			for(DeviceSettingDTO setting : preInitSettings)
+			for(DeviceSetting setting : preInitSettings)
 			{
 				if(setting.isAbsoluteValue() == false)
 					throw new MicroscopeDriverException("Relative values are not allowed for properties when initializing a device.");

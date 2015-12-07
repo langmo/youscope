@@ -546,4 +546,9 @@ class NemesysJobConfigurationAddon extends ComponentAddonUIAdapter<NemesysJobCon
     		configuration.setScript(scriptField.getText());
 		}
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(NemesysJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

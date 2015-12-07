@@ -4,8 +4,8 @@
 package org.youscope.plugin.microscopeaccess;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -22,9 +22,9 @@ import org.youscope.addon.microscopeaccess.PropertyInternal;
 import org.youscope.addon.microscopeaccess.ShutterDeviceInternal;
 import org.youscope.addon.microscopeaccess.StageDeviceInternal;
 import org.youscope.addon.microscopeaccess.StateDeviceInternal;
-import org.youscope.common.YouScopeMessageListener;
+import org.youscope.common.MessageListener;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.common.microscope.MicroscopeException;
@@ -65,7 +65,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	 */
 	private final ReentrantReadWriteLock		shortTimeMicroscopeAccessLock	= new ReentrantReadWriteLock();
 
-	private Vector<YouScopeMessageListener>	listeners						= new Vector<YouScopeMessageListener>();
+	private ArrayList<MessageListener>	listeners						= new ArrayList<MessageListener>();
 	
 	private final MicroscopeConfigurationImpl microscopeConfiguration;
 	
@@ -294,7 +294,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 
 	@Override
-	public void addMessageListener(YouScopeMessageListener listener)
+	public void addMessageListener(MessageListener listener)
 	{
 		synchronized(listeners)
 		{
@@ -303,7 +303,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 
 	@Override
-	public void removeMessageListener(YouScopeMessageListener listener)
+	public void removeMessageListener(MessageListener listener)
 	{
 		synchronized(listeners)
 		{
@@ -313,19 +313,18 @@ class MicroscopeImpl implements MicroscopeInternal
 
 	void stateChanged(String description)
 	{
-		Date time = new Date();
 		synchronized(listeners)
 		{
 			for(int i = 0; i < listeners.size(); i++)
 			{
-				YouScopeMessageListener listener = listeners.elementAt(i);
+				MessageListener listener = listeners.get(i);
 				try
 				{
-					listener.consumeMessage(description, time);
+					listener.sendMessage(description);
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{
-					listeners.removeElementAt(i);
+					listeners.remove(i);
 					i--;
 				}
 			}
@@ -334,19 +333,18 @@ class MicroscopeImpl implements MicroscopeInternal
 
 	void errorOccured(String description, Throwable throwable)
 	{
-		Date time = new Date();
 		synchronized(listeners)
 		{
 			for(int i = 0; i < listeners.size(); i++)
 			{
-				YouScopeMessageListener listener = listeners.elementAt(i);
+				MessageListener listener = listeners.get(i);
 				try
 				{
-					listener.consumeError(description, throwable, time);
+					listener.sendErrorMessage(description, throwable);
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{
-					listeners.removeElementAt(i);
+					listeners.remove(i);
 					i--;
 				}
 			}
@@ -395,7 +393,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	 * @param onlyAbsolute True if an exception should be thrown if the setting corresponds to relative values.
 	 * @throws SettingException
 	 */
-	void isSettingValid(DeviceSettingDTO setting, boolean onlyAbsolute) throws SettingException
+	void isSettingValid(DeviceSetting setting, boolean onlyAbsolute) throws SettingException
 	{
 		if(setting.getDevice() == null || setting.getDevice().length() <= 0)
 			throw new SettingException("Device name of device setting is null or empty.");
@@ -467,9 +465,9 @@ class MicroscopeImpl implements MicroscopeInternal
 	 * @param onlyAbsolute True if an exception should be thrown if the setting corresponds to relative values.
 	 * @throws SettingException
 	 */
-	void areSettingsValid(DeviceSettingDTO[] settings, boolean onlyAbsolute) throws SettingException
+	void areSettingsValid(DeviceSetting[] settings, boolean onlyAbsolute) throws SettingException
 	{
-		for(DeviceSettingDTO setting : settings)
+		for(DeviceSetting setting : settings)
 		{
 			isSettingValid(setting, onlyAbsolute);
 		}
@@ -631,7 +629,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 
 	@Override
-	public void applyDeviceSettingAsync(DeviceSettingDTO setting, int accessID) throws MicroscopeLockedException, SettingException, InterruptedException, MicroscopeException
+	public void applyDeviceSettingAsync(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException, InterruptedException, MicroscopeException
 	{
 		if(setting == null)
 			throw new SettingException("Device setting is null pointer.");
@@ -672,7 +670,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 
 	@Override
-	public void applyDeviceSetting(DeviceSettingDTO setting, int accessID) throws MicroscopeLockedException, SettingException, InterruptedException, MicroscopeException
+	public void applyDeviceSetting(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException, InterruptedException, MicroscopeException
 	{
 		if(setting == null)
 			throw new SettingException("Device setting is null pointer.");
@@ -693,14 +691,14 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 	
 	@Override
-	public void applyDeviceSettingsAsync(DeviceSettingDTO[] settings, int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
+	public void applyDeviceSettingsAsync(DeviceSetting[] settings, int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
 		try
 		{
 			lockWrite(accessID);
-			for(DeviceSettingDTO setting : settings)
+			for(DeviceSetting setting : settings)
 			{
 				if(setting == null)
 					throw new SettingException("Device setting is null pointer.");
@@ -714,14 +712,14 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 	
 	@Override
-	public void applyDeviceSettings(DeviceSettingDTO[] settings, int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
+	public void applyDeviceSettings(DeviceSetting[] settings, int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
 	{
 		try
 		{
 			lockWrite(accessID);
 			applyDeviceSettingsAsync(settings, accessID);
 			Vector<String> alreadyWaitedFor = new Vector<String>();
-			settingsIterator: for(DeviceSettingDTO setting : settings)
+			settingsIterator: for(DeviceSetting setting : settings)
 			{
 				String device = setting.getDevice();
 				for(String waitedDevice : alreadyWaitedFor)
@@ -1093,7 +1091,7 @@ class MicroscopeImpl implements MicroscopeInternal
 		stateChanged("Device " + deviceID + " unloaded.");
 	}
 
-	void labelChanged(DeviceSettingDTO oldLabel, DeviceSettingDTO newLabel)
+	void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
 	{
 		synchronized(microscopeConfigurationListeners)
 		{

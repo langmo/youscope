@@ -18,7 +18,7 @@ import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.PropertyType;
 
 /**
@@ -42,7 +42,7 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 				} catch (ComponentCreationException e1) {
 					throw new AddonException("Device slides job requires composite job plugin.", e1);
 				}
-				DeviceSettingDTO[][] settings = configuration.getMultiPosDeviceSettings();
+				DeviceSetting[][] settings = configuration.getMultiPosDeviceSettings();
 				// First check if job is valid
 				if(settings.length <= 0)
 					return compositeJob;
@@ -128,13 +128,13 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 				// Add the jobs for all positions
 				for(int i = 0; i < settings.length; i++)
 				{
-					DeviceSettingDTO[] jobSettings = settings[i];
-					DeviceSettingDTO[] internalSettings = new DeviceSettingDTO[jobSettings.length];
+					DeviceSetting[] jobSettings = settings[i];
+					DeviceSetting[] internalSettings = new DeviceSetting[jobSettings.length];
 					
 					// Replace relative positions
 					for(int j = 0; j < jobSettings.length; j++)
 					{
-						DeviceSettingDTO newSetting;
+						DeviceSetting newSetting;
 						newSetting = jobSettings[j].clone();
 						if(!jobSettings[j].isAbsoluteValue())
 						{
@@ -177,13 +177,13 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 				}
 
 				// Finally, set all relative value settings to zero
-				Vector<DeviceSettingDTO> tempSettings = new Vector<DeviceSettingDTO>();
+				Vector<DeviceSetting> tempSettings = new Vector<DeviceSetting>();
 				for(int i = 0; i < lastPositions.length; i++)
 				{
 					// If value is given absolutely, we don't care.
 					if(lastPositions[i] == null)
 						continue;
-					DeviceSettingDTO setting;
+					DeviceSetting setting;
 					setting = settings[0][i].clone();
 					if(propertyTypes[i] == PropertyType.PROPERTY_FLOAT)
 					{
@@ -201,7 +201,7 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 				} catch (ComponentCreationException e) {
 					throw new AddonException("Multi positions jobs need the device job plugin.", e);
 				}
-				deviceJob.setDeviceSettings(tempSettings.toArray(new DeviceSettingDTO[tempSettings.size()]));
+				deviceJob.setDeviceSettings(tempSettings.toArray(new DeviceSetting[tempSettings.size()]));
 				compositeJob.addJob(deviceJob);
 				
 				return compositeJob;

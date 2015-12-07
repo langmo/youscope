@@ -29,12 +29,12 @@ import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration
  */
 public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter 
 {
-	private static final CustomAddonCreator<MicroplateJobConfigurationDTO, CompositeJob> CREATOR = new CustomAddonCreator<MicroplateJobConfigurationDTO, CompositeJob>()
+	private static final CustomAddonCreator<MicroplateJobConfiguration, CompositeJob> CREATOR = new CustomAddonCreator<MicroplateJobConfiguration, CompositeJob>()
 	{
 
 		@Override
 		public CompositeJob createCustom(PositionInformation mainPositionInformation,
-				MicroplateJobConfigurationDTO configuration, ConstructionContext constructionContext)
+				MicroplateJobConfiguration configuration, ConstructionContext constructionContext)
 						throws ConfigurationException, AddonException 
 		{
 			try

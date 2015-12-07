@@ -5,7 +5,7 @@ package org.youscope.addon.microscopeaccess;
 
 
 
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -66,7 +66,7 @@ public interface AvailableDeviceDriverInternal
 	 * @throws MicroscopeDriverException
 	 * @throws MicroscopeLockedException 
 	 */
-	public void initializeDevice(DeviceSettingDTO[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException;
+	public void initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException;
 	
 	/**
 	 * Unloads a previously loaded, but yet not initialized device. Should be called to clean up if a device was loaded, but it was decided to not initialize it.

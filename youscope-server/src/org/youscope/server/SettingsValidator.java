@@ -7,7 +7,7 @@ import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.addon.microscopeaccess.PropertyInternal;
 import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.PropertyType;
 import org.youscope.common.microscope.SettingException;
 
@@ -26,7 +26,7 @@ class SettingsValidator
 	 * @param accessID The access ID for the microscope used for checking.
 	 * @throws SettingException
 	 */
-	public static void isSettingValid(DeviceSettingDTO setting, boolean onlyAbsolute, MicroscopeInternal microscope, int accessID) throws SettingException
+	public static void isSettingValid(DeviceSetting setting, boolean onlyAbsolute, MicroscopeInternal microscope, int accessID) throws SettingException
 	{
 		if(setting.getDevice() == null || setting.getDevice().length() <= 0)
 			throw new SettingException("Device name of device setting is null or empty.");
@@ -100,9 +100,9 @@ class SettingsValidator
 	 * @param accessID The access ID for the microscope used for checking.
 	 * @throws SettingException
 	 */
-	public static void areSettingsValid(DeviceSettingDTO[] settings, boolean onlyAbsolute, MicroscopeInternal microscope, int accessID) throws SettingException
+	public static void areSettingsValid(DeviceSetting[] settings, boolean onlyAbsolute, MicroscopeInternal microscope, int accessID) throws SettingException
 	{
-		for(DeviceSettingDTO setting : settings)
+		for(DeviceSetting setting : settings)
 		{
 			isSettingValid(setting, onlyAbsolute, microscope, accessID);
 		}

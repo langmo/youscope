@@ -96,4 +96,9 @@ class FlexibleControllerUI extends ComponentAddonUIAdapter<FlexibleControllerCon
 		if(isInitialized())
 			syringeTableField.setNumSyringes(this.numFlowUnits);
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(FlexibleControllerConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

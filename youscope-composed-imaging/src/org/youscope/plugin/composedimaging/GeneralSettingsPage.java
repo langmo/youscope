@@ -27,7 +27,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ImageFolderStructure;
 import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriodDTO;
+import org.youscope.common.configuration.VaryingPeriod;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.PeriodVaryingPanel;
@@ -286,9 +286,9 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 			periodField.setValue(((RegularPeriod)configuration.getPeriod()).getPeriod() / 1000);
 			periodFixed.doClick();
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriodDTO)
+		else if(configuration.getPeriod() instanceof VaryingPeriod)
 		{
-			VaryingPeriodDTO period = (VaryingPeriodDTO)configuration.getPeriod();
+			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
 			periodVaryingDataPanel.setPeriod(period);
 			periodField.setValue(60);
 			periodVarying.doClick();

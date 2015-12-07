@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.PreInitDevicePropertyInternal;
 import org.youscope.common.microscope.AvailableDeviceDriver;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -89,7 +89,7 @@ public class AvailableDeviceDriverRMI extends UnicastRemoteObject implements Ava
 	}
 
 	@Override
-	public void initializeDevice(DeviceSettingDTO[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException
+	public void initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException
 	{
 		deviceDriver.initializeDevice(preInitSettings, accessID);
 	}

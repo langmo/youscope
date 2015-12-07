@@ -44,7 +44,7 @@ import javax.swing.event.ListSelectionListener;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.AvailableDeviceDriver;
 import org.youscope.common.microscope.DeviceLoader;
-import org.youscope.common.microscope.DeviceSettingDTO;
+import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.PreInitDeviceProperty;
 import org.youscope.uielements.ImageLoadingTools;
@@ -645,11 +645,11 @@ class ManageAddDeviceFrame
 			// Add device.
 			try
 			{
-				DeviceSettingDTO[] deviceSettings = new DeviceSettingDTO[preInitProperties.length];
+				DeviceSetting[] deviceSettings = new DeviceSetting[preInitProperties.length];
 				for(int i=0; i<deviceSettings.length; i++)
 				{
 					String propertyName = preInitProperties[i].getPropertyID();
-					deviceSettings[i] = new DeviceSettingDTO();
+					deviceSettings[i] = new DeviceSetting();
 					deviceSettings[i].setAbsoluteValue(true);
 					deviceSettings[i].setDeviceProperty(deviceID, propertyName);
 					String value;

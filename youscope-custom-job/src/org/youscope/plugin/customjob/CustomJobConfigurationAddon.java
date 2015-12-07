@@ -58,4 +58,9 @@ class CustomJobConfigurationAddon extends ComponentAddonUIAdapter<CustomJobConfi
 	protected void commitChanges(CustomJobConfiguration configuration) {
 		configuration.setJobs(jobPanel.getJobs());
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(CustomJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

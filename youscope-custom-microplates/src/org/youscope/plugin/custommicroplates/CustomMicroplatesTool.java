@@ -63,7 +63,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 		setMaximizable(false);
 		setResizable(true);
 		setTitle("Custom Microplates Configuration");
-		setCloseButton(true);
+		setShowCloseButton(true);
 		
 		// Grid Bag Layouts
 		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();

@@ -449,4 +449,9 @@ class StaggeringJobConfigurationAddon  extends ComponentAddonUIAdapter<Staggerin
 		configuration.setNumTilesPerIteration(nTilesIter);
 		configuration.setJobs(jobPanel.getJobs());		
 	}
+
+	@Override
+	protected void initializeDefaultConfiguration(StaggeringJobConfiguration configuration) throws AddonException {
+		// do nothing.
+	}
 }

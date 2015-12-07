@@ -5,14 +5,14 @@ package org.youscope.plugin.openbis;
 
 import java.rmi.RemoteException;
 
-import org.youscope.serverinterfaces.GeneralPurposeAddon;
+import org.youscope.serverinterfaces.ServerAddon;
 
 /**
  * Addon allowing to transfer measurement data (images, meta-data) to OpenBIS.
  * @author Moritz Lang
  *
  */
-public interface OpenBISAddon extends GeneralPurposeAddon
+public interface OpenBISAddon extends ServerAddon
 {
 	/**
 	 * Transfers a measurement to OpenBIS and saves it there under openBISUser/projectIdentifier/measurementIdentifier. If overwrite == false, an OpenBISException is thrown if a measurement with the
