@@ -11,7 +11,7 @@ extern "C" {
  * Class:     org_youscope_plugin_matlabscripting_util_LongFileNameToShort
  * Method:    toShortFileName
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
- */
+ */ 
 JNIEXPORT jstring JNICALL Java_org_youscope_plugin_matlabscripting_util_LongFileNameToShort_toShortFileName
   (JNIEnv *, jobject, jstring);
 

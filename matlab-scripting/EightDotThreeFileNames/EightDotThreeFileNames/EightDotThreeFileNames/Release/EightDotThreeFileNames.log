@@ -1,0 +1,26 @@
+﻿Der Buildvorgang wurde am 07.12.2015 16:09:02 gestartet.
+     1>Projekt "C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\EightDotThreeFileNames\EightDotThreeFileNames.vcxproj" auf Knoten "2", Rebuild Ziel(e).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppClean.targets(74,5): warning : Der Prozess kann nicht auf die Datei "C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\EightDotThreeFileNames\Release\vc140.pdb" zugreifen, da sie von einem anderen Prozess verwendet wird.
+     1>ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\Java\jdk1.8.0_45\include" /I"C:\Program Files\Java\jdk1.8.0_45\include\win32" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _JNI_IMPLEMENTATION_ /D NDEBUG /D _WINDOWS /D _USRDLL /D EIGHTDOTTHREEFILENAMES_EXPORTS /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vcWindows7.1SDK.pdb" /Gd /TP /analyze- /errorReport:prompt dllmain.cpp
+         dllmain.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\Java\jdk1.8.0_45\include" /I"C:\Program Files\Java\jdk1.8.0_45\include\win32" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _JNI_IMPLEMENTATION_ /D NDEBUG /D _WINDOWS /D _USRDLL /D EIGHTDOTTHREEFILENAMES_EXPORTS /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vcWindows7.1SDK.pdb" /Gd /TP /analyze- /errorReport:prompt EightDotThreeFileNames.cpp org_youscope_plugin_matlabscripting_util_LongFileNameToShort.cpp stdafx.cpp
+         EightDotThreeFileNames.cpp
+         org_youscope_plugin_matlabscripting_util_LongFileNameToShort.cpp
+         stdafx.cpp
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.dll" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\EightDotThreeFileNames.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.lib" /MACHINE:X86 /DLL Release\dllmain.obj
+         Release\EightDotThreeFileNames.obj
+         Release\org_youscope_plugin_matlabscripting_util_LongFileNameToShort.obj
+         Release\stdafx.obj
+            Creating library C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.lib and object C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.exp
+         Generating code
+         Finished generating code
+         EightDotThreeFileNames.vcxproj -> C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.dll
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.1\bin\mt.exe /nologo /verbose /outputresource:"C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\Release\EightDotThreeFileNames.dll;#2" /manifest Release\EightDotThreeFileNames.dll.intermediate.manifest
+     1>Die Erstellung von Projekt "C:\YouScope\sources\youscope\matlab-scripting\org_youscope_plugin_matlabscripting_util_LongFileNameToShort\EightDotThreeFileNames\EightDotThreeFileNames\EightDotThreeFileNames.vcxproj" ist abgeschlossen (Rebuild Ziel(e)).
+
+Der Buildvorgang wurde erfolgreich ausgeführt.
+
+Verstrichene Zeit 00:00:05.74
