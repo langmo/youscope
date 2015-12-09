@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
@@ -221,7 +222,8 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		private Component addonConfigurationPanel = null;
 		private ComponentAddonUI<? extends DropletObserverConfiguration> currentAddon = null;
 		private final ComponentComboBox<DropletObserverConfiguration>	observerTypeField;
-		
+		private JTextField dropletTableNameField = new JTextField();
+		private JCheckbox saveDropletTableField )
 		ObserverConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
 		{
 			DropletObserverConfiguration lastConfiguration = configuration.getObserverConfiguration();
@@ -239,6 +241,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			add(new JLabel("Observer stategy:"));
 			add(observerTypeField);
 			displayAddonConfiguration(observerTypeField.getSelectedElement());
+			add(new JLabel("Droplet-table save name (without extension):"))
 		}
 		private Component createErrorUI(String message, Exception exception)
 		{
@@ -294,7 +297,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 				return;
 			}
 			
-			addFill(addonConfigurationPanel);
+			addFill(addonConfigurationPanel, 2);
 			revalidate();
 			revalidate();
 			if(getContainingFrame().isVisible())

@@ -59,6 +59,11 @@ public class DropletMicrofluidicJobAddonFactory extends ComponentAddonFactoryAda
 					throw new ConfigurationException("No observer configuration set.");
 				job.setObserver(constructionContext.getComponentProvider().createComponent(positionInformation, observerConfiguration, DropletObserverResource.class));
 				
+				if(configuration.getDropletTableSaveName() != null)
+				{
+					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableDataListener(configuration.getDropletTableSaveName()));
+				}
+				
 				DropletMicrofluidicJobCallback callback;
 				try {
 					callback = constructionContext.getCallbackProvider().createCallback(DropletMicrofluidicJobCallback.TYPE_IDENTIFIER, DropletMicrofluidicJobCallback.class);

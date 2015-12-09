@@ -92,6 +92,18 @@ public class DynamicPanel extends JPanel
 	}
 	
 	/**
+	 * Inserts an element at the given index, setting the layout such that the element gets additional vertical space if available.
+	 * @param component The component to add.
+	 * @param index The index where to add the component.
+	 * @return The added component.
+	 * @throws IllegalArgumentException If the index is invalid.
+	 */
+	public Component addFill(Component component, int index) throws IllegalArgumentException 
+	{
+		return this.add(component, index, FILL_CONSTRAINT);
+	}
+	
+	/**
 	 * Adds an empty document, setting its layout such that it fills empty vertical space if available.
 	 * @return The added empty document.
 	 */

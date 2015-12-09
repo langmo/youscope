@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @XStreamAlias("droplet-based-microfluidics-job")
-class DropletMicrofluidicJobConfiguration extends JobConfiguration implements TableProducerConfiguration
+public class DropletMicrofluidicJobConfiguration extends JobConfiguration implements TableProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -48,6 +48,17 @@ class DropletMicrofluidicJobConfiguration extends JobConfiguration implements Ta
 	private String nemesysDevice = null;
 	
 	/**
+	 * Default name for droplet table.
+	 */
+	public static final String DROPLET_TABLE_DEFAULT_NAME = "droplet";
+	/**
+	 * The name under which the droplet table should be saved.
+	 */
+	@XStreamAlias("droplet-table-save-name")
+	private String dropletTableSaveName = DROPLET_TABLE_DEFAULT_NAME;
+	
+	
+	/**
 	 * Constructor.
 	 */
 	public DropletMicrofluidicJobConfiguration()
@@ -64,6 +75,26 @@ class DropletMicrofluidicJobConfiguration extends JobConfiguration implements Ta
 		autofocusConfiguration.setResetFocusAfterSearch(false);
 	}
 	
+	/**
+	 * Returns the file name (without extension) under which the droplet table should
+	 * be saved. Returns null if droplet table is not saved.
+	 * @return Droplet table save name, or null.
+	 */
+	public String getDropletTableSaveName()
+	{
+		return dropletTableSaveName;
+	}
+
+	/**
+	 * Sets the file name (without extension) under which the droplet table should
+	 * be saved. Set to null to not save droplet table.
+	 * @param dropletTableSaveName Droplet table save name, or null.
+	 */
+	public void setDropletTableSaveName(String dropletTableSaveName)
+	{
+		this.dropletTableSaveName = dropletTableSaveName;
+	}
+
 	/**
 	 * Returns the name of the Nemesys device. Initially null, i.e. unset.
 	 * @return nemesys device name.
@@ -108,18 +139,33 @@ class DropletMicrofluidicJobConfiguration extends JobConfiguration implements Ta
 		return "Droplet based microfluidics";
 	}
 
+	/**
+	 * Returns the configuration of the controll algorithm.
+	 * @return Control algorithm configuration.
+	 */
 	public DropletControllerConfiguration getControllerConfiguration() {
 		return controllerConfiguration;
 	}
 
+	/**
+	 * Sets the configuration of the controll algorithm.
+	 * @param controllerConfiguration Control algorithm configuration.
+	 */
 	public void setControllerConfiguration(DropletControllerConfiguration controllerConfiguration) {
 		this.controllerConfiguration = controllerConfiguration;
 	}
 
+	/**
+	 * Returns the configuration of the observer of the droplet heights.
+	 * @return Droplet height observer.
+	 */
 	public DropletObserverConfiguration getObserverConfiguration() {
 		return observerConfiguration;
 	}
-
+	/**
+	 * Sets the configuration of the observer of the droplet heights.
+	 * @param observerConfiguration Droplet height observer configuraion.
+	 */
 	public void setObserverConfiguration(DropletObserverConfiguration observerConfiguration) {
 		this.observerConfiguration = observerConfiguration;
 	}
