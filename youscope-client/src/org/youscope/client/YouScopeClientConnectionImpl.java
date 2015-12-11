@@ -3,19 +3,15 @@
  */
 package org.youscope.client;
 
-import javax.script.ScriptEngineFactory;
-
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
-import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
-import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.clientinterfaces.ClientAddonProvider;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
 
@@ -106,57 +102,9 @@ class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
     }
 
     @Override
-    public Iterable<MeasurementAddonFactory> getMeasurementAddons()
-    {
-        return ClientSystem.getMeasurementAddons();
-    }
-
-    @Override
-    public Iterable<ToolAddonFactory> getToolAddons()
-    {
-        return ClientSystem.getToolAddons();
-    }
-
-    @Override
-    public MeasurementAddonFactory getMeasurementAddon(String addonID)
-    {
-        return ClientSystem.getMeasurementAddon(addonID);
-    }
-
-    @Override
-    public ToolAddonFactory getToolAddon(String addonID)
-    {
-        return ClientSystem.getToolAddon(addonID);
-    }
-
-    @Override
-    public Iterable<MicroplateAddonFactory> getMicroplateTypeAddons()
-    {
-        return ClientSystem.getMicroplateTypeAddons();
-    }
-
-    @Override
-    public MicroplateAddonFactory getMicroplateTypeAddon(String addonID)
-    {
-        return ClientSystem.getMicroplateTypeAddon(addonID);
-    }
-
-    @Override
     public YouScopeProperties getProperties()
     {
         return this;
-    }
-
-    @Override
-    public Iterable<ScriptEngineFactory> getScriptEngineFactories()
-    {
-        return ClientSystem.getScriptEngines();
-    }
-
-    @Override
-    public ScriptEngineFactory getScriptEngineFactory(String engineName)
-    {
-        return ClientSystem.getScriptEngine(engineName);
     }
 
     @Override
@@ -166,42 +114,18 @@ class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
     }
 
     @Override
-    public Iterable<PostProcessorAddonFactory> getMeasurementPostProcessorAddons()
-    {
-        return ClientSystem.getMeasurementPostProcessorAddons();
-    }
-
-    @Override
-    public PostProcessorAddonFactory getMeasurementPostProcessorAddon(String addonID)
-    {
-        return ClientSystem.getMeasurementPostProcessorAddon(addonID);
-    }
-
-    @Override
     public boolean editMeasurement(MeasurementConfiguration configuration)
     {
-        MeasurementAddonFactory addonFactory = ClientSystem.getMeasurementAddon(configuration.getTypeIdentifier());
-        if (addonFactory == null)
-        {
-            ClientSystem.err.println("Could not find addon to configure measurement of type " + configuration.getTypeIdentifier() + ".");
-            return false;
-        }
         ComponentAddonUI<? extends MeasurementConfiguration> addon;
 		try {
-			addon = addonFactory.createMeasurementUI(configuration.getTypeIdentifier(), new YouScopeClientConnectionImpl(),
-			        YouScopeClientImpl.getServer());
+			addon = ClientAddonProviderImpl.getProvider().createComponentUI(configuration);
 		} catch (AddonException e1) {
 			ClientSystem.err.println("Cannot create measurement configuration UI.", e1);
             return false;
-		}
-        try
-        {
-            addon.setConfiguration(configuration);
-        } catch (Exception e)
-        {
-            ClientSystem.err.println("Cannot load measurement configuration.", e);
+		} catch (ConfigurationException e) {
+			ClientSystem.err.println("Configuration of measurement invalid.", e);
             return false;
-        }
+		}
         addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
         {
 
@@ -247,6 +171,16 @@ class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
 	@Override
 	public ClientAddonProvider getAddonProvider() {
 		return ClientAddonProviderImpl.getProvider();
+	}
+
+	@Override
+	public void setProperty(StandardProperty property, Object value) {
+		ConfigurationSettings.setProperty(property, value);
+	}
+
+	@Override
+	public Object getProperty(StandardProperty property) {
+		return ConfigurationSettings.getProperty(property);
 	}
 
    

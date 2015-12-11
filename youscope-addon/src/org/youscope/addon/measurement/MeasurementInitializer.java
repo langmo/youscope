@@ -1,10 +1,10 @@
 package org.youscope.addon.measurement;
 
 import org.youscope.addon.AddonException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * Interface which has to be implemented if the creation of a component, given its configuration, should be done

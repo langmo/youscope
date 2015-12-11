@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -32,7 +33,7 @@ public class ImageTools
 	 * @return The resulting image.
 	 * @throws ImageConvertException
 	 */
-	public static ImageEvent toYouScopeImage(BufferedImage image) throws ImageConvertException
+	public static ImageEvent<?> toYouScopeImage(BufferedImage image) throws ImageConvertException
 	{
 		Raster ras = image.getData();
 		int bands = ras.getNumBands();
@@ -72,8 +73,15 @@ public class ImageTools
 		{
 			bitDepth = 8 * bytesPerPixel;
 		}
-
-		ImageEvent result = new ImageEvent(rawData, image.getWidth(), image.getHeight(), bytesPerPixel, bitDepth);
+		ImageEvent<?> result;
+		try
+		{
+			result = ImageEvent.createImage(rawData, image.getWidth(), image.getHeight(), bitDepth);
+		}
+		catch(Exception e)
+		{
+			throw new ImageConvertException("Error creating YouScope image from buffered image.", e);
+		}
 		result.setBands(bands);
 
 		return result;
@@ -87,7 +95,7 @@ public class ImageTools
 	 * @return created Image.
 	 * @throws ImageConvertException
 	 */
-	public static BufferedImage getMicroscopeImage(ImageEvent imageEvent, BufferedImage bufferedImage) throws ImageConvertException
+	public static BufferedImage getMicroscopeImage(ImageEvent<?> imageEvent, BufferedImage bufferedImage) throws ImageConvertException
 	{
 		return getScaledMicroscopeImage(imageEvent, 0.0F, 1.0F, bufferedImage);
 	}
@@ -98,7 +106,7 @@ public class ImageTools
 	 * @return created Image.
 	 * @throws ImageConvertException
 	 */
-	public static BufferedImage getMicroscopeImage(ImageEvent imageEvent) throws ImageConvertException
+	public static BufferedImage getMicroscopeImage(ImageEvent<?> imageEvent) throws ImageConvertException
 	{
 		return getScaledMicroscopeImage(imageEvent, 0.0F, 1.0F, null);
 	}
@@ -112,11 +120,138 @@ public class ImageTools
 	 * @return created Image.
 	 * @throws ImageConvertException
 	 */
-	public static BufferedImage getScaledMicroscopeImage(ImageEvent imageEvent, float lowerCutoff, float upperCutoff) throws ImageConvertException
+	public static BufferedImage getScaledMicroscopeImage(ImageEvent<?> imageEvent, float lowerCutoff, float upperCutoff) throws ImageConvertException
 	{
 		return getScaledMicroscopeImage(imageEvent, lowerCutoff, upperCutoff, null);
 	}
+	
+	/**
+	 * Clones a buffered image. The two images are independent, i.e. changes in one do not affect the other.
+	 * @param bufferedImage The image to clone.
+	 * @return the cloned image.
+	 */
+	public static BufferedImage cloneImage(BufferedImage bufferedImage) 
+	{
+		 ColorModel cm = bufferedImage.getColorModel();
+		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		 WritableRaster raster = bufferedImage.copyData(null);
+		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
 
+	/**
+	 * Returns a scaled version of the image. Only supports 8 and 16bit grayscale images. For all other images, returns the original image.
+	 * @param bufferedImage The buffered image to transform.
+	 * @param lowerCutoff Lower cutoff (0<=lowerCutoff<upperCutoff<=1).
+	 * @param upperCutoff Upper cutoff (0<=lowerCutoff<upperCutoff<=1)
+	 * @param returnVal Image to save the result in, or null to create new image. Note: the function might save the resulting image in this variable, or might not, depending on if returnVal is suited.
+	 * @return The scaled image, or the original image if image could not be scaled.
+	 */
+	public static BufferedImage getScaledImage(BufferedImage bufferedImage, float lowerCutoff, float upperCutoff, BufferedImage returnVal)
+	{
+		if(lowerCutoff > upperCutoff)
+		{
+			float temp = lowerCutoff;
+			lowerCutoff = upperCutoff;
+			upperCutoff = temp;
+		}
+		if(lowerCutoff < 0)
+			lowerCutoff = 0;
+		if(upperCutoff > 1)
+			upperCutoff = 1;
+		if(lowerCutoff == 0.0 && upperCutoff == 1.0)
+			return bufferedImage;
+		long maxValue = getMaximalPixelValue(bufferedImage);
+		if(maxValue <=0)
+			return bufferedImage;
+		
+		if(returnVal == null || returnVal.getWidth() != bufferedImage.getWidth() || returnVal.getHeight() != bufferedImage.getHeight() || returnVal.getType() != bufferedImage.getType() || returnVal.getRaster().getTransferType() != bufferedImage.getRaster().getTransferType() || returnVal.getRaster().getNumDataElements() != bufferedImage.getRaster().getNumDataElements())
+		{
+			returnVal = cloneImage(bufferedImage);
+		}
+		
+		double scaleFactor = 1.0 / (upperCutoff - lowerCutoff);
+		int offset = (int)(-lowerCutoff * maxValue);
+		int highestValue = (int)(maxValue / scaleFactor - offset);
+		int lowestValue = -offset;
+
+		int width = bufferedImage.getWidth();
+		int height = bufferedImage.getHeight();
+		
+		WritableRaster raster = returnVal.getRaster();
+		WritableRaster orgRaster = bufferedImage.getRaster();
+		int imageType = returnVal.getType();
+		int dataType = bufferedImage.getRaster().getTransferType();
+		int numElementsPerPixel = bufferedImage.getRaster().getNumDataElements();
+		if(dataType==DataBuffer.TYPE_BYTE && imageType == BufferedImage.TYPE_BYTE_GRAY && numElementsPerPixel==1)
+		{
+			byte[] imageData = new byte[1];
+			int value;
+			for(int x = 0; x < width; x++)
+			{
+				for(int y = 0; y < height; y++)
+				{
+					orgRaster.getDataElements(x, y, imageData);
+					value = imageData[0] & 0xff;
+					if(value <= lowestValue)
+						imageData[0] = 0;
+					else if(value >= highestValue)
+						imageData[0] = (byte) maxValue;
+					else
+						imageData[0] = (byte) ((value + offset) * scaleFactor);
+					
+					raster.setDataElements(x, y, imageData);
+				}
+			}
+		}
+		else if((dataType==DataBuffer.TYPE_SHORT || dataType==DataBuffer.TYPE_USHORT)&&imageType == BufferedImage.TYPE_USHORT_GRAY && numElementsPerPixel==1)
+		{
+			short[] imageData = new short[1];
+			int value;
+			for(int x = 0; x < width; x++)
+			{
+				for(int y = 0; y < height; y++)
+				{
+					orgRaster.getDataElements(x, y, imageData);
+					value = imageData[0] & 0xffff;
+					if(value <= lowestValue)
+						imageData[0] = 0;
+					else if(value >= highestValue)
+						imageData[0] = (short) maxValue;
+					else
+						imageData[0] = (short) ((value + offset) * scaleFactor);
+					
+					raster.setDataElements(x, y, imageData);
+				}
+			}
+		}
+		else if(imageType == BufferedImage.TYPE_CUSTOM && dataType==DataBuffer.TYPE_BYTE && numElementsPerPixel >= 3)
+		{
+			byte[] imageData = new byte[numElementsPerPixel];
+			int value;
+			for(int x = 0; x < width; x++)
+			{
+				for(int y = 0; y < height; y++)
+				{
+					orgRaster.getDataElements(x, y, imageData);
+					for(int i=0; i<3; i++)
+					{
+						value = imageData[i] & 0xff;
+						if(value <= lowestValue)
+							imageData[i] = 0;
+						else if(value >= highestValue)
+							imageData[i] = (byte) maxValue;
+						else
+							imageData[i] = (byte) ((value + offset) * scaleFactor);
+					}
+					raster.setDataElements(x, y, imageData);
+				}
+			}
+		}
+		else
+			returnVal = bufferedImage;
+		return returnVal;
+	}
+	
 	/**
 	 * Returns the intensity of the pixel at the (zero based) x and y position in original coordinates.
 	 * Use backTransformCoordinate() if only transformed coordinates are available.
@@ -126,7 +261,7 @@ public class ImageTools
 	 * @param y The y position of the pixel (0<=y<image.getHeight()).
 	 * @return The pixel intensity at the specific position, or -1 if position is invalid or image is not a 1 or 2 byte grayscale image.
 	 */
-	public static long getPixelValue(ImageEvent image, int x, int y)
+	public static long getPixelValue(ImageEvent<?> image, int x, int y)
 	{
 		if(image == null || x < 0 || x >= image.getWidth() || y < 0 || y >= image.getHeight())
 			return -1;
@@ -153,7 +288,7 @@ public class ImageTools
 	 * @param orgCoords The original coordinates.
 	 * @return the switched coordinates, or null if the original coordinates were invalid.
 	 */
-	public static Point transformCoordinate(ImageEvent image, Point orgCoords)
+	public static Point transformCoordinate(ImageEvent<?> image, Point orgCoords)
 	{
 		if(image == null || orgCoords == null || orgCoords.x < 0 || orgCoords.x >= image.getWidth() || orgCoords.y < 0 || orgCoords.y > image.getHeight())
 		{
@@ -182,7 +317,7 @@ public class ImageTools
 	 * @param transCoords The transformed coordinates
 	 * @return the original coordinates, or null if the transformed coordinates were invalid.
 	 */
-	public static Point backTransformCoordinate(ImageEvent image, Point transCoords)
+	public static Point backTransformCoordinate(ImageEvent<?> image, Point transCoords)
 	{
 		if(image == null || transCoords == null)
 			return null;
@@ -216,7 +351,7 @@ public class ImageTools
 	 * @return created Image.
 	 * @throws ImageConvertException
 	 */
-	public static BufferedImage getScaledMicroscopeImage(ImageEvent imageEvent, float lowerCutoff, float upperCutoff, BufferedImage bufferedImage) throws ImageConvertException
+	public static BufferedImage getScaledMicroscopeImage(ImageEvent<?> imageEvent, float lowerCutoff, float upperCutoff, BufferedImage bufferedImage) throws ImageConvertException
 	{
 		int bands = imageEvent.getBands();
 		int bytesPerPixel = imageEvent.getBytesPerPixel();
@@ -275,7 +410,7 @@ public class ImageTools
 		{
 			int[] imageData = (int[])imageEvent.getImageData();
 			if(bufferedImage == null || bufferedImage.getWidth() != width || bufferedImage.getHeight() != height || bufferedImage.getType() != BufferedImage.TYPE_INT_RGB)
-				bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);// .TYPE_INT_RGB);
+				bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			WritableRaster wr = bufferedImage.getRaster();
 			wr.setDataElements(0, 0, width, height, imageData);
 			// Total image has 32bit and 4 bands, every band thus has 8 bit.
@@ -338,13 +473,205 @@ public class ImageTools
 	}
 
 	/**
+	 * Returns the intensity of the pixel at the (zero based) x and y position in original coordinates.
+	 * Method does only work if image is a 1 or 2 byte grayscale image.
+	 * @param bufferedImage The image from which the pixel intensity should be extracted.
+	 * @param x The x position of the pixel (0<=x<image.getWidth()).
+	 * @param y The y position of the pixel (0<=y<image.getHeight()).
+	 * @return The pixel intensity at the specific position, or -1 if position is invalid or image is not a 1 or 2 byte grayscale image.
+	 */
+	public static long getPixelValue(BufferedImage bufferedImage, int x, int y)
+	{
+		if(x<0 || x>=bufferedImage.getWidth() || y < 0 || y>= bufferedImage.getHeight())
+			return -1;
+		int imageType = bufferedImage.getType();
+		if(imageType == BufferedImage.TYPE_BYTE_GRAY)
+		{
+			byte[] imageData = new byte[1];
+			bufferedImage.getRaster().getDataElements(x, y, imageData);
+			return imageData[0] & 0xff;
+		}
+		else if(imageType == BufferedImage.TYPE_USHORT_GRAY)
+		{
+			short[] imageData = new short[1];
+			bufferedImage.getRaster().getDataElements(x, y, imageData);
+			return imageData[0] & 0xffff;
+		}
+		return -1;
+	}
+	/**
+	 * Returns the maximal intensity a pixel in the image can have.
+	 * Method does only work if image is a 1 or 2 byte grayscale image.
+	 * @param bufferedImage The image from which the maximal pixel intensity should be returned.
+	 * @return The maximal pixel intensity at the specific position, or -1 if image is not a 1 or 2 byte grayscale image.
+	 */
+	public static long getMaximalPixelValue(BufferedImage bufferedImage)
+	{
+		int imageType = bufferedImage.getType();
+		int dataType = bufferedImage.getRaster().getTransferType();
+		int numElementsPerPixel = bufferedImage.getRaster().getNumDataElements();
+		if(dataType==DataBuffer.TYPE_BYTE && imageType == BufferedImage.TYPE_BYTE_GRAY && numElementsPerPixel==1)
+		{
+			return (long) (Math.pow(2, 8)-1);
+		}
+		else if((dataType==DataBuffer.TYPE_SHORT || dataType==DataBuffer.TYPE_USHORT)&&imageType == BufferedImage.TYPE_USHORT_GRAY && numElementsPerPixel==1)
+		{
+			return(long) (Math.pow(2, 16)-1);
+		}
+		else if(imageType == BufferedImage.TYPE_CUSTOM && dataType==DataBuffer.TYPE_BYTE && numElementsPerPixel >= 3)
+		{
+			return (long) (Math.pow(2, 8)-1);
+		}
+		else
+			return -1;
+	}
+	
+	/**
+	 * Generates a histogram for the given image.
+	 * @param bufferedImage The buffered image, either stored as byte or short gray image, or int RGB/BGR image.
+	 * @param numBins The number of bins the histogram should have.
+	 * @return histogram.
+	 * @throws ImageConvertException
+	 */
+	public static int[][] getHistogram(BufferedImage bufferedImage, int numBins) throws ImageConvertException
+	{
+		final int width = bufferedImage.getWidth();
+		final int height = bufferedImage.getHeight();
+		int imageType = bufferedImage.getType();
+		int dataType = bufferedImage.getRaster().getTransferType();
+		int numElementsPerPixel = bufferedImage.getRaster().getNumDataElements();
+		if(dataType==DataBuffer.TYPE_BYTE && imageType == BufferedImage.TYPE_BYTE_GRAY && numElementsPerPixel==1)
+		{
+			int bands = 1;
+			int[][] bins = new int[bands][numBins];
+			int maxExpectValue = (int) (Math.pow(2, 8)-1);
+			
+			byte[] imageData = new byte[width * height];
+			bufferedImage.getRaster().getDataElements(0, 0, width, height, imageData);
+			
+			for(byte pixel : imageData)
+			{
+				int binID = (pixel & 0xff) * numBins / maxExpectValue;
+				if(binID < numBins)
+					bins[0][binID]++;
+				else
+					bins[0][numBins - 1]++;
+			}
+			return bins;
+			
+		}
+		else if((dataType==DataBuffer.TYPE_SHORT || dataType==DataBuffer.TYPE_USHORT)&&imageType == BufferedImage.TYPE_USHORT_GRAY && numElementsPerPixel==1)
+		{
+			int bands = 1;
+			int[][] bins = new int[bands][numBins];
+			int maxExpectValue = (int) (Math.pow(2, 16)-1);
+			short[] imageData = new short[width * height];
+			bufferedImage.getRaster().getDataElements(0, 0, width, height, imageData);
+			for(short pixel : imageData)
+			{
+				int binID = (pixel & 0xffff) * numBins / maxExpectValue;
+				if(binID < numBins)
+					bins[0][binID]++;
+				else
+					bins[0][numBins - 1]++;
+			}
+			return bins;
+		}
+		else if(dataType==DataBuffer.TYPE_INT&&(imageType == BufferedImage.TYPE_INT_BGR
+				||imageType == BufferedImage.TYPE_INT_RGB
+				|| imageType == BufferedImage.TYPE_INT_ARGB) && numElementsPerPixel==1)
+		{
+			int bands = 3;
+			int[][] bins = new int[bands][numBins];
+			int maxExpectValue = (int) (Math.pow(2, 8)-1);
+			
+			int[] imageData = new int[width * height];
+			bufferedImage.getRaster().getDataElements(0, 0, width, height, imageData);
+			
+			for(int pixel : imageData)
+			{
+				// Always cal
+				for(int band = 0; band < bands; band++)
+				{
+					int binID;
+					switch(band)
+					{
+						case 0:
+							// Red
+							binID = ((pixel & 0xFF000000) >>> 24) * numBins / maxExpectValue;
+							break;
+						case 1:
+							// Green
+							binID = ((pixel & 0x00FF0000) >>> 16) * numBins / maxExpectValue;
+							break;
+						case 2: 
+							// Blue
+							binID = ((pixel & 0x0000FF00) >>> 8) * numBins / maxExpectValue;
+							break;
+						case 3:
+							// Alpha
+							binID = ((pixel & 0x000000FF) >>> 0) * numBins / maxExpectValue;
+							break;
+						default:
+							// This case should not happen...
+							continue;
+					}
+
+					if(binID >= 0 && binID < numBins)
+						bins[band][binID]++;
+					else if(binID >= numBins)
+						bins[band][numBins - 1]++;
+					else
+						bins[band][0]++;
+				}
+			}
+			return bins;
+		}
+		else if(imageType == BufferedImage.TYPE_CUSTOM && dataType==DataBuffer.TYPE_BYTE && numElementsPerPixel >= 3)
+		{
+			
+			int bands = 3;
+			int[][] bins = new int[bands][numBins];
+			int maxExpectValue = (int) (Math.pow(2, 8)-1);
+			
+			byte[] imageData = new byte[width * height * numElementsPerPixel];
+			bufferedImage.getRaster().getDataElements(0, 0, width, height, imageData);
+			
+			for(int i=0; i<imageData.length; i+=numElementsPerPixel)
+			{
+				// Always cal
+				for(int band = 0; band < bands; band++)
+				{
+					int binID = (imageData[i+band] & 0xFF) * numBins / maxExpectValue;
+
+					if(binID >= 0 && binID < numBins)
+						bins[band][binID]++;
+					else if(binID >= numBins)
+						bins[band][numBins - 1]++;
+					else
+						bins[band][0]++;
+				}
+			}
+			// assume BGR instead of RGB. YouScope assumes RGB
+			int[] temp = bins[0];
+			bins[0] = bins[2];
+			bins[2] = temp;
+			return bins;
+		}
+		else 
+		{
+			throw new ImageConvertException("Can only interpret grayscale images with 1 or 2 byte per pixel and RGBA images with 4 bytes. This image type id was "+ imageType+" and data buffer transfer type "+dataType+".");
+		}
+	}
+	
+	/**
 	 * Generates a histogram for the given image.
 	 * @param imageEvent The raw image data and metadata supplied by the microscope.
 	 * @param numBins The number of bins the histogram should have.
 	 * @return histogram.
 	 * @throws ImageConvertException
 	 */
-	public static int[][] getHistogram(ImageEvent imageEvent, int numBins) throws ImageConvertException
+	public static int[][] getHistogram(ImageEvent<?> imageEvent, int numBins) throws ImageConvertException
 	{
 		int bands = imageEvent.getBands();
 		int bytesPerPixel = imageEvent.getBytesPerPixel();
@@ -364,7 +691,7 @@ public class ImageTools
 			}
 			return bins;
 		}
-		else if(bytesPerPixel == 2)// && bands == 1)
+		else if(bytesPerPixel == 2)
 		{
 			int[][] bins = new int[1][numBins];
 			short[] imageData = (short[])imageEvent.getImageData();
@@ -433,7 +760,7 @@ public class ImageTools
 	 * @return Created image.
 	 * @throws ImageConvertException
 	 */
-	public static BufferedImage getScaledMicroscopeImage(ImageEvent imageEvent) throws ImageConvertException
+	public static BufferedImage getScaledMicroscopeImage(ImageEvent<?> imageEvent) throws ImageConvertException
 	{
 		int bytesPerPixel = imageEvent.getBytesPerPixel();
 		int bitDepth = imageEvent.getBitDepth();

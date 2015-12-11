@@ -166,7 +166,7 @@ public class SingleComponentDefinitionPanel<C extends Configuration> extends Dyn
 		}
 		try 
 		{
-			currentAddon = client.getAddonProvider().createComponentAddonUI(metadata.getTypeIdentifier(), configurationType);
+			currentAddon = client.getAddonProvider().createComponentUI(metadata.getTypeIdentifier(), configurationType);
 			
 			if(initialConfiguration != null && initialConfiguration.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
 			{

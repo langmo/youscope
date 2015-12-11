@@ -6,7 +6,6 @@ package org.youscope.plugin.livemodifiablejob;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.measurement.ExecutionInformation;
 import org.youscope.common.measurement.MeasurementContext;
@@ -17,6 +16,7 @@ import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.job.JobAdapter;
 import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang

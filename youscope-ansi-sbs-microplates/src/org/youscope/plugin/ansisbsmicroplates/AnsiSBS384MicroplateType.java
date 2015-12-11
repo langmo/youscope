@@ -5,13 +5,13 @@ package org.youscope.plugin.ansisbsmicroplates;
 
 import java.io.Serializable;
 
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author Moritz Lang
  *
  */
-public class AnsiSBS384MicroplateType implements MicroplateType, Cloneable, Serializable
+public class AnsiSBS384MicroplateType implements Microplate, Cloneable, Serializable
 {
 	/**
 	 * Serial Version UID.

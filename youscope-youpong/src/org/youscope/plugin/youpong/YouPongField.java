@@ -320,10 +320,10 @@ class YouPongField extends JPanel implements Runnable
 		double exposure = configuration.getExposure();
 		try
 		{
-			measurement = server.getMeasurementFactory().createContinuousMeasurement(null, channelGroup, channel, imagingPeriod, exposure, new ImageListener()
+			measurement = server.getMeasurementProvider().createContinuousMeasurement(null, channelGroup, channel, imagingPeriod, exposure, new ImageListener()
 			{
 				@Override
-				public void imageMade(ImageEvent e) throws RemoteException
+				public void imageMade(ImageEvent<?> e) throws RemoteException
 				{
 					BufferedImage image;
 			        try

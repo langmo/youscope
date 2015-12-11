@@ -7,7 +7,7 @@ import java.awt.Dimension;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.Period;
+import org.youscope.common.configuration.PeriodConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -104,7 +104,7 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	 * interpreted as as fast as possible.
 	 */
 	@XStreamAlias("period")
-	private Period										period				= null;
+	private PeriodConfiguration										period				= null;
 	
 	/**
 	 * The camera device to use. Set to null if standard camera should be used.
@@ -116,13 +116,13 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	 * Sets the period length between single repetitions of the imaging process.
 	 * @param period Period time between making several composed images.
 	 */
-	public void setPeriod(Period period)
+	public void setPeriod(PeriodConfiguration period)
 	{
 		if(period!=null)
 		{
 			try
 			{
-				this.period = (Period)period.clone();
+				this.period = (PeriodConfiguration)period.clone();
 			}
 			catch(CloneNotSupportedException e)
 			{
@@ -134,13 +134,13 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	/**
 	 * @return the period
 	 */
-	public Period getPeriod()
+	public PeriodConfiguration getPeriod()
 	{
 		if(period == null)
 			return null;
 		try
 		{
-			return (Period)period.clone();
+			return (PeriodConfiguration)period.clone();
 		}
 		catch(CloneNotSupportedException e)
 		{
@@ -370,7 +370,7 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	{
 		ComposedImagingMeasurementConfiguration clone = (ComposedImagingMeasurementConfiguration)super.clone();
 		if(period != null)
-			clone.period = (Period)period.clone();
+			clone.period = (PeriodConfiguration)period.clone();
 		clone.numPixels = (Dimension)numPixels.clone();
 		return clone;
 	}

@@ -4,7 +4,7 @@
 package org.youscope.plugin.custommicroplates;
 
 import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author langmo
@@ -12,7 +12,7 @@ import org.youscope.common.MicroplateType;
  */
 public class CustomMicroplateTypeFactory implements MicroplateAddonFactory
 {
-	MicroplateType[] microplateTypes;
+	Microplate[] microplateTypes;
 	/**
 	 * Constructor.
 	 */
@@ -21,9 +21,9 @@ public class CustomMicroplateTypeFactory implements MicroplateAddonFactory
 		microplateTypes = CustomMicroplatesManager.getMicroplateTypes();
 	}
 	@Override
-	public MicroplateType createMicroplateType(String ID)
+	public Microplate createMicroplateType(String ID)
 	{ 
-		for(MicroplateType microplateType : microplateTypes)
+		for(Microplate microplateType : microplateTypes)
 		{
 			if(ID.compareToIgnoreCase(microplateType.getMicroplateID()) == 0)
 				return microplateType;

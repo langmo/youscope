@@ -201,7 +201,7 @@ class UserControlMeasurementCallbackImpl extends UnicastRemoteObject implements 
 	}
 
 	@Override
-	public void newImage(ImageEvent e) throws RemoteException 
+	public void newImage(ImageEvent<?> e) throws RemoteException 
 	{
 		if(userFrame != null)
 			userFrame.newImage(e);

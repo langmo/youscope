@@ -24,7 +24,7 @@ public interface CellDetectionAddon extends Resource, TableProducer
 	 * @throws CellDetectionException
 	 * @throws RemoteException 
 	 */
-	public CellDetectionResult detectCells(ImageEvent detectionImage) throws CellDetectionException, RemoteException;
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage) throws CellDetectionException, RemoteException;
 	
 	/**
 	 * Detects the cell in the detectionImage image according to the configuration of the addon.
@@ -37,5 +37,5 @@ public interface CellDetectionAddon extends Resource, TableProducer
 	 * @throws CellDetectionException
 	 * @throws RemoteException 
 	 */
-	public CellDetectionResult detectCells(ImageEvent detectionImage, ImageEvent[] quantificationImages) throws CellDetectionException, RemoteException;
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage, ImageEvent<?>[] quantificationImages) throws CellDetectionException, RemoteException;
 }

@@ -30,7 +30,7 @@ import org.youscope.common.ImageEvent;
 import org.youscope.common.ImageListener;
 import org.youscope.common.MessageListener;
 import org.youscope.common.Well;
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementRunningException;
@@ -248,9 +248,6 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	{
 		if(saveSettings == null)
 			return;
-
-		// load image formats
-		ImageIO.scanForPlugins();
 
 		// Create output folder
 		DateFormat dateToFileName = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss-SSS");
@@ -662,7 +659,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 
 		private class ImageSaveData
 		{
-			public ImageSaveData(BufferedImage image, String imagePath, ImageEvent event)
+			public ImageSaveData(BufferedImage image, String imagePath, ImageEvent<?> event)
 			{
 				this.image = image;
 				this.imagePath = imagePath;
@@ -671,11 +668,11 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 
 			BufferedImage	image;
 			String			imagePath;
-			ImageEvent		event;
+			ImageEvent<?>		event;
 		}
 
 		@Override
-		public void imageMade(final ImageEvent e)
+		public void imageMade(final ImageEvent<?> e)
 		{
 			if(saveSettings == null)
 				return;
@@ -704,7 +701,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 
 		}
 
-		private void processImage(ImageEvent event) throws RemoteException
+		private void processImage(ImageEvent<?> event) throws RemoteException
 		{
 			// Create image.
 			BufferedImage image = reusableImages.pollFirst();
@@ -730,7 +727,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			String imageFile = NamingMacros.convertFileName(saveSettings.getImageFileName(), imageSaveName, channel, well, positionInformation, event.getExecutionInformation(), calendar, camera, null);
 
 			String imageFolderName = "";
-			if(saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_AND_CHANNEL || saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_AND_POSITION || saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_POSITION_AND_CHANNEL)
+			if(saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_AND_CHANNEL || saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_AND_POSITION || saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_POSITION_AND_CHANNEL)
 			{
 				if(well != null)
 				{
@@ -739,7 +736,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 					imageFolderName += "well " + well.getWellName();
 				}
 			}
-			if(saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_AND_POSITION || saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_POSITION_AND_CHANNEL)
+			if(saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_AND_POSITION || saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_POSITION_AND_CHANNEL)
 			{
 				// Add position information if necessary (only for
 				// multi-position jobs
@@ -750,7 +747,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 					imageFolderName += "position " + Integer.toString(positionInformation[i]);
 				}
 			}
-			if(saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_AND_CHANNEL || saveSettings.getImageFolderStructure() == ImageFolderStructure.SEPARATE_WELL_POSITION_AND_CHANNEL)
+			if(saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_AND_CHANNEL || saveSettings.getImageFolderStructure() == FolderStructureConfiguration.SEPARATE_WELL_POSITION_AND_CHANNEL)
 			{
 				if(imageFolderName.length() > 0)
 					imageFolderName += File.separator;
@@ -791,7 +788,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		{
 			BufferedImage image = imageData.image;
 			String imagePath = imageData.imagePath;
-			ImageEvent event = imageData.event;
+			ImageEvent<?> event = imageData.event;
 			File file = new File(measurementSaveFolder + File.separator + imagePath);
 			try
 			{
@@ -811,10 +808,10 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			saveImageMetadataInList(event, imagePath, imageSaveName);
 		}
 
-		private synchronized void saveImageMetadataInList(final ImageEvent e, String path, String imageName) throws TableException, RemoteException
+		private synchronized void saveImageMetadataInList(final ImageEvent<?> e, String path, String imageName) throws TableException, RemoteException
 		{
 			Table imageTable = new Table(getImageTableDefinition(), e.getCreationTime(), e.getPositionInformation(), e.getExecutionInformation());
-			imageTable.addRow(path, imageName, e.getCamera(), e.getConfigGroup(), e.getChannel(), new Integer(e.getBitDepth()));
+			imageTable.addRow(path, imageName, e.getCamera(), e.getChannelGroup(), e.getChannel(), new Integer(e.getBitDepth()));
 			tableDataListener.newTableProduced(imageTable);
 		}
 

@@ -124,7 +124,7 @@ class InputConfigurationPanel extends DynamicPanel
 		}
 		try 
 		{
-			currentAddon = client.getAddonProvider().createComponentAddonUI(inputOption.getTypeIdentifier(), JobConfiguration.class);
+			currentAddon = client.getAddonProvider().createComponentUI(inputOption.getTypeIdentifier(), JobConfiguration.class);
 			
 			JobConfiguration currentConfiguration = controllerConfiguration.getInputJob();
 			

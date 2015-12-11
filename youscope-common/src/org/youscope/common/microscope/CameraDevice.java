@@ -38,7 +38,7 @@ public interface CameraDevice extends Device
 	 * @throws InterruptedException
 	 * @throws SettingException
 	 */
-	ImageEvent makeImage(String channelGroupID, String channelID, double exposure) throws MicroscopeException, RemoteException, MicroscopeLockedException, InterruptedException, SettingException;
+	ImageEvent<?> makeImage(String channelGroupID, String channelID, double exposure) throws MicroscopeException, RemoteException, MicroscopeLockedException, InterruptedException, SettingException;
 
 	/**
 	 * Starts a continuous sequence acquisition.
@@ -72,7 +72,7 @@ public interface CameraDevice extends Device
 	 * 
 	 */
 	@Deprecated
-	ImageEvent[] makeParallelImages(String channelGroupID, String channelID, String[] cameraIDs, double[] exposures) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException, RemoteException;
+	ImageEvent<?>[] makeParallelImages(String channelGroupID, String channelID, String[] cameraIDs, double[] exposures) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException, RemoteException;
 
 	/**
 	 * Stops the previously started continuous acquisition.

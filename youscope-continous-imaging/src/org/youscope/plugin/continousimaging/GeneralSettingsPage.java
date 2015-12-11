@@ -19,10 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
@@ -103,7 +103,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ContinousImagingMeasure
 			
 		
 		// Save some of the configurations
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
 
 		return true;
 	}
@@ -112,8 +112,9 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ContinousImagingMeasure
 	public void setToDefault(ContinousImagingMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
-		saveSettings.setImageFolderStructure(ImageFolderStructure.ALL_IN_ONE_FOLDER);
+		String lastFolder = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+		saveSettings.setFolder(lastFolder == null ? "" : lastFolder);
+		saveSettings.setImageFolderStructure(FolderStructureConfiguration.ALL_IN_ONE_FOLDER);
 		saveSettings.setImageFileName("%N_time%n");
 		configuration.setSaveSettings(saveSettings);
 	}
@@ -134,7 +135,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ContinousImagingMeasure
 		String[] imageTypes;
 		try
 		{
-			imageTypes = server.getConfiguration().getSupportedImageFormats();
+			imageTypes = server.getProperties().getSupportedImageFormats();
 		}
 		catch (RemoteException e1)
 		{

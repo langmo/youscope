@@ -29,8 +29,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.measurement.job.basicjobs.ScriptingJob;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.JobsDefinitionPanel;
@@ -125,15 +125,21 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
                 public void actionPerformed(ActionEvent arg0)
                 {
                     JFileChooser fileChooser =
-                            new JFileChooser(getClient().getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_SCRIPT_PATH, "/"));
+                            new JFileChooser((String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
                     
                     String engineName = (String) engineNamesField.getSelectedItem();
                     if(engineName == null)
                     {
-                    	getClient().sendError("No script engine selected.");
+                    	sendErrorMessage("No script engine selected.", null);
                     	return;
                     }
-                    ScriptEngineFactory engineFactory = getClient().getScriptEngineFactory(engineName);
+                    ScriptEngineFactory engineFactory;
+					try {
+						engineFactory = getClient().getAddonProvider().getScriptEngineFactory(engineName);
+					} catch (AddonException e) {
+						sendErrorMessage("Could not get script engine with type identifier " + engineName+".", e);
+						return;
+					}
                     
                     String[] engineFileEndings;
                     if(engineFactory == null)
@@ -179,7 +185,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_SCRIPT_PATH, fileChooser
+                    getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
                             .getCurrentDirectory().getAbsolutePath());
 
                     scriptFileField.setText(file.toString());
@@ -249,7 +255,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
         {
             Vector<String> engineNames = new Vector<String>();
 
-            for(ScriptEngineFactory factory : getClient().getScriptEngineFactories())
+            for(ScriptEngineFactory factory : getClient().getAddonProvider().getScriptEngineFactories())
             {
                 String engineName = factory.getEngineName();
                 engineNames.add(engineName);
@@ -261,7 +267,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
         {
             try
             {
-                engines =getServer().getConfiguration().getSupportedScriptEngines();
+                engines =getServer().getProperties().getSupportedScriptEngines();
             } 
             catch (RemoteException e)
             {

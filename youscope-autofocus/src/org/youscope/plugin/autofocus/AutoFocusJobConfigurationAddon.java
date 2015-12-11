@@ -21,9 +21,9 @@ import javax.swing.border.TitledBorder;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.microscope.Channel;
@@ -261,7 +261,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 			@Override
 			public void run()
 			{
-				ImageEvent imageEvent;
+				ImageEvent<?> imageEvent;
 				try
 				{
 					imageEvent = getServer().getMicroscope().getCameraDevice().makeImage(channelGroup, channel, exposure);
@@ -308,7 +308,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = getClient().getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, "");
+			configGroup = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < channelGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(channelGroupField.getItemAt(i).toString()) == 0)
@@ -369,7 +369,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 
     	configuration.setJobs(jobPanel.getJobs());
     	
-		getClient().getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String) channelGroupField.getSelectedItem());
+		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroupField.getSelectedItem());
     }
     
     private void loadFocusDevices()

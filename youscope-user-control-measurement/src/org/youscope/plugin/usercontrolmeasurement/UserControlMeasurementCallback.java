@@ -59,7 +59,7 @@ public interface UserControlMeasurementCallback extends Callback
 	 * @param e The new image.
 	 * @throws RemoteException
 	 */
-	public void newImage(ImageEvent e) throws RemoteException;
+	public void newImage(ImageEvent<?> e) throws RemoteException;
 	
 	/**
 	 * Notifies the callback that the last image was saved to disk. The callback should give some feedback to the user.

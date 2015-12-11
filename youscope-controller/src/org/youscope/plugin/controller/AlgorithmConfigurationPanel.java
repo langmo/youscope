@@ -53,7 +53,7 @@ class AlgorithmConfigurationPanel extends JPanel
 		String[] scriptEngines;
 		try
 		{
-			scriptEngines = server.getConfiguration().getSupportedScriptEngines();
+			scriptEngines = server.getProperties().getSupportedScriptEngines();
 		}
 		catch(RemoteException e2)
 		{

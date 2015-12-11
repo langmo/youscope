@@ -175,7 +175,7 @@ public class MultiStreamPanel extends JPanel
         try
         {
         	// Create measurement on server
-            MeasurementProvider measurementFactory =server.getMeasurementFactory();
+            MeasurementProvider measurementFactory =server.getMeasurementProvider();
             measurement = measurementFactory.createMeasurement();
             measurement.setName("Multi-Color Stream");
             MeasurementTask task = measurement.addTask(imagingPeriod, false, 0);
@@ -212,7 +212,7 @@ public class MultiStreamPanel extends JPanel
          */
         private static final long serialVersionUID = -2641367149643651724L;
         private final int imageNo;
-        private ImageEvent imageEvent = null;
+        private ImageEvent<?> imageEvent = null;
         /**
          * @throws RemoteException
          */
@@ -223,7 +223,7 @@ public class MultiStreamPanel extends JPanel
         }
 
         @Override
-        public void imageMade(ImageEvent e)
+        public void imageMade(ImageEvent<?> e)
         {
         	imageEvent = e;
             // Start new thread to process image.
@@ -238,7 +238,7 @@ public class MultiStreamPanel extends JPanel
             thread.start();
         }
     }
-    protected void newImage(int imageNo, ImageEvent imageEvent)
+    protected void newImage(int imageNo, ImageEvent<?> imageEvent)
 	{
     	try
 		{

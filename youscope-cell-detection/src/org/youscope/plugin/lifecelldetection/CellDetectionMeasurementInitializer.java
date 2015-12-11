@@ -11,15 +11,15 @@ import org.youscope.addon.celldetection.CellDetectionConfiguration;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.RegularPeriod;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author langmo
@@ -60,7 +60,7 @@ public class CellDetectionMeasurementInitializer implements MeasurementInitializ
 		else
 			cellVisualizationAddon = null;
 		
-		RegularPeriod period = new RegularPeriod();
+		RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 		int taskPeriod = configuration.getImagingPeriod();
 		if(taskPeriod <= 0)
 		{

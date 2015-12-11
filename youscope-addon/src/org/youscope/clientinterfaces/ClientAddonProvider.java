@@ -2,9 +2,16 @@ package org.youscope.clientinterfaces;
 
 import java.util.List;
 
+import javax.script.ScriptEngineFactory;
+
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonMetadata;
+import org.youscope.addon.AddonUI;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
+import org.youscope.addon.tool.ToolAddonUI;
+import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.common.Microplate;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 
@@ -16,71 +23,185 @@ import org.youscope.common.configuration.ConfigurationException;
 public interface ClientAddonProvider
 {	
 	/**
-	 * Creates a configuration addon with the given ID.
+	 * Creates a component addon user interface for the given type identifier.
 	 * @param typeIdentifier type identifier of the addon/configuration.
-	 * @return The created addon with the given type ID.
-	 * @throws AddonException Thrown if no factory for the given configuration addon exists, or if the creation of the addon failed.
+	 * @return The created addon UI with the given type identifier.
+	 * @throws AddonException Thrown if no factory for the given component addon exists, or if the creation of the addon failed.
 	 */
-	ComponentAddonUI<?> createComponentAddonUI(String typeIdentifier) throws AddonException;
+	ComponentAddonUI<?> createComponentUI(String typeIdentifier) throws AddonException;
 	
 	/**
-	 * Creates a configuration addon with the given ID and configuration class.
+	 * Creates a component addon user interface with the given type identifier, producing component comfigurations of the given configuration class.
 	 * @param typeIdentifier type identifier of the addon/configuration.
-	 * @param configurationClass The configuration class which should be created by the factory.
-	 * @return The created addon with the given type ID.
-	 * @throws AddonException Thrown if no factory for the given configuration addon exists, or if the addon does not create configurations of the given configuration class.
+	 * @param configurationClass The configuration class which the addon user interface produces.
+	 * @return The created addon UI with the given type identifier.
+	 * @throws AddonException Thrown if no factory for the given component addon exists, or if the addon does not create configurations of the given configuration class.
 	 */
-	<T extends Configuration>ComponentAddonUI<? extends T> createComponentAddonUI(String typeIdentifier, Class<T> configurationClass) throws AddonException;
+	<T extends Configuration>ComponentAddonUI<? extends T> createComponentUI(String typeIdentifier, Class<T> configurationClass) throws AddonException;
 	
 	/**
-	 * Creates an configuration addon compatible with the configuration, and initializes it with the configuration.
+	 * Creates an component addon user interface compatible with the configuration, and initializes it with the configuration.
 	 * @param configuration Configuration to edit.
-	 * @return The created addon, initialized with the given configuration.
-	 * @throws AddonException Thrown if no factory for the given configuration type exists, or if the addon does not create configurations of the given configuration class.
-	 * @throws ConfigurationException Thrown if corresponding addon was found, but configuration was invalid.
+	 * @return The created component addon UI, initialized with the given configuration.
+	 * @throws AddonException Thrown if no factory for the given component type exists, or if the addon does not create configurations of the given configuration class.
+	 * @throws ConfigurationException Thrown if corresponding component addon was found, but configuration was invalid.
 	 */
-	<T extends Configuration>ComponentAddonUI<? extends T> createComponentAddonUI(T configuration) throws AddonException, ConfigurationException;
+	<T extends Configuration>ComponentAddonUI<? extends T> createComponentUI(T configuration) throws AddonException, ConfigurationException;
 	
 	/**
-	 * Creates an configuration addon compatible with the configuration metadata.
-	 * @param metadata The metadata for which a configuration addon should be constructed.
-	 * @return The created addon, initialized with the given configuration.
-	 * @throws AddonException Thrown if no factory for the given configuration metadata type exists.
+	 * Creates an component addon user interface compatible with the configuration metadata.
+	 * @param metadata The metadata for which a component addon UI should be constructed.
+	 * @return The created component addon UI.
+	 * @throws AddonException Thrown if no factory for the given component metadata exists.
 	 */
-	<T extends Configuration>ComponentAddonUI<T> createComponentAddonUI(ComponentMetadata<T> metadata) throws AddonException;
+	<T extends Configuration>ComponentAddonUI<T> createComponentUI(ComponentMetadata<T> metadata) throws AddonException;
 	
 	/**
-	 * Returns the type identifiers of all configurations being a sub-class of the provided configuration class. 
-	 * @param configurationClass Configuration class for which all type identifiers of configurations being sub-classes of this configuration should be returned.
-	 * @return All type identifiers of configurations conforming to the given configuration class.
+	 * Returns the type identifiers of all component addons capable of consuming and creating configuration being sub-classes of the provided configuration class. 
+	 * @param configurationClass Configuration class for which all component type identifiers of configurations being sub-classes of this configuration should be returned.
+	 * @return All type identifiers of component conforming to the given configuration class.
 	 */
 	List<String> getComponentTypeIdentifiers(Class<? extends Configuration> configurationClass);
 	
 	/**
-	 * Returns the metadata of all configurations being a sub-class of the provided configuration class. 
-	 * @param configurationClass Configuration class for which all metadata of configurations being sub-classes of this configuration should be returned.
-	 * @return All metadata of configurations conforming to the given configuration class.
+	 * Returns the type identifiers of all components. 
+	 * @return All type identifiers of measurement components.
+	 */
+	List<String> getComponentTypeIdentifiers();
+	
+	/**
+	 * Returns the metadata of all components being able to produce or consume sub-class of the provided configuration class. 
+	 * @param configurationClass Configuration class for which all metadata of componentsshould be returned.
+	 * @return All metadata of components conforming to the given configuration class.
 	 */
 	<T extends Configuration> List<ComponentMetadata<? extends T>> getComponentMetadata(Class<T> configurationClass);
 	/**
-	 * Returns the metadata of all configurations. 
-	 * @return All metadata of configurations.
+	 * Returns the metadata of all components. 
+	 * @return metadata of all components.
 	 */
 	List<ComponentMetadata<?>> getComponentMetadata();
 	/**
-	 * Returns the metadata of the configuration having the given type identifier
-	 * @param typeIdentifier type identifier of the addon/configuration. 
-	 * @return Configurations metadata having given type identifier.
-	 * @throws AddonException Thrown if no factory for the given configuration addon exists, or if the creation of the addon failed.
+	 * Returns the metadata of the component having the given type identifier
+	 * @param typeIdentifier type identifier of the component. 
+	 * @return The metadata of the component having given type identifier.
+	 * @throws AddonException Thrown if no factory for the given component exists, or if the creation of the metadata failed.
 	 */
 	public ComponentMetadata<?> getComponentMetadata(String typeIdentifier) throws AddonException;
 	
 	/**
-	 * Returns the metadata of the configuration having the given type identifier and given type of configuration.
-	 * @param typeIdentifier type identifier of the addon/configuration. 
-	 * @param configurationClass Configuration class for which metadata should be returned.
-	 * @return Configurations metadata having given type identifier.
-	 * @throws AddonException Thrown if no factory for the given configuration addon exists, if the creation of the addon failed, or if metadata is not metadata of given configuration class.
+	 * Returns the metadata of the component having the given type identifier, with the component producing/consuming the given type of configurations.
+	 * @param typeIdentifier type identifier of the component. 
+	 * @param configurationClass Configuration class of the component.
+	 * @return Configurations metadata having the given type identifier.
+	 * @throws AddonException Thrown if no factory for the given component exists, if the creation of the metadata failed, or if component cannot consume/produce given configuration class.
 	 */
 	public <T extends Configuration> ComponentMetadata<? extends T> getComponentMetadata(String typeIdentifier, Class<T> configurationClass) throws AddonException;
+
+	/**
+	 * Returns all known microplate types.
+	 * @return List of all known microplate types.
+	 */
+	List<Microplate> getMicroplateTypes();
+	
+	/**
+	 * Returns the type identifiers of all known microplate types.
+	 * @return List of all known microplate type identifier.
+	 */
+	List<String> getMicroplateTypeIdentifiers();
+	
+	/**
+	 * Returns the microplate type with the given type identifer.
+	 * @param typeIdentifier Type identifier of the microplate.
+	 * @return Microplate type with given type identifer.
+	 * @throws AddonException Thrown if microplate type identifier is unknown.
+	 */
+	Microplate getMicroplateType(String typeIdentifier) throws AddonException;
+	
+	/**
+	 * Creates a post processor user interface for the given type identifier.
+	 * @param typeIdentifier type identifier of the post processor.
+	 * @param measurementFolder The folder where the measurement which should be processed is located.
+	 * @return The created post processor UI with the given type identifier.
+	 * @throws AddonException Thrown if no factory for the given post processor addon exists, or if the creation of the post processor failed.
+	 */
+	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, String measurementFolder) throws AddonException;
+	
+	/**
+	 * Creates an post processor user interface compatible with the metadata.
+	 * @param metadata The metadata for which a post processor addon UI should be constructed.
+	 * @param measurementFolder The folder where the measurement which should be processed is located.
+	 * @return The created post processor addon UI.
+	 * @throws AddonException Thrown if no factory for the given post processor metadata exists.
+	 */
+	<T extends AddonMetadata>AddonUI<T> createPostProcessorUI(T metadata, String measurementFolder) throws AddonException;
+	
+	/**
+	 * Returns the type identifiers of all post processors. 
+	 * @return All type identifiers of post processors.
+	 */
+	List<String> getPostProcessorTypeIdentifiers();
+
+	/**
+	 * Returns the metadata of all post processors. 
+	 * @return metadata of all post processors. 
+	 */
+	List<AddonMetadata> getPostProcessorMetadata();
+	/**
+	 * Returns the metadata of the post processor having the given type identifier
+	 * @param typeIdentifier type identifier of the post processor. 
+	 * @return The metadata of the post processor having given type identifier.
+	 * @throws AddonException Thrown if no factory for the given post processor exists, or if the creation of the metadata failed.
+	 */
+	public AddonMetadata getPostProcessorMetadata(String typeIdentifier) throws AddonException;
+	
+	/**
+	 * Creates a tool user interface for the given type identifier.
+	 * @param typeIdentifier type identifier of the tool.
+	 * @return The created tool UI with the given type identifier.
+	 * @throws AddonException Thrown if no factory for the given tool exists, or if the creation of the tool failed.
+	 */
+	ToolAddonUI createToolUI(String typeIdentifier) throws AddonException;
+	
+	/**
+	 * Creates a tool user interface compatible with the metadata.
+	 * @param metadata The metadata for which a tool UI should be constructed.
+	 * @return The created tool UI.
+	 * @throws AddonException Thrown if no factory for the given tool metadata exists.
+	 */
+	ToolAddonUI createToolUI(ToolMetadata metadata) throws AddonException;
+	
+	/**
+	 * Returns the type identifiers of all tools. 
+	 * @return All type identifiers of tools.
+	 */
+	List<String> getToolTypeIdentifiers();
+
+	/**
+	 * Returns the metadata of all tools. 
+	 * @return metadata of all tools. 
+	 */
+	List<ToolMetadata> getToolMetadata();
+	/**
+	 * Returns the metadata of the tool having the given type identifier
+	 * @param typeIdentifier type identifier of the tool. 
+	 * @return The metadata of the tool having given type identifier.
+	 * @throws AddonException Thrown if no factory for the given tool exists, or if the creation of the metadata failed.
+	 */
+	public ToolMetadata getToolMetadata(String typeIdentifier) throws AddonException;
+	
+    
+    /**
+	 * Returns all script engine factories supported by the client.
+	 * @return List of all script engines.
+	 */
+	List<ScriptEngineFactory> getScriptEngineFactories();
+	
+	/**
+	 * Returns a script engine factory with the given type identifier. 
+	 * 
+	 * @param typeIdentifier The type identifier/name of the script engine factory. Same as {@link ScriptEngineFactory#getEngineName()}.
+	 * @return script engine factory for given type identifier.
+	 * @throws AddonException Thrown if no script engine factory for the given type identifier exists.
+	 */
+	ScriptEngineFactory getScriptEngineFactory(String typeIdentifier) throws AddonException;
 }

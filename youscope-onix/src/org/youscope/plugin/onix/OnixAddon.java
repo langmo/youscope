@@ -5,9 +5,9 @@ package org.youscope.plugin.onix;
 
 import java.rmi.RemoteException;
 
+import org.youscope.addon.serveraddon.ServerAddon;
 import org.youscope.common.MessageListener;
 import org.youscope.common.tools.RMIReader;
-import org.youscope.serverinterfaces.ServerAddon;
 
 /**
  * Addon allowing to control the CellAsic Onix microfluidic device.

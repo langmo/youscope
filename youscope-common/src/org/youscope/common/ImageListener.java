@@ -7,20 +7,18 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.EventListener;
 
-
-
 /**
- * Listener which detects the availability of new pictures of the microscope.
+ * Listener which gets notified about produced images.
  * 
  * @author Moritz Lang
  */
 public interface ImageListener extends Remote, EventListener
 {
     /**
-     * Method gets invoked if new picture is available and makes picture and its properties available.
+     * Method gets invoked if new image is available.
      * 
-     * @param e Object containing picture and picture properties data.
+     * @param image Object containing the pixel data, as well as the image metadata.
      * @throws RemoteException
      */
-    void imageMade(ImageEvent e) throws RemoteException;
+    void imageMade(ImageEvent<?> image) throws RemoteException;
 }

@@ -5,13 +5,13 @@ package org.youscope.plugin.custommicroplates;
 
 import java.io.Serializable;
 
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author langmo
  *
  */
-class CustomMicroplateType implements MicroplateType, Cloneable, Serializable
+class CustomMicroplateType implements Microplate, Cloneable, Serializable
 {
 	/**
 	 * This class represents a custom microplate type.

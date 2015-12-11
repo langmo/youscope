@@ -9,7 +9,6 @@ import java.util.ServiceLoader;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
@@ -23,6 +22,7 @@ import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.measurement.job.basicjobs.FocusingJob;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang

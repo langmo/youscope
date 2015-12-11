@@ -110,7 +110,7 @@ class FocusScoreAlgorithmPanel extends JPanel
 		}
 		try 
 		{
-			currentAddon = client.getAddonProvider().createComponentAddonUI(metadata);
+			currentAddon = client.getAddonProvider().createComponentUI(metadata);
 			if(lastConfiguration != null && lastConfiguration.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
 			{
 				currentAddon.setConfiguration(lastConfiguration);

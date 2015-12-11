@@ -12,8 +12,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 
 /**
  * @author Moritz Lang
@@ -84,7 +84,7 @@ class CustomizationFrame
     {
         tabAppearance.storeContent();
         tabSpecial.storeContent();
-        ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_IS_CONFIGURED, true);
+        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_IS_CONFIGURED, true);
 
     }
     

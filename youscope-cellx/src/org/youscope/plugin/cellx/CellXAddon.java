@@ -117,12 +117,12 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 	}
 
 	@Override
-	public CellDetectionResult detectCells(ImageEvent detectionImage) throws CellDetectionException,RemoteException
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage) throws CellDetectionException,RemoteException
 	{
 		return detectCells(detectionImage, new ImageEvent[0]);
 	}
 	@Override
-	public CellDetectionResult detectCells(ImageEvent detectionImage, ImageEvent[] quantificationImages) throws CellDetectionException, RemoteException
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage, ImageEvent<?>[] quantificationImages) throws CellDetectionException, RemoteException
 	{
 		if(!isInitialized())
 			throw new CellDetectionException("Addon not yet initialized.");

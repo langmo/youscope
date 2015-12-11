@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
@@ -18,6 +17,7 @@ import org.youscope.common.measurement.callback.CallbackCreationException;
 import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.job.basicjobs.ScriptingJob;
 import org.youscope.common.scripting.RemoteScriptEngine;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang

@@ -5,6 +5,7 @@ import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Component;
 import org.youscope.common.measurement.PositionInformation;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * Interface which has to be implemented if the creation of a component, given its configuration, should be done

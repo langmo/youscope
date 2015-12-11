@@ -17,13 +17,13 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.script.ScriptEngineFactory;
 
-import org.youscope.serverinterfaces.ServerAddon;
-import org.youscope.serverinterfaces.YouScopeServerConfiguration;
+import org.youscope.addon.serveraddon.ServerAddon;
+import org.youscope.serverinterfaces.YouScopeServerProperties;
 
 /**
  * @author langmo
  */
-class ServerConfigurationImpl extends UnicastRemoteObject implements YouScopeServerConfiguration
+class ServerConfigurationImpl extends UnicastRemoteObject implements YouScopeServerProperties
 {
 
     /**
@@ -42,9 +42,6 @@ class ServerConfigurationImpl extends UnicastRemoteObject implements YouScopeSer
     @Override
 	public String[] getSupportedImageFormats()
     {
-        Thread.currentThread()
-                .setContextClassLoader(ServerConfigurationImpl.class.getClassLoader());
-        ImageIO.scanForPlugins();
         String[] result = ImageIO.getWriterFormatNames();
         Arrays.sort(result);
 

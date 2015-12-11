@@ -77,7 +77,7 @@ class MultiStreamPanel extends JPanel
     {
     	private volatile boolean shouldRun = true;
     	
-    	private final ImageEvent[] nextImages;
+    	private final ImageEvent<?>[] nextImages;
     	ImageHandler()
     	{
     		nextImages = new ImageEvent[cameras.length];
@@ -100,7 +100,7 @@ class MultiStreamPanel extends JPanel
 			}
 
 			@Override
-    		public void imageMade(ImageEvent e) throws RemoteException
+    		public void imageMade(ImageEvent<?> e) throws RemoteException
     		{
 				String camera = e.getCamera();
 	        	if(camera == null || camera.compareToIgnoreCase("unknown") == 0)
@@ -161,7 +161,7 @@ class MultiStreamPanel extends JPanel
 				// update images if available
 				for(int i=0; i<nextImages.length; i++)
 				{
-					ImageEvent image = null;
+					ImageEvent<?> image = null;
 					synchronized(this)
 					{
 						image = nextImages[i];
@@ -186,7 +186,7 @@ class MultiStreamPanel extends JPanel
 				// wait that at least one image arrives.
 				outer: while(shouldRun)
 				{
-					for(ImageEvent e : nextImages)
+					for(ImageEvent<?> e : nextImages)
 					{
 						if(e != null)
 							break outer;
@@ -211,86 +211,12 @@ class MultiStreamPanel extends JPanel
 		
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //private ImageListener imageListener;
-    
     MultiStreamPanel(YouScopeClient client, YouScopeServer server)
 	{
 		this.server = server;
 		this.client = client;
 		
-		/*class MicroscopeImageFrameListener extends UnicastRemoteObject implements ImageListener
-		{
-		    private static final long serialVersionUID = 8782739907507416542L;
-		
-		    MicroscopeImageFrameListener() throws RemoteException
-		    {
-		        super();
-		    }
-		
-		    @Override
-		    public void imageMade(ImageEvent e)
-		    {
-		        // Start new thread to process image.
-		        Thread thread =
-		                new Thread(new ImageProcessor(e), "Image processor");
-		        thread.start();
-		    }
-		}
-		try
-		{
-		    imageListener = new MicroscopeImageFrameListener();
-		} 
-		catch (RemoteException e1)
-		{
-			client.sendError("Could not initialize image listener.", e1);
-		    return;
-		}*/
 	}
-    
-   /* private class ImageProcessor implements Runnable
-    {
-        private ImageEvent event;
-
-        ImageProcessor(ImageEvent e)
-        {
-            this.event = e;
-        }
-
-        @Override
-        public void run()
-        {
-        	String camera = event.getCamera();
-        	if(camera == null || camera.compareToIgnoreCase("unknown") == 0)
-        	{
-        		stopMeasurement(false);
-				client.sendError("Stopped measurement since it was not detectable by which camera an image was taken. Check the camera drivers and ensure, that they set the \"Camera\" metadata tag correctly.");
-				return;
-        	}
-        	for(int i=0; i<cameras.length; i++)
-        	{
-        		if(cameras[i] != null && camera.compareToIgnoreCase(cameras[i]) == 0)
-    			{
-    				newImage(i, event);
-    				return;
-    			}
-        	}
-        	
-        	// When we are here, we received an image from a camera which shouldn't be imaging...
-        	stopMeasurement(false);
-        	client.sendError("Received an image from camera \"" + camera + "\", although it shouldn't be imaging. Check if all cameras which are not taking part in the parallel imaging stopped imaging, or if the device driver of the respective camera sets the \"Camera\" metadata tag correctly.");
-        }
-    }*/
-
     
     /**
      * Stops the measurement. Does nothing if measurement is not running.
@@ -407,7 +333,7 @@ class MultiStreamPanel extends JPanel
 			usedCameras[i] = cameras[u];
 			usedExposures[i] = exposures[u];
 		}
-		measurement = server.getMeasurementFactory().createMeasurement();
+		measurement = server.getMeasurementProvider().createMeasurement();
 		imageHandler = new ImageHandler();
 		try
 		{
@@ -437,7 +363,7 @@ class MultiStreamPanel extends JPanel
 		
     }
     
-    void processImage(int imageNo, ImageEvent imageEvent)
+    void processImage(int imageNo, ImageEvent<?> imageEvent)
 	{
     	try
 		{

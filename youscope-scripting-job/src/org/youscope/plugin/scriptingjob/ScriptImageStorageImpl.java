@@ -23,7 +23,7 @@ class ScriptImageStorageImpl extends UnicastRemoteObject implements ScriptImageS
      */
     private static final long serialVersionUID = 8303485384981886687L;
 
-    private ImageEvent lastImage = null;
+    private ImageEvent<?> lastImage = null;
 
     private boolean newImageArrived = false;
 
@@ -74,7 +74,7 @@ class ScriptImageStorageImpl extends UnicastRemoteObject implements ScriptImageS
     }
 
     @Override
-    public void imageMade(ImageEvent e)
+    public void imageMade(ImageEvent<?> e)
     {
         synchronized (this)
         {

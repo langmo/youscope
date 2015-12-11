@@ -16,9 +16,9 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.microscope.Channel;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
@@ -59,7 +59,7 @@ class ImagingDefinitionPage extends MeasurementAddonUIPage<ContinousImagingMeasu
 	{		
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, "");
+			configGroup = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)

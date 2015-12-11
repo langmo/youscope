@@ -148,7 +148,7 @@ class NemesysJobConfigurationAddon extends ComponentAddonUIAdapter<NemesysJobCon
 		String[] scriptEngines;
 		try
 		{
-			scriptEngines = getServer().getConfiguration().getSupportedScriptEngines();
+			scriptEngines = getServer().getProperties().getSupportedScriptEngines();
 		}
 		catch(RemoteException e2)
 		{

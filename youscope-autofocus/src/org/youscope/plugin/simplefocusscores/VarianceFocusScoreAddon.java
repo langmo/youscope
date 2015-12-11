@@ -24,7 +24,7 @@ class VarianceFocusScoreAddon extends ResourceAdapter<VarianceFocusScoreConfigur
 	}
 	
 	@Override
-	public double calculateScore(ImageEvent imageEvent) throws ResourceException, RemoteException
+	public double calculateScore(ImageEvent<?> imageEvent) throws ResourceException, RemoteException
 	{
 		assertInitialized();
 		if(imageEvent == null)

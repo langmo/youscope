@@ -232,7 +232,7 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 				}
 			}
 			
-			ImageEvent e;
+			ImageEvent<?> e;
 			try
 			{
 				e = cameraDevice.makeImage(channelGroupID, channelID, exposures[0]);
@@ -245,7 +245,7 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 		}
 		else
 		{
-			ImageEvent[] images;
+			ImageEvent<?>[] images;
 			try
 			{
 				images = microscope.getCameraDevice().makeParallelImages(channelGroupID, channelID, cameras, exposures);
@@ -254,7 +254,7 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 			{
 				throw new JobException("Could not take images.", e1);
 			}
-			for(ImageEvent image : images)
+			for(ImageEvent<?> image : images)
 			{
 				sendImageToListeners(executionInformation, image);
 			}
@@ -278,7 +278,7 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 		return text;
 	}
 
-	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent e)
+	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent<?> e)
 	{
 		// Set execution information
 		e.setExecutionInformation(executionInformation);

@@ -13,7 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @YSConfigAlias("Evaporation controller")
-@XStreamAlias("evaporation-controller")
+@XStreamAlias("droplet-evaporation-controller")
 public class EvaporationControllerConfiguration extends DropletControllerConfiguration
 {
  

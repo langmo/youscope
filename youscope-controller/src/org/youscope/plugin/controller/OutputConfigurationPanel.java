@@ -123,7 +123,7 @@ class OutputConfigurationPanel extends DynamicPanel
 		}
 		try 
 		{
-			currentAddon = client.getAddonProvider().createComponentAddonUI(outputOption.getTypeIdentifier(), JobConfiguration.class);
+			currentAddon = client.getAddonProvider().createComponentUI(outputOption.getTypeIdentifier(), JobConfiguration.class);
 			
 			JobConfiguration currentConfiguration = controllerConfiguration.getOutputJob();
 			

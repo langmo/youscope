@@ -9,7 +9,7 @@ import java.util.Vector;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.JobContainerConfiguration;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.Period;
+import org.youscope.common.configuration.PeriodConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -73,7 +73,7 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	 * interpreted as as fast as possible.
 	 */
 	@XStreamAlias("period")
-	private Period										period				= null;
+	private PeriodConfiguration										period				= null;
 
 	@Override
 	public String getTypeIdentifier()
@@ -92,7 +92,7 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 		}
 		if(period != null)
 		{
-			clone.period = (Period)period.clone();
+			clone.period = (PeriodConfiguration)period.clone();
 		}
 		
 		return clone;
@@ -115,11 +115,11 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	 * @param period
 	 *            the period to set
 	 */
-	public void setPeriod(Period period)
+	public void setPeriod(PeriodConfiguration period)
 	{
 		try
 		{
-			this.period = (Period)period.clone();
+			this.period = (PeriodConfiguration)period.clone();
 		}
 		catch(CloneNotSupportedException e)
 		{
@@ -130,7 +130,7 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	/**
 	 * @return the period
 	 */
-	public Period getPeriod()
+	public PeriodConfiguration getPeriod()
 	{
 		return period;
 	}

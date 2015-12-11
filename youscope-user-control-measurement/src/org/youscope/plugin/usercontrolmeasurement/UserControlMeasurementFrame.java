@@ -80,7 +80,7 @@ class UserControlMeasurementFrame extends JPanel
 		add(snapImageButton, BorderLayout.SOUTH);
 	}
 
-	public void newImage(ImageEvent event)
+	public void newImage(ImageEvent<?> event)
 	{
 		if(imagePanel != null)
 			imagePanel.setImage(event);

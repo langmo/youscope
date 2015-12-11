@@ -53,7 +53,7 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	}
 
 	@Override
-	public void imageMade(ImageEvent e)
+	public void imageMade(ImageEvent<?> e)
 	{
 		// Do nothing.
 	}

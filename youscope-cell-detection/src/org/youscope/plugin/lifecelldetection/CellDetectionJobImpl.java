@@ -182,11 +182,11 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		
 		if(imageAdapters == null || imageAdapters.length <= 0)
 			return;
-		ImageEvent detectionImage = imageAdapters[0].clearImage();
+		ImageEvent<?> detectionImage = imageAdapters[0].clearImage();
 		
 		if(detectionImage == null)
 			return;
-		ImageEvent[] quantificationImages = new ImageEvent[imageAdapters.length-1];
+		ImageEvent<?>[] quantificationImages = new ImageEvent<?>[imageAdapters.length-1];
 		for(int i=0; i<imageAdapters.length-1; i++)
 		{
 			quantificationImages[i] = imageAdapters[i+1].clearImage();
@@ -212,7 +212,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		
 		if(result!= null && result.getLabelImage() != null && visualizationAlgorithm != null)
 		{
-			ImageEvent visImage;
+			ImageEvent<?> visImage;
 			try
 			{
 				visImage = visualizationAlgorithm.visualizeCells(detectionImage, result);
@@ -260,142 +260,76 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		return retVal;
 	}
 	
-	private void sendImageToListeners(ImageEvent e, ExecutionInformation executionInformation)
+	private void sendImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
 	{
-		class ImageSender implements Runnable
-		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
-			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(imageListeners)
-				{
-					for(int i = 0; i < imageListeners.size(); i++)
-					{
-						ImageListener listener = imageListeners.get(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							imageListeners.remove(i);
-							i--;
-						}
-					}
-				}
-			}
-		}
+		e.setPositionInformation(getPositionInformation());
+		e.setExecutionInformation(executionInformation);
 
 		synchronized(imageListeners)
 		{
-			if(imageListeners.size() <= 0)
-				return;
-		}
-		
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
-		new ImageSender(e).run();
-	}
-	
-	private void sendSegmentationImageToListeners(ImageEvent e, ExecutionInformation executionInformation)
-	{
-		class ImageSender implements Runnable
-		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
+			for(int i = 0; i < imageListeners.size(); i++)
 			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(segmentationImageListeners)
+				ImageListener listener = imageListeners.get(i);
+				try
 				{
-					for(int i = 0; i < segmentationImageListeners.size(); i++)
-					{
-						ImageListener listener = segmentationImageListeners.get(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							segmentationImageListeners.remove(i);
-							i--;
-						}
-					}
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					imageListeners.remove(i);
+					i--;
 				}
 			}
 		}
+	}
+	
+	private void sendSegmentationImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
+	{
+		e.setPositionInformation(getPositionInformation());
+		e.setExecutionInformation(executionInformation);
 
 		synchronized(segmentationImageListeners)
 		{
-			if(segmentationImageListeners.size() <= 0)
-				return;
-		}
-		
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
-		new ImageSender(e).run();
-	}
-	
-	private void sendControlImageToListeners(ImageEvent e, ExecutionInformation executionInformation)
-	{
-		class ImageSender implements Runnable
-		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
+			for(int i = 0; i < segmentationImageListeners.size(); i++)
 			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(controlImageListeners)
+				ImageListener listener = segmentationImageListeners.get(i);
+				try
 				{
-					for(int i = 0; i < controlImageListeners.size(); i++)
-					{
-						ImageListener listener = controlImageListeners.get(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							controlImageListeners.remove(i);
-							i--;
-						}
-					}
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					segmentationImageListeners.remove(i);
+					i--;
 				}
 			}
 		}
-
-		synchronized(controlImageListeners)
-		{
-			if(controlImageListeners.size() <= 0)
-				return;
-		}
-		
+	}
+	
+	private void sendControlImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
+	{
 		e.setPositionInformation(getPositionInformation());
 		e.setExecutionInformation(executionInformation);
 
-		new ImageSender(e).run();
+		synchronized(controlImageListeners)
+		{
+			for(int i = 0; i < controlImageListeners.size(); i++)
+			{
+				ImageListener listener = controlImageListeners.get(i);
+				try
+				{
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					controlImageListeners.remove(i);
+					i--;
+				}
+			}
+		}
 	}
 	
 	@Override

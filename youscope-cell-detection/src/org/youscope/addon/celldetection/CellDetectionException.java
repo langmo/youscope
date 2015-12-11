@@ -27,7 +27,7 @@ public class CellDetectionException extends ResourceException
 		super(message, cause);
 	}
 
-	/**
+	/** 
 	 * @param message
 	 */
 	public CellDetectionException(String message)

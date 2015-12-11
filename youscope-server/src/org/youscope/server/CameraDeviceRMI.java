@@ -42,7 +42,7 @@ class CameraDeviceRMI extends DeviceRMI implements CameraDevice
 	}
 
 	@Override
-	public ImageEvent makeImage(String channelGroupID, String channelID, double exposure) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
+	public ImageEvent<?> makeImage(String channelGroupID, String channelID, double exposure) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
 	{
 		ChannelInternal channel = channelManager.getChannel(channelGroupID, channelID);
 		return camera.makeImage(channel, exposure, accessID);
@@ -112,7 +112,7 @@ class CameraDeviceRMI extends DeviceRMI implements CameraDevice
 
 	@Override
 	@Deprecated
-	public ImageEvent[] makeParallelImages(String channelGroupID, String channelID, String[] cameraIDs, double[] exposures) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException, RemoteException
+	public ImageEvent<?>[] makeParallelImages(String channelGroupID, String channelID, String[] cameraIDs, double[] exposures) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException, RemoteException
 	{
 		ChannelInternal channel = channelManager.getChannel(channelGroupID, channelID);
 		return camera.makeParallelImages(channel, cameraIDs, exposures, accessID);

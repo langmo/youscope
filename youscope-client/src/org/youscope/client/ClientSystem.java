@@ -13,17 +13,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.ServiceLoader;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-
-import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
-import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.common.MessageListener;
 /**
  * Static class providing similar functionality as System.out.println() and System.err.println(), only that the messages are displayed
@@ -374,95 +366,6 @@ class ClientSystem
             return false;
         } 
     }
-    
-    static Iterable<ScriptEngineFactory> getScriptEngines()
-    {
-    	ScriptEngineManager mgr = new ScriptEngineManager(ClientSystem.class.getClassLoader());
-        return mgr.getEngineFactories();
-    }
-    
-    static ScriptEngineFactory getScriptEngine(String engineName)
-    {
-    	for(ScriptEngineFactory factory : getScriptEngines())
-    	{
-    		if(factory.getEngineName().compareTo(engineName) == 0)
-    			return factory;
-    	}
-    	return null;
-    }
-        
-    static Iterable<MeasurementAddonFactory> getMeasurementAddons()
-    {
-        ServiceLoader<MeasurementAddonFactory> jobAddons =
-                ServiceLoader.load(MeasurementAddonFactory.class,
-                        ClientSystem.class.getClassLoader());
-        return jobAddons;
-    }
-    
-    static Iterable<PostProcessorAddonFactory> getMeasurementPostProcessorAddons()
-    {
-        ServiceLoader<PostProcessorAddonFactory> addons =
-                ServiceLoader.load(PostProcessorAddonFactory.class,
-                        ClientSystem.class.getClassLoader());
-        return addons;
-    }
-    
-    static Iterable<ToolAddonFactory> getToolAddons()
-    {
-        ServiceLoader<ToolAddonFactory> toolAddons =
-                ServiceLoader.load(ToolAddonFactory.class,
-                        ClientSystem.class.getClassLoader());
-        return toolAddons;
-    }
-    
-    static MeasurementAddonFactory getMeasurementAddon(String addonID)
-    {
-        for (MeasurementAddonFactory addon : getMeasurementAddons())
-        {
-        	if(addon.isSupportingTypeIdentifier(addonID))
-                return addon;
-        }
-        return null;
-    }
-    
-    static PostProcessorAddonFactory getMeasurementPostProcessorAddon(String addonID)
-    {
-    	for (PostProcessorAddonFactory addon : getMeasurementPostProcessorAddons())
-        {
-        	if(addon.isSupportingTypeIdentifier(addonID))
-                return addon;
-        }
-        return null;
-    }
-    
-    static ToolAddonFactory getToolAddon(String addonID)
-    {
-        for (ToolAddonFactory addon : getToolAddons())
-        {
-        	if(addon.isSupportingTypeIdentifier(addonID))
-                return addon;
-        }
-        return null;
-    }
-    
-    static Iterable<MicroplateAddonFactory> getMicroplateTypeAddons()
-	{
-    	ServiceLoader<MicroplateAddonFactory> microplateTypeAddons =
-            ServiceLoader.load(MicroplateAddonFactory.class,
-                    ClientSystem.class.getClassLoader());
-    	return microplateTypeAddons;
-	}
-
-	
-	static MicroplateAddonFactory getMicroplateTypeAddon(String addonID)
-	{
-		for (MicroplateAddonFactory addon : getMicroplateTypeAddons())
-        {
-        	if(addon.isSupportingTypeIdentifier(addonID))
-                return addon;
-        }
-        return null;
-	}
 
 	public static class YouScopeUncaughtExceptionHandler  implements Thread.UncaughtExceptionHandler
 	{

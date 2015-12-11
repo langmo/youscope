@@ -23,5 +23,5 @@ public interface CellVisualizationAddon extends Resource
 	 * @throws CellVisualizationException
 	 * @throws RemoteException 
 	 */
-	public ImageEvent visualizeCells(ImageEvent image, CellDetectionResult detectionResult) throws CellVisualizationException, RemoteException;
+	public ImageEvent<?> visualizeCells(ImageEvent<?> image, CellDetectionResult detectionResult) throws CellVisualizationException, RemoteException;
 }

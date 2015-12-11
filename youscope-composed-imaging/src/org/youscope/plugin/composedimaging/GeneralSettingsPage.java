@@ -22,12 +22,12 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.ImageFolderStructure;
-import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.FolderStructureConfiguration;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.PeriodVaryingPanel;
@@ -97,7 +97,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 		String[] imageTypes;
 		try
 		{
-			imageTypes = server.getConfiguration().getSupportedImageFormats();
+			imageTypes = server.getProperties().getSupportedImageFormats();
 		}
 		catch (RemoteException e1)
 		{
@@ -276,19 +276,19 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 			stopByUser.doClick();
 		}
 
-		if(configuration.getPeriod() instanceof RegularPeriod && !((RegularPeriod)configuration.getPeriod()).isFixedTimes())
+		if(configuration.getPeriod() instanceof RegularPeriodConfiguration && !((RegularPeriodConfiguration)configuration.getPeriod()).isFixedTimes())
 		{
 			periodField.setValue(60);
 			periodAFAP.doClick();
 		}
-		else if(configuration.getPeriod() instanceof RegularPeriod)
+		else if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 		{
-			periodField.setValue(((RegularPeriod)configuration.getPeriod()).getPeriod() / 1000);
+			periodField.setValue(((RegularPeriodConfiguration)configuration.getPeriod()).getPeriod() / 1000);
 			periodFixed.doClick();
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriod)
+		else if(configuration.getPeriod() instanceof VaryingPeriodConfiguration)
 		{
-			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
+			VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 			periodVaryingDataPanel.setPeriod(period);
 			periodField.setValue(60);
 			periodVarying.doClick();
@@ -301,7 +301,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 		configuration.setName(nameField.getText());
 		if(periodAFAP.isSelected())
 		{
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(false);
 			period.setStartTime(0);
 			period.setPeriod(0);
@@ -309,7 +309,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 		}
 		else if(periodFixed.isSelected())
 		{
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(true);
 			period.setStartTime(0);
 			period.setPeriod(((Number)periodField.getValue()).intValue() * 1000);
@@ -334,7 +334,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 		saveSettings.setImageFileType((String) imageTypeField.getSelectedItem());
 		configuration.setSaveSettings(saveSettings);
 		
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
 		return true;
 	}
 
@@ -342,15 +342,16 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 	public void setToDefault(ComposedImagingMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
-		saveSettings.setImageFolderStructure(ImageFolderStructure.ALL_IN_ONE_FOLDER);
+		String lastFolder = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+		saveSettings.setFolder(lastFolder == null ? "" : lastFolder);
+		saveSettings.setImageFolderStructure(FolderStructureConfiguration.ALL_IN_ONE_FOLDER);
 		saveSettings.setImageFileName("%N_position%4p_time%n");
 		configuration.setSaveSettings(saveSettings);
 		
 		if(configuration.getPeriod() == null)
 		{
 			// Set to AFAP
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(false);
 			period.setStartTime(0);
 			period.setPeriod(0);

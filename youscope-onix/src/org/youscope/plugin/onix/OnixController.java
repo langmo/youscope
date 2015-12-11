@@ -398,7 +398,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 		// get onix addon.
 		try
 		{
-			onix = getServer().getConfiguration().getServerAddon(OnixAddon.class);
+			onix = getServer().getProperties().getServerAddon(OnixAddon.class);
 			onix.addMessageListener(onixListener);
 			onix.initialize();
 		}

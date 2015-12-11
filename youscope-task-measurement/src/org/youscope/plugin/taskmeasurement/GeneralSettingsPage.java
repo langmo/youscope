@@ -19,10 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.FileNameComboBox;
@@ -59,8 +59,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<TaskMeasurementConfigur
 				"After a given time.",
 				false);
 	
-	private JComboBox<ImageFolderStructure>									imageFolderTypeField	= new JComboBox<ImageFolderStructure>(
-				ImageFolderStructure
+	private JComboBox<FolderStructureConfiguration>									imageFolderTypeField	= new JComboBox<FolderStructureConfiguration>(
+				FolderStructureConfiguration
 						.values());
 	
 	private FileNameComboBox									imageFileField			= new FileNameComboBox(
@@ -117,11 +117,11 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<TaskMeasurementConfigur
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
 		saveSettings.setFolder(folderField.getText());
 		saveSettings.setImageFileType((String) imageTypeField.getSelectedItem());
-		saveSettings.setImageFolderStructure((ImageFolderStructure) imageFolderTypeField.getSelectedItem());
+		saveSettings.setImageFolderStructure((FolderStructureConfiguration) imageFolderTypeField.getSelectedItem());
 		saveSettings.setImageFileName(imageFileField.getSelectedItem().toString());
 		configuration.setSaveSettings(saveSettings);
 		
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
 
 		return true;
 	}
@@ -130,7 +130,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<TaskMeasurementConfigur
 	public void setToDefault(TaskMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
+		String lastFolder = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+		saveSettings.setFolder(lastFolder == null ? "" : lastFolder);
 		saveSettings.setImageFileName(FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
 		configuration.setSaveSettings(saveSettings);
 	}
@@ -149,7 +150,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<TaskMeasurementConfigur
 		String[] imageTypes;
 		try
 		{
-			imageTypes = server.getConfiguration().getSupportedImageFormats();
+			imageTypes = server.getProperties().getSupportedImageFormats();
 		}
 		catch (RemoteException e1)
 		{

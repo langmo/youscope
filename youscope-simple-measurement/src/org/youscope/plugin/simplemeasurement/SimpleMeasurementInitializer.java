@@ -7,12 +7,11 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.ComponentException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
@@ -22,6 +21,7 @@ import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.job.basicjobs.CompositeJob;
 import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author langmo
@@ -34,9 +34,9 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 	public void initializeMeasurement(Measurement measurement, SimpleMeasurementConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException
 	{
 		MeasurementTask mainTask;
-		if(configuration.getPeriod() instanceof RegularPeriod)
+		if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 		{
-			RegularPeriod period = (RegularPeriod)configuration.getPeriod();
+			RegularPeriodConfiguration period = (RegularPeriodConfiguration)configuration.getPeriod();
 			try
 			{
 				mainTask = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
@@ -50,9 +50,9 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 				throw new AddonException("Could not create measurement due to remote exception.", e);
 			}
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriod)
+		else if(configuration.getPeriod() instanceof VaryingPeriodConfiguration)
 		{
-			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
+			VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 			try
 			{
 				mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());

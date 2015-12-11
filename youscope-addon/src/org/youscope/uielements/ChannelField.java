@@ -9,8 +9,8 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ChannelConfiguration;
 import org.youscope.common.microscope.Channel;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -42,7 +42,7 @@ public class ChannelField extends JPanel
      */
     public ChannelField(YouScopeClient client, YouScopeServer server)
     {
-    	this(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)null), client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, (String)null), client, server);
+    	this((String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP), (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL), client, server);
     }
     
     /**
@@ -53,8 +53,8 @@ public class ChannelField extends JPanel
      */
     public ChannelField(ChannelConfiguration channelConfiguration, YouScopeClient client, YouScopeServer server)
     {
-    	this(channelConfiguration == null ? client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)null) : channelConfiguration.getChannelGroup(),
-    			channelConfiguration == null ? client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, (String)null) : channelConfiguration.getChannel(),
+    	this(channelConfiguration == null ? (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP) : channelConfiguration.getChannelGroup(),
+    			channelConfiguration == null ? (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL) : channelConfiguration.getChannel(),
     					client, server);
     }
     
@@ -124,24 +124,24 @@ public class ChannelField extends JPanel
     
     private String getLastChannelGroup()
     {
-    	return client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)null);
+    	return (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
     }
     
     private String getLastChannel()
     {
-    	return client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, (String)null);
+    	return (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL);
     }
     
     private void setLastChannel(String channel)
     {
     	if(channel != null)
-    		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, channel);
+    		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL, channel);
     }
     
     private void setLastChannelGroup(String channelGroup)
     {
     	if(channelGroup != null)
-    		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
+    		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
     }
     
     /**

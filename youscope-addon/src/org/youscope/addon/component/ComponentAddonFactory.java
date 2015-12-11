@@ -6,6 +6,7 @@ import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Component;
 import org.youscope.common.measurement.PositionInformation;
+import org.youscope.serverinterfaces.ConstructionContext;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

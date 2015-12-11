@@ -140,7 +140,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 			throw new JobException("Device set to serve as the reflector must be of type \"Reflector\". DriverID of device \"" + reflectorDevice.getDeviceID() + "\" is \"" + reflectorDevice.getDriverID()+"\".");
 		}
 		// make images
-		ImageEvent[] images = new ImageEvent[phaseShiftsMask.length];
+		ImageEvent<?>[] images = new ImageEvent<?>[phaseShiftsMask.length];
 		try
 		{
 			if(maskFileName == null)
@@ -177,7 +177,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 		{
 			throw new JobException("Could not take SLIM images.", e);
 		}
-		ImageEvent slimImage;
+		ImageEvent<?> slimImage;
 		try {
 			slimImage = SlimHelper.calculateSlimImage(images);
 		} catch (Exception e) {
@@ -194,41 +194,25 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 		return "SLIM job";
 	}
 
-	private void sendImageToListeners(ImageEvent e)
+	private void sendImageToListeners(ImageEvent<?> e)
 	{
-		class ImageSender implements Runnable
+		synchronized(imageListeners)
 		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
+			for(int i = 0; i < imageListeners.size(); i++)
 			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(imageListeners)
+				ImageListener listener = imageListeners.get(i);
+				try
 				{
-					for(int i = 0; i < imageListeners.size(); i++)
-					{
-						ImageListener listener = imageListeners.get(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							imageListeners.remove(i);
-							i--;
-						}
-					}
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					imageListeners.remove(i);
+					i--;
 				}
 			}
-		}
-
-		new ImageSender(e).run();
+		}	
 	}
 
 	@Override

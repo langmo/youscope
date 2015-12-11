@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.serverinterfaces.ConstructionContext;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

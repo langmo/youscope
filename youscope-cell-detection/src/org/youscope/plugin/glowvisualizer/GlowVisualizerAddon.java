@@ -3,12 +3,7 @@
  */
 package org.youscope.plugin.glowvisualizer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -20,14 +15,15 @@ import javax.script.ScriptException;
 import org.youscope.addon.celldetection.CellDetectionResult;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationException;
+import org.youscope.addon.celldetection.utils.MatlabFunctionCreator;
 import org.youscope.common.ImageAdapter;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
+import org.youscope.common.configuration.ResourceConfiguration; 
 import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.measurement.resource.ResourceException; 
 
 /**
  * @author Moritz Lang
@@ -37,7 +33,10 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 {
 	private ScriptEngine scriptEngine;
 	private final StringWriter outputListener = new StringWriter();
+	private MatlabFunctionCreator functionCreator = null;
+	private final static String[] MATLAB_INVOKER_ARGUMENTS = {"imageEvent", "detectionResult", "glowStrength", "imageSink"};
 	
+	 
 	GlowVisualizerAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
 	{
 		super(positionInformation, configuration, GlowVisualizerConfiguration.CONFIGURATION_ID,GlowVisualizerConfiguration.class, "Glow Visualizer");
@@ -90,12 +89,16 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 		}
 		receiveEngineMessages();	
 
+		functionCreator = new MatlabFunctionCreator("org/youscope/plugin/glowvisualizer/GlowVisualizerInvoker.m", MATLAB_INVOKER_ARGUMENTS);
+		functionCreator.initialize();
 	}
 
 	@Override
 	public void uninitialize(MeasurementContext measurementContext) throws ResourceException, RemoteException
 	{
 		scriptEngine = null;
+		functionCreator.uninitialize();
+		functionCreator = null;
 		super.uninitialize(measurementContext);
 	}
 
@@ -115,7 +118,7 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 	}
 
 	@Override
-	public ImageEvent visualizeCells(ImageEvent e, CellDetectionResult detectionResult) throws CellVisualizationException
+	public ImageEvent<?> visualizeCells(ImageEvent<?> e, CellDetectionResult detectionResult) throws CellVisualizationException
 	{
 		if(!isInitialized())
 			throw new CellVisualizationException("Addon not yet initialized.");
@@ -137,26 +140,21 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 		// Pass parameters to script
 		scriptEngine.put("imageSink", imageSink);
 		scriptEngine.put("imageEvent", e);
-		scriptEngine.put("detectionResult", detectionResult);
+		scriptEngine.put("detectionResult", detectionResult); 
 		scriptEngine.put("glowStrength", getConfiguration().getGlowStrength());
-		File scriptsFolder = new File("scripts/Matlab/tools/");
-		if(!scriptsFolder.exists() || !scriptsFolder.isDirectory())
-			throw new CellVisualizationException("Scripts folder \"scripts/Matlab/tools/\" does not exist. Check your installation.");			
-		scriptEngine.put("scriptsFolder", scriptsFolder.getAbsolutePath());
 		
-		// Open & eval matlab file
-		URL matlabFile = getClass().getClassLoader().getResource("org/youscope/plugin/glowvisualizer/GlowVisualizerInvoker.m");
-		InputStreamReader fileReader = null;
-		BufferedReader bufferedReader = null;
+		
+		// generate function call logic.
+		String fullInvokeString = functionCreator.getFullInvokeString();
+		
+		// Eval matlab script
 		try
 		{
-			bufferedReader = new BufferedReader(fileReader);
-			fileReader = new InputStreamReader(matlabFile.openStream());
-			scriptEngine.eval(bufferedReader);
+			scriptEngine.eval(fullInvokeString);
 		}
 		catch(ScriptException ex)
 		{
-			String errorMessage = "Error in script on line " + ex.getLineNumber() + ", column " + ex.getColumnNumber() + ".";
+			String errorMessage = "Error in script on line " + ex.getLineNumber() + ", column " + ex.getColumnNumber() + ". Calling line was \""+fullInvokeString+"\".";
 			Throwable cause = ex;
 			while(true)
 			{
@@ -165,33 +163,7 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 				if(cause == null)
 					break;
 			}
-			throw new CellVisualizationException(errorMessage);
-		}
-		catch(IOException e1)
-		{
-			throw new CellVisualizationException("Script file " + matlabFile.toString() + " could not be opened.", e1);
-		}
-		finally
-		{
-			if(bufferedReader != null)
-			{
-				try {
-					bufferedReader.close();
-				} catch (@SuppressWarnings("unused") IOException e1) {
-					// do nothing.
-				}
-			}
-			if(fileReader != null)
-			{
-				try
-				{
-					fileReader.close();
-				}
-				catch(@SuppressWarnings("unused") IOException e1)
-				{
-					// Do nothing.
-				}
-			}
+			throw new CellVisualizationException(errorMessage, ex);
 		}
 		receiveEngineMessages();
 		

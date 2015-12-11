@@ -7,7 +7,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
 
-import org.youscope.addon.component.ComponentProvider;
 import org.youscope.common.MessageListener;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
@@ -15,28 +14,27 @@ import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeStateListener;
 
 /**
- * Main Interface for the control of a microscope.
+ * The main interface of the YouScope server, which controls the microscope, executes measurements, and similar.
  * 
  * @author Moritz Lang
  */
 public interface YouScopeServer extends Remote
 {
 	/**
-	 * Returns an interface representing the configuration of the microscope server. All these
-	 * settings will be saved between startups.
+	 * Returns the properties of the server.
 	 * 
-	 * @return The configuration interface.
+	 * @return Properties of the server.
 	 * @throws RemoteException
 	 */
-	YouScopeServerConfiguration getConfiguration() throws RemoteException;
+	YouScopeServerProperties getProperties() throws RemoteException;
 
 	/**
-	 * Returns a factory for the construction of new measurements.
+	 * Returns a provider for the construction of new measurements.
 	 * 
 	 * @return Factory for the construction of new measurements.
 	 * @throws RemoteException
 	 */
-	MeasurementProvider getMeasurementFactory() throws RemoteException;
+	MeasurementProvider getMeasurementProvider() throws RemoteException;
 
 	/**
 	 * Returns a provider for the construction of measurement components, e.g. jobs, resources, and similar.

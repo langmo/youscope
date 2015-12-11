@@ -122,7 +122,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 		try
 		{
 			goFocus(microscope, offset);
-			ImageEvent e = microscope.getCameraDevice().makeImage(channelGroup, channel, exposure);
+			ImageEvent<?> e = microscope.getCameraDevice().makeImage(channelGroup, channel, exposure);
 			sendImageToListeners(executionInformation, e);
 			goFocus(microscope, -offset);
 		}
@@ -138,44 +138,28 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 		return "Out of focus (offset "+Double.toString(getOffset())+"um) imaging channel " + getChannelGroup() + "." + getChannel() + ", exposure " + Double.toString(getExposure()) + "ms";
 	}
 
-	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent e)
+	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent<?> e)
 	{
-		class ImageSender implements Runnable
-		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
-			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(imageListeners)
-				{
-					for(int i = 0; i < imageListeners.size(); i++)
-					{
-						ImageListener listener = imageListeners.elementAt(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							imageListeners.removeElementAt(i);
-							i--;
-						}
-					}
-				}
-			}
-		}
-
 		e.setPositionInformation(getPositionInformation());
 		e.setExecutionInformation(executionInformation);
 
-		new ImageSender(e).run();
+		synchronized(imageListeners)
+		{
+			for(int i = 0; i < imageListeners.size(); i++)
+			{
+				ImageListener listener = imageListeners.elementAt(i);
+				try
+				{
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					imageListeners.removeElementAt(i);
+					i--;
+				}
+			}
+		}
 	}
 	
 	private void goFocus(Microscope microscope, double offset) throws InterruptedException, RemoteException, MicroscopeLockedException, MicroscopeException, DeviceException

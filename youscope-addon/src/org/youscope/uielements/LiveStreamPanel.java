@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -137,11 +138,11 @@ public class LiveStreamPanel extends ImagePanel {
     	int imagingPeriod = channelControl.getImagingPeriod();
     	
     	YouScopeProperties props = client.getProperties();
-    	props.setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, channel);
-    	props.setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
-    	props.setProperty(YouScopeProperties.PROPERTY_LAST_LIVE_CAMERA, camera);
-    	props.setProperty(YouScopeProperties.PROPERTY_LAST_LIVE_EXPOSURE, exposure);
-    	props.setProperty(YouScopeProperties.PROPERTY_LAST_LIVE_PERIOD, imagingPeriod);
+    	props.setProperty(StandardProperty.PROPERTY_LAST_CHANNEL, channel);
+    	props.setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
+    	props.setProperty(StandardProperty.PROPERTY_LAST_LIVE_CAMERA, camera);
+    	props.setProperty(StandardProperty.PROPERTY_LAST_LIVE_EXPOSURE, exposure);
+    	props.setProperty(StandardProperty.PROPERTY_LAST_LIVE_PERIOD, imagingPeriod);
 	}
 	
 	/**
@@ -180,7 +181,7 @@ public class LiveStreamPanel extends ImagePanel {
 	
 	private class ImageHandler extends Thread
     {
-    	private volatile ImageEvent nextImage;
+    	private volatile ImageEvent<?> nextImage;
     	private volatile boolean shouldRun = true;
     	private class ImageListenerImpl extends UnicastRemoteObject implements ImageListener
     	{
@@ -199,7 +200,7 @@ public class LiveStreamPanel extends ImagePanel {
 			}
 
 			@Override
-    		public void imageMade(ImageEvent e) throws RemoteException
+    		public void imageMade(ImageEvent<?> e) throws RemoteException
     		{
     			synchronized(ImageHandler.this)
     			{
@@ -231,7 +232,7 @@ public class LiveStreamPanel extends ImagePanel {
 			while(shouldRun)
 			{
 				// get image.
-				ImageEvent image = null;
+				ImageEvent<?> image = null;
 				synchronized(this)
 				{
 					while(shouldRun && nextImage == null)
@@ -290,11 +291,11 @@ public class LiveStreamPanel extends ImagePanel {
 			imagingPeriodField.setMinimalValue(0);
 			
 			// Load settings
-			exposureField.setValue(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_LIVE_EXPOSURE, 50.0));
-			imagingPeriodField.setValue(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_LIVE_PERIOD, 100));
-			cameraField.setCamera(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_LIVE_CAMERA, (String)null));
-			channelField.setChannel(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)null), 
-					client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL, (String)null));
+			exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_LIVE_EXPOSURE));
+			imagingPeriodField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_LIVE_PERIOD));
+			cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_LIVE_CAMERA));
+			channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP), 
+					(String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL));
 			
 			ActionListener changeListener = new ActionListener()
 			{
@@ -660,7 +661,7 @@ public class LiveStreamPanel extends ImagePanel {
         // Create measurement on server
         try
         {
-            MeasurementProvider measurementFactory =server.getMeasurementFactory();
+            MeasurementProvider measurementFactory =server.getMeasurementProvider();
             synchronized (this)
             {
                 // Create measurement

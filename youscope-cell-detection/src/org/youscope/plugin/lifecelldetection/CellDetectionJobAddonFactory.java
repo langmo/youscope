@@ -12,7 +12,6 @@ import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
@@ -20,6 +19,7 @@ import org.youscope.common.measurement.ImageProducer;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang
@@ -73,28 +73,28 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 				if(configuration.getSegmentationImageSaveName() != null)
 				{
 					cellDetectionJob.addSegmentationImageListener(constructionContext.getMeasurementSaver().getSaveImageListener(configuration.getSegmentationImageSaveName()));
-				}
+				} 
 				if(configuration.getControlImageSaveName() != null)
 				{
 					cellDetectionJob.addControlImageListener(constructionContext.getMeasurementSaver().getSaveImageListener(configuration.getControlImageSaveName()));
 				}
 				
 				// Change image name for display
-				if(configuration.getControlImageSaveName() != null)
+				if(configuration.getControlImageSaveName() != null && configuration.getVisualizationAlgorithmConfiguration() != null)
 				{
-					cellDetectionJob.setImageDescription(configuration.getControlImageSaveName() + " (cell-detection control image)");
+					cellDetectionJob.setImageDescription(configuration.getControlImageSaveName() + " (cell-detection)");
 				}
 				else if(configuration.getVisualizationAlgorithmConfiguration() != null)
 				{
-					cellDetectionJob.setImageDescription("cell-detection control image");
+					cellDetectionJob.setImageDescription("cell-detection");
 				}
-				else if(configuration.getSegmentationImageSaveName() != null)
+				else if(configuration.getSegmentationImageSaveName() != null) 
 				{
-					cellDetectionJob.setImageDescription(configuration.getSegmentationImageSaveName() + " (cell-detection segmentation image)");
-				}
+					cellDetectionJob.setImageDescription(configuration.getSegmentationImageSaveName() + " (cell-detection)");
+				} 
 				else
 				{
-					cellDetectionJob.setImageDescription("cell-detection segmentation image");
+					cellDetectionJob.setImageDescription("cell-detection");
 				}
 				
 				if(configuration.getCellTableSaveName() != null)

@@ -8,8 +8,6 @@ import java.util.UUID;
 
 import javax.script.ScriptEngineManager;
 
-import org.youscope.addon.component.ComponentProvider;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.ImageListener;
 import org.youscope.common.MessageListener;
@@ -21,6 +19,8 @@ import org.youscope.common.measurement.callback.CallbackCreationException;
 import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableListener;
+import org.youscope.serverinterfaces.ComponentProvider;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author langmo
@@ -57,7 +57,7 @@ class ConstructionContextImpl implements ConstructionContext
 				return new ImageListener()
 				{
 					@Override
-					public void imageMade(ImageEvent e) throws RemoteException
+					public void imageMade(ImageEvent<?> e) throws RemoteException
 					{
 						// Do nothing (dummy).
 					}

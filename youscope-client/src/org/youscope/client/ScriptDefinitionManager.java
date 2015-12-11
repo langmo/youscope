@@ -23,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.youscope.addon.AddonException;
 
 /**
  * @author langmo
@@ -225,10 +226,11 @@ class ScriptDefinitionManager
 	private static void runScriptInternal(ScriptDefinition scriptDefinition)
 	{
 		String engineName = scriptDefinition.getEngine();
-		ScriptEngineFactory factory = ClientSystem.getScriptEngine(engineName);
-		if(factory == null)
-		{
-			ClientSystem.err.println("Could not find script engine with name " + engineName + ".");
+		ScriptEngineFactory factory;
+		try {
+			factory = ClientAddonProviderImpl.getProvider().getScriptEngineFactory(engineName);
+		} catch (AddonException e2) {
+			ClientSystem.err.println("Could not find script engine with name " + engineName + ".", e2);
 			return;
 		}
 		try

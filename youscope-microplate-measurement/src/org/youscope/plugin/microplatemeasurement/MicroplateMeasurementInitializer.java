@@ -8,15 +8,14 @@ import java.util.ServiceLoader;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
 import org.youscope.common.Well;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
@@ -28,6 +27,7 @@ import org.youscope.common.measurement.job.basicjobs.FocusingJob;
 import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.task.MeasurementTask;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang
@@ -48,9 +48,9 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 		MeasurementTask mainTask = null;
 		if(wellTime <= 0)
 		{
-			if(configuration.getPeriod() instanceof RegularPeriod)
+			if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 			{
-				RegularPeriod period = (RegularPeriod)configuration.getPeriod();
+				RegularPeriodConfiguration period = (RegularPeriodConfiguration)configuration.getPeriod();
 				try
 				{
 					mainTask = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
@@ -64,9 +64,9 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					throw new AddonException("Could not create measurement due to remote exception.", e);
 				}
 			}
-			else if(configuration.getPeriod() instanceof VaryingPeriod)
+			else if(configuration.getPeriod() instanceof VaryingPeriodConfiguration)
 			{
-				VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
+				VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 				try
 				{
 					mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
@@ -175,9 +175,9 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					// Get properties for actual well
 					int startTime = configuration.getPeriod().getStartTime() + elementNum * wellTime;
 
-					if(configuration.getPeriod() instanceof RegularPeriod)
+					if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 					{
-						RegularPeriod period = (RegularPeriod)configuration.getPeriod();
+						RegularPeriodConfiguration period = (RegularPeriodConfiguration)configuration.getPeriod();
 						int mainPeriod = period.getPeriod();
 						boolean fixedTimes = period.isFixedTimes();
 						if(mainPeriod <= 0)
@@ -198,9 +198,9 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							throw new AddonException("Could not create measurement due to remote exception.", e);
 						}
 					}
-					else if(configuration.getPeriod() instanceof VaryingPeriod)
+					else if(configuration.getPeriod() instanceof VaryingPeriodConfiguration)
 					{
-						VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
+						VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 						try
 						{
 							wellTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), startTime, period.getNumExecutions());

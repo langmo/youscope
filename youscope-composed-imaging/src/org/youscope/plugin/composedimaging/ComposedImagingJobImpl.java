@@ -182,7 +182,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 			if(Thread.interrupted())
 				throw new InterruptedException();
 
-			ImageEvent e;
+			ImageEvent<?> e;
 			try
 			{
 				e = microscope.getCameraDevice().makeImage(configGroup, channel, exposures[0]);
@@ -192,7 +192,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 				throw new JobException("Could not take sub-image for composed image..", e1);
 			}
 			e.setChannel(channel);
-			e.setConfigGroup(configGroup);
+			e.setChannelGroup(configGroup);
 			
 			// Create position information for element.
 			PositionInformation temp = new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_YTILE, position.getRowColumnPosition().y);
@@ -327,41 +327,25 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 		}
 	}
 	
-	protected void sendImageToListeners(ImageEvent e)
+	protected void sendImageToListeners(ImageEvent<?> e)
 	{
-		class ImageSender implements Runnable
+		synchronized(imageListeners)
 		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
+			for(int i = 0; i < imageListeners.size(); i++)
 			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(imageListeners)
+				ImageListener listener = imageListeners.elementAt(i);
+				try
 				{
-					for(int i = 0; i < imageListeners.size(); i++)
-					{
-						ImageListener listener = imageListeners.elementAt(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							imageListeners.removeElementAt(i);
-							i--;
-						}
-					}
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					imageListeners.removeElementAt(i);
+					i--;
 				}
 			}
 		}
-
-		(new Thread(new ImageSender(e))).start();
 	}
 
 	@Override

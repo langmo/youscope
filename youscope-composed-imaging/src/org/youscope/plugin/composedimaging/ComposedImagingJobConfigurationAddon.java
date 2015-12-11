@@ -26,8 +26,8 @@ import javax.swing.border.TitledBorder;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.PixelSize;
@@ -394,7 +394,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = getClient().getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, "");
+			configGroup = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -678,7 +678,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		else
 			configuration.setCameraDevice(null);
 
-		getClient().getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)configGroupField.getSelectedItem());
+		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
 		getClient().getProperties().setProperty(PROPERTY_OVERLAP, overlap);
 		getClient().getProperties().setProperty(PROPERTY_NX, nx);
 		getClient().getProperties().setProperty(PROPERTY_NY, ny);

@@ -12,6 +12,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.callback.CallbackProvider;
+import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
 
 /**
  * A class being able to construct new measurements.
@@ -22,54 +23,52 @@ import org.youscope.common.measurement.callback.CallbackProvider;
 public interface MeasurementProvider extends Remote
 {
 	/**
-	 * Creates a new empty measurement which is configurable by the user. Same as
-	 * createConfigurableMeasurement(-1).
+	 * Creates a new empty measurement. Same as
+	 * {@link #createMeasurement(int)}(-1).
 	 * 
-	 * @return The measurement object.
+	 * @return The created measurement.
 	 * @throws RemoteException
 	 */
 	Measurement createMeasurement() throws RemoteException;
 
 	/**
-	 * Creates a new empty measurement which is configurable by the user.
+	 * Creates a new empty measurement.
 	 * 
-	 * @param measurementRuntime Total maximal runtime of measurement in milliseconds. After this
-	 *            time the measurement will be automatically canceled. Set to -1 for unlimited
-	 *            maximal runtime.
+	 * @param measurementRuntime Runtime of measurement in milliseconds. After this
+	 *            time the measurement will be automatically stopped. Set to -1 for unlimited runtime.
 	 * @return The measurement object.
 	 * @throws RemoteException
 	 */
 	Measurement createMeasurement(int measurementRuntime) throws RemoteException;
 
 	/**
-	 * Creates a new measurement and configures it according to the provided configuration. Same as
-	 * createMeasurement(configuration, null).
+	 * Creates a new measurement from the configuration. Same as
+	 * {@link #createMeasurement(MeasurementConfiguration, CallbackProvider)}(configuration, null).
 	 * 
 	 * @param configuration The configuration of the measurement.
-	 * @return The measurement object.
+	 * @return The newly created measurement.
 	 * @throws RemoteException
-	 * @throws ConfigurationException
-	 * @throws ComponentCreationException
+	 * @throws ConfigurationException Thrown if configuration is invalid.
+	 * @throws ComponentCreationException Thrown if an error occurred in the creation of the components (e.g. jobs) belonging to the measurement.
 	 */
 	Measurement createMeasurement(MeasurementConfiguration configuration) throws RemoteException, ConfigurationException, ComponentCreationException;
 
 	/**
-	 * Creates a new measurement and configures it according to the provided configuration.
+	 * Creates a new measurement from the configuration.
 	 * 
 	 * @param configuration The configuration of the measurement.
-	 * @param scriptEngineManager The script engine manager to obtain the script engines which should run on the client side.
-	 * @param callbackProvider Object providing access to the callbacks of the client which can be called by the measurement.
-	 * @return The measurement object.
+	 * @param callbackProvider Provider of callbacks, with which the measurement can send messages to the client, e.g. to prompt the client to graphically display the state of the measurement, or even to manipulate the measurement at runtime.
+	 * @return The newly created measurement.
 	 * @throws RemoteException
-	 * @throws ConfigurationException
-	 * @throws ComponentCreationException
+	 * @throws ConfigurationException Thrown if configuration is invalid.
+	 * @throws ComponentCreationException Thrown if an error occurred in the creation of the components (e.g. jobs) belonging to the measurement.
 	 */
 	Measurement createMeasurement(MeasurementConfiguration configuration, CallbackProvider callbackProvider) throws RemoteException, ConfigurationException, ComponentCreationException;
 
 	/**
-	 * Short way to create a measurement, where every [imagingPeriod] ms an image is made in the given channel with the given period.
-	 * The images made are not saved.
-	 * Internally, this is done by creating an empty measurement and adding a continuous imaging job with the respective settings to it.
+	 * Convenience function to create a measurement, in which every imagingPeriod ms an image is made in the given channel with the given period, using the default camera.
+	 * The images made are not saved automatically, but intended to be displayed to the user.
+	 * Internally, this is done by creating an empty measurement and adding a {@link ContinuousImagingJob} with the respective settings to it.
 	 * This function mainly servers the propose of displaying the current microscope image in a client, a functionality which is so often needed such that a default implementation seemed necessary.
 	 * 
 	 * @param cameraID The device name of the camera with which it should be imaged. Set to null to use standard camera.
@@ -77,10 +76,10 @@ public interface MeasurementProvider extends Remote
 	 * @param channel The channel in which the images should be made.
 	 * @param imagingPeriod The time between two successive images.
 	 * @param exposure The exposure time for imaging.
-	 * @param imageListener A listener which should be informed when new images are made.
-	 * @return The measurement.
+	 * @param imageListener Listener to which the images made by the microscope are send.
+	 * @return The newly created measurement.
 	 * @throws RemoteException
-	 * @throws ComponentCreationException 
+	 * @throws ComponentCreationException Thrown if an error occurred in the creation of the components (e.g. jobs) belonging to the measurement.
 	 */
 	Measurement createContinuousMeasurement(String cameraID, String channelGroup, String channel, int imagingPeriod, double exposure, ImageListener imageListener) throws RemoteException, ComponentCreationException;
 }

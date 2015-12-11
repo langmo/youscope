@@ -336,7 +336,7 @@ public class ContinousMeasurementAndControlsPanel extends JPanel
 			private static final long	serialVersionUID	= -1418017134453605763L;
 
 			@Override
-			public void newImage(ImageEvent event)
+			public void newImage(ImageEvent<?> event)
 			{
 				int[][] bins;
 				double[] minMax;

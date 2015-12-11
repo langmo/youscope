@@ -271,7 +271,16 @@ class ImageGatherer extends Thread
 			
 			// Create event object
 			Object imageDataRaw = convertToRightType(taggedImage.pix, bytesPerPixel);
-			ImageEvent event = new ImageEvent(imageDataRaw, imageWidth, imageHeight, bytesPerPixel, bitDepth);
+			ImageEvent<?> event;
+			try
+			{
+				event = ImageEvent.createImage(imageDataRaw, imageWidth, imageHeight, bitDepth);
+			}
+			catch(Exception e)
+			{
+				microscope.errorOccured("Error creating image from data received from camera.", e);
+				continue;
+			}
 			event.setCamera(imgCamera);
 			event.setBands(bands);
 			event.setTransposeX(waiter.cameraObj.isTransposeX());

@@ -21,10 +21,10 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.PeriodField;
@@ -84,7 +84,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<CellDetectionMeasuremen
 		String[] imageTypes;
 		try
 		{
-			imageTypes = server.getConfiguration().getSupportedImageFormats();
+			imageTypes = server.getProperties().getSupportedImageFormats();
 		}
 		catch (RemoteException e1)
 		{
@@ -254,7 +254,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<CellDetectionMeasuremen
 		saveSettings.setImageFileType((String) imageTypeField.getSelectedItem());
 		configuration.setSaveSettings(saveSettings);
 		
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
 		
 		return true;
 	}
@@ -263,8 +263,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<CellDetectionMeasuremen
 	public void setToDefault(CellDetectionMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
-		saveSettings.setImageFolderStructure(ImageFolderStructure.ALL_IN_ONE_FOLDER);
+		saveSettings.setFolder((String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
+		saveSettings.setImageFolderStructure(FolderStructureConfiguration.ALL_IN_ONE_FOLDER);
 		saveSettings.setImageFileName("%N_position%4p_time%n");
 		configuration.setSaveSettings(saveSettings);
 	}

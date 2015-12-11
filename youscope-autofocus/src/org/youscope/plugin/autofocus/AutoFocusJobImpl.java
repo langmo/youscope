@@ -313,7 +313,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 					setFocus(microscope, zeroPosition + relativeFocusPosition);
 					if(adjustmentTime>0)
 						Thread.sleep(adjustmentTime);
-					ImageEvent image = takeImage(microscope, executionInformation, new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_ZSTACK, step));			
+					ImageEvent<?> image = takeImage(microscope, executionInformation, new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_ZSTACK, step));			
 					focusScore = getScore(image);
 				}
 				catch(RemoteException e)
@@ -480,7 +480,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 			Thread.sleep(adjustmentTime);
 	}
 	
-	private double getScore(ImageEvent image) throws RemoteException, JobException, InterruptedException
+	private double getScore(ImageEvent<?> image) throws RemoteException, JobException, InterruptedException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
@@ -494,11 +494,11 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 		}
 	}
 	
-	private ImageEvent takeImage(Microscope microscope, ExecutionInformation executionInformation, PositionInformation positionInformation) throws RemoteException, JobException, InterruptedException
+	private ImageEvent<?> takeImage(Microscope microscope, ExecutionInformation executionInformation, PositionInformation positionInformation) throws RemoteException, JobException, InterruptedException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
-		ImageEvent image;
+		ImageEvent<?> image;
 		try
 		{
 			//image = microscope.getCameraDevice().makeImage(configGroup, channel, exposure);
@@ -536,41 +536,25 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 		return text;
 	}
 
-	private void sendImageToListeners(ImageEvent e)
+	private void sendImageToListeners(final ImageEvent<?> e)
 	{
-		class ImageSender implements Runnable
+		synchronized(imageListeners)
 		{
-			ImageEvent	e;
-
-			ImageSender(ImageEvent e)
+			for(int i = 0; i < imageListeners.size(); i++)
 			{
-				this.e = e;
-			}
-
-			@Override
-			public void run()
-			{
-				synchronized(imageListeners)
+				ImageListener listener = imageListeners.get(i);
+				try
 				{
-					for(int i = 0; i < imageListeners.size(); i++)
-					{
-						ImageListener listener = imageListeners.get(i);
-						try
-						{
-							listener.imageMade(e);
-						}
-						catch(@SuppressWarnings("unused") RemoteException e1)
-						{
-							// Connection probably broken down...
-							imageListeners.remove(i);
-							i--;
-						}
-					}
+					listener.imageMade(e);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e1)
+				{
+					// Connection probably broken down...
+					imageListeners.remove(i);
+					i--;
 				}
 			}
-		}
-
-		new ImageSender(e).run();
+		}	
 	}
 	
 	

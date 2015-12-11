@@ -70,7 +70,9 @@ public class ImagePanel extends JPanel
 	/**
 	 * The current image, or null, if no image arrived yet.
 	 */
-    private ImageEvent imageEvent = null;
+    private ImageEvent<?> imageEvent = null;
+    private BufferedImage bufferedImage = null;
+    
     private HistogramPlot				histogram				= new HistogramPlot();
     private BufferedImage lastBuffered = null;
     private final ControlsPanel controlsPanel;
@@ -78,7 +80,14 @@ public class ImagePanel extends JPanel
 	private String noImageText = "No image available yet.";
 	private final long VISIBILITY_TIMEOUT = 2000; // 2s
 	private final HideTimer hideTimer;
-	private final static Color BACKGROUND = new Color(0.3f, 0.3f, 0.3f);
+	/**
+	 * Default background color of the image panel.
+	 */
+	public final static Color DEFAULT_BACKGROUND = new Color(0.3f, 0.3f, 0.3f);
+	/**
+	 * Default foreground (text) color of the image panel.
+	 */
+	public final static Color DEFAULT_FOREGROUND = new Color(1f, 1f, 1f);
 	private boolean autoAdjustContrast = false;
 	private static final double ZOOM_IN_STEP = Math.sqrt(2);
 	private static final double ZOOM_OUT_STEP = 1/Math.sqrt(2);
@@ -96,10 +105,12 @@ public class ImagePanel extends JPanel
 	{
 		final String title;
 		final Component component;
-		public Control(String title, Component component)
+		boolean fill;
+		public Control(String title, Component component, boolean fill)
 		{
 			this.title = title;
 			this.component = component;
+			this.fill = fill;
 		}
 	}
 	
@@ -373,7 +384,7 @@ public class ImagePanel extends JPanel
 					}
 				}
 			});
-			autoAdjustField.setForeground(Color.WHITE);
+			autoAdjustField.setForeground(DEFAULT_FOREGROUND);
 			autoAdjustField.setVisible(false);
 		}
 	}
@@ -395,9 +406,20 @@ public class ImagePanel extends JPanel
 	 */
 	public void addControl(String title, Component component)
 	{
+		addControl(title, component, false);
+	}
+	
+	/**
+	 * Adds a component with the given title to the end of the menu containing all controls.
+	 * @param title Title of the control.
+	 * @param component The control element.
+	 * @param resizable True if the control can take up excess vertical space.
+	 */
+	public void addControl(String title, Component component, boolean resizable)
+	{
 		synchronized(controlsList)
 		{
-			controlsList.add(new Control(title, component));
+			controlsList.add(new Control(title, component, resizable));
 		}
 		controlsPanel.revalidateControls();
 	}
@@ -411,9 +433,22 @@ public class ImagePanel extends JPanel
 	 */
 	public void insertControl(String title, Component component, int index) throws IndexOutOfBoundsException
 	{
+		insertControl(title, component, index, false);
+	}
+	
+	/**
+	 * Adds a component with the given title to the menu containing all controls at the given index.
+	 * @param title Title of the control.
+	 * @param component The control element.
+	 * @param index index where to add control. Must be greater or equal to 0, and smaller or equal to {@link #getNumControls()}.
+	 * @param resizable True if the control can take up excess vertical space.
+	 * @throws IndexOutOfBoundsException Thrown if index is invalid.
+	 */
+	public void insertControl(String title, Component component, int index, boolean resizable) throws IndexOutOfBoundsException
+	{
 		synchronized(controlsList)
 		{
-			controlsList.add(index, new Control(title, component));
+			controlsList.add(index, new Control(title, component, resizable));
 		}
 		controlsPanel.revalidateControls();
 	}
@@ -482,7 +517,7 @@ public class ImagePanel extends JPanel
 		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = 8492907052808833994L;
-		private final Color CONTROLS_BACKGROUND = new Color(BACKGROUND.getRed(), BACKGROUND.getGreen(), BACKGROUND.getBlue(), 200);
+		private final Color CONTROLS_BACKGROUND = new Color(DEFAULT_BACKGROUND.getRed(), DEFAULT_BACKGROUND.getGreen(), DEFAULT_BACKGROUND.getBlue(), 200);
 		ControlsPanel()
 		{
 			setOpaque(false);
@@ -500,18 +535,26 @@ public class ImagePanel extends JPanel
 					synchronized(controlsList)
 					{
 						removeAll();
+						boolean anyFill = false;
 						for(Control control : controlsList)
 						{
 							// add panel for border.
 							JPanel containingPanel = new JPanel(new BorderLayout());
 							containingPanel.setOpaque(false);
 							containingPanel.add(control.component);
-							TitledBorder border = new TitledBorder(new LineBorder(Color.WHITE, 1), control.title);
-							border.setTitleColor(Color.WHITE);
+							TitledBorder border = new TitledBorder(new LineBorder(DEFAULT_FOREGROUND, 1), control.title);
+							border.setTitleColor(DEFAULT_FOREGROUND);
 							containingPanel.setBorder(border);
-							add(containingPanel);
+							if(control.fill)
+							{
+								addFill(containingPanel);
+								anyFill = true;
+							}
+							else
+								add(containingPanel);
 						}
-						addFillEmpty();
+						if(!anyFill)
+							addFillEmpty();
 						revalidate();
 					}
 				}
@@ -628,12 +671,13 @@ public class ImagePanel extends JPanel
 	}
 	private void calculateHoveredPixel(MouseEvent mouseEvent)
 	{
-		BufferedImage image = ImagePanel.this.lastBuffered;
-		ImageEvent imageEvent = ImagePanel.this.imageEvent;
-		if(mouseEvent == null || image == null || imageEvent == null)
+		BufferedImage lastBuffered = ImagePanel.this.lastBuffered;
+		BufferedImage bufferedImage = ImagePanel.this.bufferedImage;
+		ImageEvent<?> imageEvent = ImagePanel.this.imageEvent;
+		if(mouseEvent == null || lastBuffered == null || (imageEvent == null && bufferedImage == null))
 			return;
-		int imageWidth = image.getWidth();
-		int imageHeight = image.getHeight();
+		int imageWidth = lastBuffered.getWidth();
+		int imageHeight = lastBuffered.getHeight();
 			
 		AffineTransform imageTransform = getTransform(imageWidth, imageHeight);
 		Point2D pos;
@@ -644,16 +688,28 @@ public class ImagePanel extends JPanel
 			// will not happen.
 			return;
 		}
-		
-		Point orgCoord = ImageTools.backTransformCoordinate(imageEvent, new Point((int)pos.getX(), (int)pos.getY()));
 		PixelInfo pixelInfo;
-		if(orgCoord != null)
+		if(imageEvent != null)
 		{
-			long pixelValue = ImageTools.getPixelValue(imageEvent, orgCoord.x, orgCoord.y);
-			pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/imageEvent.getMaxIntensity());
+			Point orgCoord = ImageTools.backTransformCoordinate(imageEvent, new Point((int)pos.getX(), (int)pos.getY()));
+			
+			if(orgCoord != null)
+			{
+				long pixelValue = ImageTools.getPixelValue(imageEvent, orgCoord.x, orgCoord.y);
+				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/imageEvent.getMaxIntensity());
+			}
+			else
+				pixelInfo = null;
 		}
 		else
-			pixelInfo = null;
+		{
+			long pixelValue = ImageTools.getPixelValue(bufferedImage, (int)pos.getX(), (int)pos.getY());
+			long maxValue = ImageTools.getMaximalPixelValue(bufferedImage);
+			if(pixelValue >= 0 && maxValue >= 0)
+				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/maxValue);
+			else
+				pixelInfo = null;
+		}
 		
 		synchronized (pixelListeners) 
 		{
@@ -709,6 +765,7 @@ public class ImagePanel extends JPanel
 		public void mousePressed(MouseEvent mouseEvent) {
 			hideTimer.userAction(mouseEvent);
 			lastClick = mouseEvent;
+			requestFocusInWindow();
 		}
 
 		@Override
@@ -770,6 +827,8 @@ public class ImagePanel extends JPanel
 		
 		setPreferredSize(new Dimension(800, 600));
 		setMinimumSize(new Dimension(200, 200));
+		
+		setFocusable(true);
     }
 	
 	synchronized void fireImageChanged()
@@ -832,24 +891,34 @@ public class ImagePanel extends JPanel
 	@Override
     public void paintComponent(Graphics grp)
     {
-		grp.setColor(BACKGROUND);
+		grp.setColor(DEFAULT_BACKGROUND);
 		grp.fillRect(0, 0, getWidth(), getHeight());
-		ImageEvent imageEvent;
+		ImageEvent<?> imageEvent;
 		BufferedImage image;
+		BufferedImage bufferedImage;
 		synchronized(this)
 		{
 			imageEvent = this.imageEvent;
-			if(imageEvent == null)
+			bufferedImage = this.bufferedImage;
+			if(imageEvent == null && bufferedImage == null)
 				lastBuffered = null;
 			else if(lastBuffered == null)
 	        {
-	        	double[] minMax = histogram.getMinMax();
-	        	try {
-	        		lastBuffered = ImageTools.getScaledMicroscopeImage(imageEvent, (float)minMax[0], (float)minMax[1]);
-				} catch (ImageConvertException e) {
-					client.sendError("Could not generate image.", e);
-					noImageText = "Error painting image.";
-					lastBuffered = null;
+				double[] minMax = histogram.getMinMax();
+				if(imageEvent != null)
+				{
+		        	
+		        	try {
+		        		lastBuffered = ImageTools.getScaledMicroscopeImage(imageEvent, (float)minMax[0], (float)minMax[1]);
+					} catch (ImageConvertException e) {
+						client.sendError("Could not generate image.", e);
+						noImageText = "Error painting image.";
+						lastBuffered = null;
+					}
+				}
+				else
+				{
+					lastBuffered = ImageTools.getScaledImage(bufferedImage, (float)minMax[0], (float)minMax[1], null);
 				}
 	        }
 			image = lastBuffered;
@@ -865,7 +934,7 @@ public class ImagePanel extends JPanel
         }
         else if(noImageText != null)
         {
-        	grp.setColor(Color.WHITE);
+        	grp.setColor(DEFAULT_FOREGROUND);
         	grp.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         	int strWidth = grp.getFontMetrics().stringWidth(noImageText);
         	int strHeight = grp.getFontMetrics().getHeight();
@@ -896,7 +965,6 @@ public class ImagePanel extends JPanel
         String lastFile = "image.tif";
         JFileChooser fileChooser = new JFileChooser(lastFile);
         Thread.currentThread().setContextClassLoader(ImagePanel.class.getClassLoader());
-        ImageIO.scanForPlugins();
         String[] imageFormats = ImageIO.getWriterFileSuffixes();
         FileFilter tifFilter = null;
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -1022,12 +1090,34 @@ public class ImagePanel extends JPanel
         frame.pack();
 		return frame;
 	}
+	/**
+	 * Sets the image which should be displayed.
+	 * @param bufferedImage Image which should be displayed.
+	 */
+	public synchronized void setImage(BufferedImage bufferedImage)
+	{
+		int[][] bins;
+		try
+		{
+			bins = ImageTools.getHistogram(bufferedImage, (int)controlsPanel.getPreferredSize().getWidth());
+			histogram.setBins(bins);
+			if(autoAdjustContrast)
+				histogram.adjust();
+		}
+		catch(ImageConvertException e)
+		{
+			client.sendError("Could not calculate histogram of image.", e);
+		}
+		this.bufferedImage = bufferedImage;
+		this.imageEvent = null;
+		fireImageChanged();
+	}
 	
 	/**
 	 * Sets the image which should be displayed.
 	 * @param imageEvent Image which should be displayed.
 	 */
-	public void setImage(ImageEvent imageEvent)
+	public synchronized void setImage(ImageEvent<?> imageEvent)
 	{
 		int[][] bins;
 		try
@@ -1041,6 +1131,7 @@ public class ImagePanel extends JPanel
 		{
 			client.sendError("Could not calculate histogram of image.", e);
 		}
+		this.bufferedImage = null;
 		this.imageEvent = imageEvent;
 		fireImageChanged();
 	}

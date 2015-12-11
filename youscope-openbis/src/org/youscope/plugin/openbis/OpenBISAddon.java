@@ -5,7 +5,7 @@ package org.youscope.plugin.openbis;
 
 import java.rmi.RemoteException;
 
-import org.youscope.serverinterfaces.ServerAddon;
+import org.youscope.addon.serveraddon.ServerAddon;
 
 /**
  * Addon allowing to transfer measurement data (images, meta-data) to OpenBIS.

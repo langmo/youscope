@@ -3,12 +3,6 @@
  */
 package org.youscope.clientinterfaces;
 
-import javax.script.ScriptEngineFactory;
-
-import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
-import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
 
@@ -34,61 +28,11 @@ public interface YouScopeClient
 	YouScopeFrame createFrame();
 	
 	/**
-	 * Returns all known measurement addons.
-	 * @return Iterable through all known measurement addons.
-	 */
-	Iterable<MeasurementAddonFactory> getMeasurementAddons();
-	
-	/**
      * Returns a list of the last saved mesurements.
      * 
      * @return The list of measurements.
      */
     MeasurementConfiguration[] getLastSavedMeasurements();
-    
-	/**
-	 * Returns all known measurement post processor addons.
-	 * @return Iterable through all known measurement post proccessor addons.
-	 */
-	Iterable<PostProcessorAddonFactory> getMeasurementPostProcessorAddons();
-
-	/**
-	 * Returns all known tool addons.
-	 * @return Iterable through all known tool addons.
-	 */
-	Iterable<ToolAddonFactory> getToolAddons();
-	
-	/**
-	 * Returns all known microplate types.
-	 * @return Iterable through all known microplate types.
-	 */
-	Iterable<MicroplateAddonFactory> getMicroplateTypeAddons();
-	
-	/**
-	 * Returns the microplate type addon with the given ID, or null if this addon is unknown.
-	 * @param addonID The ID of the microplate type.
-	 * @return A factory to create the addon, or null if the addon ID is unknown.
-	 */
-	MicroplateAddonFactory getMicroplateTypeAddon(String addonID);
-    
-	/**
-	 * Returns the measurement addon with the given ID, or null if this addon is unknown.
-	 * @param addonID The ID of the addon.
-	 * @return A factory to create the addon, or null if the addon ID is unknown.
-	 */
-    MeasurementAddonFactory getMeasurementAddon(String addonID);
-    /**
-	 * Returns the measurement post processing addon with the given ID, or null if this addon is unknown.
-	 * @param addonID The ID of the addon.
-	 * @return A factory to create the addon, or null if the addon ID is unknown.
-	 */
-    PostProcessorAddonFactory getMeasurementPostProcessorAddon(String addonID);
-    /**
-	 * Returns the tool addon with the given ID, or null if this addon is unknown.
-	 * @param addonID The ID of the addon.
-	 * @return A factory to create the addon, or null if the addon ID is unknown.
-	 */
-    ToolAddonFactory getToolAddon(String addonID);
     
 	/**
 	 * Notifies the client that an error occurred, such that the client can notify the user in the
@@ -117,22 +61,6 @@ public interface YouScopeClient
 	 * @return True if the microscope is connected to this computer, and false, if the microscope is on a different computer.
 	 */
 	boolean isLocalServer();
-	
-	/**
-	 * Returns all script engine factories supported by the client.
-	 * @return Iterable through all script engines.
-	 */
-	Iterable<ScriptEngineFactory> getScriptEngineFactories();
-	
-	/**
-	 * Returns a script engine factory with the given name. 
-	 * 
-	 * Remark: engine names are case sensitive.
-	 * 
-	 * @param engineName The name of the script engine factory. Same as factory.getEngineName().
-	 * @return script engine factory for given name, or null, if no script engine is supported for the given name.
-	 */
-	ScriptEngineFactory getScriptEngineFactory(String engineName);
 	
 	/**
 	 * Opens the default editor to manipulate the measurement configuration.

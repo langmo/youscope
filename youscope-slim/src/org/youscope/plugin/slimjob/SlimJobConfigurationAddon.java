@@ -31,9 +31,9 @@ import javax.swing.border.TitledBorder;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Channel;
@@ -489,7 +489,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = getClient().getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, "");
+			configGroup = getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP).toString();
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -641,7 +641,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 						throw new Exception("Device set to serve as the reflector must be of type \"Reflector\". DriverID of device \"" + reflectorDevice.getDeviceID() + "\" is \"" + reflectorDevice.getDriverID()+"\".");
 					}
 					// make images
-					ImageEvent[] images = new ImageEvent[4];
+					ImageEvent<?>[] images = new ImageEvent<?>[4];
 					try
 					{
 						if(config.getMaskFileName() == null)
@@ -680,7 +680,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 					{
 						throw new Exception("Could not take SLIM images.", e);
 					}
-					ImageEvent slimImage = SlimHelper.calculateSlimImage(images);
+					ImageEvent<short[]> slimImage = SlimHelper.calculateSlimImage(images);
 					// Show image
 					childFrame.endLoading();
 					imagePanel.setImage(slimImage);
@@ -726,7 +726,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 			@Override
 			public void run()
 			{
-				ImageEvent imageEvent;
+				ImageEvent<?> imageEvent;
 				try
 				{
 					CameraDevice cameraDevice;
@@ -785,7 +785,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		else
 			configuration.setMaskFileName(maskFileField.getText());
 		
-		getClient().getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String)configGroupField.getSelectedItem());
+		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
 		
 	}
 

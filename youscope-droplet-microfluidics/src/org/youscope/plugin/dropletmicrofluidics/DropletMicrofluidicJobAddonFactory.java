@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
@@ -22,6 +21,7 @@ import org.youscope.plugin.autofocus.AutoFocusJob;
 import org.youscope.plugin.autofocus.AutoFocusJobConfiguration;
 import org.youscope.plugin.nemesys.NemesysJob;
 import org.youscope.plugin.nemesys.NemesysJobConfiguration;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author Moritz Lang

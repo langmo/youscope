@@ -15,6 +15,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import org.youscope.clientinterfaces.StandardProperty;
+
 
 /**
  * @author langmo
@@ -144,6 +146,69 @@ class ConfigurationSettings
     static boolean getProperty(String name, boolean defaultValue)
     {
         return Boolean.parseBoolean(getProperty(name, Boolean.toString(defaultValue)));
+    }
+    static Object getProperty(StandardProperty property)
+    {
+    	if(property.isBooleanProperty())
+    		return getProperty(property.getPropertyName(), property.getDefaultAsBoolean());
+    	else if(property.isIntegerProperty())
+    		return getProperty(property.getPropertyName(), property.getDefaultAsInteger());
+    	else if(property.isDoubleProperty())
+    		return getProperty(property.getPropertyName(), property.getDefaultAsDouble());
+    	else
+    		return getProperty(property.getPropertyName(), property.getDefaultAsString());
+    }
+    static void setProperty(StandardProperty property, Object value)
+    {
+    	if(property.isBooleanProperty())
+    	{
+    		if(value instanceof Boolean)
+    			setProperty(property.getPropertyName(), (Boolean)value);
+    		else if(value instanceof Number)
+    			setProperty(property.getPropertyName(), ((Number)value).doubleValue() != 0);
+    		else
+    			setProperty(property.getPropertyName(), Boolean.parseBoolean(value.toString()));
+    	}
+    	else if(property.isDoubleProperty())
+    	{
+    		if(value instanceof Number)
+    			setProperty(property.getPropertyName(), ((Number)value).doubleValue());
+    		else if(value instanceof Boolean)
+    			setProperty(property.getPropertyName(), ((Boolean)value)? 1.0 : 0.0);
+    		else
+    		{
+    			try
+    			{
+    				setProperty(property.getPropertyName(), Double.parseDouble(value.toString()));
+    			}
+    			catch(@SuppressWarnings("unused") NumberFormatException e)
+    			{
+    				// do nothing.
+    			}
+    		}
+    	}
+    	else if(property.isIntegerProperty())
+    	{
+    		if(value instanceof Number)
+    			setProperty(property.getPropertyName(), ((Number)value).intValue());
+    		else if(value instanceof Boolean)
+    			setProperty(property.getPropertyName(), ((Boolean)value)? 1 : 0);
+    		else
+    		{
+    			try
+    			{
+    				setProperty(property.getPropertyName(), Integer.parseInt(value.toString()));
+    			}
+    			catch(@SuppressWarnings("unused") NumberFormatException e)
+    			{
+    				// do nothing.
+    			}
+    		}
+    	}
+    	else
+    	{
+    		setProperty(property.getPropertyName(), value.toString());
+    	}
     }
     
     public static String[] getProperty(String name, String[] defaultValue)

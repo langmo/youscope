@@ -29,7 +29,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.StandardFormats;
@@ -40,7 +40,7 @@ import org.youscope.uielements.StandardFormats;
  */
 class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 {	
-	private JList<MicroplateType> microplateTypesList;
+	private JList<Microplate> microplateTypesList;
 	/**
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
@@ -94,7 +94,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	MicroplateType microplateType = microplateTypesList.getSelectedValue();
+                	Microplate microplateType = microplateTypesList.getSelectedValue();
                     if (microplateType == null)
                         return;
                     int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the microplate type \"" + microplateType.getMicroplateName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
@@ -120,7 +120,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	MicroplateType microplateType = microplateTypesList.getSelectedValue();
+                	Microplate microplateType = microplateTypesList.getSelectedValue();
                     if (microplateType == null)
                         return;
                
@@ -139,9 +139,9 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
         StandardFormats.addGridBagElement(deleteMicroplateTypeButton, elementsLayout, newLineConstr, buttonPanel);
         StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, buttonPanel);
 
-        microplateTypesList = new JList<MicroplateType>();
+        microplateTypesList = new JList<Microplate>();
         microplateTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        class MicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<MicroplateType> 
+        class MicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<Microplate> 
 		{
 			/**
 			 * Serial Version UID
@@ -149,7 +149,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 			private static final long	serialVersionUID	= 239461111656492466L;
 
 			@Override
-			public Component getListCellRendererComponent(JList<? extends MicroplateType> list, MicroplateType value, int index, boolean isSelected, boolean cellHasFocus)
+			public Component getListCellRendererComponent(JList<? extends Microplate> list, Microplate value, int index, boolean isSelected, boolean cellHasFocus)
 		    {
 				String text = value.getMicroplateName();
 		        setText(text);

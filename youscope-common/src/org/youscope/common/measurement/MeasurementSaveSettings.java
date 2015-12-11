@@ -5,7 +5,7 @@ package org.youscope.common.measurement;
 
 import java.io.Serializable;
 
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -38,7 +38,7 @@ public class MeasurementSaveSettings implements Cloneable, Serializable
 	 * separate folders. FALSE, if all images should be saved in main folder.
 	 */
 	@XStreamAlias("folder-structure")
-	private ImageFolderStructure	imageFolderStructure	= ImageFolderStructure.ALL_IN_ONE_FOLDER;
+	private FolderStructureConfiguration	imageFolderStructure	= FolderStructureConfiguration.ALL_IN_ONE_FOLDER;
 
 	/**
 	 * The filename of the image, without the file format (everything before the
@@ -113,7 +113,7 @@ public class MeasurementSaveSettings implements Cloneable, Serializable
 	/**
 	 * @return The folder structure in which the images are saved.
 	 */
-	public ImageFolderStructure getImageFolderStructure()
+	public FolderStructureConfiguration getImageFolderStructure()
 	{
 		return imageFolderStructure;
 	}
@@ -123,7 +123,7 @@ public class MeasurementSaveSettings implements Cloneable, Serializable
 	 *            The folder structure in which the images are saved.
 	 * 
 	 */
-	public void setImageFolderStructure(ImageFolderStructure imageFolderStructure)
+	public void setImageFolderStructure(FolderStructureConfiguration imageFolderStructure)
 	{
 		this.imageFolderStructure = imageFolderStructure;
 	}

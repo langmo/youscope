@@ -21,8 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.youscope.addon.AddonException;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -76,7 +77,7 @@ class ScriptDefinitionConfigurationFrame
                 public void actionPerformed(ActionEvent arg0)
                 {
                     JFileChooser fileChooser =
-                            new JFileChooser(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_LAST_SCRIPT_PATH, "/"));
+                            new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
                     
                     String engineName = (String) engineNamesField.getSelectedItem();
                     if(engineName == null)
@@ -84,7 +85,13 @@ class ScriptDefinitionConfigurationFrame
                     	ClientSystem.err.println("No script engine selected.");
                     	return;
                     }
-                    ScriptEngineFactory engineFactory = ClientSystem.getScriptEngine(engineName);
+                    ScriptEngineFactory engineFactory;
+					try {
+						engineFactory = ClientAddonProviderImpl.getProvider().getScriptEngineFactory(engineName);
+					} catch (AddonException e) {
+						ClientSystem.err.println("Could not load script engine.", e);
+                    	return;
+					}
                     
                     String[] engineFileEndings;
                     if(engineFactory == null)
@@ -130,7 +137,7 @@ class ScriptDefinitionConfigurationFrame
                     		break;
                     }
                     
-                    ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_LAST_SCRIPT_PATH, fileChooser
+                    ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
                             .getCurrentDirectory().getAbsolutePath());
                     String relative = new File(".").toURI().relativize(file.toURI()).getPath();
                     scriptFileField.setText(relative);
@@ -205,7 +212,7 @@ class ScriptDefinitionConfigurationFrame
 	
 	protected void intitializeSupportedScriptEngines()
     {
-        for (ScriptEngineFactory factory : ClientSystem.getScriptEngines())
+        for (ScriptEngineFactory factory : ClientAddonProviderImpl.getProvider().getScriptEngineFactories())
         {
            	engineNamesField.addItem(factory.getEngineName());
         }

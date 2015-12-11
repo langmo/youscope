@@ -55,14 +55,14 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= 1767496756465103915L;
-		private ImageEvent lastImage = null;
+		private ImageEvent<?> lastImage = null;
 		private final PositionInformation positionInformation;
 		ImageGatherer(PositionInformation positionInformation) throws RemoteException
 		{
 			this.positionInformation = positionInformation;
 		}
 		@Override
-		public void imageMade(ImageEvent image) throws RemoteException
+		public void imageMade(ImageEvent<?> image) throws RemoteException
 		{
 			image.setPositionInformation(positionInformation);
 			
@@ -73,16 +73,16 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 			}
 		}
 		
-		private synchronized ImageEvent getLastImage()
+		private synchronized ImageEvent<?> getLastImage()
 		{
-			ImageEvent temp = lastImage;
+			ImageEvent<?> temp = lastImage;
 			lastImage = null;
 			return temp;
 		}
 		
-		private ImageEvent waitForImage() throws InterruptedException
+		private ImageEvent<?> waitForImage() throws InterruptedException
 		{
-			ImageEvent image;
+			ImageEvent<?> image;
 			while(true)
 			{
 				synchronized(this)
@@ -170,7 +170,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 		{
 			for(int i = 0; i < cameraIDs.length; i++)
 			{
-				ImageEvent image = imageGatherers[i].waitForImage();
+				ImageEvent<?> image = imageGatherers[i].waitForImage();
 				if(image == null)
 					continue;
 				ExecutionInformation exInfo = new ExecutionInformation(executionInformation, n);
@@ -213,7 +213,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 		imageGatherers = null;
 	}
 	
-	private void sendImageToListeners(ImageEvent image)
+	private void sendImageToListeners(ImageEvent<?> image)
 	{
 		synchronized(imageListeners)
 		{

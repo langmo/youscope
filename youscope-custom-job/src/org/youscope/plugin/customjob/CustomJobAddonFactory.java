@@ -7,7 +7,6 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactory;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
@@ -15,6 +14,7 @@ import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.measurement.Component;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
+import org.youscope.serverinterfaces.ConstructionContext;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

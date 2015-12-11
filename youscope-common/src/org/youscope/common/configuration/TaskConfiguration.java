@@ -23,7 +23,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 	 * as possible.
 	 */
 	@XStreamAlias("period")
-	private Period					period				= new RegularPeriod();
+	private PeriodConfiguration					period				= new RegularPeriodConfiguration();
 
 	/**
 	 * A list of all the jobs which should be done during the measurement.
@@ -82,7 +82,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
 		}
 		if(period != null)
-			clone.period = (Period)period.clone();
+			clone.period = (PeriodConfiguration)period.clone();
 
 		return clone;
 	}
@@ -94,7 +94,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 	 */
 	public String getDescription()
 	{
-		boolean fixedTimes = !(getPeriod() instanceof RegularPeriod) || ((RegularPeriod)getPeriod()).isFixedTimes();
+		boolean fixedTimes = !(getPeriod() instanceof RegularPeriodConfiguration) || ((RegularPeriodConfiguration)getPeriod()).isFixedTimes();
 
 		String description;
 		if(getPeriod().getNumExecutions() < 0)
@@ -110,18 +110,18 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 		}
 		if(fixedTimes)
 		{
-			if(getPeriod() instanceof RegularPeriod)
+			if(getPeriod() instanceof RegularPeriodConfiguration)
 			{
-				description += "<li>wait(deltaT &lt; " + Integer.toString(((RegularPeriod)getPeriod()).getPeriod()) + "ms)</li>";
+				description += "<li>wait(deltaT &lt; " + Integer.toString(((RegularPeriodConfiguration)getPeriod()).getPeriod()) + "ms)</li>";
 			}
-			else if(getPeriod() instanceof VaryingPeriod)
+			else if(getPeriod() instanceof VaryingPeriodConfiguration)
 			{
 				description += "<li>wait(deltaT &lt; periods[n])</li>";
 			}
 		}
 		else
 		{
-			description += "<li>wait(" + Integer.toString(((RegularPeriod)getPeriod()).getPeriod()) + "ms)</li>";
+			description += "<li>wait(" + Integer.toString(((RegularPeriodConfiguration)getPeriod()).getPeriod()) + "ms)</li>";
 		}
 
 		description += "</ul><p>end</p>";
@@ -131,7 +131,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 	/**
 	 * @param period the period to set
 	 */
-	public void setPeriod(Period period)
+	public void setPeriod(PeriodConfiguration period)
 	{
 		this.period = period;
 	}
@@ -139,7 +139,7 @@ public class TaskConfiguration implements JobContainerConfiguration, Configurati
 	/**
 	 * @return the period
 	 */
-	public Period getPeriod()
+	public PeriodConfiguration getPeriod()
 	{
 		return period;
 	}

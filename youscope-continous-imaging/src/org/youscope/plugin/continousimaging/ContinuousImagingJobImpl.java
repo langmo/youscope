@@ -51,7 +51,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= 1767496756465103915L;
-		private ImageEvent lastImage = null;
+		private ImageEvent<?> lastImage = null;
 		private volatile int evaluationNumber = 0;
 		private final PositionInformation positionInformation;
 		ImageGatherer(PositionInformation positionInformation) throws RemoteException
@@ -59,7 +59,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			this.positionInformation = positionInformation;
 		}
 		@Override
-		public void imageMade(ImageEvent image) throws RemoteException
+		public void imageMade(ImageEvent<?> image) throws RemoteException
 		{
 			image.setPositionInformation(positionInformation);
 			
@@ -77,9 +77,9 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			}
 		}
 		
-		private synchronized ImageEvent getLastImage()
+		private synchronized ImageEvent<?> getLastImage()
 		{
-			ImageEvent temp = lastImage;
+			ImageEvent<?> temp = lastImage;
 			lastImage = null;
 			return temp;
 		}
@@ -112,7 +112,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			String[] cameraIDs = getCameras();
 			for(int i = 0; i < cameraIDs.length; i++)
 			{
-				ImageEvent image = imageGatherers[i].getLastImage();
+				ImageEvent<?> image = imageGatherers[i].getLastImage();
 				if(image == null)
 					continue;
 				image.setExecutionInformation(executionInformation);
@@ -121,7 +121,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 		}
 	}
 	
-	private void sendImageToListeners(ImageEvent image)
+	private void sendImageToListeners(ImageEvent<?> image)
 	{
 		synchronized(imageListeners)
 		{

@@ -4,16 +4,19 @@
 package org.youscope.common;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Date;
 
 import org.youscope.common.measurement.ExecutionInformation;
 import org.youscope.common.measurement.PositionInformation;
 
 /**
- * @author langmo
+ * Objects of this class contain the pixel data of an image, as well as metadata about it, like where and when an image was made. 
+ * @author Moritz Lang
+ * @param <T> Specifies the array type of the image. Typically either byte[], short[], or int[].
  * 
  */
-public class ImageEvent implements Serializable, Cloneable
+public final class ImageEvent<T extends Object> implements Serializable, Cloneable
 {
 
 	/**
@@ -21,7 +24,7 @@ public class ImageEvent implements Serializable, Cloneable
 	 */
 	private static final long		serialVersionUID		= 3149338017624936717L;
 
-	private final Object			imageData;
+	private final T			imageData;
 	private final int				width;
 	private final int				height;
 	private final int				bytesPerPixel;
@@ -30,7 +33,7 @@ public class ImageEvent implements Serializable, Cloneable
 	private PositionInformation		positionInformation		= null;
 	private long					creationTime;
 	private String					camera					= "";
-	private String					configGroup				= "";
+	private String					channelGroup				= "";
 	private String					channel					= "";
 	private int						bands					= 1;
 
@@ -41,26 +44,7 @@ public class ImageEvent implements Serializable, Cloneable
 	private boolean					switchXY				= false;
 
 	/**
-	 * Constructor.
-	 * Sets bit depth to maximal depth (i.e. bytesPerPixel * 8).
-	 * @param imageData Object representing the image data.
-	 * @param width The width of the image.
-	 * @param height The height of the image.
-	 * @param bytesPerPixel Number of bytes with which the image is encoded.
-	 * 
-	 */
-	public ImageEvent(Object imageData, int width, int height, int bytesPerPixel)
-	{
-		this.imageData = imageData;
-		this.width = width;
-		this.height = height;
-		this.bytesPerPixel = bytesPerPixel;
-		this.bitDepth = bytesPerPixel * 8;
-		this.creationTime = new Date().getTime();
-	}
-
-	/**
-	 * Constructor.
+	 * Private constructor. To create an image, use {@link #createImage(Object, int, int)} or {@link #createImage(Object, int, int, int)}.
 	 * @param imageData Object representing the image data.
 	 * @param width The width of the image.
 	 * @param height The height of the image.
@@ -68,7 +52,7 @@ public class ImageEvent implements Serializable, Cloneable
 	 * @param bitDepth The bit depth of the image.
 	 * 
 	 */
-	public ImageEvent(Object imageData, int width, int height, int bytesPerPixel, int bitDepth)
+	private ImageEvent(T imageData, int width, int height, int bytesPerPixel, int bitDepth)
 	{
 		this.imageData = imageData;
 		this.width = width;
@@ -76,6 +60,85 @@ public class ImageEvent implements Serializable, Cloneable
 		this.bytesPerPixel = bytesPerPixel;
 		this.bitDepth = bitDepth;
 		this.creationTime = new Date().getTime();
+	}
+	
+	/**
+	 * Returns the class of the array in which the image data is stored. One of byte[].class, short[].class or int[].class.
+	 * @return Class of array of image data.
+	 */
+	public Class<?> getImageDataArrayType()
+	{
+		return imageData.getClass();
+	}
+	
+	/**
+	 * Returns the class of the primitive type in which one pixel of the image data is stored. One of byte.class, short.class or int.class.
+	 * @return Primitive class of image data.
+	 */
+	public Class<?> getImageDataType()
+	{
+		return imageData.getClass().getComponentType();
+	}
+	
+	/**
+	 * Creates a new image with the given image data and meta information. The image data must be an array of primitive types byte, short or int. This limitation may change in future releases of YouScope.
+	 * @param imageData Array of bytes, shorts or ints representing the pixel intensities, either of grayscale images or of several bands (colors) or color images.
+	 * @param width The width of the image in pixels.
+	 * @param height The height of the image in pixels.
+	 * @param bitDepth The bit depth of the image.
+	 * @return Newly created image.
+	 * @throws NullPointerException Thrown if imageData is null. 
+	 * @throws IllegalArgumentException Thrown if type of image data is not supported by YouScope, or if number of pixels in imageData is not in agreement of claimed width and height of the image.
+	 */
+	public static <T> ImageEvent<T> createImage(T imageData, int width, int height, int bitDepth) throws NullPointerException, IllegalArgumentException
+	{
+		if(imageData == null)
+			throw new NullPointerException("Image data used to create new image is null.");
+		else if(!imageData.getClass().isArray())
+			throw new IllegalArgumentException("Image data must be an array of primitive types, e.g. byte[], short[], or int[]");
+		else if(Array.getLength(imageData) != width * height)
+			throw new IllegalArgumentException("Provided image data array has "+Integer.toString(Array.getLength(imageData))+" pixels, while image width "+Integer.toString(width)+" and height "+Integer.toString(height)+" correspond to "+Integer.toString(width*height)+" pixels.");
+		
+		// get bytes per pixel
+		Class<?> primitiveType = imageData.getClass().getComponentType();
+		if(!primitiveType.isPrimitive())
+			throw new IllegalArgumentException("Image data must be an array of primitive types, whereas an array of non-primitive types is provided.");
+		int bytesPerPixel;
+		if(primitiveType.equals(int.class))
+		{
+			bytesPerPixel = 4;
+		}
+		else if(primitiveType.equals(short.class))
+		{
+			bytesPerPixel = 2;
+		}
+		else if(primitiveType.equals(byte.class))
+		{
+			bytesPerPixel = 1;
+		}
+		else
+			throw new IllegalArgumentException("Currently, only image data represented as arrays of ints, short or bytes is accepted in YouScope. Image data was an array of "+primitiveType.getName()+". This might change in future version of YouScope.");
+		if(bitDepth < 0)
+			bitDepth = bytesPerPixel*8;
+		else if(bitDepth > bytesPerPixel*8)
+			throw new IllegalArgumentException("Image pixels are stored with "+Integer.toString(bytesPerPixel)+" bytes per pixel, resulting in a maximal bit depth of "+ (bytesPerPixel*8)+", while a bit depth of "+bitDepth+" was claimed.");
+		return new ImageEvent<T>(imageData, width, height, bytesPerPixel, bitDepth);
+	}
+	
+	
+	
+	/**
+	 * Creates a new image with the given image data and meta information. The bit depth is set to the maximal bit depth for the given pixel type, i.e. 8bit for bytes, 16bit for shorts, and 32bit for ints. 
+	 * @param imageData Array of bytes, shorts or ints representing the pixel intensities, either of grayscale images or of several bands (colors) or color images.
+	 * @param width The width of the image in pixels.
+	 * @param height The height of the image in pixels.
+	 * @return Newly created image.
+	 * @throws NullPointerException Thrown if imageData is null. 
+	 * @throws IllegalArgumentException Thrown if type of image data is not supported by YouScope, or if number of pixels in imageData is not in agreement of claimed width and height of the image.
+	 */
+	public static <T> ImageEvent<T> createImage(T imageData, int width, int height) throws NullPointerException, IllegalArgumentException
+	{
+		return createImage(imageData, width, height, -1);
 	}
 
 	/**
@@ -151,15 +214,18 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
+	 * Returns the pixel data as an array of primitive types (typically byte or short). Note that the pixel values are typically unsigned, whereas
+	 * typical java operations on them assume them to be signed. This typically implies that one has to upcast them, e.g. byte to short, or short to int.
 	 * @return the imageData
 	 */
-	public Object getImageData()
+	public T getImageData()
 	{
 		return imageData;
 	}
 
 	/**
-	 * @return the width
+	 * Returns image width in pixels.
+	 * @return image width in pixels.
 	 */
 	public int getWidth()
 	{
@@ -167,7 +233,8 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @return the height
+	 * Returns image height in pixels.
+	 * @return image height in pixels
 	 */
 	public int getHeight()
 	{
@@ -175,7 +242,8 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @return the bytesPerPixel
+	 * Returns the number of bytes used to store each pixel. Typically one or two for grayscale images, and more only for colour images.
+	 * @return Number of bytes used to store a pixel.
 	 */
 	public int getBytesPerPixel()
 	{
@@ -183,7 +251,10 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @return the bitDepth
+	 * Returns the bit dept. This has to be smaller or equal to {@link #getBytesPerPixel()}*8. For example, 12bit/pixel images are typically 
+	 * stored in 2 bytes/pixel, which would allow for up to 16bit depth. However, 12bit pixels typically only use the lower 12bit of the 16bit available
+	 * in two bytes.
+	 * @return the bitDepth of the image.
 	 */
 	public int getBitDepth()
 	{
@@ -235,18 +306,6 @@ public class ImageEvent implements Serializable, Cloneable
 	{
 		return positionInformation;
 	}
-
-	/**
-	 * @deprecated Use {@link #setCreationTime(long)} instead.
-	 * @param imageCreationTime the imageCreationTime to set
-	 */
-	@Deprecated
-	public void setImageCreationTime(Date imageCreationTime)
-	{
-		if(imageCreationTime == null)
-			throw new NullPointerException();
-		this.creationTime = imageCreationTime.getTime();
-	}
 	
 	/**
 	 * Sets the time milliseconds since January 1, 1970, 00:00:00 GMT when the image was created (see {@link Date#getTime()}).
@@ -267,17 +326,8 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @deprecated Use {@link #getCreationTime()} instead.
-	 * @return the imageCreationTime
-	 */
-	@Deprecated
-	public Date getImageCreationTime()
-	{
-		return new Date(creationTime);
-	}
-
-	/**
-	 * @param camera the camera to set
+	 * Set the name of the camera with which the image was taken.
+	 * @param camera the name of the camera which took the image.
 	 */
 	public void setCamera(String camera)
 	{
@@ -285,7 +335,8 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @return the camera
+	 * Returns the name of the camera which took the image.
+	 * @return camera name.
 	 */
 	public String getCamera()
 	{
@@ -293,23 +344,26 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @param configGroup the configGroup to set
+	 * Sets the channel group in which the image was made. Together with {@link #setChannel(String)}, this identifies the channel the image was taken in.
+	 * @param channelGroup the channel group the image was taken in.
 	 */
-	public void setConfigGroup(String configGroup)
+	public void setChannelGroup(String channelGroup)
 	{
-		this.configGroup = configGroup;
+		this.channelGroup = channelGroup;
 	}
 
 	/**
-	 * @return the configGroup
+	 * Returns the channel group in which the image was made. Together with {@link #getChannel()}, this identifies the channel the image was taken in.
+	 * @return the channel group the image was taken in.
 	 */
-	public String getConfigGroup()
+	public String getChannelGroup()
 	{
-		return configGroup;
+		return channelGroup;
 	}
 
 	/**
-	 * @param channel the channel to set
+	 * Sets the channel in which the image was made. Together with {@link #setChannelGroup(String)}, this identifies the channel the image was taken in.
+	 * @param channel the channel the image was taken in.
 	 */
 	public void setChannel(String channel)
 	{
@@ -317,26 +371,24 @@ public class ImageEvent implements Serializable, Cloneable
 	}
 
 	/**
-	 * @return the channel
+	 * Returns the channel in which the image was made. Together with {@link #getChannelGroup()}, this identifies the channel the image was taken in.
+	 * @return the channel the image was taken in.
 	 */
 	public String getChannel()
 	{
 		return channel;
 	}
 
-	
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public ImageEvent clone()
+	public ImageEvent<T> clone()
 	{
 		// image data needs not to be cloned since it is final
-		ImageEvent clone;
 		try {
-			clone = (ImageEvent)super.clone();
+			return (ImageEvent<T>)super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("Clone not supported.", e); // should not happen.
 		}
-		return clone;
 	}
 
 	@Override
@@ -348,7 +400,7 @@ public class ImageEvent implements Serializable, Cloneable
 		result = prime * result + bytesPerPixel;
 		result = prime * result + ((camera == null) ? 0 : camera.hashCode());
 		result = prime * result + ((channel == null) ? 0 : channel.hashCode());
-		result = prime * result + ((configGroup == null) ? 0 : configGroup.hashCode());
+		result = prime * result + ((channelGroup == null) ? 0 : channelGroup.hashCode());
 		result = prime * result + (int) (creationTime ^ (creationTime >>> 32));
 		result = prime * result + ((executionInformation == null) ? 0 : executionInformation.hashCode());
 		result = prime * result + height;
@@ -369,7 +421,7 @@ public class ImageEvent implements Serializable, Cloneable
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ImageEvent other = (ImageEvent) obj;
+		ImageEvent<?> other = (ImageEvent<?>) obj;
 		if (bands != other.bands)
 			return false;
 		if (bitDepth != other.bitDepth)
@@ -386,10 +438,10 @@ public class ImageEvent implements Serializable, Cloneable
 				return false;
 		} else if (!channel.equals(other.channel))
 			return false;
-		if (configGroup == null) {
-			if (other.configGroup != null)
+		if (channelGroup == null) {
+			if (other.channelGroup != null)
 				return false;
-		} else if (!configGroup.equals(other.configGroup))
+		} else if (!channelGroup.equals(other.channelGroup))
 			return false;
 		if (creationTime != other.creationTime)
 			return false;

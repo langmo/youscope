@@ -10,7 +10,7 @@ class SlimHelper
 	{
 		// static functions only
 	}
-	public static ImageEvent calculateSlimImage(ImageEvent[] images) throws Exception
+	public static ImageEvent<short[]> calculateSlimImage(ImageEvent<?>[] images) throws Exception
 	{
 		if(images.length!=4)
 			throw new Exception("Expected 4 SLIM images, found " + Integer.toString(images.length));
@@ -98,6 +98,15 @@ class SlimHelper
 			
 			result[i]=(short)((int)Math.round((phi+Math.PI)/(2*Math.PI)*(Math.pow(2, 16)-1)));
 		}
-		return new ImageEvent(result, width, height, 2);
+		ImageEvent<short[]> image;
+		try
+		{
+			image = ImageEvent.createImage(result, width, height, 2);
+		}
+		catch(Exception e)
+		{
+			throw new Exception("Error creating YouScope image from SLIM raw image data.", e);
+		}
+		return image;
 	}
 }

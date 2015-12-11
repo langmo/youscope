@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -68,7 +69,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		setResizable(true);
 		setMaximizable(false);
 		
-		autofocusAddon = getClient().getAddonProvider().createComponentAddonUI(AutoFocusJobConfiguration.TYPE_IDENTIFIER, AutoFocusJobConfiguration.class);
+		autofocusAddon = getClient().getAddonProvider().createComponentUI(AutoFocusJobConfiguration.TYPE_IDENTIFIER, AutoFocusJobConfiguration.class);
 		AutoFocusJobConfiguration autofocusConfiguration = configuration.getAutofocusConfiguration();
 		if(autofocusConfiguration != null)
 			try {
@@ -171,7 +172,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			}
 			try 
 			{
-				currentAddon = getClient().getAddonProvider().createComponentAddonUI(controllerOption);
+				currentAddon = getClient().getAddonProvider().createComponentUI(controllerOption);
 				if(currentAddon instanceof DropletControllerConfigurationAddon<?>)
 				{
 					int numSyringes = getNumSyringes((String)nemesysDeviceField.getSelectedItem());
@@ -223,7 +224,8 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		private ComponentAddonUI<? extends DropletObserverConfiguration> currentAddon = null;
 		private final ComponentComboBox<DropletObserverConfiguration>	observerTypeField;
 		private JTextField dropletTableNameField = new JTextField();
-		private JCheckbox saveDropletTableField )
+		private JLabel dropletTableNameLabel = new JLabel("Droplet-table save name (without extension):");
+		private JCheckBox saveDropletTableField = new JCheckBox("Save droplet table.");
 		ObserverConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
 		{
 			DropletObserverConfiguration lastConfiguration = configuration.getObserverConfiguration();
@@ -241,7 +243,34 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			add(new JLabel("Observer stategy:"));
 			add(observerTypeField);
 			displayAddonConfiguration(observerTypeField.getSelectedElement());
-			add(new JLabel("Droplet-table save name (without extension):"))
+			saveDropletTableField.setOpaque(false);
+			add(saveDropletTableField);
+			add(dropletTableNameLabel);
+			add(dropletTableNameField);
+			
+			if(configuration.getDropletTableSaveName() != null)
+			{
+				saveDropletTableField.setSelected(true);
+				dropletTableNameField.setText(configuration.getDropletTableSaveName());
+			}
+			else
+			{
+				saveDropletTableField.setSelected(false);
+				dropletTableNameField.setText(DropletMicrofluidicJobConfiguration.DROPLET_TABLE_DEFAULT_NAME);
+				dropletTableNameField.setVisible(false);
+				dropletTableNameLabel.setVisible(false);
+			}
+			saveDropletTableField.addActionListener(new ActionListener() 
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) 
+				{
+					boolean visible = saveDropletTableField.isSelected();
+					dropletTableNameField.setVisible(visible);
+					dropletTableNameLabel.setVisible(visible);
+					notifyLayoutChanged();
+				}
+			});
 		}
 		private Component createErrorUI(String message, Exception exception)
 		{
@@ -276,7 +305,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			}
 			try 
 			{
-				currentAddon = getClient().getAddonProvider().createComponentAddonUI(observerOption.getTypeIdentifier(), DropletObserverConfiguration.class);
+				currentAddon = getClient().getAddonProvider().createComponentUI(observerOption.getTypeIdentifier(), DropletObserverConfiguration.class);
 				
 				DropletObserverConfiguration currentConfiguration = getConfiguration().getObserverConfiguration();
 				
@@ -307,6 +336,12 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		void commitChanges(DropletMicrofluidicJobConfiguration configuration)
 		{
 			configuration.setObserverConfiguration(currentAddon == null ? null : currentAddon.getConfiguration());
+			if(saveDropletTableField.isSelected())
+			{
+				configuration.setDropletTableSaveName(dropletTableNameField.getText());
+			}
+			else
+				configuration.setDropletTableSaveName(null);
 		}
 	}
 

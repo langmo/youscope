@@ -60,7 +60,7 @@ public class CellDetectionTableColumns
 	/**
 	 * Column containing the quantification image id for which e.g. fluorescence was quantified.
 	 */
-	public final static ColumnDefinition<Integer> TABLE_COLUMN_QUANTIFICATION_IMAGE_ID = ColumnDefinition.createIntegerColumnDefinition("Quantification Image ID", "Index of the quantification image, starting at zero. The index indicates to which channel e.g. the quantification of the fluorescence belongs.", true);
+	public final static ColumnDefinition<Integer> TABLE_COLUMN_QUANTIFICATION_IMAGE_ID = ColumnDefinition.createIntegerColumnDefinition("quantification_image", "Index of the quantification image, starting at zero. The index indicates to which channel e.g. the quantification of the fluorescence belongs.", true);
 	
 	/**
 	 * Column containing the area of cells.

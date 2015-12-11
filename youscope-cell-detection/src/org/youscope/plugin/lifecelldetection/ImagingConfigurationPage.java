@@ -29,9 +29,9 @@ import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.microscope.Channel;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
@@ -250,7 +250,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 		
 		ComponentAddonUI<? extends CellDetectionConfiguration> addon;
 		try {
-			addon = client.getAddonProvider().createComponentAddonUI(algorithm, CellDetectionConfiguration.class);
+			addon = client.getAddonProvider().createComponentUI(algorithm, CellDetectionConfiguration.class);
 		} catch (AddonException e) {
 			client.sendError("Cannot configure cell detection algorithm.", e);
 			return;
@@ -292,7 +292,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 		String algorithm = visualizationAlgorithmField.getSelectedItem().toString();
 		ComponentAddonUI<? extends CellVisualizationConfiguration> addon;
 		try {
-			addon = client.getAddonProvider().createComponentAddonUI(algorithm, CellVisualizationConfiguration.class);
+			addon = client.getAddonProvider().createComponentUI(algorithm, CellVisualizationConfiguration.class);
 		} catch (AddonException e1) {
 			client.sendError("Error loading cell visualization configuration UI.", e1);
 			return;
@@ -382,7 +382,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, "");
+			configGroup = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -464,7 +464,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 		configuration.setSaveImages(saveImagesField.isSelected());
 		configuration.setImageSaveName(imageNameField.getText());
 		
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_CHANNEL_GROUP, (String) configGroupField.getSelectedItem());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
 		
 		return true;
 	}

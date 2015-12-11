@@ -21,7 +21,7 @@ public class CellDetectionResult implements Serializable, Cloneable
 	private static final long	serialVersionUID	= 8995560180318058006L;
 
 	private Table cellTable;
-	private ImageEvent labelImage;
+	private ImageEvent<?> labelImage;
 	
 	/**
 	 * Constructor.
@@ -38,7 +38,7 @@ public class CellDetectionResult implements Serializable, Cloneable
 	 * @param cellTable Table containing information about segmented cells.
 	 * @param labelImage The label image. Set to null if not available.
 	 */
-	public CellDetectionResult(Table cellTable, ImageEvent labelImage)
+	public CellDetectionResult(Table cellTable, ImageEvent<?> labelImage)
 	{
 		if(cellTable == null)
 			throw new NullPointerException("Cell table must not be null");
@@ -77,7 +77,7 @@ public class CellDetectionResult implements Serializable, Cloneable
 	 * a given cell has the same intensity value as the respective cell number.
 	 * @return Label image, or null, if none available/generated..
 	 */
-	public ImageEvent getLabelImage()
+	public ImageEvent<?> getLabelImage()
 	{
 		return labelImage;
 	}

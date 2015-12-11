@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -42,7 +42,7 @@ class CustomMicroplatesConfigurationFrame
 
 	private JTextField microplateNameField 									= new JTextField();
 		
-	private MicroplateType microplateType;
+	private Microplate microplateType;
 	private Vector<ActionListener> listeners = new Vector<ActionListener>();
 	private YouScopeClient client;
 	
@@ -50,7 +50,7 @@ class CustomMicroplatesConfigurationFrame
 	{
 		this(client, frame, null);
 	}
-	CustomMicroplatesConfigurationFrame(YouScopeClient client, YouScopeFrame frame, MicroplateType microplateType)
+	CustomMicroplatesConfigurationFrame(YouScopeClient client, YouScopeFrame frame, Microplate microplateType)
 	{
 		this.frame = frame;
 		this.microplateType = microplateType;

@@ -10,7 +10,7 @@ class ImageAdapter {
 	private final int width;
 	private double mean = -1;
 	private double variance = -1;
-	ImageAdapter(ImageEvent imageEvent) throws ResourceException 
+	ImageAdapter(ImageEvent<?> imageEvent) throws ResourceException 
 	{
 		int bands = imageEvent.getBands();
 		width = imageEvent.getWidth();

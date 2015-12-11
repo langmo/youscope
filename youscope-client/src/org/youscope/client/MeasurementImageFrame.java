@@ -50,7 +50,7 @@ class MeasurementImageFrame extends ImagePanel
 		}
 		
 		@Override
-		public void imageMade(final ImageEvent event)
+		public void imageMade(final ImageEvent<?> event)
 		{
 		    // Start new thread to process image.
 		    Thread thread = new Thread(new Runnable()
@@ -100,7 +100,7 @@ class MeasurementImageFrame extends ImagePanel
         	setUserChoosesAutoAdjustContrast(true);
     }
 
-    private synchronized void setImage(ImageEvent image, ImageFrameListener imageProducer)
+    private synchronized void setImage(ImageEvent<?> image, ImageFrameListener imageProducer)
     {
     	if(imageProducer != currentImageProducer)
     	{

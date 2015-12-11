@@ -219,7 +219,7 @@ class MultiStreamAndControlsPanel extends JPanel
 			private static final long	serialVersionUID	= -1118017134453605763L;
 
 			@Override
-			protected void newImage(int imageNo, ImageEvent event)
+			protected void newImage(int imageNo, ImageEvent<?> event)
 			{
 				int[][] bins;
 				double[] minMax;

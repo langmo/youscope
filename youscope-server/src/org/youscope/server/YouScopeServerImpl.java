@@ -21,11 +21,11 @@ import java.security.AccessControlException;
 import java.util.UUID;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.youscope.addon.component.ComponentProvider;
 import org.youscope.addon.microscopeaccess.MicroscopeConnectionException;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.common.MessageListener;
@@ -36,10 +36,11 @@ import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.MicroscopeStateListener;
+import org.youscope.serverinterfaces.ComponentProvider;
 import org.youscope.serverinterfaces.MeasurementProvider;
 import org.youscope.serverinterfaces.YouScopeLogin;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.serverinterfaces.YouScopeServerConfiguration;
+import org.youscope.serverinterfaces.YouScopeServerProperties;
 
 /**
  * Server which controls the microscope and gets measurement jobs from (visual) clients.
@@ -103,6 +104,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	private YouScopeServerImpl()
 	{
 		// Initialization is done elsewhere.
+		ImageIO.scanForPlugins();
 	}
 
 	/**
@@ -327,7 +329,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	 */
 	public synchronized void initializeProgram(String configFile) throws MicroscopeException
 	{
-		ServerSystem.out.println("Connecting to microManager...");
+		ServerSystem.out.println("Connecting to microscope...");
 		try
 		{
 			setMicroscope(connectToMicroscope());
@@ -395,7 +397,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	}
 
 	@Override
-	public YouScopeServerConfiguration getConfiguration() throws RemoteException
+	public YouScopeServerProperties getProperties() throws RemoteException
 	{
 		return new ServerConfigurationImpl();
 	}
@@ -744,7 +746,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	}
 
 	@Override
-	public MeasurementProvider getMeasurementFactory()
+	public MeasurementProvider getMeasurementProvider()
 	{
 		return measurementFactory;
 	}

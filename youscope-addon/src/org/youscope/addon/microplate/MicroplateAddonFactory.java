@@ -4,7 +4,7 @@
 package org.youscope.addon.microplate;
 
 import org.youscope.addon.AddonException;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * Factory to create layouts of microplates, i.e. how many wells they have, how they are layouted, and how big they are.
@@ -20,7 +20,7 @@ public interface MicroplateAddonFactory
      * @return Information about the microplate type.
      * @throws AddonException Thrown if factory does not support microplate types with the given type identifier.
      */
-    MicroplateType createMicroplateType(String typeIdentifier) throws AddonException;    
+    Microplate createMicroplateType(String typeIdentifier) throws AddonException;    
     
     /**
 	 * Returns the type identifiers of all microplate types supported by this addon

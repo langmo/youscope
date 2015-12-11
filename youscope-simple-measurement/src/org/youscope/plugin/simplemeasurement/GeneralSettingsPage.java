@@ -19,12 +19,12 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.ImageFolderStructure;
-import org.youscope.common.configuration.RegularPeriod;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.FolderStructureConfiguration;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.FileNameComboBox;
@@ -75,7 +75,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 
 	private JComboBox<String>						imageTypeField;
 
-	private JComboBox<ImageFolderStructure>						imageFolderTypeField	= new JComboBox<ImageFolderStructure>(ImageFolderStructure.values());
+	private JComboBox<FolderStructureConfiguration>						imageFolderTypeField	= new JComboBox<FolderStructureConfiguration>(FolderStructureConfiguration.values());
 
 	private FileNameComboBox						imageFileField			= new FileNameComboBox(FileNameComboBox.Type.FILE_NAME);
 	
@@ -107,19 +107,19 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 			numExecutionsField.setValue(configuration.getPeriod().getNumExecutions());
 		else
 			numExecutionsField.setValue(1);
-		if(configuration.getPeriod() instanceof RegularPeriod && !((RegularPeriod)configuration.getPeriod()).isFixedTimes())
+		if(configuration.getPeriod() instanceof RegularPeriodConfiguration && !((RegularPeriodConfiguration)configuration.getPeriod()).isFixedTimes())
 		{
 			periodField.setDuration(10 * 60 * 1000);
 			periodAFAP.doClick();
 		}
-		else if(configuration.getPeriod() instanceof RegularPeriod)
+		else if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 		{
-			periodField.setDuration(((RegularPeriod)configuration.getPeriod()).getPeriod());
+			periodField.setDuration(((RegularPeriodConfiguration)configuration.getPeriod()).getPeriod());
 			periodFixed.doClick();
 		}
-		else if(configuration.getPeriod() instanceof VaryingPeriod)
+		else if(configuration.getPeriod() instanceof VaryingPeriodConfiguration)
 		{
-			VaryingPeriod period = (VaryingPeriod)configuration.getPeriod();
+			VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 			periodVaryingDataPanel.setPeriod(period);
 			periodField.setDuration(10 * 60 * 1000);
 			periodVarying.doClick();
@@ -144,7 +144,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	{
 		if(periodAFAP.isSelected())
 		{
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(false);
 			period.setStartTime(0);
 			period.setPeriod(0);
@@ -152,7 +152,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 		}
 		else if(periodFixed.isSelected())
 		{
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(true);
 			period.setStartTime(0);
 			period.setPeriod(periodField.getDuration());
@@ -176,12 +176,12 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
 		saveSettings.setFolder(folderField.getText());
 		saveSettings.setImageFileType((String) imageTypeField.getSelectedItem());
-		saveSettings.setImageFolderStructure((ImageFolderStructure) imageFolderTypeField.getSelectedItem());
+		saveSettings.setImageFolderStructure((FolderStructureConfiguration) imageFolderTypeField.getSelectedItem());
 		saveSettings.setImageFileName(imageFileField.getSelectedItem().toString());
 		configuration.setSaveSettings(saveSettings);
 			
 		// Save some of the configurations for next time.
-		client.getProperties().setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
 
 		return true;
 	}
@@ -190,7 +190,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
 		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
+		String lastFolder = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+		saveSettings.setFolder(lastFolder);
 		saveSettings.setImageFileName(FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
 		configuration.setSaveSettings(saveSettings);
 	}
@@ -214,7 +215,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 		String[] imageTypes;
 		try
 		{
-			imageTypes = server.getConfiguration().getSupportedImageFormats();
+			imageTypes = server.getProperties().getSupportedImageFormats();
 		}
 		catch(RemoteException e1)
 		{

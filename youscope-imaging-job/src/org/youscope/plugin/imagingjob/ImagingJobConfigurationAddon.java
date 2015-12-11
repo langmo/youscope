@@ -181,7 +181,7 @@ class ImagingJobConfigurationAddon extends ComponentAddonUIAdapter<ImagingJobCon
 			@Override
 			public void run()
 			{
-				ImageEvent imageEvent;
+				ImageEvent<?> imageEvent;
 				try
 				{
 					CameraDevice cameraDevice;

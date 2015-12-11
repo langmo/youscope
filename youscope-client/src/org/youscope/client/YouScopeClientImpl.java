@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
@@ -59,12 +60,10 @@ import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
-import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.addon.tool.ToolMetadata;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.YouScopeVersion;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
@@ -74,7 +73,7 @@ import org.youscope.common.tools.RMIWriter;
 import org.youscope.common.tools.TextTools;
 import org.youscope.serverinterfaces.YouScopeLogin;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.serverinterfaces.YouScopeServerConfiguration;
+import org.youscope.serverinterfaces.YouScopeServerProperties;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
@@ -161,6 +160,9 @@ public class YouScopeClientImpl extends JFrame
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
+		// Load image formats
+		ImageIO.scanForPlugins();
+		
 		// Create Console & other bottom elements
 		lastMeasurementConfigurationsList.addMouseListener(new MouseAdapter()
 		{
@@ -184,7 +186,8 @@ public class YouScopeClientImpl extends JFrame
 		tabbedPane.addTab("Microscope Log", logPanel);
 		refreshLastMeasurementsList();
 		tabbedPane.addTab("Last Measurements", new JScrollPane(lastMeasurementConfigurationsList));
-
+		tabbedPane.setMinimumSize(new Dimension(0,0));
+		
 		YouScopeToolBar toolBar = new YouScopeToolBar();
 		toolBar.loadConfiguration();
 		
@@ -325,111 +328,96 @@ public class YouScopeClientImpl extends JFrame
 		ImageIcon defaultNewMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new protocol");
 		ImageIcon measurementFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Job Folder");
 		Vector<JMenuItem> measurementMenuItems = new Vector<JMenuItem>();
-		for(MeasurementAddonFactory addonFactory : ClientSystem.getMeasurementAddons())
+		for(final ComponentMetadata<? extends MeasurementConfiguration> metadata : ClientAddonProviderImpl.getProvider().getComponentMetadata(MeasurementConfiguration.class))
 		{
-			for(String addonID : addonFactory.getSupportedTypeIdentifiers())
+			
+			String addonName = metadata.getTypeName();
+			if(addonName == null || addonName.length() <= 0)
+				addonName = "Unnamed Measurement";
+			String[] addonFolder = metadata.getClassification();
+			
+			JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
+			
+			Icon newMeasurementIcon = metadata.getIcon();
+			if(newMeasurementIcon == null)
+				newMeasurementIcon = defaultNewMeasurementIcon;
+			if(newMeasurementIcon != null)
+				newMeasurementMenuItem.setIcon(newMeasurementIcon);
+			newMeasurementMenuItem.addActionListener(new ActionListener()
 			{
-				ComponentMetadata<? extends MeasurementConfiguration> metadata;
-				try {
-					metadata = addonFactory.getComponentMetadata(addonID);
-				} catch (AddonException e1) {
-					ClientSystem.err.println("Could not load measurement addon with type identifier " + addonID+".", e1);
-					continue;
-				}
-				String addonName = metadata.getTypeName();
-				if(addonName == null || addonName.length() <= 0)
-					addonName = "Unnamed Measurement";
-				String[] addonFolder = metadata.getClassification();
 				
-				JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
-				
-				Icon newMeasurementIcon = metadata.getIcon();
-				if(newMeasurementIcon == null)
-					newMeasurementIcon = defaultNewMeasurementIcon;
-				if(newMeasurementIcon != null)
-					newMeasurementMenuItem.setIcon(newMeasurementIcon);
-				class NewMeasurementListener implements ActionListener
+				@Override
+				public void actionPerformed(ActionEvent e)
 				{
-					private MeasurementAddonFactory addonFactory;
-					private String addonID;
-					NewMeasurementListener(MeasurementAddonFactory addonFactory, String addonID)
-					{
-						this.addonFactory = addonFactory;
-						this.addonID = addonID;
+					openAddon();
+				}
+				private void openAddon()
+				{
+					ComponentAddonUI<? extends MeasurementConfiguration> addon;
+					try {
+						addon = ClientAddonProviderImpl.getProvider().createComponentUI(metadata);
+					} catch (AddonException e1) {
+						ClientSystem.err.println("Could not create measurement configuration UI.", e1);
+						return;
 					}
-					@Override
-					public void actionPerformed(ActionEvent e)
+					addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
 					{
-						openAddon();
-					}
-					private void openAddon()
-					{
-						ComponentAddonUI<? extends MeasurementConfiguration> addon;
-						try {
-							addon = addonFactory.createMeasurementUI(addonID, new YouScopeClientConnectionImpl(), getServer());
-						} catch (AddonException e1) {
-							ClientSystem.err.println("Could not create measurement configuration UI.", e1);
-							return;
-						}
-						addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
-						{
-							@Override
-							public void configurationFinished(MeasurementConfiguration configuration) {
-								Measurement measurement = YouScopeClientImpl.addMeasurement(configuration);
-								if(measurement == null)
-								{
-									openAddon();
-									return;
-								}
+						@Override
+						public void configurationFinished(MeasurementConfiguration configuration) {
+							Measurement measurement = YouScopeClientImpl.addMeasurement(configuration);
+							if(measurement == null)
+							{
+								openAddon();
+								return;
 							}
-						});
-						YouScopeFrame confFrame;
-						try {
-							confFrame = addon.toFrame();
-						} catch (AddonException e) {
-							ClientSystem.err.println("Could not initialize measurement configuration UI.", e);
-							return;
 						}
-						confFrame.setVisible(true);
+					});
+					YouScopeFrame confFrame;
+					try {
+						confFrame = addon.toFrame();
+					} catch (AddonException e) {
+						ClientSystem.err.println("Could not initialize measurement configuration UI.", e);
+						return;
 					}
+					confFrame.setVisible(true);
 				}
-				newMeasurementMenuItem.addActionListener(new NewMeasurementListener(addonFactory, addonID));
-				
-				// Setup folder structure
-				JMenu parentMenu = measurementMenu;
-				for(int i=0; i<addonFolder.length;i++)
+			});
+			
+			// Setup folder structure
+			JMenu parentMenu = measurementMenu;
+			for(int i=0; i<addonFolder.length;i++)
+			{
+				// Iterate over all menus to check if it already exists
+				boolean found = false;
+				for(Component existingItem : (parentMenu == measurementMenu ? measurementMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
 				{
-					// Iterate over all menus to check if it already exists
-					boolean found = false;
-					for(Component existingItem : (parentMenu == measurementMenu ? measurementMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
+					if(!(existingItem instanceof JMenu))
+						continue;
+					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
 					{
-						if(!(existingItem instanceof JMenu))
-							continue;
-						if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
-						{
-							parentMenu = (JMenu)existingItem;
-							found = true;
-							break;
-						}
-					}
-					if(!found)
-					{
-						JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
-						if(measurementFolderIcon != null)
-							newMenu.setIcon(measurementFolderIcon);
-						if(parentMenu == measurementMenu)
-							measurementMenuItems.add(newMenu);
-						else
-							parentMenu.add(newMenu);
-							
-						parentMenu = newMenu;
+						parentMenu = (JMenu)existingItem;
+						found = true;
+						break;
 					}
 				}
-				if(parentMenu == measurementMenu)
-					measurementMenuItems.add(newMeasurementMenuItem);
-				else
-					parentMenu.add(newMeasurementMenuItem);
+				if(!found)
+				{
+					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
+					if(measurementFolderIcon != null)
+						newMenu.setIcon(measurementFolderIcon);
+					if(parentMenu == measurementMenu)
+						measurementMenuItems.add(newMenu);
+					else
+						parentMenu.add(newMenu);
+						
+					parentMenu = newMenu;
+				}
 			}
+			if(parentMenu == measurementMenu)
+				measurementMenuItems.add(newMeasurementMenuItem);
+			else
+				parentMenu.add(newMeasurementMenuItem);
+	
 		}
 		Collections.sort(measurementMenuItems, new Comparator<JMenuItem>()
 				{
@@ -475,99 +463,77 @@ public class YouScopeClientImpl extends JFrame
 		ImageIcon defaultToolIcon = ImageLoadingTools.getResourceIcon("icons/application-form.png", "New Tool");
 		ImageIcon toolFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Job Folder");
 		Vector<JMenuItem> toolMenuItems = new Vector<JMenuItem>();
-		for(ToolAddonFactory addonFactory : ClientSystem.getToolAddons())
+		for(final ToolMetadata metadata : ClientAddonProviderImpl.getProvider().getToolMetadata())
 		{
-			for(String addonID : addonFactory.getSupportedTypeIdentifiers())
+			String addonName = metadata.getTypeName();
+			if(addonName == null || addonName.length() <= 0)
+				addonName = "Unknown Tool";
+			String[] addonFolder = metadata.getClassification();
+			JMenuItem newToolMenuItem = new JMenuItem(TextTools.capitalize(addonName));
+			Icon toolIcon = metadata.getIcon();
+			if(toolIcon != null)
 			{
-				ToolMetadata metadata;
-				try
-				{
-					metadata = addonFactory.getToolMetadata(addonID);
-				}
-				catch (AddonException e1)
-				{
-					ClientSystem.err.println("Cannot get metadata of tool with ID "+addonID+". Continuing without tool.", e1);
-					continue;
-				}
-				
-				String addonName = metadata.getTypeName();
-				if(addonName == null || addonName.length() <= 0)
-					addonName = "Unknown Tool";
-				String[] addonFolder = metadata.getClassification();
-				JMenuItem newToolMenuItem = new JMenuItem(TextTools.capitalize(addonName));
-				Icon toolIcon = metadata.getIcon();
-				if(toolIcon != null)
-				{
-					newToolMenuItem.setIcon(toolIcon);
-				}
-				else if(defaultToolIcon != null)
-					newToolMenuItem.setIcon(defaultToolIcon);
-				class NewToolListener implements ActionListener
-				{
-					private ToolAddonFactory addonFactory;
-					private String addonID;
-					NewToolListener(ToolAddonFactory addonFactory, String addonID)
-					{
-						this.addonFactory = addonFactory;
-						this.addonID = addonID;
-					}
-					@Override
-					public void actionPerformed(ActionEvent e)
-					{
-						openAddon();
-					}
-					private void openAddon()
-					{
-						ToolAddonUI addon;
-						try
-						{
-							addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), getServer());
-							YouScopeFrame toolFrame = addon.toFrame();
-							toolFrame.setVisible(true);
-						}
-						catch (AddonException e)
-						{
-							ClientSystem.err.println("Error creating tool UI.", e);
-							return;
-						}
-					}
-				}
-				newToolMenuItem.addActionListener(new NewToolListener(addonFactory, addonID));
-				
-				// Setup folder structure
-				JMenu parentMenu = toolsMenu;
-				for(int i=0; i<addonFolder.length;i++)
-				{
-					// Iterate over all menus to check if it already exists
-					boolean found = false;
-					for(Component existingItem : (parentMenu == toolsMenu ? toolMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
-					{
-						if(!(existingItem instanceof JMenu))
-							continue;
-						if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
-						{
-							parentMenu = (JMenu)existingItem;
-							found = true;
-							break;
-						}
-					}
-					if(!found)
-					{
-						JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
-						if(toolFolderIcon != null)
-							newMenu.setIcon(toolFolderIcon);
-						if(toolsMenu == parentMenu)
-							toolMenuItems.add(newMenu);
-						else
-							parentMenu.add(newMenu);
-						parentMenu = newMenu;
-					}
-				}
-				if(toolsMenu == parentMenu)
-					toolMenuItems.add(newToolMenuItem);
-				else
-					parentMenu.add(newToolMenuItem);
+				newToolMenuItem.setIcon(toolIcon);
 			}
+			else if(defaultToolIcon != null)
+				newToolMenuItem.setIcon(defaultToolIcon);
+			newToolMenuItem.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					openAddon();
+				}
+				private void openAddon()
+				{
+					ToolAddonUI addon;
+					try
+					{
+						addon = ClientAddonProviderImpl.getProvider().createToolUI(metadata);
+						YouScopeFrame toolFrame = addon.toFrame();
+						toolFrame.setVisible(true);
+					}
+					catch (AddonException e)
+					{
+						ClientSystem.err.println("Error creating tool UI.", e);
+						return;
+					}
+				}
+			});
+			
+			// Setup folder structure
+			JMenu parentMenu = toolsMenu;
+			for(int i=0; i<addonFolder.length;i++)
+			{
+				// Iterate over all menus to check if it already exists
+				boolean found = false;
+				for(Component existingItem : (parentMenu == toolsMenu ? toolMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
+				{
+					if(!(existingItem instanceof JMenu))
+						continue;
+					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
+					{
+						parentMenu = (JMenu)existingItem;
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+				{
+					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
+					if(toolFolderIcon != null)
+						newMenu.setIcon(toolFolderIcon);
+					if(toolsMenu == parentMenu)
+						toolMenuItems.add(newMenu);
+					else
+						parentMenu.add(newMenu);
+					parentMenu = newMenu;
+				}
+			}
+			if(toolsMenu == parentMenu)
+				toolMenuItems.add(newToolMenuItem);
+			else
+				parentMenu.add(newToolMenuItem);
 		}
 		Collections.sort(toolMenuItems, new Comparator<JMenuItem>()
 				{
@@ -928,9 +894,9 @@ public class YouScopeClientImpl extends JFrame
 		return getServer().getMicroscope();
 	}
 
-	static YouScopeServerConfiguration getServerConfiguration() throws RemoteException
+	static YouScopeServerProperties getServerConfiguration() throws RemoteException
 	{
-		return getServer().getConfiguration();
+		return getServer().getProperties();
 	}
 
 	/**
@@ -1117,51 +1083,32 @@ public class YouScopeClientImpl extends JFrame
 		final String[] autoStartIDs = getAutoStartIDs();
         for(String autoStartID : autoStartIDs)
         {
-            final ToolAddonFactory toolFactory = ClientSystem.getToolAddon(autoStartID);
-            if(toolFactory != null)
-            {
-                try
-                {
-                    
-                    final ToolAddonUI addon = 
-                            toolFactory.createToolUI(autoStartID, new YouScopeClientConnectionImpl(), getServer());
-                    final YouScopeFrame toolFrame = addon.toFrame();
-                    toolFrame.setVisible(true);
-                } catch (final Exception ex)
-                {
-                    ClientSystem.err.println("Error automatically starting tool with ID " + autoStartID, ex);
-                }
-                continue;
-            }
-            
-            final MeasurementAddonFactory measurementFactory = ClientSystem.getMeasurementAddon(autoStartID);
-            if(measurementFactory != null)
-            {
-                try
-                {
-                    final ComponentAddonUI<? extends MeasurementConfiguration> addon =
-                            measurementFactory.createMeasurementUI(autoStartID, new YouScopeClientConnectionImpl(),
-                                    YouScopeClientImpl.getServer());
-                    addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
-                    {
-
-                    	@Override
-						public void configurationFinished(MeasurementConfiguration configuration)
-                    	{
-                            YouScopeClientImpl.addMeasurement(configuration);
-                        }
-                    });
-                    final YouScopeFrame confFrame = addon.toFrame();
-                    confFrame.setVisible(true);
-                } catch (final Exception ex)
-                {
-                    ClientSystem.err.println("Error automatically starting measurement configuration with ID " + autoStartID, ex);
-                }
-                continue;
-            }
+        	try
+        	{
+	        	ToolAddonUI addon = ClientAddonProviderImpl.getProvider().createToolUI(autoStartID);
+	        	YouScopeFrame toolFrame = addon.toFrame();
+	            toolFrame.setVisible(true);
+	            continue;
+        	}
+        	catch(@SuppressWarnings("unused") AddonException e)
+        	{
+        		// do nothing, probably not a tool.
+        	}
+        	
+        	try
+        	{
+        		ComponentAddonUI<? extends MeasurementConfiguration> addon = ClientAddonProviderImpl.getProvider().createComponentUI(autoStartID, MeasurementConfiguration.class);
+	        	YouScopeFrame toolFrame = addon.toFrame();
+	            toolFrame.setVisible(true);
+	            continue;
+        	}
+        	catch(@SuppressWarnings("unused") AddonException e)
+        	{
+        		// do nothing, probably not a measurement.
+        	}
             
             // if we arrive here, we didn't find autostart tool or measurement configuration
-            ClientSystem.err.println("Could not find autostart tool or measurement configuration with ID " + autoStartID);
+            ClientSystem.err.println("Could not find autostart tool or measurement type with type identifier " + autoStartID);
         }
 	}
 
@@ -1452,7 +1399,7 @@ public class YouScopeClientImpl extends JFrame
 
 	static void loadMeasurement()
 	{
-		JFileChooser fileChooser = new JFileChooser(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
+		JFileChooser fileChooser = new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Measurement Configuration Files (.csb)", "csb"));
 		int returnVal = fileChooser.showDialog(null, "Load Measurement Configuration");
 		String fileName;
@@ -1467,7 +1414,7 @@ public class YouScopeClientImpl extends JFrame
 				{
 					folder = folder.getParentFile();
 					if(folder != null)
-						ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
+						ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
 				}
 			}
 			
@@ -1495,7 +1442,7 @@ public class YouScopeClientImpl extends JFrame
 	{
 		if(measurement == null)
 			return;
-		JFileChooser fileChooser = new JFileChooser(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, ""));
+		JFileChooser fileChooser = new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.setSelectedFile(new File(measurement.getName() + ".csb"));
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Measurement Configuration Files (.csb)", "csb"));
 		int returnVal = fileChooser.showDialog(null, "Save Measurement Configuration");
@@ -1513,7 +1460,7 @@ public class YouScopeClientImpl extends JFrame
 				{
 					folder = folder.getParentFile();
 					if(folder != null)
-						ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
+						ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
 				}
 			}
 		}

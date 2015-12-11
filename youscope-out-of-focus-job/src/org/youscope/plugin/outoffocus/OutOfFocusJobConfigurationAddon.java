@@ -172,7 +172,7 @@ class OutOfFocusJobConfigurationAddon  extends ComponentAddonUIAdapter<OutOfFocu
 			@Override
 			public void run()
 			{
-				ImageEvent imageEvent;
+				ImageEvent<?> imageEvent;
 				try
 				{
 					getServer().getMicroscope().getFocusDevice(focusDevice).setRelativeFocusPosition(offset);

@@ -13,7 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @YSConfigAlias("Table controller")
-@XStreamAlias("droplet-table-controller")
+@XStreamAlias("droplet-flexible-controller")
 public class FlexibleControllerConfiguration extends DropletControllerConfiguration
 {
  

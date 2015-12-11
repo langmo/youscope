@@ -54,7 +54,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 	}
 
 	@Override
-	public ImageEvent visualizeCells(ImageEvent orgImage, CellDetectionResult detectionResult) throws CellVisualizationException, RemoteException
+	public ImageEvent<?> visualizeCells(ImageEvent<?> orgImage, CellDetectionResult detectionResult) throws CellVisualizationException, RemoteException
 	{
 		if(!isInitialized())
 			throw new CellVisualizationException("Addon not yet initialized.");
@@ -65,7 +65,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 		if(detectionResult.getLabelImage() == null)
 			throw new CellVisualizationException("Cell detection label image is null.");
 		
-		ImageEvent labelImage;
+		ImageEvent<?> labelImage;
 		if(getConfiguration().isDrawIntoOrgImage())
 		{
 			labelImage = drawBorderImage(orgImage, detectionResult.getLabelImage());
@@ -238,7 +238,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 	}
 	
 	
-	private ImageEvent drawBorderImage(ImageEvent orgImage, ImageEvent labelImage) throws CellVisualizationException
+	private ImageEvent<?> drawBorderImage(ImageEvent<?> orgImage, ImageEvent<?> labelImage) throws CellVisualizationException
 	{
 		boolean orgImageTurned = orgImage.isSwitchXY() != labelImage.isSwitchXY();
 		
@@ -332,7 +332,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 	 * @return
 	 * @throws CellVisualizationException 
 	 */
-	private ImageEvent convertLabelImage(ImageEvent labelImage) throws CellVisualizationException
+	private ImageEvent<int[]> convertLabelImage(ImageEvent<?> labelImage) throws CellVisualizationException
 	{
 		int[] labelImageData = new int[labelImage.getWidth() * labelImage.getHeight()];
 		int bytesPerPixel = labelImage.getBytesPerPixel();
@@ -372,11 +372,11 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 		
 		
 		
-		ImageEvent result = new ImageEvent(labelImageData, labelImage.getWidth(), labelImage.getHeight(), 4, 8);
+		ImageEvent<int[]> result = ImageEvent.createImage(labelImageData, labelImage.getWidth(), labelImage.getHeight(), 8);
 		result.setBands(4);
 		result.setCamera("Cell-Detection-Result");
 		result.setChannel(labelImage.getChannel());
-		result.setConfigGroup(labelImage.getConfigGroup());
+		result.setChannelGroup(labelImage.getChannelGroup());
 		result.setExecutionInformation(labelImage.getExecutionInformation());
 		result.setCreationTime(labelImage.getCreationTime());
 		result.setPositionInformation(labelImage.getPositionInformation());

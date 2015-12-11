@@ -71,7 +71,7 @@ public class ContinousMeasurementPanel extends JPanel
     private double exposure;
 
     private volatile BufferedImage image = null;
-    private volatile ImageEvent orgImage = null;
+    private volatile ImageEvent<?> orgImage = null;
     private volatile int imageNo = 0;
 
     private static AffineTransform transform = new AffineTransform();
@@ -243,7 +243,7 @@ public class ContinousMeasurementPanel extends JPanel
         // Create measurement on server
         try
         {
-            MeasurementProvider measurementFactory =server.getMeasurementFactory();
+            MeasurementProvider measurementFactory =server.getMeasurementProvider();
             synchronized (this)
             {
                 // Create measurement
@@ -266,7 +266,7 @@ public class ContinousMeasurementPanel extends JPanel
      * Displays the new image.
      * @param event image to be displayed
      */
-    public void newImage(ImageEvent event)
+    public void newImage(ImageEvent<?> event)
     {
     	// Create image.
         BufferedImage bufferedImage;
@@ -312,7 +312,7 @@ public class ContinousMeasurementPanel extends JPanel
     
     private class ImageHandler extends Thread
     {
-    	private volatile ImageEvent nextImage;
+    	private volatile ImageEvent<?> nextImage;
     	private volatile boolean shouldRun = true;
     	private class ImageListenerImpl extends UnicastRemoteObject implements ImageListener
     	{
@@ -331,7 +331,7 @@ public class ContinousMeasurementPanel extends JPanel
 			}
 
 			@Override
-    		public void imageMade(ImageEvent e) throws RemoteException
+    		public void imageMade(ImageEvent<?> e) throws RemoteException
     		{
     			synchronized(ImageHandler.this)
     			{
@@ -363,7 +363,7 @@ public class ContinousMeasurementPanel extends JPanel
 			while(shouldRun)
 			{
 				// get image.
-				ImageEvent image = null;
+				ImageEvent<?> image = null;
 				synchronized(this)
 				{
 					while(shouldRun && nextImage == null)
@@ -506,7 +506,7 @@ public class ContinousMeasurementPanel extends JPanel
 			if(currentX >= 0 && currentY >= 0)
 			{
 				message += ", X: " + Integer.toString(currentX + 1) + ", Y: " + Integer.toString(currentY + 1);
-				ImageEvent orgImage = ContinousMeasurementPanel.this.orgImage;
+				ImageEvent<?> orgImage = ContinousMeasurementPanel.this.orgImage;
 				Point orgCoord = ImageTools.backTransformCoordinate(orgImage, new Point(currentX, currentY));
 				if(orgCoord != null)
 				{
@@ -557,7 +557,6 @@ public class ContinousMeasurementPanel extends JPanel
 			        String lastFile = client.getProperties().getProperty(LAST_IMAGE_FILE_PROPERTY, "image.tif");
                     JFileChooser fileChooser = new JFileChooser(lastFile);
                     Thread.currentThread().setContextClassLoader(ContinousMeasurementPanel.class.getClassLoader());
-                    ImageIO.scanForPlugins();
                     String[] imageFormats = ImageIO.getWriterFileSuffixes();
                     FileFilter tifFilter = null;
                     fileChooser.setAcceptAllFileFilterUsed(false);

@@ -32,7 +32,7 @@ class ImagesFileProcessor
 			String line = lineReader.readLine();
 			if(line == null)
 			{
-				throw new Exception("File " + imagesFile.getAbsolutePath() + " is empty or not a valid image database file (i.e. not created by YouScope).");
+				// do nothing. Means not a single image was saved...
 			}
 			
 			// Parse the CSV file

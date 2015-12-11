@@ -23,8 +23,9 @@ public class DynamicPanel extends JPanel
 
 	/**
 	 * Standard constraints used when adding an element without arguments.
+	 * The element fills the line, and the next element will be placed below.
 	 */
-	private static final GridBagConstraints	NEW_LINE_CONSTRAINT	= new GridBagConstraints()
+	public static final GridBagConstraints	CONSTRAINT_NEW_LINE	= new GridBagConstraints()
 	{
 		/**
 		 * Serial Version UID.
@@ -41,9 +42,29 @@ public class DynamicPanel extends JPanel
 	};
 	
 	/**
-	 * Constraint used when adding a component with the fill option.
+	 * The element will be centered at the line, and the next element will be placed below.
 	 */
-	private static final GridBagConstraints	FILL_CONSTRAINT	= new GridBagConstraints()
+	public static final GridBagConstraints	CONSTRAINT_CENTER	= new GridBagConstraints()
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = 6565854468499172536L;
+
+		{
+			this.gridwidth = GridBagConstraints.REMAINDER;
+			this.anchor = GridBagConstraints.CENTER;
+			this.gridx = GridBagConstraints.RELATIVE;
+			this.weightx = 1.0;
+		}
+	};
+	
+	/**
+	 * The element fills the line, and the next element will be placed below. Furthermore, the component
+	 * tries to fill the remaining vertical space. If more than one element is added with this option,
+	 * the elements will share the remaining vertical space equally.
+	 */
+	private static final GridBagConstraints	CONSTRAINT_FILL	= new GridBagConstraints()
 	{
 		/**
 		 * Serial Version UID.
@@ -72,13 +93,13 @@ public class DynamicPanel extends JPanel
 	@Override
 	public Component add(Component component)
 	{
-		return this.add(component, NEW_LINE_CONSTRAINT);
+		return this.add(component, CONSTRAINT_NEW_LINE);
 	}
 	
 	@Override
 	public Component add(Component component, int index) throws IllegalArgumentException 
 	{
-		return this.add(component, index, NEW_LINE_CONSTRAINT);
+		return this.add(component, index, CONSTRAINT_NEW_LINE);
 	}
 	
 	/**
@@ -88,7 +109,7 @@ public class DynamicPanel extends JPanel
 	 */
 	public Component addFill(Component component)
 	{
-		return this.add(component, FILL_CONSTRAINT);
+		return this.add(component, CONSTRAINT_FILL);
 	}
 	
 	/**
@@ -100,7 +121,29 @@ public class DynamicPanel extends JPanel
 	 */
 	public Component addFill(Component component, int index) throws IllegalArgumentException 
 	{
-		return this.add(component, index, FILL_CONSTRAINT);
+		return this.add(component, index, CONSTRAINT_FILL);
+	}
+	
+	/**
+	 * Adding an element, setting the layout such that it is centered in its own line..
+	 * @param component The component to add.
+	 * @return The added component.
+	 */
+	public Component addCenter(Component component)
+	{
+		return this.add(component, CONSTRAINT_CENTER);
+	}
+	
+	/**
+	 * Inserts an element at the given index, setting the layout such that the element gets centered in its own line.
+	 * @param component The component to add.
+	 * @param index The index where to add the component.
+	 * @return The added component.
+	 * @throws IllegalArgumentException If the index is invalid.
+	 */
+	public Component addCenter(Component component, int index) throws IllegalArgumentException 
+	{
+		return this.add(component, index, CONSTRAINT_CENTER);
 	}
 	
 	/**

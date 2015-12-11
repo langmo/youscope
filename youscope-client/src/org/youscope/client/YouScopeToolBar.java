@@ -22,13 +22,10 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
-import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.Measurement;
 import org.youscope.common.tools.TextTools;
 import org.youscope.uielements.ImageLoadingTools;
 
@@ -54,17 +51,9 @@ class YouScopeToolBar extends JToolBar
 	
 	private void addButton(String addonID)
 	{
-		MeasurementAddonFactory measurementAddon = ClientSystem.getMeasurementAddon(addonID);
-		if(measurementAddon != null)
+		try
 		{
-			ComponentMetadata<? extends MeasurementConfiguration> metadata;
-			try {
-				metadata = measurementAddon.getComponentMetadata(addonID);
-			} catch (AddonException e) {
-				ClientSystem.err.println("Could not load measurement metadata.", e);
-				return;
-			}
-			
+			final ComponentMetadata<? extends MeasurementConfiguration> metadata = ClientAddonProviderImpl.getProvider().getComponentMetadata(addonID, MeasurementConfiguration.class);
 			String addonName = metadata.getTypeName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unnamed Measurement";
@@ -81,25 +70,14 @@ class YouScopeToolBar extends JToolBar
 				measurementButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 				measurementButton.setHorizontalTextPosition(SwingConstants.CENTER);
 			}
-			class NewMeasurementListener implements ActionListener
+			measurementButton.addActionListener(new ActionListener()
 			{
-				private MeasurementAddonFactory addonFactory;
-				private String addonID;
-				NewMeasurementListener(MeasurementAddonFactory addonFactory, String addonID)
-				{
-					this.addonFactory = addonFactory;
-					this.addonID = addonID;
-				}
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					openAddon();
-				}
-				private void openAddon()
+				public void actionPerformed(ActionEvent event)
 				{
 					ComponentAddonUI<? extends MeasurementConfiguration> addon;
 					try {
-						addon = addonFactory.createMeasurementUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+						addon = ClientAddonProviderImpl.getProvider().createComponentUI(metadata);
 					} catch (AddonException e1) {
 						ClientSystem.err.println("Could not create measurement configuration UI.", e1);
 						return;
@@ -110,12 +88,7 @@ class YouScopeToolBar extends JToolBar
 						@Override
 						public void configurationFinished(MeasurementConfiguration configuration)
 						{
-							Measurement measurement = YouScopeClientImpl.addMeasurement(configuration);
-							if(measurement == null)
-							{
-								openAddon();
-								return;
-							}
+							YouScopeClientImpl.addMeasurement(configuration);
 						}
 					});
 					YouScopeFrame confFrame;
@@ -127,25 +100,18 @@ class YouScopeToolBar extends JToolBar
 					}
 					confFrame.setVisible(true);
 				}
-			}
-			measurementButton.addActionListener(new NewMeasurementListener(measurementAddon, addonID));
+			});
 			add(measurementButton);
 			return;
 		}
-		
-		ToolAddonFactory toolAddon = ClientSystem.getToolAddon(addonID);
-		if(toolAddon != null)
+		catch(@SuppressWarnings("unused") AddonException e)
 		{
-			ToolMetadata metadata;
-			try
-			{
-				metadata = toolAddon.getToolMetadata(addonID);
-			}
-			catch (AddonException e)
-			{
-				ClientSystem.err.println("Could not load tool metadata.", e);
-				return;
-			}
+			// do nothing, probably not a measurement.
+		}
+		
+		try
+		{
+			final ToolMetadata metadata = ClientAddonProviderImpl.getProvider().getToolMetadata(addonID);
 			String addonName = metadata.getTypeName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unknown Tool";
@@ -161,26 +127,15 @@ class YouScopeToolBar extends JToolBar
 				toolButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 				toolButton.setHorizontalTextPosition(SwingConstants.CENTER);
 			}
-			class NewToolListener implements ActionListener
+			toolButton.addActionListener(new ActionListener()
 			{
-				private ToolAddonFactory addonFactory;
-				private String addonID;
-				NewToolListener(ToolAddonFactory addonFactory, String addonID)
-				{
-					this.addonFactory = addonFactory;
-					this.addonID = addonID;
-				}
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					openAddon();
-				}
-				private void openAddon()
+				public void actionPerformed(ActionEvent event)
 				{
 					ToolAddonUI addon;
 					try
 					{
-						addon = addonFactory.createToolUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+						addon = ClientAddonProviderImpl.getProvider().createToolUI(metadata);
 						YouScopeFrame toolFrame = addon.toFrame();
 						toolFrame.setVisible(true);
 					}
@@ -190,10 +145,13 @@ class YouScopeToolBar extends JToolBar
 						return;
 					}
 				}
-			}
-			toolButton.addActionListener(new NewToolListener(toolAddon, addonID));
+			});
 			add(toolButton);
 			return;
+		}
+		catch(@SuppressWarnings("unused") AddonException e)
+		{
+			// do nothing, probably not a measurement.
 		}
 		
 		ScriptDefinition[] scriptDefinitions = ScriptDefinitionManager.getScriptDefinitions();

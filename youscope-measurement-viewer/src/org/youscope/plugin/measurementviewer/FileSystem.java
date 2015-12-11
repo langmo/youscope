@@ -41,8 +41,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.StandardFormats;
 
@@ -72,13 +72,13 @@ class FileSystem extends JPanel
 	private JButton actualizeButton;
 	private JButton folderUpButton;
 	
-	FileSystem(YouScopeClient client)
+	FileSystem(YouScopeClient client) 
 	{
 		super(new BorderLayout());
 		
 		this.client = client;
 		
-		String measurementFolder = client.getProperties().getProperty(YouScopeProperties.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, "");
+		String measurementFolder = client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER).toString();
 		
 		// Create rootNode
 		try

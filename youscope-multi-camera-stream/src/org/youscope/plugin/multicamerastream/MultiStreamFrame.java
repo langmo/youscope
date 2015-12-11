@@ -76,7 +76,7 @@ class MultiStreamFrame implements YouScopeFrameListener
     {
     	private volatile boolean shouldRun = true;
     	
-    	private final ImageEvent[] nextImages;
+    	private final ImageEvent<?>[] nextImages;
     	ImageHandler()
     	{
     		nextImages = new ImageEvent[imageFields.length];
@@ -99,7 +99,7 @@ class MultiStreamFrame implements YouScopeFrameListener
 			}
 
 			@Override
-    		public void imageMade(ImageEvent e) throws RemoteException
+    		public void imageMade(ImageEvent<?> e) throws RemoteException
     		{
 				String camera = e.getCamera();
 	        	if(camera == null || camera.compareToIgnoreCase("unknown") == 0)
@@ -170,7 +170,7 @@ class MultiStreamFrame implements YouScopeFrameListener
 				// update images if available
 				for(int i=0; i<nextImages.length; i++)
 				{
-					ImageEvent image = null;
+					ImageEvent<?> image = null;
 					synchronized(this)
 					{
 						image = nextImages[i];
@@ -185,7 +185,7 @@ class MultiStreamFrame implements YouScopeFrameListener
 				// wait that at least one image arrives.
 				outer: while(shouldRun)
 				{
-					for(ImageEvent e : nextImages)
+					for(ImageEvent<?> e : nextImages)
 					{
 						if(e != null)
 							break outer;
@@ -410,7 +410,7 @@ class MultiStreamFrame implements YouScopeFrameListener
 	{
 		stopMeasurement(true);
 		
-		measurement = server.getMeasurementFactory().createMeasurement();
+		measurement = server.getMeasurementProvider().createMeasurement();
 		imageHandler = new ImageHandler();
 		try
 		{
@@ -553,7 +553,7 @@ class MultiStreamFrame implements YouScopeFrameListener
 	        splitPane.setResizeWeight(1.0);
 	        add(splitPane, BorderLayout.CENTER);
 		}
-		void setImage(ImageEvent event)
+		void setImage(ImageEvent<?> event)
 	    {
 			int[][] bins;
 			try

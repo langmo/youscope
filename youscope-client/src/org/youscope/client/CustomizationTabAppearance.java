@@ -6,7 +6,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.FramePositionStorageType;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.uielements.DynamicPanel;
 
 class CustomizationTabAppearance extends ManageTabElement
@@ -20,7 +21,7 @@ class CustomizationTabAppearance extends ManageTabElement
     private JComboBox<String> dockingField = new JComboBox<String>(new String[] { "Dock measurement control to main window.",
     "Show measurement control in own window." });
     
-    private JComboBox<FramePositionStorage.StorageType> frameField = new JComboBox<FramePositionStorage.StorageType>(FramePositionStorage.StorageType.values());
+    private JComboBox<FramePositionStorageType> frameField = new JComboBox<FramePositionStorageType>(FramePositionStorageType.values());
     CustomizationTabAppearance()
     {
         setLayout(new BorderLayout());
@@ -39,17 +40,17 @@ class CustomizationTabAppearance extends ManageTabElement
     @Override
     public void initializeContent()
     {
-        dockingField.setSelectedIndex(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_DOCK_MEASUREMENT_CONTROL, true) ? 0 : 1);
-        frameField.setSelectedItem(FramePositionStorage.StorageType.getType(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_POSITION_STORAGE, FramePositionStorage.StorageType.NONE.getIdentifier())));
+        dockingField.setSelectedIndex((Boolean) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL) ? 0 : 1);
+        frameField.setSelectedItem(FramePositionStorageType.getType((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
     }
 
     @Override
     public boolean storeContent()
     {
-        ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_DOCK_MEASUREMENT_CONTROL, dockingField.getSelectedIndex() == 0);
-        FramePositionStorage.StorageType storageType = (FramePositionStorage.StorageType)frameField.getSelectedItem();
+        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL, dockingField.getSelectedIndex() == 0);
+        FramePositionStorageType storageType = (FramePositionStorageType)frameField.getSelectedItem();
         FramePositionStorage.getInstance().setStorageType(storageType);
-        ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_POSITION_STORAGE, storageType.getIdentifier());
+        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_POSITION_STORAGE, storageType.getIdentifier());
         return false;
     }
 

@@ -7,8 +7,8 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import org.youscope.common.Microplate;
-import org.youscope.common.MicroplateType;
 import org.youscope.common.Well;
+import org.youscope.common.configuration.MicroplateConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * @author langmo
  */
 @XStreamAlias("microplate-positions")
-public class MicroplatePositionConfiguration extends Microplate
+public class MicroplatePositionConfiguration extends MicroplateConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -49,7 +49,7 @@ public class MicroplatePositionConfiguration extends Microplate
 	 * Constructor for a predefined microplate type.
 	 * @param microplateType The predefined microplate type.
 	 */
-	public MicroplatePositionConfiguration(MicroplateType microplateType)
+	public MicroplatePositionConfiguration(Microplate microplateType)
 	{
 		super(microplateType);
 	}

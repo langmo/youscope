@@ -11,10 +11,10 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
-import org.youscope.common.configuration.RegularPeriod;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
@@ -82,7 +82,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementCo
 	@Override
 	public void setToDefault(SimpleMeasurementConfiguration configuration)
 	{
-		if (client.getProperties().getProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, false))
+		if ((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS))
 		{
 			try
 			{
@@ -110,7 +110,7 @@ class StartAndEndSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementCo
 		if(configuration.getPeriod() == null)
 		{
 			// Set to AFAP
-			RegularPeriod period = new RegularPeriod();
+			RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 			period.setFixedTimes(false);
 			period.setStartTime(0);
 			period.setPeriod(0);

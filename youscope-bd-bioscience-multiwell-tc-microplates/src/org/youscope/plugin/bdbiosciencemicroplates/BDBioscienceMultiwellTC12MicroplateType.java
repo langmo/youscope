@@ -5,13 +5,13 @@ package org.youscope.plugin.bdbiosciencemicroplates;
 
 import java.io.Serializable;
 
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author langmo
  *
  */
-public class BDBioscienceMultiwellTC12MicroplateType implements MicroplateType, Cloneable, Serializable
+public class BDBioscienceMultiwellTC12MicroplateType implements Microplate, Cloneable, Serializable
 {
 	/**
 	 * Serial Version UID.

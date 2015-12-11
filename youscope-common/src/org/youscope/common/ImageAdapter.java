@@ -18,7 +18,7 @@ public class ImageAdapter extends UnicastRemoteObject implements ImageListener
 	 * SerializableVersion UID.
 	 */
 	private static final long	serialVersionUID	= 521510353477597919L;
-	private volatile ImageEvent	lastImage			= null;
+	private volatile ImageEvent<?>	lastImage			= null;
 
 	/**
 	 * Constructor.
@@ -30,7 +30,7 @@ public class ImageAdapter extends UnicastRemoteObject implements ImageListener
 	}
 
 	@Override
-	public synchronized void imageMade(ImageEvent e) throws RemoteException
+	public synchronized void imageMade(ImageEvent<?> e) throws RemoteException
 	{
 		lastImage = e;
 	}
@@ -39,7 +39,7 @@ public class ImageAdapter extends UnicastRemoteObject implements ImageListener
 	 * Returns the last image received by this adapter.
 	 * @return Last image received, or null, if yet none received.
 	 */
-	public synchronized ImageEvent getImage()
+	public synchronized ImageEvent<?> getImage()
 	{
 		return lastImage;
 	}
@@ -48,9 +48,9 @@ public class ImageAdapter extends UnicastRemoteObject implements ImageListener
 	 * Returns the last image received by this adapter and sets the last image to null.
 	 * @return Last image received, or null, if yet none received.
 	 */
-	public synchronized ImageEvent clearImage()
+	public synchronized ImageEvent<?> clearImage()
 	{
-		ImageEvent e = lastImage;
+		ImageEvent<?> e = lastImage;
 		lastImage = null;
 		return e;
 	}

@@ -88,7 +88,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 						startContinuousSequenceAcquisition(null, getExposure(), new ImageListener()
 						{
 							@Override
-							public void imageMade(ImageEvent e) throws RemoteException
+							public void imageMade(ImageEvent<?> e) throws RemoteException
 							{
 								// do nothing with the images.	
 							}
@@ -489,7 +489,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 	
 	@Override
 	@Deprecated
-	public ImageEvent[] makeParallelImages(ChannelInternal channel, String[] cameraIDs, double[] exposures, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException
+	public ImageEvent<?>[] makeParallelImages(ChannelInternal channel, String[] cameraIDs, double[] exposures, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
@@ -505,9 +505,9 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 		CameraDeviceInternal[] cameras = new CameraDeviceInternal[cameraIDs.length];
 		class MyImageListener implements ImageListener
 		{
-			volatile ImageEvent image = null;
+			volatile ImageEvent<?> image = null;
 			@Override
-			public void imageMade(ImageEvent e)
+			public void imageMade(ImageEvent<?> e)
 			{
 				if(image != null)
 					microscope.stateChanged("Obtained more than one image for one camera. Taking last one...");
@@ -664,7 +664,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			}
 	
 			// wait for all images to be done
-			ImageEvent[] images = new ImageEvent[cameraIDs.length];
+			ImageEvent<?>[] images = new ImageEvent[cameraIDs.length];
 			int waitTimeTotal =0;
 			do
 			{
@@ -677,7 +677,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 						if(images[i] != null && channel != null)
 						{
 							images[i].setChannel(channel.getChannelID());
-							images[i].setConfigGroup(channel.getChannelGroupID());
+							images[i].setChannelGroup(channel.getChannelGroupID());
 						}
 						if(images[i]!=null)
 						{
@@ -933,13 +933,21 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 
 				// Create event object
 				imageDataRaw = convertToRightType(imageDataRaw, bytesPerPixel);
-				ImageEvent event = new ImageEvent(imageDataRaw, imageWidth, imageHeight, bytesPerPixel, bitDepth);
+				ImageEvent<?> event;
+				try
+				{
+					event = ImageEvent.createImage(imageDataRaw, imageWidth, imageHeight, bitDepth);
+				}
+				catch(Exception e)
+				{
+					throw new MicroscopeException("Error creating image from data received from camera.", e);
+				}
 				event.setBands(bands);
 				event.setCamera(camera);
 				if(channel != null)
 				{
 					event.setChannel(channel.getChannelID());
-					event.setConfigGroup(channel.getChannelGroupID());
+					event.setChannelGroup(channel.getChannelGroupID());
 				}
 				event.setCreationTime(imageCreationTime);
 				
@@ -1001,7 +1009,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 	}
 
 	@Override
-	public ImageEvent makeImage(ChannelInternal channel, double exposure, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
+	public ImageEvent<?> makeImage(ChannelInternal channel, double exposure, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
@@ -1096,13 +1104,21 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 		
 		// Create event object
 		imageDataRaw = convertToRightType(imageDataRaw, bytesPerPixel);
-		ImageEvent event = new ImageEvent(imageDataRaw, imageWidth, imageHeight, bytesPerPixel, bitDepth);
+		ImageEvent<?> event;
+		try
+		{
+			event = ImageEvent.createImage(imageDataRaw, imageWidth, imageHeight, bitDepth);
+		}
+		catch(Exception e)
+		{
+			throw new MicroscopeException("Error creating image from data received from camera.", e);
+		}
 		event.setBands(bands);
 		event.setCamera(getDeviceID());
 		if(channel != null)
 		{
 			event.setChannel(channel.getChannelID());
-			event.setConfigGroup(channel.getChannelGroupID());
+			event.setChannelGroup(channel.getChannelGroupID());
 		}
 		event.setCreationTime(imageCreationTime);
 		event.setTransposeX(isTransposeX());

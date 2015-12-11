@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.TaskContainer;
+import org.youscope.common.configuration.TaskContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("task-measurement")
-public class TaskMeasurementConfiguration extends MeasurementConfiguration implements TaskContainer
+public class TaskMeasurementConfiguration extends MeasurementConfiguration implements TaskContainerConfiguration
 {
 	/**
 	 * Serial Version UID.

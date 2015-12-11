@@ -33,7 +33,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	private static final long	serialVersionUID	= 8128119758338178084L;
 
 	private UserControlMeasurementCallback callback;
-	private volatile ImageEvent lastImage = null;
+	private volatile ImageEvent<?> lastImage = null;
 	private volatile ExecutionInformation lastExecutionInformation = null;
 	
 	private final ArrayList<ImageListener> imageListeners = new ArrayList<ImageListener>();
@@ -70,7 +70,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= 1767496756465103915L;
-		private ImageEvent lastImage = null;
+		private ImageEvent<?> lastImage = null;
 		
 		/**
 		 * Constructor.
@@ -82,7 +82,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		}
 
 		@Override
-		public void imageMade(ImageEvent image) throws RemoteException
+		public void imageMade(ImageEvent<?> image) throws RemoteException
 		{
 			synchronized(this)
 			{
@@ -90,9 +90,9 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 			}
 		}
 		
-		private synchronized ImageEvent getLastImage()
+		private synchronized ImageEvent<?> getLastImage()
 		{
-			ImageEvent temp = lastImage;
+			ImageEvent<?> temp = lastImage;
 			lastImage = null;
 			return temp;
 		}
@@ -144,7 +144,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		// get image
 		try
 		{
-			ImageEvent image = imageGatherer.getLastImage();
+			ImageEvent<?> image = imageGatherer.getLastImage();
 			if(image != null)
 			{
 				image.setPositionInformation(getPositionInformation());
@@ -269,7 +269,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	@Override
 	public void snapImage() throws RemoteException
 	{
-		ImageEvent image;
+		ImageEvent<?> image;
 		ExecutionInformation executionInformation;
 		synchronized(this)
 		{
@@ -292,7 +292,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		// update image information
 		imageNumber++;
 		image.setChannel(channel);
-		image.setConfigGroup(channelGroup);
+		image.setChannelGroup(channelGroup);
 		image.setExecutionInformation(new ExecutionInformation(new Date().getTime(), imageNumber));
 		image.setPositionInformation(new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_MAIN_POSITION, currentPositionInformation));
 		

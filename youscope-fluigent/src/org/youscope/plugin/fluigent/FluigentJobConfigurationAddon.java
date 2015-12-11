@@ -144,7 +144,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 		String[] scriptEngines;
 		try
 		{
-			scriptEngines = getServer().getConfiguration().getSupportedScriptEngines();
+			scriptEngines = getServer().getProperties().getSupportedScriptEngines();
 		}
 		catch(RemoteException e2)
 		{

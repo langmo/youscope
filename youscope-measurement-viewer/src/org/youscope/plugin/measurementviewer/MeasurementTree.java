@@ -3,14 +3,20 @@
  */
 package org.youscope.plugin.measurementviewer;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -28,16 +34,14 @@ class MeasurementTree extends JTree
 	 * Serial Version UID.
 	 */
 	private static final long	serialVersionUID	= -2175021952583925133L;
-	private final ImageFolderNode rootNode;
 	private final Vector<ImageFolderListener> imageFolderListeners = new Vector<ImageFolderListener>();
-	MeasurementTree(ImageFolderNode rootNode)
-	{
-		this.rootNode = rootNode;
-		
-		this.setModel(new MeasurementTreeModel());
-		//setPreferredSize(new Dimension(200, 300));
+	private final MyTreeModel treeModel = new MyTreeModel();
+	MeasurementTree()
+	{	
+		this.setModel(treeModel);
+		this.setCellRenderer(new MyTreeRenderer());
 		setRootVisible(false);
-		setShowsRootHandles(true);
+		//setShowsRootHandles(true);
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
 		addMouseListener (new MouseAdapter() 
@@ -65,19 +69,38 @@ class MeasurementTree extends JTree
 	        		}
 		        }
 			} 
-		});
-		// Customize icons
-		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-		ImageIcon leafIcon = ImageLoadingTools.getResourceIcon("icons/camera.png", "image stream");
-		if(leafIcon != null)
-			renderer.setLeafIcon(leafIcon);
-		ImageIcon openIcon = ImageLoadingTools.getResourceIcon("icons/map-pin.png", "well or position");
-		if(openIcon != null)
-			renderer.setOpenIcon(openIcon);
-		ImageIcon closedIcon = ImageLoadingTools.getResourceIcon("icons/map-pin.png", "well or position");
-		if(closedIcon != null)
-			renderer.setClosedIcon(closedIcon);
-		setCellRenderer(renderer);
+		});		
+		setOpaque(false);
+		
+	}
+	
+	public synchronized void setRootNode(ImageFolderNode rootNode)
+	{
+		this.treeModel.setRootNode(rootNode);
+		ImageFolderNode currentNode = rootNode;
+		TreePath path = new TreePath(rootNode);
+		while(true)
+		{
+			if(currentNode.getChildCount() <= 0)
+				break;
+			TreeNode node = currentNode.getChildAt(0);
+			if(!(node instanceof ImageFolderNode))
+				break;
+			currentNode = (ImageFolderNode)node;
+			path = path.pathByAddingChild(currentNode);
+			if(currentNode.getImageList() != null)
+			{
+				synchronized(imageFolderListeners)
+        		{
+            		for(ImageFolderListener listener : imageFolderListeners)
+            		{
+            			listener.showFolder(currentNode);
+            		}
+        		}
+				setSelectionPath(path);
+				break;
+			}
+		}
 	}
 	
 	public void addImageFolderListener(ImageFolderListener listener)
@@ -96,12 +119,55 @@ class MeasurementTree extends JTree
 		}
 	}
 	
-	private class MeasurementTreeModel implements TreeModel
-    {
+	private static class MyTreeRenderer implements TreeCellRenderer
+	{
+		private final JLabel cellLabel = new JLabel();
+		private final ImageIcon leafIcon;
+		private final ImageIcon positionIcon;
+		MyTreeRenderer()
+		{
+			cellLabel.setOpaque(false);
+			cellLabel.setForeground(Color.WHITE);
+			leafIcon = ImageLoadingTools.getResourceIcon("icons/camera.png", "image stream");
+			positionIcon = ImageLoadingTools.getResourceIcon("icons/map-pin.png", "well or position");
+		}
 		@Override
-        public void addTreeModelListener(TreeModelListener l)
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
+				int row, boolean hasFocus) 
+		{
+			if(leaf)
+				cellLabel.setIcon(leafIcon);
+			else
+				cellLabel.setIcon(positionIcon);
+			if(selected)
+			{
+				cellLabel.setBackground(Color.WHITE);
+				cellLabel.setForeground(Color.BLACK);
+				cellLabel.setOpaque(true);
+			}
+			else
+			{
+				cellLabel.setForeground(Color.WHITE);
+				cellLabel.setOpaque(false);
+			}
+			cellLabel.setText(value.toString());
+			return cellLabel;
+		}
+		
+	}
+	
+	private static class MyTreeModel implements TreeModel
+    {
+		private ImageFolderNode rootNode = new ImageFolderNode(null, "", ImageFolderNode.ImageFolderType.ROOT);
+		private final ArrayList<TreeModelListener> treeListeners = new ArrayList<TreeModelListener>();
+		 
+		@Override
+        public void addTreeModelListener(TreeModelListener listener)
         {
-			// Tree does never change.
+			synchronized(treeListeners)
+			{
+				treeListeners.add(listener);
+			}
         }
 
         @Override
@@ -141,9 +207,41 @@ class MeasurementTree extends JTree
         }
 
 		@Override
-		public void removeTreeModelListener(TreeModelListener l)
+		public void removeTreeModelListener(TreeModelListener listener)
 		{
-			// Tree does never change.
+			synchronized(treeListeners)
+			{
+				treeListeners.remove(listener);
+			}
+		}
+		
+		/**
+		 * Sets the current root node of the measurement tree.
+		 * @param rootNode new root node.
+		 */
+		public void setRootNode(final ImageFolderNode rootNode)
+		{
+			Runnable runner = new Runnable()
+			{
+
+				@Override
+				public void run() 
+				{
+					MyTreeModel.this.rootNode = rootNode;
+					synchronized(treeListeners)
+					{
+						for(TreeModelListener listener : treeListeners)
+						{
+							listener.treeStructureChanged(new TreeModelEvent(this, new Object[]{rootNode}));
+						}
+					}
+				}
+		
+			};
+			if(SwingUtilities.isEventDispatchThread())
+				runner.run();
+			else
+				SwingUtilities.invokeLater(runner);
 		}
     }
 }

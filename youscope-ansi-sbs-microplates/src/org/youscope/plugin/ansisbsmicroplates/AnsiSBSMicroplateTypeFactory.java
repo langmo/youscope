@@ -4,7 +4,7 @@
 package org.youscope.plugin.ansisbsmicroplates;
 
 import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author langmo
@@ -14,7 +14,7 @@ public class AnsiSBSMicroplateTypeFactory implements MicroplateAddonFactory
 {
 
 	@Override
-	public MicroplateType createMicroplateType(String ID)
+	public Microplate createMicroplateType(String ID)
 	{ 
 		if(ID.compareToIgnoreCase(AnsiSBS96MicroplateType.TYPE_ID) == 0)
 			return new AnsiSBS96MicroplateType();

@@ -27,5 +27,5 @@ public interface FocusScoreResource  extends Resource
 	 * @throws ResourceException
 	 * @throws RemoteException
 	 */
-	public double calculateScore(ImageEvent e) throws ResourceException, RemoteException;
+	public double calculateScore(ImageEvent<?> e) throws ResourceException, RemoteException;
 }

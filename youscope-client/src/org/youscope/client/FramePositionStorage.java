@@ -16,7 +16,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.FramePositionStorageType;
+import org.youscope.clientinterfaces.StandardProperty;
 
 
 /**
@@ -31,79 +32,6 @@ class FramePositionStorage
     
     private final static String FRAME_POSTFIX_SEPARATOR = "__";
     
-    public enum StorageType
-    {
-        NONE      ("none",      false, false, false, false, false, "Do not store window positions."),
-        ALL ("all",                 true, true, true, true, true, "Store window positions."),
-        READ_ONLY ("read",      true, false, false, false, true, "Do not store new, but apply existing positions."),
-        READ_UPDATE ("read_update", true, true, true, false, true, "Do not store new, but apply and update existing positions.");
-        
-        private final String identifier;
-        private final String description;
-        private final boolean readDisk;
-        private final boolean writeDisk;
-        private final boolean updatePositions;
-        private final boolean storeNewPositions;
-        private final boolean positionFrames;
-        StorageType(String identifier, boolean readDisk, boolean writeDisk, boolean updatePositions, boolean storeNewPositions, boolean positionFrames, String description)
-        {
-            this.identifier = identifier;
-            this.readDisk = readDisk;
-            this.writeDisk = writeDisk;
-            this.updatePositions = updatePositions;
-            this.storeNewPositions = storeNewPositions;
-            this.positionFrames = positionFrames;
-            this.description = description;
-        }
-        public boolean isPositionFrames()
-        {
-            return positionFrames;
-        }
-        public boolean isReadDisk()
-        {
-            return readDisk;
-        }
-        public boolean isWriteDisk()
-        {
-            return writeDisk;
-        }
-        public boolean isUpdatePositions()
-        {
-            return updatePositions;
-        }
-        public boolean isStoreNewPositions()
-        {
-            return storeNewPositions;
-        }
-        public boolean equals(String identifier)
-        {
-            return this.identifier.equals(identifier);
-        }
-        public String getIdentifier()
-        {
-            return identifier;
-        }
-        public String getDescription()
-        {
-            return description;
-        }
-        @Override
-        public String toString() 
-        {
-            return description;
-        }
-        public static StorageType getType(String identifier)
-        {
-            if(identifier == null)
-                return NONE;
-            for(StorageType type : StorageType.values())
-            {
-                if(type.equals(identifier))
-                    return type;
-            }
-            return NONE;
-        }
-    }
     public enum FrameProperty
     {
         X("x"),
@@ -182,7 +110,7 @@ class FramePositionStorage
         }
     }
     
-    private StorageType storageType = StorageType.NONE;
+    private FramePositionStorageType storageType = FramePositionStorageType.NONE;
     private static FramePositionStorage instance = null;
     private final Map<String, FramePosition> frameMap = new HashMap<String, FramePosition>();
     private final Object ioLock = new Object();
@@ -351,14 +279,14 @@ class FramePositionStorage
         }
     }
     
-    public void setStorageType(StorageType storageType)
+    public void setStorageType(FramePositionStorageType storageType)
     {
         this.storageType = storageType;
     }
     
     private synchronized void initialize()
     {
-        setStorageType(StorageType.getType(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_POSITION_STORAGE, StorageType.NONE.identifier)));
+        setStorageType(FramePositionStorageType.getType((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
         loadProperties();
     }
 }

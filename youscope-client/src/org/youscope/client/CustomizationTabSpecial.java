@@ -6,7 +6,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.uielements.DynamicPanel;
 
 class CustomizationTabSpecial extends ManageTabElement
@@ -38,15 +38,14 @@ class CustomizationTabSpecial extends ManageTabElement
     @Override
     public void initializeContent()
     {
-        cameraStartupField.setSelected(ConfigurationSettings.getProperty(
-                YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS,
-                false));
+        cameraStartupField.setSelected((Boolean) ConfigurationSettings.getProperty(
+        		StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS));
     }
 
     @Override
     public boolean storeContent()
     {
-        ConfigurationSettings.setProperty(YouScopeProperties.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, cameraStartupField.isSelected());
+        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, cameraStartupField.isSelected());
         return false;
     }
 

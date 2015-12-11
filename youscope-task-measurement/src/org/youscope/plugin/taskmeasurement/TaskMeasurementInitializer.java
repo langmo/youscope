@@ -7,18 +7,18 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.addon.component.ConstructionContext;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriod;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.PositionInformation;
 import org.youscope.common.measurement.job.Job;
 import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
  * @author langmo
@@ -38,16 +38,16 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 			if(taskConfiguration.getPeriod() == null)
 			{
 				// Set period to AFAP
-				RegularPeriod period = new RegularPeriod();
+				RegularPeriodConfiguration period = new RegularPeriodConfiguration();
 				period.setPeriod(0);
 				period.setFixedTimes(false);
 				period.setStartTime(0);
 				taskConfiguration.setPeriod(period);
 			}
 
-			if(taskConfiguration.getPeriod() instanceof RegularPeriod)
+			if(taskConfiguration.getPeriod() instanceof RegularPeriodConfiguration)
 			{
-				RegularPeriod period = (RegularPeriod)taskConfiguration.getPeriod();
+				RegularPeriodConfiguration period = (RegularPeriodConfiguration)taskConfiguration.getPeriod();
 				try
 				{
 					task = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
@@ -61,9 +61,9 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 					throw new AddonException("Could not create measurement due to remote exception.", e);
 				}
 			}
-			else if(taskConfiguration.getPeriod() instanceof VaryingPeriod)
+			else if(taskConfiguration.getPeriod() instanceof VaryingPeriodConfiguration)
 			{
-				VaryingPeriod period = (VaryingPeriod)taskConfiguration.getPeriod();
+				VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)taskConfiguration.getPeriod();
 				try
 				{
 					task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());

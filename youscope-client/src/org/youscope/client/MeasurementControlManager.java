@@ -30,9 +30,9 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.client.MeasurementControl.MeasurementControlListener;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
@@ -219,7 +219,7 @@ class MeasurementControlManager extends JPanel
 		public MeasurementControlHolder(Measurement measurement) throws RemoteException
 		{
 			control = new MeasurementControl(this, measurement);
-			if(ConfigurationSettings.getProperty(YouScopeProperties.PROPERTY_DOCK_MEASUREMENT_CONTROL, true))
+			if((Boolean) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL))
 			{
 				setToDocked();
 			}
@@ -336,7 +336,7 @@ class MeasurementControlManager extends JPanel
 	
 	public Measurement addMeasurement(MeasurementConfiguration configuration) throws RemoteException, ConfigurationException, ComponentCreationException
 	{
-		Measurement measurement = YouScopeClientImpl.getServer().getMeasurementFactory().createMeasurement(configuration, new CallbackProviderImpl(new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer()));
+		Measurement measurement = YouScopeClientImpl.getServer().getMeasurementProvider().createMeasurement(configuration, new CallbackProviderImpl(new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer()));
 		addMeasurement(measurement);
 		return measurement;
 	}

@@ -9,7 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JFormattedTextField;
@@ -23,12 +23,10 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
-import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -67,7 +65,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 
 	private JRadioButton							arbitraryPositions			= new JRadioButton("Arbitrary Positions.", false);
 	
-	private JList<MicroplateType> predefinedMicroplateList = null;
+	private JList<Microplate> predefinedMicroplateList = null;
 	private JLabel								predefinedMicroplateLabel	= new JLabel("Select microplate type:");
 	private JScrollPane predefinedMicroplateScrollPane = null;
 
@@ -87,11 +85,11 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 		boolean foundType = false;
 		if(typeID != null)
 		{
-			ListModel<MicroplateType> model = predefinedMicroplateList.getModel();
+			ListModel<Microplate> model = predefinedMicroplateList.getModel();
 			for(int i=0; i<model.getSize(); i++)
 			{
 				Object element = model.getElementAt(i);
-				if(element instanceof MicroplateType && ((MicroplateType)element).getMicroplateID().compareToIgnoreCase(typeID) == 0)
+				if(element instanceof Microplate && ((Microplate)element).getMicroplateID().compareToIgnoreCase(typeID) == 0)
 				{
 					predefinedMicroplateList.setSelectedIndex(i);
 					foundType = true;
@@ -157,7 +155,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	{
 		if(microplatePredefined.isSelected())
 		{
-			MicroplateType type = predefinedMicroplateList.getSelectedValue();
+			Microplate type = predefinedMicroplateList.getSelectedValue();
 			if(type != null)
 			{
 				configuration.getMicroplatePositions().setMicroplateType(type);
@@ -194,7 +192,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	{
 		
 		
-		class PredefinedMicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<MicroplateType> 
+		class PredefinedMicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<Microplate> 
 		{
 			/**
 			 * Serial Version UID
@@ -202,7 +200,7 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 			private static final long	serialVersionUID	= 239461111656492466L;
 
 			@Override
-			public Component getListCellRendererComponent(JList<? extends MicroplateType> list, MicroplateType value, int index, boolean isSelected, boolean cellHasFocus)
+			public Component getListCellRendererComponent(JList<? extends Microplate> list, Microplate value, int index, boolean isSelected, boolean cellHasFocus)
 		    {
 				String text  = value.getMicroplateName();
 		        setText(text);
@@ -229,24 +227,9 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 	@Override
 	public void createUI(YouScopeFrame frame)
 	{
-		Vector<MicroplateType> microplateTypes = new Vector<MicroplateType>();
-		for(MicroplateAddonFactory factory :client.getMicroplateTypeAddons())
-		{
-			String[] microplateIDs = factory.getSupportedTypeIdentifiers();
-			for(String microplateID : microplateIDs)
-			{
-				MicroplateType microplateType;
-				try {
-					microplateType = factory.createMicroplateType(microplateID);
-				} catch (@SuppressWarnings("unused") AddonException e) {
-					continue;
-				}
-				microplateTypes.add(microplateType);
-				
-			}
-		}
+		List<Microplate> microplateTypes = client.getAddonProvider().getMicroplateTypes();
 		
-		predefinedMicroplateList = new JList<MicroplateType>(microplateTypes);
+		predefinedMicroplateList = new JList<Microplate>(microplateTypes.toArray(new Microplate[microplateTypes.size()]));
 		predefinedMicroplateList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		if(microplateTypes.size() > 0)
 			predefinedMicroplateList.setSelectedIndex(0);

@@ -16,8 +16,8 @@ import java.util.Vector;
 import javax.script.ScriptEngineManager;
 
 import org.youscope.addon.measurement.MeasurementAddonFactory;
+import org.youscope.addon.serveraddon.ServerAddon;
 import org.youscope.common.MessageListener;
-import org.youscope.serverinterfaces.ServerAddon;
 
 /**
  * @author Moritz Lang

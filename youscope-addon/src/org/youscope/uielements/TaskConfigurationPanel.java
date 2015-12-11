@@ -20,10 +20,10 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.Period;
-import org.youscope.common.configuration.RegularPeriod;
+import org.youscope.common.configuration.PeriodConfiguration;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -183,9 +183,9 @@ public class TaskConfigurationPanel extends JPanel
     	if(taskConfiguration == null)
     		throw new IllegalArgumentException("Task must not be null.");
     	
-    	Period period = taskConfiguration.getPeriod();
+    	PeriodConfiguration period = taskConfiguration.getPeriod();
     	if(period == null)
-    		period = new RegularPeriod();
+    		period = new RegularPeriodConfiguration();
     	
     	if(period.getNumExecutions() <= 0)
     	{
@@ -200,9 +200,9 @@ public class TaskConfigurationPanel extends JPanel
     	
     	firstEvaluationField.setDuration(period.getStartTime());
     		
-    	if(period instanceof RegularPeriod)
+    	if(period instanceof RegularPeriodConfiguration)
 		{
-    		RegularPeriod regularPeriod = (RegularPeriod)period;
+    		RegularPeriodConfiguration regularPeriod = (RegularPeriodConfiguration)period;
     		if(regularPeriod.isFixedTimes())
     		{
     			fixedPeriodRadio.doClick();
@@ -222,9 +222,9 @@ public class TaskConfigurationPanel extends JPanel
     			}
     		}
 		}
-		else if(period instanceof VaryingPeriod)
+		else if(period instanceof VaryingPeriodConfiguration)
 		{
-			VaryingPeriod varyingPeriod = (VaryingPeriod)period;
+			VaryingPeriodConfiguration varyingPeriod = (VaryingPeriodConfiguration)period;
 			periodVaryingDataPanel.setPeriod(varyingPeriod);
 			periodField.setDuration(10 * 1000);
 			varyingPeriodRadio.doClick();
@@ -247,10 +247,10 @@ public class TaskConfigurationPanel extends JPanel
     	TaskConfiguration taskConfiguration = new TaskConfiguration();
     	taskConfiguration.setJobs(jobPanel.getJobs());
     	
-    	Period period;
+    	PeriodConfiguration period;
     	if(burstRadio.isSelected())
     	{
-    		RegularPeriod regularPeriod = new RegularPeriod();
+    		RegularPeriodConfiguration regularPeriod = new RegularPeriodConfiguration();
     		regularPeriod.setFixedTimes(false);
     		regularPeriod.setPeriod(0);
     		
@@ -258,7 +258,7 @@ public class TaskConfigurationPanel extends JPanel
     	}
     	else if(dynamicPeriodRadio.isSelected())
     	{
-    		RegularPeriod regularPeriod = new RegularPeriod();
+    		RegularPeriodConfiguration regularPeriod = new RegularPeriodConfiguration();
     		regularPeriod.setFixedTimes(false);
     		regularPeriod.setPeriod(periodField.getDuration());
     		
@@ -266,7 +266,7 @@ public class TaskConfigurationPanel extends JPanel
     	}
     	else if(fixedPeriodRadio.isSelected())
     	{
-    		RegularPeriod regularPeriod = new RegularPeriod();
+    		RegularPeriodConfiguration regularPeriod = new RegularPeriodConfiguration();
     		regularPeriod.setFixedTimes(true);
     		regularPeriod.setPeriod(periodField.getDuration());
     		

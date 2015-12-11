@@ -119,7 +119,7 @@ public class JobsDefinitionPanel extends JPanel
 			public void actionPerformed(ActionEvent e) {
 				ComponentAddonUI<? extends JobConfiguration> addon;
 				try {
-					addon = client.getAddonProvider().createComponentAddonUI(imagingJobID, JobConfiguration.class);
+					addon = client.getAddonProvider().createComponentUI(imagingJobID, JobConfiguration.class);
 				} catch (AddonException e1) {
 					client.sendError("Could not create imaging job configuration UI.", e1);
 					return;
@@ -163,7 +163,7 @@ public class JobsDefinitionPanel extends JPanel
         			return;
         		ComponentAddonUI<? extends JobConfiguration> addon;
 				try {
-					addon = client.getAddonProvider().createComponentAddonUI(typeIdentifier, JobConfiguration.class);
+					addon = client.getAddonProvider().createComponentUI(typeIdentifier, JobConfiguration.class);
 				} catch (AddonException e) {
 					client.sendError("Could not create job configuration UI for configurations with type identifiers "+typeIdentifier+".", e);
 					return;
@@ -209,7 +209,7 @@ public class JobsDefinitionPanel extends JPanel
                     
                     ComponentAddonUI<? extends JobConfiguration> addon;
 					try {
-						addon = client.getAddonProvider().createComponentAddonUI(job);
+						addon = client.getAddonProvider().createComponentUI(job);
 					} catch (AddonException e1) {
 						client.sendError("Could not create job configuration UI for configurations with type identifiers "+job.getTypeIdentifier()+".", e1);
 						return;

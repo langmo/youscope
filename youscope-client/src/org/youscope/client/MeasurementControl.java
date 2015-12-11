@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.EventListener;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -30,11 +30,10 @@ import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.AddonUI;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
-import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.configuration.MeasurementConfiguration;
@@ -61,7 +60,7 @@ class MeasurementControl
 	private Date startTime = null;
 	private volatile Timer			runTimeTimer				= null;
 
-	private JButton						measurementResultsButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">Measurement<br>Results</p></body></html>");
+	private JButton						processMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">View<br>Results</p></body></html>");
 	
 	private JButton						startMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">Start<br>Measurement</p></body></html>");
 
@@ -259,15 +258,9 @@ class MeasurementControl
 				{
 					if(state == MeasurementState.READY || state == MeasurementState.FINISHED || state == MeasurementState.ERROR || state == MeasurementState.UNQUEUED)
 					{
-						MeasurementAddonFactory addonFactory = ClientSystem.getMeasurementAddon(configuration.getTypeIdentifier());
-						if(addonFactory == null)
-						{
-							ClientSystem.err.println("No measurement configuration addon installed for measurements of type \"" + configuration.getTypeIdentifier() + "\".");
-							return;
-						}
 						ComponentAddonUI<? extends MeasurementConfiguration> addon;
 						try {
-							addon = addonFactory.createMeasurementUI(configuration.getTypeIdentifier(), new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer());
+							addon = ClientAddonProviderImpl.getProvider().createComponentUI(configuration.getTypeIdentifier(), MeasurementConfiguration.class);
 						} catch (AddonException e1) {
 							ClientSystem.err.println("Cannot create measurement configuration UI.", e1);
 							return;
@@ -340,31 +333,28 @@ class MeasurementControl
 		
 		
 		measurementProcessorChooser = new JPopupMenu();
-		measurementResultsButton.addActionListener(new ActionListener()
+		processMeasurementButton.addActionListener(new ActionListener()
             {
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
                 	if(isDocked)
-                		measurementProcessorChooser.show(measurementResultsButton, -measurementProcessorChooser.getPreferredSize().width, 0);
+                		measurementProcessorChooser.show(processMeasurementButton, -measurementProcessorChooser.getPreferredSize().width, 0);
                 	else
-                		measurementProcessorChooser.show(measurementResultsButton, measurementResultsButton.getWidth(), 0);
+                		measurementProcessorChooser.show(processMeasurementButton, processMeasurementButton.getWidth(), 0);
                 }
             });
 		
-		Iterator<PostProcessorAddonFactory> factories = ClientSystem.getMeasurementPostProcessorAddons().iterator();
+		List<AddonMetadata> postProcessorMetadata = ClientAddonProviderImpl.getProvider().getPostProcessorMetadata();
 		
-		for(;factories.hasNext();)
+		for(AddonMetadata postProcessorMetadate : postProcessorMetadata)
 		{
-			PostProcessorAddonFactory factory = factories.next();
-			for(String addonID : factory.getSupportedTypeIdentifiers())
-			{
-				try {
-					measurementProcessorChooser.add(new StartProcessorMenuItem(factory, addonID));
-				} catch (@SuppressWarnings("unused") AddonException e1) {
-					continue;
-				}
+			try {
+				measurementProcessorChooser.add(new StartProcessorMenuItem(postProcessorMetadate));
+			} catch (@SuppressWarnings("unused") AddonException e1) {
+				continue;
 			}
+		
 		}
 		
 		stopMeasurementButton.addActionListener(new ActionListener()
@@ -393,7 +383,7 @@ class MeasurementControl
 		});
 
 		startMeasurementButton.setOpaque(false);
-		measurementResultsButton.setOpaque(false);
+		processMeasurementButton.setOpaque(false);
 		stopMeasurementButton.setOpaque(false);
 		quickStopMeasurementButton.setOpaque(false);
 		editMeasurementButton.setOpaque(false);
@@ -404,10 +394,10 @@ class MeasurementControl
 		controlPanel = new JPanel(buttonsLayout);
 		controlPanel.setBorder(new TitledBorder("Measurement Control"));
 		controlPanel.setOpaque(false);
-		StandardFormats.addGridBagElement(measurementResultsButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(startMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(stopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(quickStopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
+		StandardFormats.addGridBagElement(processMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		JPanel emptyPanel1 = new JPanel();
 		emptyPanel1.setOpaque(false);
 		StandardFormats.addGridBagElement(emptyPanel1, buttonsLayout, newLineConstr, controlPanel);
@@ -452,6 +442,10 @@ class MeasurementControl
 			SwingUtilities.invokeLater(new Runner(state));
 		}
 	}
+	private boolean showMeasurementProcessors()
+	{
+		return measurementProcessorChooser.getComponentCount() > 0 && ClientSystem.isLocalServer();
+	}
 	private synchronized void actualizeStateInternal(MeasurementState state)
 	{
 		this.state = state;
@@ -459,10 +453,10 @@ class MeasurementControl
 		switch(state)
 		{
 			case FINISHED:
-				if(measurementProcessorChooser.getComponentCount() > 0)
-					measurementResultsButton.setVisible(true);
+				if(showMeasurementProcessors())
+					processMeasurementButton.setVisible(true);
 				else
-					measurementResultsButton.setVisible(false);
+					processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(true);
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(false);
@@ -470,7 +464,7 @@ class MeasurementControl
 				break;
 			case READY:
 			case UNQUEUED:
-				measurementResultsButton.setVisible(false);
+				processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(true);
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(false);
@@ -482,14 +476,17 @@ class MeasurementControl
 			case INTERRUPTING:
 			case INITIALIZING:
 			case UNINITIALIZING:
-				measurementResultsButton.setVisible(false);
+				if(showMeasurementProcessors())
+					processMeasurementButton.setVisible(true);
+				else
+					processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(false);
 				editMeasurementButton.setVisible(false);
 				stopMeasurementButton.setVisible(true);
 				quickStopMeasurementButton.setVisible(true);
 				break;
 			case ERROR:
-				measurementResultsButton.setVisible(false);
+				processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(false);
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(true);
@@ -709,13 +706,11 @@ class MeasurementControl
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= -1089398454827661984L;
-		private final PostProcessorAddonFactory addonFactory;
-		private final String addonID;
-		StartProcessorMenuItem(PostProcessorAddonFactory addonFactory, String addonID) throws AddonException
+		private final AddonMetadata addonMetadata;
+		StartProcessorMenuItem(AddonMetadata addonMetadata) throws AddonException
 		{
-			super(addonFactory.getPostProcessorMetadata(addonID).getTypeName());
-			this.addonFactory = addonFactory;
-			this.addonID = addonID;
+			super(addonMetadata.getTypeName());
+			this.addonMetadata = addonMetadata;
 			addActionListener(this);
 		}
 		@Override
@@ -736,7 +731,7 @@ class MeasurementControl
 			}
 			try
 			{
-				AddonUI<?> addon = addonFactory.createPostProcessorUI(addonID, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
+				AddonUI<?> addon = ClientAddonProviderImpl.getProvider().createPostProcessorUI(addonMetadata, measurementFolder);
 				YouScopeFrame frame = addon.toFrame();
 				frame.setVisible(true);
 			}

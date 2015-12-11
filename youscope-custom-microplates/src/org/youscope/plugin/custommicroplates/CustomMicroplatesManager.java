@@ -19,7 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.youscope.common.MicroplateType;
+import org.youscope.common.Microplate;
 
 /**
  * @author langmo
@@ -58,7 +58,7 @@ public class CustomMicroplatesManager
 	 * @return True if successful.
 	 * @throws FileNotFoundException
 	 */
-	public static boolean deleteMicroplateTypeDefinition(MicroplateType microplateType) throws FileNotFoundException
+	public static boolean deleteMicroplateTypeDefinition(Microplate microplateType) throws FileNotFoundException
 	{
 		if(microplateType == null)
 			return false;
@@ -80,7 +80,7 @@ public class CustomMicroplatesManager
 	 * @return True if successful.
 	 * @throws IOException
 	 */
-	public static boolean saveMicroplateTypeDefinition(MicroplateType microplateType) throws IOException
+	public static boolean saveMicroplateTypeDefinition(Microplate microplateType) throws IOException
 	{
 		if(microplateDefinitionFolder==null)
 		{
@@ -151,11 +151,11 @@ public class CustomMicroplatesManager
 	 * Returns a list of all custom (using this addon) defined microplate types.
 	 * @return List of microplate types.
 	 */
-	public static MicroplateType[] getMicroplateTypes()
+	public static Microplate[] getMicroplateTypes()
 	{
 		if(microplateDefinitionFolder==null || !microplateDefinitionFolder.exists() || !microplateDefinitionFolder.isDirectory())
 		{
-			return new MicroplateType[0];
+			return new Microplate[0];
 		}
 		File[] xmlFiles = microplateDefinitionFolder.listFiles(new FilenameFilter()
 		{
@@ -165,10 +165,10 @@ public class CustomMicroplatesManager
 		    }
 
 		});
-		Vector<MicroplateType> microplateTypes = new Vector<MicroplateType>();
+		Vector<Microplate> microplateTypes = new Vector<Microplate>();
 		for(File xmlFile :xmlFiles)
 		{
-			MicroplateType microplateType;
+			Microplate microplateType;
 			try
 			{
 				microplateType = getMicroplateType(xmlFile);
@@ -180,9 +180,9 @@ public class CustomMicroplatesManager
 			if(microplateType != null)
 				microplateTypes.add(microplateType);
 		}
-		return microplateTypes.toArray(new MicroplateType[microplateTypes.size()]);
+		return microplateTypes.toArray(new Microplate[microplateTypes.size()]);
 	}
-	private static MicroplateType getMicroplateType(File xmlFile) throws IOException
+	private static Microplate getMicroplateType(File xmlFile) throws IOException
 	{
 		Document document;
 		try

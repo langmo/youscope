@@ -105,7 +105,7 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 	}
 	
 	@Override
-	public double calculateScore(ImageEvent e) throws ResourceException, RemoteException
+	public double calculateScore(ImageEvent<?> e) throws ResourceException, RemoteException
 	{
 		assertInitialized();
 		MatlabScoresConfiguration configuration = getConfiguration();

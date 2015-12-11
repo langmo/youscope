@@ -1,6 +1,6 @@
 %% Get detection image
-if isempty(imageEvent)
-    return;
+if ~exist('imageEvent', 'var') || isempty(imageEvent)
+    error('QuickDetect:ParametersMissing', 'No imageEvent provided');
 end
 % Get image metadata
 bytesPerPixel = imageEvent.getBytesPerPixel();
@@ -217,7 +217,7 @@ else
 end
 
 %% Create YouScope image event.
-detectionImageEvent = org.youscope.common.ImageEvent(detectionImage(:), size(detectionImage, 1), size(detectionImage, 2), bytesPerPixel, bitDepth);
+detectionImageEvent = org.youscope.common.ImageEvent.createImage(detectionImage(:), size(detectionImage, 1), size(detectionImage, 2), bitDepth);
 if colorImage
     detectionImageEvent.setBands(3);
 end

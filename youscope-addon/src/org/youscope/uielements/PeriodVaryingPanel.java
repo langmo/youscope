@@ -27,7 +27,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 
 /**
  * @author langmo
@@ -212,7 +212,7 @@ public class PeriodVaryingPanel extends JPanel
 	 * Sets the period configuration.
 	 * @param period period configuration.
 	 */
-	public void setPeriod(VaryingPeriod period)
+	public void setPeriod(VaryingPeriodConfiguration period)
 	{
 		int[] periods = period.getPeriods();
 		periodVaryingData.clear();
@@ -240,9 +240,9 @@ public class PeriodVaryingPanel extends JPanel
 	 * Returns the period configuration.
 	 * @return The period configuration.
 	 */
-	public VaryingPeriod getPeriod()
+	public VaryingPeriodConfiguration getPeriod()
 	{
-		VaryingPeriod period = new VaryingPeriod();
+		VaryingPeriodConfiguration period = new VaryingPeriodConfiguration();
 		period.setStartTime(0);
 		Vector<Integer> periodsTemp = new Vector<Integer>();
 		for(int[] datum : periodVaryingData)

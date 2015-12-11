@@ -41,7 +41,7 @@ public interface CameraDeviceInternal extends DeviceInternal
 	 * @throws InterruptedException
 	 * @throws SettingException 
 	 */
-	ImageEvent makeImage(ChannelInternal channel, double exposure, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException;
+	ImageEvent<?> makeImage(ChannelInternal channel, double exposure, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException;
 
 	/**
 	 * Starts a continuous sequence acquisition.
@@ -136,5 +136,5 @@ public interface CameraDeviceInternal extends DeviceInternal
 	 * 
 	 */
 	@Deprecated
-	ImageEvent[] makeParallelImages(ChannelInternal channel, String[] cameraIDs, double[] exposures, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException;
+	ImageEvent<?>[] makeParallelImages(ChannelInternal channel, String[] cameraIDs, double[] exposures, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException, DeviceException;
 }

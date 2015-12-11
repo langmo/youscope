@@ -3,11 +3,7 @@
  */
 package org.youscope.plugin.quickdetect;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +17,7 @@ import javax.script.ScriptException;
 import org.youscope.addon.celldetection.CellDetectionAddon;
 import org.youscope.addon.celldetection.CellDetectionException;
 import org.youscope.addon.celldetection.CellDetectionResult;
+import org.youscope.addon.celldetection.utils.MatlabFunctionCreator;
 import org.youscope.common.ImageAdapter;
 import org.youscope.common.ImageEvent;
 import org.youscope.common.configuration.ConfigurationException;
@@ -46,6 +43,8 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 	private ScriptEngine scriptEngine;
 	private final StringWriter outputListener = new StringWriter();
 	private final ArrayList<TableListener> tableListeners = new ArrayList<TableListener>();
+	private MatlabFunctionCreator functionCreator = null;
+	private final static String[] MATLAB_INVOKER_ARGUMENTS = {"imageEvent", "quantImages", "threshold", "internalBinning", "maxCellDiameter", "minCellDiameter", "imageSink", "tableSink"};
 	QuickDetectAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
 	{
 		super(positionInformation, configuration, QuickDetectConfiguration.TYPE_IDENTIFIER,QuickDetectConfiguration.class, "Quick-Detect cell detection.");
@@ -98,22 +97,26 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 		}
 		receiveEngineMessages();	
 
+		functionCreator = new MatlabFunctionCreator("org/youscope/plugin/quickdetect/QuickDetectInvoker.m", MATLAB_INVOKER_ARGUMENTS);
+		functionCreator.initialize();
 	}
 
 	@Override
 	public void uninitialize(MeasurementContext measurementContext) throws ResourceException, RemoteException
 	{
 		scriptEngine = null;
+		functionCreator.uninitialize();
+		functionCreator = null;
 		super.uninitialize(measurementContext);
 	}
 
 	@Override
-	public CellDetectionResult detectCells(ImageEvent detectionImage) throws CellDetectionException, RemoteException
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage) throws CellDetectionException, RemoteException
 	{
 		return detectCells(detectionImage, new ImageEvent[0]);
 	}
 	@Override
-	public CellDetectionResult detectCells(ImageEvent detectionImage, ImageEvent[] quantificationImages) throws CellDetectionException, RemoteException
+	public CellDetectionResult detectCells(ImageEvent<?> detectionImage, ImageEvent<?>[] quantificationImages) throws CellDetectionException, RemoteException
 	{
 		if(!isInitialized())
 			throw new CellDetectionException("Addon not yet initialized.");
@@ -122,7 +125,7 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 		
 		QuickDetectConfiguration configuration = getConfiguration();
 		
-		// Pass parameters to script
+		// Create sinks for matlab results.
 		ImageAdapter imageSink = null;
 		if(configuration.isGenerateLabelImage())
 		{
@@ -134,11 +137,11 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 			{
 				throw new CellDetectionException("Could not create image adapter for cell detection script.", e1);
 			}
-			scriptEngine.put("imageSink", imageSink);
+			
 		}
-		
 		TableSinkImpl tableSink = new TableSinkImpl();
 		
+		// Send variables to matlab.
 		scriptEngine.put("tableSink", tableSink);
 		scriptEngine.put("imageEvent", detectionImage);
 		scriptEngine.put("quantImages", quantificationImages);
@@ -146,20 +149,19 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 		scriptEngine.put("internalBinning", configuration.getInternalBinning());
 		scriptEngine.put("maxCellDiameter", configuration.getMaxCellDiameter());
 		scriptEngine.put("minCellDiameter", configuration.getMinCellDiameter());
+		scriptEngine.put("imageSink", imageSink);
 		
-		// Open & eval matlab file
-		URL matlabFile = getClass().getClassLoader().getResource("org/youscope/plugin/quickdetect/QuickDetectInvoker.m");
-		InputStreamReader fileReader = null;
-		BufferedReader bufferedReader = null;
+		// generate function call logic.
+		String fullInvokeString = functionCreator.getFullInvokeString();
+		
+		// Eval matlab script
 		try
 		{
-			fileReader = new InputStreamReader(matlabFile.openStream());
-			bufferedReader = new BufferedReader(fileReader);
-			scriptEngine.eval(bufferedReader);
+			scriptEngine.eval(fullInvokeString);
 		}
 		catch(ScriptException ex)
 		{
-			String errorMessage = "Error in script on line " + ex.getLineNumber() + ", column " + ex.getColumnNumber() + ".";
+			String errorMessage = "Error in script on line " + ex.getLineNumber() + ", column " + ex.getColumnNumber() + ". Calling line was \""+fullInvokeString+"\".";
 			Throwable cause = ex;
 			while(true)
 			{
@@ -168,34 +170,10 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 				if(cause == null)
 					break;
 			}
-			throw new CellDetectionException(errorMessage);
+			throw new CellDetectionException(errorMessage, ex);
 		}
-		catch(IOException e1)
-		{
-			throw new CellDetectionException("Script file " + matlabFile.toString() + " could not be opened.", e1);
-		}
-		finally
-		{
-			if(bufferedReader != null)
-			{
-				try {
-					bufferedReader.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// do nothing.
-				}
-			}
-			if(fileReader != null)
-			{
-				try
-				{
-					fileReader.close();
-				}
-				catch(@SuppressWarnings("unused") IOException e1)
-				{
-					// Do nothing.
-				}
-			}
-		}
+		
+		// process results.
 		receiveEngineMessages();
 		
 		Table table =tableSink.table;

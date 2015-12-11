@@ -17,6 +17,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
+import org.youscope.addon.AddonException;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -136,11 +137,14 @@ class ScriptExcecuter implements EvaluationListener
 		{
 			throw new Exception("Script engine name not defined.");
 		}
-		
-		ScriptEngineFactory factory = client.getScriptEngineFactory(engineName);
-		if(factory == null)
+		ScriptEngineFactory factory;
+		try
 		{
-        	throw new Exception("Could not get script engine factory for script engine name " + engineName + ".");
+			factory = client.getAddonProvider().getScriptEngineFactory(engineName);
+		}
+		catch(AddonException e)
+		{
+        	throw new Exception("Could not get script engine factory for script engine name " + engineName + ".", e);
 		}
 		this.engineName = engineName;
 		engine = factory.getScriptEngine();
@@ -278,7 +282,7 @@ class ScriptExcecuter implements EvaluationListener
 	public String[] getScriptEngines()
     {
 		Vector<String> engineNames = new Vector<String>();
-		for (ScriptEngineFactory factory : client.getScriptEngineFactories())
+		for (ScriptEngineFactory factory : client.getAddonProvider().getScriptEngineFactories())
         {
 			engineNames.add(factory.getEngineName());
         }

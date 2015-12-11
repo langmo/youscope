@@ -24,17 +24,17 @@ import java.util.ServiceLoader;
 import org.youscope.addon.component.ComponentAddonFactory;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.common.Microplate;
 import org.youscope.common.Well;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.ImageFolderStructure;
+import org.youscope.common.configuration.FolderStructureConfiguration;
 import org.youscope.common.configuration.JobConfiguration;
 import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.Period;
-import org.youscope.common.configuration.RegularPeriod;
+import org.youscope.common.configuration.MicroplateConfiguration;
+import org.youscope.common.configuration.PeriodConfiguration;
+import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriod;
+import org.youscope.common.configuration.VaryingPeriodConfiguration;
 import org.youscope.common.measurement.MeasurementSaveSettings;
 import org.youscope.common.microscope.DeviceSetting;
 
@@ -110,7 +110,7 @@ public class ConfigurationManagement
 		xstream.aliasSystemAttribute("type", "class");
 
 		// First, process the annotations of the classes in this package.
-		xstream.processAnnotations(new Class<?>[] {MeasurementSaveSettings.class, Well.class, Microplate.class, FocusConfiguration.class, ImageFolderStructure.class, JobConfiguration.class, MeasurementConfiguration.class, Period.class, RegularPeriod.class, TaskConfiguration.class, VaryingPeriod.class, DeviceSetting.class});
+		xstream.processAnnotations(new Class<?>[] {MeasurementSaveSettings.class, Well.class, MicroplateConfiguration.class, FocusConfiguration.class, FolderStructureConfiguration.class, JobConfiguration.class, MeasurementConfiguration.class, PeriodConfiguration.class, RegularPeriodConfiguration.class, TaskConfiguration.class, VaryingPeriodConfiguration.class, DeviceSetting.class});
 
 		// Now, process all classes provided by the service providers
 		ServiceLoader<ComponentAddonFactory> componentAddonFactories = ServiceLoader.load(ComponentAddonFactory.class, ConfigurationManagement.class.getClassLoader());
