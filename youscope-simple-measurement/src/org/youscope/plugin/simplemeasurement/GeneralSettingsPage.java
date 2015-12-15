@@ -103,6 +103,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<SimpleMeasurementConfig
 			imageTypeField.setSelectedItem(saveSettings.getImageFileType());
 		}
 		
+		if(configuration.getPeriod() == null)
+			configuration.setPeriod(new RegularPeriodConfiguration());
 		if(configuration.getPeriod().getNumExecutions() >= 0)
 			numExecutionsField.setValue(configuration.getPeriod().getNumExecutions());
 		else

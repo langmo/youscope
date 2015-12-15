@@ -62,6 +62,11 @@ class ColumnViewImpl<T extends Serializable> implements ColumnView<T>
 					// Should not happen, since we know the type of the column.
 					throw new RuntimeException("Table element at row " + Integer.toString(row)+" and column "+ Integer.toString(column)+" is not of type " + columnDefinition.getValueType().getName()+".", e);
 				}
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
 			}		
 		};
 	}

@@ -1,0 +1,26 @@
+License agreement
+
+            
+ Copyright (c) 2002 and later by MH Software-Entwicklung. All Rights Reserved.
+ 
+ JTattoo is multiple licensed. If your are an open source developer you can use
+ it under the terms and conditions of the GNU General Public License version 2.0
+ or later as published by the Free Software Foundation.
+ 
+ see:   GPLv2    GPLv3  
+  
+ If you pay for a license you will become a registered user who could use the
+ software under the terms and conditions of the GNU Lesser General Public License
+ version 2.0 or later with classpath exception as published by the Free Software
+ Foundation.
+ 
+ see:   LGPLv2    LGPLv3  
+ see:   classpath-exception  
+ 
+ Registered users could also use JTattoo under the terms and conditions of the 
+ Apache License, Version 2.0 as published by the Apache Software Foundation.
+ 
+ see: Apache License, Version 2.0
+ 
+            
+                    

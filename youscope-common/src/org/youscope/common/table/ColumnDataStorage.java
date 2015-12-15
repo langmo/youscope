@@ -108,6 +108,11 @@ class ColumnDataStorage<T extends Serializable> implements Serializable, Cloneab
 					public TableEntry<? extends T> next() {
 						return iterator.next();
 					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
 			
 				};
 	}

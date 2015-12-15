@@ -17,6 +17,8 @@ import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
+import org.youscope.addon.skin.Skin;
+import org.youscope.addon.skin.SkinFactory;
 import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
@@ -30,6 +32,7 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 	private final List<ComponentAddonFactory> componentAddonFactories = new ArrayList<ComponentAddonFactory>(30);
 	private final List<MeasurementAddonFactory> measurementAddonFactories = new ArrayList<MeasurementAddonFactory>(30);
 	private final List<ToolAddonFactory> toolAddonFactories = new ArrayList<ToolAddonFactory>(30);
+	private final List<SkinFactory> skinFactories = new ArrayList<SkinFactory>(5);
 	private final List<PostProcessorAddonFactory> postProcessorAddonFactories = new ArrayList<PostProcessorAddonFactory>(30);
 	private final List<MicroplateAddonFactory> microplateAddonFactories = new ArrayList<MicroplateAddonFactory>(30);
 	private final List<ScriptEngineFactory> scriptEngineFactories = new ArrayList<ScriptEngineFactory>(5); 
@@ -78,6 +81,14 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 		for(PostProcessorAddonFactory factory : postProcessorAddonFactories)
 		{
 			singleton.postProcessorAddonFactories.add(factory);
+		}
+		
+		// look and feels
+		Iterable<SkinFactory> skinFactories = ServiceLoader.load(SkinFactory.class,
+				ClientAddonProviderImpl.class.getClassLoader());
+		for(SkinFactory factory : skinFactories)
+		{
+			singleton.skinFactories.add(factory);
 		}
 		
 		// microplates
@@ -441,6 +452,30 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 		}
 		return returnVal;
 	}
+	public List<AddonMetadata> getSkinMetadata() {
+		ArrayList<AddonMetadata> returnVal = new ArrayList<AddonMetadata>();
+		for(SkinFactory addonFactory : skinFactories) 
+		{
+			for(String algorithmID : addonFactory.getSupportedTypeIdentifiers())
+			{
+				try {
+					returnVal.add(addonFactory.getMetadata(algorithmID));
+				} catch (AddonException e) {
+					ClientSystem.err.println("Metadata for look and feel with type identifier "+algorithmID+" cannot be constructed. Skipping this post processor.", e);
+				}
+			}
+		}
+		return returnVal;
+	}
+	
+	public AddonMetadata getSkinMetadata(String typeIdentifier) throws AddonException {
+		for(SkinFactory addonFactory : skinFactories) 
+		{
+			if(addonFactory.isSupportingTypeIdentifier(typeIdentifier))
+				return addonFactory.getMetadata(typeIdentifier);
+		}
+		throw new AddonException("Look and feel with type identifier " + typeIdentifier+" is unknown.");
+	}
 	@Override
 	public AddonMetadata getPostProcessorMetadata(String typeIdentifier) throws AddonException {
 		for(PostProcessorAddonFactory addonFactory : postProcessorAddonFactories) 
@@ -463,10 +498,35 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 	public ToolAddonUI createToolUI(ToolMetadata metadata) throws AddonException {
 		return createToolUI(metadata.getTypeIdentifier());
 	}
+	
+	public Skin createSkin(String typeIdentifier) throws AddonException {
+		for(SkinFactory addonFactory : skinFactories) 
+		{
+			if(addonFactory.isSupportingTypeIdentifier(typeIdentifier))
+				return addonFactory.createSkin(typeIdentifier);
+		}
+		throw new AddonException("Look and feel with type identifier " + typeIdentifier+" is unknown.");
+	}
+	public Skin createSkin(AddonMetadata metadata) throws AddonException {
+		return createSkin(metadata.getTypeIdentifier());
+	}
+	
 	@Override
 	public List<String> getToolTypeIdentifiers() {
 		ArrayList<String> returnVal = new ArrayList<String>();
 		for(ToolAddonFactory addonFactory : toolAddonFactories) 
+		{
+			for(String algorithmID : addonFactory.getSupportedTypeIdentifiers())
+			{
+				returnVal.add(algorithmID);
+			}
+		}
+		return returnVal;
+	}
+	
+	public List<String> getSkinTypeIdentifiers() {
+		ArrayList<String> returnVal = new ArrayList<String>();
+		for(SkinFactory addonFactory : skinFactories) 
 		{
 			for(String algorithmID : addonFactory.getSupportedTypeIdentifiers())
 			{

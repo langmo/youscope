@@ -104,6 +104,11 @@ public class TemporaryRow implements Serializable, Cloneable, RowView
 							throw new NoSuchElementException(e.getMessage());
 						}
 					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
 			
 				};
 	}

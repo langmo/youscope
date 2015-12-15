@@ -76,6 +76,11 @@ public final class TableDefinition implements Iterable<ColumnDefinition<?>>, Ser
 							throw new NoSuchElementException(e.getMessage());
 						}
 					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
 			
 				};
 	}

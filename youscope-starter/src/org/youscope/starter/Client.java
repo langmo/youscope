@@ -50,6 +50,7 @@ class Client extends ClientServerConnection
 
         HashSet<URL> classLoaderURLs = new HashSet<URL>();
         classLoaderURLs.addAll(getPluginsJars());
+        classLoaderURLs.addAll(getLibJars());
         classLoaderURLs.addAll(getSubJars(jarURL, null));
         return classLoaderURLs;
     }

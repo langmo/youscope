@@ -243,6 +243,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<ComposedImagingMeasurem
 	@Override
 	public void loadData(ComposedImagingMeasurementConfiguration configuration)
 	{
+		if(configuration.getPeriod() == null)
+			configuration.setPeriod(new RegularPeriodConfiguration());
 		if(configuration.getPeriod().getNumExecutions() >= 0)
 			numExecutionsField.setValue(configuration.getPeriod().getNumExecutions());
 		else

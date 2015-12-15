@@ -4,7 +4,6 @@
 package org.youscope.plugin.scripting;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -59,21 +58,13 @@ class Console extends JPanel implements ScriptMessageListener
 	{		
 		// Initialize output area
 		outputArea.setEditable(false);
-		outputArea.setBackground(Color.WHITE);
-		outputArea.setForeground(Color.BLACK);
 		outputArea.setFont(CONSOLE_FONT);
 		
 		// Initialize single line input
-		inputAreaField.setBackground(Color.WHITE);
-		inputAreaField.setForeground(Color.BLACK);
 		inputAreaField.setFont(CONSOLE_FONT);
-		inputAreaField.setCaretColor(Color.BLACK);
 		
 		// Initialize multiple lines input
-		inputAreaArea.setBackground(Color.WHITE);
-		inputAreaArea.setForeground(Color.BLACK);
-		inputAreaArea.setFont(CONSOLE_FONT);
-		inputAreaArea.setCaretColor(Color.BLACK);		
+		inputAreaArea.setFont(CONSOLE_FONT);	
 		
 		// Single Line Input
         inputAreaField.addActionListener(new SingleInputActionListener());

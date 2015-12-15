@@ -4,11 +4,9 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +30,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -51,15 +50,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
+import org.youscope.addon.skin.Skin;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.StandardProperty;
@@ -98,6 +98,8 @@ public class YouScopeClientImpl extends JFrame
 	 */
 	public static final String				REGISTRY_NAME						= "YouScope";
 
+	private final static String DEFAULT_SKIN = "YouScope.Skin.System";
+	
 	/**
 	 * The only existing main frame in this program
 	 */
@@ -117,7 +119,7 @@ public class YouScopeClientImpl extends JFrame
 	private static final String				POLICY_FILE							= "org/youscope/client/youscope-client.policy";
 
 	// Layout components
-	private JDesktopPane					desktop								= new ImageDesktopPane();
+	private JDesktopPane					desktop								= new JDesktopPane();//ImageDesktopPane();
 	private MeasurementControlManager		controlManager 						= new MeasurementControlManager(desktop);
 
 	private LogPanel					logPanel;
@@ -151,6 +153,69 @@ public class YouScopeClientImpl extends JFrame
         }
     }
 	
+	private static void initializeSkin()
+	{
+		// Set skin
+		String skinID = (String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_SKIN);
+		if(skinID == null)
+			skinID = DEFAULT_SKIN;
+		Skin skin = null;
+		try
+		{
+			skin = ClientAddonProviderImpl.getProvider().createSkin(skinID);
+		}
+		catch(@SuppressWarnings("unused") AddonException e)
+		{
+			// do nothing.
+		}
+		if(skin == null)
+		{
+			// try default skin
+			try
+			{
+				skin = ClientAddonProviderImpl.getProvider().createSkin(DEFAULT_SKIN);
+			}
+			catch(@SuppressWarnings("unused") AddonException e)
+			{
+				// do nothing.
+			}
+		}
+		if(skin == null)
+		{
+			// try any skin
+			List<String> skinIDs = ClientAddonProviderImpl.getProvider().getSkinTypeIdentifiers();
+			for(String anySkinID : skinIDs)
+			{
+				try
+				{
+					skin = ClientAddonProviderImpl.getProvider().createSkin(anySkinID);
+					if(skin != null)
+					{
+						break;
+					}
+				}
+				catch(@SuppressWarnings("unused") AddonException e)
+				{
+					// do nothing.
+				}
+			}
+		}
+		if(skin == null)
+		{
+			ClientSystem.err.println("No skin installed. YouScope might look weird.");
+		}
+		else
+		{
+			try {
+				skin.applySkin();
+				ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());		
+			} catch (AddonException e) {
+				ClientSystem.err.println("Could not set skin.", e);
+			}
+				
+		}
+	}
+	
 	/**
 	 * Constructor.
 	 */
@@ -162,6 +227,11 @@ public class YouScopeClientImpl extends JFrame
 
 		// Load image formats
 		ImageIO.scanForPlugins();
+		
+		// Setup log panel. If there is an error, we want to already log it
+		logPanel = new LogPanel();
+		ClientSystem.addMessageOutListener(logPanel.getMessageListener());
+		ClientSystem.addMessageErrListener(logPanel.getMessageListener());
 		
 		// Create Console & other bottom elements
 		lastMeasurementConfigurationsList.addMouseListener(new MouseAdapter()
@@ -179,9 +249,6 @@ public class YouScopeClientImpl extends JFrame
             }
         });
 
-		logPanel = new LogPanel();
-		ClientSystem.addMessageOutListener(logPanel.getMessageListener());
-		ClientSystem.addMessageErrListener(logPanel.getMessageListener());
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.addTab("Microscope Log", logPanel);
 		refreshLastMeasurementsList();
@@ -306,6 +373,45 @@ public class YouScopeClientImpl extends JFrame
 			}
 		});
 		fileMenu.add(configurationMenuItem);
+		
+		JMenu skinMenu = new JMenu("Skin");
+		ImageIcon defaultLookAndFeelIcon = ImageLoadingTools.getResourceIcon("icons/application-blog.png", "skin");
+		int numSkins = 0;
+		for(final AddonMetadata metadata : ClientAddonProviderImpl.getProvider().getSkinMetadata())
+		{
+			numSkins++;
+			String addonName = metadata.getTypeName();
+			if(addonName == null || addonName.length() <= 0)
+				addonName = "Unnamed Look-and-Feel";
+			
+			JMenuItem skinMenuItem = new JMenuItem(TextTools.capitalize(addonName));
+			
+			Icon skinIcon = metadata.getIcon();
+			if(skinIcon == null)
+				skinIcon = defaultLookAndFeelIcon;
+			if(skinIcon != null)
+				skinMenuItem.setIcon(skinIcon);
+			skinMenuItem.addActionListener(new ActionListener()
+			{
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					Skin addon;
+					try {
+						addon = ClientAddonProviderImpl.getProvider().createSkin(metadata);
+					} catch (AddonException e1) {
+						ClientSystem.err.println("Could not create look and feel.", e1);
+						return;
+					}
+					setSkin(addon);
+				}
+			});
+			skinMenu.add(skinMenuItem);
+		}
+		// Only add if there is really a choice...
+		if(numSkins > 1)
+			fileMenu.add(skinMenu);
 		
 		fileMenu.addSeparator();
 		
@@ -726,28 +832,6 @@ public class YouScopeClientImpl extends JFrame
 		setExtendedState(MAXIMIZED_BOTH);
 	}
 	
-	private class ImageDesktopPane extends JDesktopPane
-	{
-		/**
-		 * Serial Version UID
-		 */
-		private static final long	serialVersionUID	= 6699931597399735839L;
-
-		private final ImageIcon icon;
-		ImageDesktopPane()
-		{
-			setBackground(new Color(210, 210, 210));
-			icon = ImageLoadingTools.getResourceIcon("org/youscope/client/images/background-logo.png", "Logo");
-		}
-		@Override
-        public void paintComponent(Graphics g) 
-		{
-            super.paintComponent(g);
-            if(icon != null)
-            	g.drawImage(icon.getImage(), (getWidth() - icon.getIconWidth())/2, (getHeight() - icon.getIconHeight())/2, this);
-
-        }
-    }
 	private void refreshWindowsMenu()
 	{
 		class WindowsMenuItemActivationListener implements ActionListener
@@ -1013,49 +1097,6 @@ public class YouScopeClientImpl extends JFrame
 		checkLastConfigFileVersion();
 	}
 
-	/**
-	 * Main function.
-	 * 
-	 * @param args
-	 *            Currently all arguments are ignored.
-	 */
-	public static void main(String[] args)
-	{
-		// Set uncaught exception handler
-		Thread.setDefaultUncaughtExceptionHandler(new ClientSystem.YouScopeUncaughtExceptionHandler());
-	    System.setProperty("sun.awt.exception.handler",
-	    		ClientSystem.YouScopeUncaughtExceptionHandler.class.getName());
-	    
-		// Set system look and feel.
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(@SuppressWarnings("unused") Exception e)
-		{
-			// Don't care, take standard L&F...
-		}
-
-		// Create main window.
-		YouScopeClientImpl youScopeClient = getMainProgram();
-
-		// Exit java when client is closed
-		youScopeClient.addClientFinishListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					System.exit(0);
-				}
-			});
-		
-		// Connect to server.
-		youScopeClient.connectToServer();
-		
-		// Run program.
-		youScopeClient.startProgram();
-	}
-
 	private static String[] getAutoStartIDs()
     {
         final String autoStartIDs = ConfigurationSettings.getProperty("auto-start", "");
@@ -1120,7 +1161,16 @@ public class YouScopeClientImpl extends JFrame
 	public synchronized static YouScopeClientImpl getMainProgram()
 	{
 		if(youScopeClient == null)
+		{
+			// Set uncaught exception handler
+			Thread.currentThread().setContextClassLoader(YouScopeClientImpl.class.getClassLoader());
+			Thread.setDefaultUncaughtExceptionHandler(new ClientSystem.YouScopeUncaughtExceptionHandler());
+		    System.setProperty("sun.awt.exception.handler",
+		    		ClientSystem.YouScopeUncaughtExceptionHandler.class.getName());
+			initializeSkin();
 			youScopeClient = new YouScopeClientImpl();
+			SwingUtilities.updateComponentTreeUI(youScopeClient);
+		}
 		return youScopeClient;
 	}
 	
@@ -1220,6 +1270,20 @@ public class YouScopeClientImpl extends JFrame
 		}
 		
 		return true;
+	}
+	
+	void setSkin(Skin skin)
+	{
+		JOptionPane.showMessageDialog(this, "The change of the skin will have effect only after restarting YouScope.", "Change Requires Restart", JOptionPane.INFORMATION_MESSAGE);
+		ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
+		/*try {
+			skin.applySkin();
+			ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
+		} catch (AddonException e1) {
+			ClientSystem.err.println("Could not apply look and feel.", e1);
+			return;
+		}
+		SwingUtilities.updateComponentTreeUI(this);*/
 	}
 	
 	static boolean addMeasurement(Measurement measurement)

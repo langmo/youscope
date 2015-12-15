@@ -11,6 +11,11 @@ public enum StandardProperty
      * Name of the boolean property indicating if camera settings should be preinitialized.
      */
     PROPERTY_PREINITIALIZE_CAMERA_SETTINGS ("CSB::Measurement::cameraStartupSettings", false),
+    
+    /**
+     * Name of the skin which is loaded at startup.
+     */
+    PROPERTY_SKIN ("YouScope.skin", "YouScope.Skin.System"),
 
     /**
      * Name of the boolean property indicating if a measurement control should be docked to the main window (true) or shown in an own window.

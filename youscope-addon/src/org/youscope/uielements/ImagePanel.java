@@ -964,7 +964,7 @@ public class ImagePanel extends JPanel
 		// Let user select file to save to
         String lastFile = "image.tif";
         JFileChooser fileChooser = new JFileChooser(lastFile);
-        Thread.currentThread().setContextClassLoader(ImagePanel.class.getClassLoader());
+        //Thread.currentThread().setContextClassLoader(ImagePanel.class.getClassLoader());
         String[] imageFormats = ImageIO.getWriterFileSuffixes();
         FileFilter tifFilter = null;
         fileChooser.setAcceptAllFileFilterUsed(false);

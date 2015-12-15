@@ -556,7 +556,7 @@ public class ContinousMeasurementPanel extends JPanel
 			        // Let user select file to save to
 			        String lastFile = client.getProperties().getProperty(LAST_IMAGE_FILE_PROPERTY, "image.tif");
                     JFileChooser fileChooser = new JFileChooser(lastFile);
-                    Thread.currentThread().setContextClassLoader(ContinousMeasurementPanel.class.getClassLoader());
+                    //Thread.currentThread().setContextClassLoader(ContinousMeasurementPanel.class.getClassLoader());
                     String[] imageFormats = ImageIO.getWriterFileSuffixes();
                     FileFilter tifFilter = null;
                     fileChooser.setAcceptAllFileFilterUsed(false);

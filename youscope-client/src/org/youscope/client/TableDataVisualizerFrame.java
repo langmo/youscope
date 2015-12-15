@@ -3,7 +3,7 @@
  */
 package org.youscope.client;
 
-import java.awt.Dimension;
+import java.awt.Dimension; 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;

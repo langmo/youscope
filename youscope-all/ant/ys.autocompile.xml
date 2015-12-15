@@ -40,7 +40,10 @@
 	<target name="-autocompile.init">
 		<echo>Project name is ${project}...</echo>
 		<condition property="isClientJar">
-			<equals arg1="${project}" arg2="youscope-client" />
+			<or>
+				<equals arg1="${project}" arg2="youscope-client" />
+				<equals arg1="${project}" arg2="youscope-client-uielements" />
+			</or>
 		</condition>	
 		<condition property="isServerJar">
 			<equals arg1="${project}" arg2="youscope-server" />

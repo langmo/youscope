@@ -112,6 +112,9 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 			imageTypeField.setSelectedItem(saveSettings.getImageFileType());
 		}
 		
+		if(configuration.getPeriod() == null)
+			configuration.setPeriod(new RegularPeriodConfiguration());
+		
 		if(configuration.getPeriod().getNumExecutions() >= 0)
 			numExecutionsField.setValue(configuration.getPeriod().getNumExecutions());
 		else

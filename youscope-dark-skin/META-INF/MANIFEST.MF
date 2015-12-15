@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: ../common/youscope-common.jar ../common/youscope-addon.jar ../lib/JTattoo-1.6.11.jar

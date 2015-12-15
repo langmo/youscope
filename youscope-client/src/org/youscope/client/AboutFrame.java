@@ -74,7 +74,7 @@ class AboutFrame
 		};
         
         description.setContentType("text/html");
-        description.setText("<html><p style=\"margin:0px;padding:0px;font-weight:bold;\">"
+        description.setText("<html><p style=\"margin:0px;padding:0px;font-weight:bold;color: #000000;\">"
                 +"YouScope "+ version.getFullVersion() + "<br />"
                 + "Created by Moritz Lang and contributers.<br /><br />"
                 + "(c) Copyright Moritz Lang, contributors and others 2009-2015.<br/>"

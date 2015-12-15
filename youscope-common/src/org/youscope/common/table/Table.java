@@ -873,6 +873,11 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 					throw new NoSuchElementException(e.getMessage());
 				}
 			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
 	
 		};
 	}

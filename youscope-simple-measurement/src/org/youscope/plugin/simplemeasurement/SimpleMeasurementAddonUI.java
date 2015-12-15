@@ -3,12 +3,17 @@
  */
 package org.youscope.plugin.simplemeasurement;
 
+import javax.swing.ImageIcon;
+
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
+import org.youscope.addon.measurement.pages.DescriptionPage;
+import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.serverinterfaces.YouScopeServer;
+import org.youscope.uielements.ImageLoadingTools;
 
 
 /**
@@ -28,7 +33,12 @@ class SimpleMeasurementAddonUI extends MeasurementAddonUIAdapter<SimpleMeasureme
 		super(getMetadata(), client, server);
 		setTitle("Simple Measurement");
 
-		addPage(new StartPage());
+		String description = "A simple measurement is the easiest type of measurement in YouScope. With it, one can perform an imaging protocol at the current stage position one or several times.\n\n" +
+				"To configure a simple measurement, the imaging protocol consisting of several subelements, called jobs, has to be defined, as well as the timing of the measurement (if more than one itertion through the protocol is intended).\n" +
+				"One job thereby corresponds to a single step of the imaging protocol, like taking a bright-field or a green fluorescence image.";
+		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/simplemeasurement/images/simpleMeasurement.jpg", "Simple Measurement");
+		addPage(new DescriptionPage(null, description, image, null));
+		
 		addPage(new GeneralSettingsPage(client, server));
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingProtocolPage(client, server));

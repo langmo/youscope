@@ -22,6 +22,7 @@ import java.util.jar.Attributes;
 abstract class ClientServerConnection
 {
     private static final String PLUGINS_LOCATION = "plugins/";
+    private static final String LIB_LOCATION = "lib/";
 
     private String getJarClassPath(URL url) throws IOException
     {
@@ -40,7 +41,7 @@ abstract class ClientServerConnection
         System.out.println("= Searching for plugin jars    =");
         System.out.println("================================");
     	
-        File pluginsFolder = new File(PLUGINS_LOCATION);
+        File pluginsFolder = new File(PLUGINS_LOCATION); 
         String[] plugins = pluginsFolder.list(new FilenameFilter()
             {
                 @Override
@@ -61,6 +62,43 @@ abstract class ClientServerConnection
         {
         	File pluginFile = new File(PLUGINS_LOCATION + plugin);
         	System.out.println("Found plugin " + pluginFile.getName() + ".");
+            if (!pluginFile.exists())
+                continue;
+            URL pluginURL = pluginFile.toURI().toURL();
+            urls.add(pluginURL);
+        }
+
+        return urls;
+
+    }
+    
+    static List<URL> getLibJars() throws MalformedURLException
+    {
+    	System.out.println("================================");
+        System.out.println("= Searching for library jars    =");
+        System.out.println("================================");
+    	
+        File pluginsFolder = new File(LIB_LOCATION);
+        String[] plugins = pluginsFolder.list(new FilenameFilter()
+            {
+                @Override
+                public boolean accept(File dir, String name)
+                {
+                    if (name.toLowerCase().lastIndexOf(".jar") == name.length() - 4)
+                        return true;
+					return false;
+                }
+            });
+        if (plugins == null)
+        {
+        	System.out.println("No libs found.");
+            return new ArrayList<URL>(0);
+        }
+        ArrayList<URL> urls = new ArrayList<URL>(plugins.length);
+        for (String plugin : plugins)
+        {
+        	File pluginFile = new File(PLUGINS_LOCATION + plugin);
+        	System.out.println("Found lib " + pluginFile.getName() + ".");
             if (!pluginFile.exists())
                 continue;
             URL pluginURL = pluginFile.toURI().toURL();

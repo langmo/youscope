@@ -38,7 +38,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 
 	private JButton											nextButton				= new JButton("Next");
 
-	private final ArrayList<MeasurementAddonUIPage<T>> pages = new ArrayList<MeasurementAddonUIPage<T>>();
+	private final ArrayList<MeasurementAddonUIPage<? super T>> pages = new ArrayList<MeasurementAddonUIPage<? super T>>();
 	
 	/**
 	 * Constructor.
@@ -57,7 +57,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	 * Adds a page to the layout. Must be called before {@link #toFrame()} or {@link #toPanel(org.youscope.clientinterfaces.YouScopeFrame)} is called.
 	 * @param page Page to be added.
 	 */
-	public void addPage(MeasurementAddonUIPage<T> page)
+	public void addPage(MeasurementAddonUIPage<? super T> page)
 	{
 		pages.add(page);
 	}
@@ -68,7 +68,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	 * @param index Index where to add page. Must be bigger or equal to 0, and smaller or equal to {@link #getNumPages()}.
 	 * @throws IndexOutOfBoundsException thrown if index is invalid. 
 	 */
-	public void insertPage(MeasurementAddonUIPage<T> page, int index) throws IndexOutOfBoundsException
+	public void insertPage(MeasurementAddonUIPage<? super T> page, int index) throws IndexOutOfBoundsException
 	{
 		pages.add(index, page);
 	}
@@ -94,7 +94,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	protected Component createUI(final T configuration) throws AddonException
 	{
 		// Initialize pages
-		for(MeasurementAddonUIPage<T> page : pages)
+		for(MeasurementAddonUIPage<? super T> page : pages)
 		{
 			page.createUI(getContainingFrame());
 			page.loadData(configuration);
@@ -157,7 +157,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 		buttonPanel.add(nextButton);
 		
 		// Add the pages
-		for(MeasurementAddonUIPage<T> page : pages)
+		for(MeasurementAddonUIPage<? super T> page : pages)
 		{
 			pagesPanel.add(page, page.getPageName());
 		}
@@ -171,7 +171,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 	@Override
 	protected void commitChanges(T configuration) 
 	{
-		for(MeasurementAddonUIPage<T> page : pages)
+		for(MeasurementAddonUIPage<? super T> page : pages)
 		{
 			page.saveData(configuration);
 		}
@@ -179,7 +179,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 
 	@Override
 	protected void initializeDefaultConfiguration(T configuration) throws AddonException {
-		for(MeasurementAddonUIPage<T> page : pages)
+		for(MeasurementAddonUIPage<? super T> page : pages)
 		{
 			page.setToDefault(configuration);
 		}

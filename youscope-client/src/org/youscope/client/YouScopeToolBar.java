@@ -45,7 +45,7 @@ class YouScopeToolBar extends JToolBar
 	{
 		setFloatable(false);
 		setRollover(true);
-		setBackground(Color.WHITE);
+		//setBackground(Color.WHITE);
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0.3f,0.3f,0.3f)));
 	}
 	

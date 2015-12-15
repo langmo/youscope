@@ -46,6 +46,11 @@ class RowViewImpl implements RowView
 				{
 					throw new NoSuchElementException(e.getMessage());
 				}
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
 			}		
 		};
 	}

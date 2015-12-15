@@ -17,13 +17,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.ParseException;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -44,6 +43,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -526,7 +526,7 @@ public class Starter extends JFrame
 				splashScreen.setVisible(true);
 	
 				// Load necessary JAR files.
-				ClassLoader classLoader = Starter.class.getClassLoader();
+				ClassLoader oldClassLoader = Starter.class.getClassLoader();
 				HashSet<URL> necessaryJARs;
 				try
 				{
@@ -539,24 +539,21 @@ public class Starter extends JFrame
 					return;
 				}
 				// TODO: When to close the class laoder?
-				classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), classLoader);
+				final ClassLoader classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), oldClassLoader);
 	
-				// Extend java classpath
-				Properties prop = System.getProperties();
-		        String javaclasspath = prop.getProperty("java.class.path", "");
-		        for(URL url : necessaryJARs)
-		        {
-		        	try
-					{
-						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
-					}
-					catch(@SuppressWarnings("unused") URISyntaxException e)
-					{
-						// do nothing
-					}
-		        }
-		        prop.setProperty("java.class.path", javaclasspath);
-		        
+				// Set class loader as default for all relevant threads.
+				try {
+					SwingUtilities.invokeAndWait(new Runnable()
+							{
+								@Override
+								public void run() {
+									Thread.currentThread().setContextClassLoader(classLoader);
+								}
+							});
+				} catch (InvocationTargetException | InterruptedException e4) {
+					ErrorConsumer.consumeException("Could not set UI class loader. Shutting down.", e4);
+					System.exit(1);
+				}
 				Thread.currentThread().setContextClassLoader(classLoader);
 				
 				splashScreen.setProgress(20, "Connecting to microscope...");
@@ -626,7 +623,7 @@ public class Starter extends JFrame
 				splashScreen.setVisible(true);
 	
 				// Load necessary JAR files.
-				ClassLoader classLoader = Starter.class.getClassLoader();
+				ClassLoader oldClassLoader = Starter.class.getClassLoader();
 				HashSet<URL> necessaryJARs;
 				try
 				{
@@ -639,24 +636,21 @@ public class Starter extends JFrame
 					return;
 				}
 				//TODO: when to close?
-				classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), classLoader);
+				final ClassLoader classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), oldClassLoader);
 	
-				// Extend java classpath
-				Properties prop = System.getProperties();
-		        String javaclasspath = prop.getProperty("java.class.path", "");
-		        for(URL url : necessaryJARs)
-		        {
-		        	try
-					{
-						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
-					}
-					catch(@SuppressWarnings("unused") URISyntaxException e)
-					{
-						// do nothing
-					}
-		        }
-		        prop.setProperty("java.class.path", javaclasspath);
-		        
+				// Set class loader as default for all relevant threads.
+				try {
+					SwingUtilities.invokeAndWait(new Runnable()
+							{
+								@Override
+								public void run() {
+									Thread.currentThread().setContextClassLoader(classLoader);
+								}
+							});
+				} catch (InvocationTargetException | InterruptedException e4) {
+					ErrorConsumer.consumeException("Could not set UI class loader. Shutting down.", e4);
+					System.exit(1);
+				}
 				Thread.currentThread().setContextClassLoader(classLoader);
 				
 				splashScreen.setProgress(30, "Initializing UI...");
@@ -734,7 +728,7 @@ public class Starter extends JFrame
 			{
 				splashScreen.setVisible(true);
 				// Load necessary JAR files.
-				ClassLoader classLoader = Starter.class.getClassLoader();
+				ClassLoader oldclassLoader = Starter.class.getClassLoader();
 				HashSet<URL> necessaryJARs;
 				try
 				{
@@ -749,24 +743,20 @@ public class Starter extends JFrame
 					return;
 				}
 				// TODO: When to close?
-				classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), classLoader);
-	
-				// Extend java classpath
-				Properties prop = System.getProperties();
-		        String javaclasspath = prop.getProperty("java.class.path", "");
-		        for(URL url : necessaryJARs)
-		        {
-		        	try
-					{
-						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
-					}
-					catch(@SuppressWarnings("unused") URISyntaxException e)
-					{
-						// do nothing
-					}
-		        }
-		        prop.setProperty("java.class.path", javaclasspath);
-				
+				final ClassLoader classLoader = new URLClassLoader(necessaryJARs.toArray(new URL[necessaryJARs.size()]), oldclassLoader);
+				// Set class loader as default for all relevant threads.
+				try {
+					SwingUtilities.invokeAndWait(new Runnable()
+							{
+								@Override
+								public void run() {
+									Thread.currentThread().setContextClassLoader(classLoader);
+								}
+							});
+				} catch (InvocationTargetException | InterruptedException e4) {
+					ErrorConsumer.consumeException("Could not set UI class loader. Shutting down.", e4);
+					System.exit(1);
+				}
 				Thread.currentThread().setContextClassLoader(classLoader);
 				
 				// Start server

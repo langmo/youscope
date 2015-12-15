@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/youscope-all/lib/zxing-core-1.7.jar"/>
 	<classpathentry kind="lib" path="/youscope-all/lib/zxing-j2se-1.7.jar"/>
 	<classpathentry kind="lib" path="/youscope-all/lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="src" path="/youscope-client-uielements"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
