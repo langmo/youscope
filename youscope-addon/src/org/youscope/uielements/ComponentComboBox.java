@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.TextTools;
 
 /**
  * A dropdown list to select components to configure.
@@ -39,6 +39,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	private Element selectedElement = null;
 	private boolean customTextIcon = false;
 	private int popupLocation = SwingConstants.BOTTOM;
+	private final int numChoices;
 	
 	private final ActionListener elementSelectionListener = new ActionListener() 
 	{
@@ -228,8 +229,17 @@ public class ComponentComboBox<C extends Configuration> extends JButton
                 		componentChooser.show(ComponentComboBox.this, getWidth(), 0);
                 }
             }); 
+		numChoices = componentMetadata.length;
 		createHierachy(componentMetadata);
 		setSelectedElement((String)null);
+	}
+	/**
+	 * Returns the number of choices the user has. Useful for not displaying this combobox if user anyway does not have a choice...
+	 * @return Number of choices the user has.
+	 */
+	public int getNumChoices()
+	{
+		return numChoices;
 	}
 	
 	/**

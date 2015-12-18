@@ -10,9 +10,9 @@ import java.util.ServiceLoader;
 
 import org.youscope.addon.callback.CallbackAddonFactory;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackCreationException;
-import org.youscope.common.measurement.callback.CallbackProvider;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackCreationException;
+import org.youscope.common.callback.CallbackProvider;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

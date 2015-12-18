@@ -5,10 +5,10 @@ package org.youscope.addon.dropletmicrofluidics;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
-import org.youscope.common.measurement.resource.Resource;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.resource.Resource;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * Abstract class all controllers for droplet based microfluidics should implement. 

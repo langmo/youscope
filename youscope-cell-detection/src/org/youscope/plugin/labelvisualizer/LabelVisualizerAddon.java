@@ -14,16 +14,16 @@ import org.youscope.addon.celldetection.CellDetectionResult;
 import org.youscope.addon.celldetection.CellDetectionTableColumns;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationException;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.table.ColumnView;
 import org.youscope.common.table.TableEntry;
 import org.youscope.common.table.TableException;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 
 /**
  * Visualizes the detected cells by painting the areas of each cell in a different color. Can also draw information about the cell (area, fluorescence) next to the cell.

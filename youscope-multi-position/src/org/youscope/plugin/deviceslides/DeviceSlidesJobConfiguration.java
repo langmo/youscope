@@ -3,8 +3,8 @@
  */
 package org.youscope.plugin.deviceslides;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -163,7 +163,7 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::MultiPositionJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.MultiPositionJob";
 
 	@Override
 	public String getTypeIdentifier()

@@ -1,8 +1,8 @@
 package org.youscope.addon.component;
 
 import org.youscope.addon.AddonMetadataAdapter;
+import org.youscope.common.Component;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.measurement.Component;
 
 /**
  * Adapter class to simplify the construction of custom metadata for configurations.

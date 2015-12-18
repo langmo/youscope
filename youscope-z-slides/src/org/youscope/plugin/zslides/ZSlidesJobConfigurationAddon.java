@@ -42,7 +42,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.CompositeJob;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.serverinterfaces.YouScopeServer;

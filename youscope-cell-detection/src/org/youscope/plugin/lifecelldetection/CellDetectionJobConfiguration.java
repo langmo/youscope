@@ -7,11 +7,11 @@ import java.util.Vector;
 
 import org.youscope.addon.celldetection.CellDetectionConfiguration;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 import org.youscope.plugin.quickdetect.QuickDetectConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -38,7 +38,7 @@ public class CellDetectionJobConfiguration extends JobConfiguration  implements 
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::CellDetectionJob";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.CellDetectionJob";
 	
 	@XStreamAlias("detection-image")
 	private JobConfiguration detectionJob = null;

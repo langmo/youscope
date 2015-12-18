@@ -3,7 +3,7 @@
  */
 package org.youscope.addon.celldetection;
 
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * Exception thrown by cell detection algorithms.

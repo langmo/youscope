@@ -5,12 +5,12 @@ package org.youscope.plugin.continousimaging;
 
 import org.youscope.common.configuration.CameraConfiguration;
 import org.youscope.common.configuration.ChannelConfiguration;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigConditional;
-import org.youscope.common.configuration.annotations.YSConfigIcon;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigConditional;
+import org.youscope.common.configuration.YSConfigIcon;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -34,7 +34,7 @@ public class ShortContinuousImagingJobConfiguration extends JobConfiguration imp
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::ShortContinuousImagingJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.ShortContinuousImagingJob";
 	
 	@XStreamAlias("camera")
 	@YSConfigAlias("camera device")

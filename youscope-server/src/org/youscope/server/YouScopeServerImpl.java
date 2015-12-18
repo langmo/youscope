@@ -18,7 +18,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.AccessControlException;
-import java.util.UUID;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -30,8 +29,8 @@ import org.youscope.addon.microscopeaccess.MicroscopeConnectionException;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.common.MessageListener;
 import org.youscope.common.YouScopeVersion;
+import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -54,15 +53,15 @@ public class YouScopeServerImpl implements YouScopeServer
 	 */
 	public static final int					REGISTRY_PORT							= 1237;
 
-	private static final String				PROPERTY_MICROSCOPE_DRIVER_FOLDER		= "CSB::server::microscopeDriverBaseFolder";
+	private static final String				PROPERTY_MICROSCOPE_DRIVER_FOLDER		= "YouScope.server.microscopeDriverBaseFolder";
 
-	private static final String				PROPERTY_MICROSCOPE_CONNECTION_TYPE		= "CSB::server::microscopeConnectionType";
+	private static final String				PROPERTY_MICROSCOPE_CONNECTION_TYPE		= "YouScope.server.microscopeConnectionType";
 
-	private static final String				PROPERTY_FORCE_CONNECTION_CONFIGURATION	= "CSB::server::forceConnectionConfiguration";
+	private static final String				PROPERTY_FORCE_CONNECTION_CONFIGURATION	= "YouScope.server.forceConnectionConfiguration";
 
-	private static final String				PROPERTY_SERVER_PORT					= "CSB::server::lastPort";
+	private static final String				PROPERTY_SERVER_PORT					= "YouScope.server.lastPort";
 
-	private static final String CONNECTION_TYPE_DEFAULT = "YouScope::StandAlone";
+	private static final String CONNECTION_TYPE_DEFAULT = "YouScope.StandAlone";
 	
 	/**
 	 * The name under which the server is exported to the registry.
@@ -845,7 +844,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	}
 
 	@Override
-	public ComponentProvider getComponentProvider(UUID measurementUUID, CallbackProvider callbackProvider) throws RemoteException {
-		return new ComponentProviderImpl(new ConstructionContextImpl(null, callbackProvider, measurementUUID));
+	public ComponentProvider getComponentProvider(CallbackProvider callbackProvider) throws RemoteException {
+		return new ComponentProviderImpl(new ConstructionContextImpl(null, callbackProvider));
 	}
 }

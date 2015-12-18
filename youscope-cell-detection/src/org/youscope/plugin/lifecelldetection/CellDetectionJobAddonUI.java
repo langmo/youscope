@@ -11,8 +11,8 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.job.basicjobs.ImagingJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.ImagingJob;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

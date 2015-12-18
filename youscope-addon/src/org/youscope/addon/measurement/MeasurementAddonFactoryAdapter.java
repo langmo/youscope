@@ -9,8 +9,8 @@ import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 import org.youscope.serverinterfaces.YouScopeServer;
 

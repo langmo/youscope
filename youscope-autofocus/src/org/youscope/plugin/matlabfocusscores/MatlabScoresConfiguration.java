@@ -5,7 +5,7 @@ package org.youscope.plugin.matlabfocusscores;
 
 import org.youscope.addon.focusscore.FocusScoreConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigAlias;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -43,7 +43,7 @@ public class MatlabScoresConfiguration extends FocusScoreConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::MatlabFocusScore";
+	public static final String	CONFIGURATION_ID	= "YouScope.MatlabFocusScore";
 	
 	@Override
 	public String getTypeIdentifier()

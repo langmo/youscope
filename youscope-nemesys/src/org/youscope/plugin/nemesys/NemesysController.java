@@ -39,7 +39,7 @@ class NemesysController extends ToolAddonUIAdapter implements YouScopeFrameListe
 	private boolean continueQuery = true;
 	private SyringeField[] syringeFields = new SyringeField[0]; 
 	
-	public final static String TYPE_IDENTIFIER = "CSB::NemesysController";
+	public final static String TYPE_IDENTIFIER = "YouScope.NemesysController";
 	
 	static ToolMetadata getMetadata()
 	{

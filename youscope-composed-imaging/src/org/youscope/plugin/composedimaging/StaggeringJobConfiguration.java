@@ -6,8 +6,8 @@ package org.youscope.plugin.composedimaging;
 import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -149,7 +149,7 @@ public class StaggeringJobConfiguration extends JobConfiguration implements JobC
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::StaggeringJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.StaggeringJob";
 
 	@Override
 	public String getTypeIdentifier()

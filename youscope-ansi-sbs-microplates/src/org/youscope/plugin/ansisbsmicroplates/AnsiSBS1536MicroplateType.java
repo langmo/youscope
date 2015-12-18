@@ -5,7 +5,7 @@ package org.youscope.plugin.ansisbsmicroplates;
 
 import java.io.Serializable;
 
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 
 /**
  * @author Moritz Lang

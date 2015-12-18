@@ -3,7 +3,7 @@
  */
 package org.youscope.server;
 
-import org.youscope.common.measurement.job.Job;
+import org.youscope.common.job.Job;
 
 /**
  * An element in the job execution queue.

@@ -4,8 +4,8 @@
 package org.youscope.plugin.waitjob;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.job.basicjobs.WaitJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.WaitJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

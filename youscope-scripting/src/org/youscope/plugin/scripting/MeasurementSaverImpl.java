@@ -5,12 +5,12 @@ package org.youscope.plugin.scripting;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.MeasurementSaveSettings;
-import org.youscope.common.measurement.MeasurementSaver;
+import org.youscope.common.saving.MeasurementSaver;
+import org.youscope.common.saving.SaveSettings;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableListener;
 
@@ -29,13 +29,13 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	}
 
 	@Override
-	public void setSaveSettings(MeasurementSaveSettings saveSettings) throws MeasurementRunningException
+	public void setSaveSettings(SaveSettings saveSettings) throws MeasurementRunningException
 	{
 		// Do nothing.
 	}
 
 	@Override
-	public MeasurementSaveSettings getSaveSettings()
+	public SaveSettings getSaveSettings()
 	{
 		return null;
 	}
@@ -65,7 +65,7 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	}
 
 	@Override
-	public TableListener getSaveTableDataListener(String tableSaveName)
+	public TableListener getSaveTableListener(String tableSaveName)
 	{
 		return this;
 	}

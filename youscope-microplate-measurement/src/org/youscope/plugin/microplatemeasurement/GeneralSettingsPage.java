@@ -1,36 +1,28 @@
 package org.youscope.plugin.microplatemeasurement;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
-import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.FolderStructureConfiguration;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
-import org.youscope.common.measurement.MeasurementSaveSettings;
-import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.FileNameComboBox;
+import org.youscope.common.saving.SaveSettingsConfiguration;
+import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.uielements.PeriodField;
 import org.youscope.uielements.PeriodVaryingPanel;
 import org.youscope.uielements.StandardFormats;
+import org.youscope.uielements.SubConfigurationPanel;
 
 class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
@@ -41,7 +33,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	private static final long				serialVersionUID		= 885352612109223078L;
 
 	private final YouScopeClient	client; 
-	private final YouScopeServer			server;
 
 	private final JLabel					fixedPeriodLabel		= new JLabel("Fixed period length:");
 
@@ -67,7 +58,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 
 	private JRadioButton					wellTimeFixed			= new JRadioButton("Exactly a given time.", false);
 
-	//private JFormattedTextField				wellTimeField			= new JFormattedTextField(StandardFormats.getIntegerFormat());
 	private PeriodField				wellTimeField			= new PeriodField();
 
 	private PeriodField				periodField				= new PeriodField();
@@ -80,17 +70,10 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 
 	private PeriodVaryingPanel				periodVaryingDataPanel	= new PeriodVaryingPanel();
 
-	private JTextField						folderField				= new JTextField();
-
-	private JComboBox<String>						imageTypeField;
-
-	private JComboBox<FolderStructureConfiguration>						imageFolderTypeField	= new JComboBox<FolderStructureConfiguration>(FolderStructureConfiguration.values());
-
-	private FileNameComboBox						imageFileField			= new FileNameComboBox(FileNameComboBox.Type.FILE_NAME);
+	private SubConfigurationPanel<SaveSettingsConfiguration> saveSettingPanel = null;
 	
-	GeneralSettingsPage(YouScopeClient client, YouScopeServer server)
+	GeneralSettingsPage(YouScopeClient client)
 	{
-		this.server = server;
 		this.client = client;
 	}
 
@@ -103,14 +86,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 		else
 			runtimeField.setDuration(60*60*1000);
 		
-		MeasurementSaveSettings saveSettings = configuration.getSaveSettings();
-		if(saveSettings != null)
-		{
-			folderField.setText(saveSettings.getFolder());
-			imageFolderTypeField.setSelectedItem(saveSettings.getImageFolderStructure());
-			imageFileField.setSelectedItem(saveSettings.getImageFileName());
-			imageTypeField.setSelectedItem(saveSettings.getImageFileType());
-		}
+		saveSettingPanel.setConfiguration(configuration.getSaveSettings());
 		
 		if(configuration.getPeriod() == null)
 			configuration.setPeriod(new RegularPeriodConfiguration());
@@ -200,15 +176,8 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 		else
 			configuration.getPeriod().setNumExecutions(-1);
 		
-		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		saveSettings.setFolder(folderField.getText());
-		saveSettings.setImageFileType((String) imageTypeField.getSelectedItem());
-		saveSettings.setImageFolderStructure((FolderStructureConfiguration) imageFolderTypeField.getSelectedItem());
-		saveSettings.setImageFileName(imageFileField.getSelectedItem().toString());
-		configuration.setSaveSettings(saveSettings);
-			
-		// Save some of the configurations for next time.
-		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, saveSettings.getFolder());
+		
+		configuration.setSaveSettings(saveSettingPanel.getConfiguration());
 
 		return true;
 	}
@@ -216,11 +185,11 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	@Override
 	public void setToDefault(MicroplateMeasurementConfiguration configuration)
 	{
-		MeasurementSaveSettings saveSettings = new MeasurementSaveSettings();
-		String lastFolder = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
-		saveSettings.setFolder(lastFolder == null ? "" : lastFolder);
-		saveSettings.setImageFileName(FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
-		configuration.setSaveSettings(saveSettings);
+		try {
+			configuration.setSaveSettings(client.getAddonProvider().getComponentMetadata("YouScope.StandardSaveSettings", SaveSettingsConfiguration.class).getConfigurationClass().newInstance());
+		} catch (@SuppressWarnings("unused") InstantiationException | IllegalAccessException | AddonException e) {
+			// do nothing.
+		}
 	}
 
 	@Override
@@ -237,19 +206,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 
 		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
 		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
-		
-		// Get supported image types
-		String[] imageTypes;
-		try
-		{
-			imageTypes = server.getProperties().getSupportedImageFormats();
-		}
-		catch(RemoteException e1)
-		{
-			client.sendError("Could not obtain supported image file types from server.", e1);
-			imageTypes = new String[0];
-		}
-		imageTypeField = new JComboBox<String>(imageTypes);
 		
 		StandardFormats.addGridBagElement(new JLabel("Name:"), layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(nameField, layout, newLineConstr, this);
@@ -380,43 +336,10 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 		wellTimeAFAP.addActionListener(new WellTimeTypeChangedListener());
 		wellTimeFixed.addActionListener(new WellTimeTypeChangedListener());
 
-		// Panel to choose files
-		StandardFormats.addGridBagElement(new JLabel("Output Directory:"), layout, newLineConstr, this);
-		JPanel folderPanel = new JPanel(new BorderLayout(5, 0));
-		folderPanel.add(folderField, BorderLayout.CENTER);
-
-		if(client.isLocalServer())
-		{
-			JButton openFolderChooser = new JButton("Edit");
-			openFolderChooser.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					JFileChooser fileChooser = new JFileChooser(folderField.getText());
-					fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					int returnVal = fileChooser.showDialog(null, "Open");
-					if(returnVal == JFileChooser.APPROVE_OPTION)
-					{
-						folderField.setText(fileChooser.getSelectedFile().getAbsolutePath());
-					}
-				}
-			});
-			folderPanel.add(openFolderChooser, BorderLayout.EAST);
-		}
-		StandardFormats.addGridBagElement(folderPanel, layout, newLineConstr, this);
-
-		StandardFormats.addGridBagElement(new JLabel("Image folder structure:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(imageFolderTypeField, layout, newLineConstr, this);
-
-		StandardFormats.addGridBagElement(new JLabel("Image filename:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(imageFileField, layout, newLineConstr, this);
-
-		// Panel to choose image file type
-		StandardFormats.addGridBagElement(new JLabel("Image File Type:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(imageTypeField, layout, newLineConstr, this);
+		// Panel to choose save settings
+		saveSettingPanel = new SubConfigurationPanel<SaveSettingsConfiguration>("Save type:", null, SaveSettingsConfiguration.class, client, frame);
+		StandardFormats.addGridBagElement(saveSettingPanel, layout, bottomConstr, this);
 		
-		StandardFormats.addGridBagElement(new JPanel(), layout, bottomConstr, this);
 		setBorder(new TitledBorder("Measurement Properties"));
 	}
 }

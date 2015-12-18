@@ -4,11 +4,11 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
+import org.youscope.common.Component;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigIcon;
-import org.youscope.common.measurement.Component;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigIcon;
 
 /**
  * Helper class to construct configuration metadata. Most of the metadata is directly extracted from the configuration class using java reflection.

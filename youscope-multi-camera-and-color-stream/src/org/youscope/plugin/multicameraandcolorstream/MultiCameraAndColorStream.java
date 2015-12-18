@@ -25,7 +25,7 @@ class MultiCameraAndColorStream extends ToolAddonUIAdapter implements YouScopeFr
 		super(getMetadata(), client, server);
 	}
 	
-	public final static String TYPE_IDENTIFIER = "CSB::MultiCameraAndColorStream";
+	public final static String TYPE_IDENTIFIER = "YouScope.MultiCameraAndColorStream";
 	
 	static ToolMetadata getMetadata()
 	{

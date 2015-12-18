@@ -13,14 +13,14 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JPanel;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.job.basicjobs.ImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.basicjobs.ImagingJob;
-import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.MeasurementProvider;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -185,7 +185,7 @@ public class MultiStreamPanel extends JPanel
             	singleImages[i] = null;
             	if(configGroups[i] == null || channels[i] == null)
             		continue;
-            	jobs[i] = server.getComponentProvider(measurement.getUUID(), null).createJob(new PositionInformation(), ImagingJob.DEFAULT_TYPE_IDENTIFIER, ImagingJob.class);
+            	jobs[i] = server.getComponentProvider(null).createJob(new PositionInformation(), ImagingJob.DEFAULT_TYPE_IDENTIFIER, ImagingJob.class);
             	jobs[i].setChannel(configGroups[i], channels[i]);
             	jobs[i].setExposure(exposures[i]);
             	jobs[i].addImageListener(new ImageListenerImpl(i));

@@ -17,7 +17,7 @@ import javax.swing.SwingConstants;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.TextTools;
 
 /**
  * Set of helpful functions to simplify configuration addon creation.

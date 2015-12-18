@@ -47,7 +47,7 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 	private PressureControl pressureControl = null;
 	private JTabbedPane centralPanel = null;
 	
-	public final static String TYPE_IDENTIFIER = "CSB::FluigentController";
+	public final static String TYPE_IDENTIFIER = "YouScope.FluigentController";
 	
 	static ToolMetadata getMetadata()
 	{
@@ -196,7 +196,7 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 		private final PumpField[] pumpFields; 
 		private final StateButton flowReachableField = new StateButton("Initializing...");
 		
-		private static final String PROPERTY_LAST_IDENTIFICATION_FILE ="CSB::Fluigent::LastIdentificationFile";
+		private static final String PROPERTY_LAST_IDENTIFICATION_FILE ="YouScope.Fluigent.LastIdentificationFile";
 		
 		PumpControl(int numFlowUnits)
 		{

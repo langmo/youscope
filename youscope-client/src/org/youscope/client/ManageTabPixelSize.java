@@ -171,7 +171,7 @@ class ManageTabPixelSize extends ManageTabElement
 				contentChanged = true;
 			}
 		});
-		pixelSizePanel.add(new JLabel("Pixel size (μm)"));
+		pixelSizePanel.add(new JLabel("Pixel size (um)"));
 		pixelSizePanel.add(pixelSizeField);
 		
 		DynamicPanel pixelSizeDefinitionPanel = new DynamicPanel();

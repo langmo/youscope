@@ -91,9 +91,9 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 	private JPanel									pixelSizeFromUserPanel		= null;
 
 	// Names for properties which are saved to the config file
-	private static final String						PROPERTY_OVERLAP			= "CSB::ComposedImaging::overlap";
-	private static final String						PROPERTY_NX					= "CSB::ComposedImaging::nx";
-	private static final String						PROPERTY_NY					= "CSB::ComposedImaging::ny";
+	private static final String						PROPERTY_OVERLAP			= "YouScope.ComposedImaging.overlap";
+	private static final String						PROPERTY_NX					= "YouScope.ComposedImaging.nx";
+	private static final String						PROPERTY_NY					= "YouScope.ComposedImaging.ny";
 
 	ComposedImagingJobConfigurationAddon(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
@@ -311,7 +311,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		// Pixels from user
 		GridBagLayout pixelSizeFromUserLayout = new GridBagLayout();
 		pixelSizeFromUserPanel = new JPanel(pixelSizeFromUserLayout);
-		StandardFormats.addGridBagElement(new JLabel("Pixel size in μm:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
+		StandardFormats.addGridBagElement(new JLabel("Pixel size in um:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 		pixelSizeField.addActionListener(new AreaConfigChangedListener());
 		StandardFormats.addGridBagElement(pixelSizeField, pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 		StandardFormats.addGridBagElement(pixelSizeFromUserPanel, partLayout, newLineConstr, partPanel);
@@ -336,7 +336,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		JPanel informationPanel = new JPanel(informationLayout);
 		informationPanel.setBorder(new TitledBorder("Information on Area:"));
 
-		StandardFormats.addGridBagElement(new JLabel("Size of one image in μm (width x height):"), informationLayout, newLineConstr, informationPanel);
+		StandardFormats.addGridBagElement(new JLabel("Size of one image in um (width x height):"), informationLayout, newLineConstr, informationPanel);
 		JPanel imageWidthPanel = new JPanel(new GridLayout(1, 2));
 		pictureHeightField.setEditable(false);
 		pictureWidthField.setEditable(false);
@@ -344,7 +344,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		imageWidthPanel.add(pictureHeightField);
 		StandardFormats.addGridBagElement(imageWidthPanel, informationLayout, newLineConstr, informationPanel);
 
-		StandardFormats.addGridBagElement(new JLabel("Size of totally imaged area in μm (width x height):"), informationLayout, newLineConstr, informationPanel);
+		StandardFormats.addGridBagElement(new JLabel("Size of totally imaged area in um (width x height):"), informationLayout, newLineConstr, informationPanel);
 		JPanel areaWidthPanel = new JPanel(new GridLayout(1, 2));
 		areaWidthField.setEditable(false);
 		areaHeightField.setEditable(false);

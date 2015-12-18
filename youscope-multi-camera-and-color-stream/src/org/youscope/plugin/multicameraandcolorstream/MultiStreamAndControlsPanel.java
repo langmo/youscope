@@ -23,12 +23,12 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.HistogramPlot;
 import org.youscope.uielements.IntegerTextField;
@@ -88,10 +88,10 @@ class MultiStreamAndControlsPanel extends JPanel
 	private YouScopeClient	client;
 	private YouScopeServer				server;
 
-	private static final String PROPERTY_LAST_DELTA_X = "CSB::multiCameraAndColorStream::lastDeltaX";
-	private static final String PROPERTY_LAST_DELTA_Y = "CSB::multiCameraAndColorStream::lastDeltaY";
-	private static final String PROPERTY_LAST_DELTA_PHIS = "CSB::multiCameraAndColorStream::lastDeltaPhi";
-	private static final String PROPERTY_LAST_CAMERAS = "CSB::multiCameraAndColorStream::lastCamera";
+	private static final String PROPERTY_LAST_DELTA_X = "YouScope.multiCameraAndColorStream.lastDeltaX";
+	private static final String PROPERTY_LAST_DELTA_Y = "YouScope.multiCameraAndColorStream.lastDeltaY";
+	private static final String PROPERTY_LAST_DELTA_PHIS = "YouScope.multiCameraAndColorStream.lastDeltaPhi";
+	private static final String PROPERTY_LAST_CAMERAS = "YouScope.multiCameraAndColorStream.lastCamera";
 	
 	/**
 	 * Constructor.

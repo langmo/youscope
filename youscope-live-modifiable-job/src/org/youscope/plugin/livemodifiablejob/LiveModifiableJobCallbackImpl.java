@@ -19,7 +19,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.callback.CallbackException;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 class LiveModifiableJobCallbackImpl extends UnicastRemoteObject implements LiveModifiableJobCallback

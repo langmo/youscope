@@ -5,8 +5,8 @@ package org.youscope.plugin.nemesys;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.job.Job;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
 import org.youscope.common.table.TableConsumer;
 import org.youscope.common.table.TableProducer;
 

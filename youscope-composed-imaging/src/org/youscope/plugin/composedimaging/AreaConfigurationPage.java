@@ -81,9 +81,9 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 	private final YouScopeServer			server;
 
 	//Names for properties which are saved to the config file
-	private static final String PROPERTY_OVERLAP = "CSB::ComposedImaging::overlap";
-	private static final String PROPERTY_NX = "CSB::ComposedImaging::nx";
-	private static final String PROPERTY_NY = "CSB::ComposedImaging::ny";
+	private static final String PROPERTY_OVERLAP = "YouScope.ComposedImaging.overlap";
+	private static final String PROPERTY_NX = "YouScope.ComposedImaging.nx";
+	private static final String PROPERTY_NY = "YouScope.ComposedImaging.ny";
 	
 	AreaConfigurationPage(YouScopeClient client, YouScopeServer server)
 	{
@@ -217,7 +217,7 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		// Pixels from user
 		GridBagLayout pixelSizeFromUserLayout  = new GridBagLayout();
 		pixelSizeFromUserPanel = new JPanel(pixelSizeFromUserLayout);
-		StandardFormats.addGridBagElement(new JLabel("Pixel size in μm:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
+		StandardFormats.addGridBagElement(new JLabel("Pixel size in um:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 		pixelSizeField.addActionListener(new AreaConfigChangedListener());
 		StandardFormats.addGridBagElement(pixelSizeField, pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 		StandardFormats.addGridBagElement(pixelSizeFromUserPanel, partLayout, newLineConstr, partPanel);	
@@ -242,7 +242,7 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		JPanel informationPanel = new JPanel(informationLayout);
 		informationPanel.setBorder(new TitledBorder("Information on Area:"));
 
-		StandardFormats.addGridBagElement(new JLabel("Size of one image in μm (width / height):"), informationLayout, newLineConstr, informationPanel);
+		StandardFormats.addGridBagElement(new JLabel("Size of one image in um (width / height):"), informationLayout, newLineConstr, informationPanel);
 		JPanel imageWidthPanel = new JPanel(new GridLayout(1, 2));
 		pictureHeightField.setEditable(false);
 		pictureWidthField.setEditable(false);
@@ -250,7 +250,7 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		imageWidthPanel.add(pictureHeightField);
 		StandardFormats.addGridBagElement(imageWidthPanel, informationLayout, newLineConstr, informationPanel);
 
-		StandardFormats.addGridBagElement(new JLabel("Size of totally imaged area in μm (width / height):"), informationLayout, newLineConstr, informationPanel);
+		StandardFormats.addGridBagElement(new JLabel("Size of totally imaged area in um (width / height):"), informationLayout, newLineConstr, informationPanel);
 		JPanel areaWidthPanel = new JPanel(new GridLayout(1, 2));
 		areaWidthField.setEditable(false);
 		areaHeightField.setEditable(false);

@@ -12,11 +12,11 @@ import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariatePointValuePair;
 import org.youscope.addon.focussearch.FocusSearchOracle;
 import org.youscope.addon.focussearch.FocusSearchResource;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.resource.ResourceException;
 
 class BrentFocusSearchAddon extends ResourceAdapter<BrentFocusSearchConfiguration> implements FocusSearchResource
 {

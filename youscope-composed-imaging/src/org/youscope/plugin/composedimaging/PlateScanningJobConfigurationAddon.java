@@ -285,7 +285,7 @@ class PlateScanningJobConfigurationAddon  extends ComponentAddonUIAdapter<PlateS
 			// Pixels from user
 			GridBagLayout pixelSizeFromUserLayout = new GridBagLayout();
 			pixelSizeFromUserPanel = new JPanel(pixelSizeFromUserLayout);
-			StandardFormats.addGridBagElement(new JLabel("Pixel size in μm:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
+			StandardFormats.addGridBagElement(new JLabel("Pixel size in um:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 			StandardFormats.addGridBagElement(pixelSizeField, pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 			StandardFormats.addGridBagElement(pixelSizeFromUserPanel, partLayout, newLineConstr, partPanel);
 

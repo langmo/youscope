@@ -36,8 +36,8 @@ import org.youscope.common.microscope.SettingException;
 import org.youscope.common.microscope.ShutterDevice;
 import org.youscope.common.microscope.StageDevice;
 import org.youscope.common.microscope.StateDevice;
-import org.youscope.common.tools.RMIReader;
-import org.youscope.common.tools.RMIWriter;
+import org.youscope.common.util.RMIReader;
+import org.youscope.common.util.RMIWriter;
 
 /**
  * The purpose of this class is to hide complexity from the user. Internally, when manipulating the state of the microscope,

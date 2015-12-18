@@ -5,9 +5,9 @@ package org.youscope.plugin.dropletmicrofluidics;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackException;
 import org.youscope.common.table.Table;
 
 /**
@@ -21,7 +21,7 @@ public interface DropletMicrofluidicJobCallback extends Callback
 	/**
 	 * Type identifier for callback.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "IST::DropletBasedMicrofluidicsJob::Callback";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DropletBasedMicrofluidicsJob.Callback";
     /**
      * Sends the table produced by a droplet based microfluidic job (see {@link DropletMicrofluidicTable#getTableDefinition()} to the callback for visualization.
      * @param executionInformation Execution information of droplet based microfluidics job.

@@ -2,8 +2,8 @@ package org.youscope.plugin.dropletmicrofluidics.flexiblecontroller;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDoubleRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDoubleRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -57,7 +57,7 @@ public class FlexibleControllerConfiguration extends DropletControllerConfigurat
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::DropletMicrofluidics::FlexibleController";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DropletMicrofluidics.FlexibleController";
 	
 	@Override
 	public String getTypeIdentifier()

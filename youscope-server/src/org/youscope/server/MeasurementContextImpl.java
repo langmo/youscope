@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.youscope.common.measurement.MeasurementContext;
+import org.youscope.common.MeasurementContext;
 
 class MeasurementContextImpl implements MeasurementContext
 {

@@ -14,11 +14,11 @@ import org.youscope.addon.component.generic.Property;
 import org.youscope.addon.component.generic.PropertyEditor;
 import org.youscope.addon.component.generic.PropertyEditorManager;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.Component;
 import org.youscope.common.MessageListener;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDescription;
-import org.youscope.common.measurement.Component;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDescription;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DynamicPanel;
 

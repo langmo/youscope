@@ -5,10 +5,10 @@ package org.youscope.plugin.slimjob;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobContainer;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainer;
 
 /**
  * Job to take SLIM images with four different phase shift patterns.

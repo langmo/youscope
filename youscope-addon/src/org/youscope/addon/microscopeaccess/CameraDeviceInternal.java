@@ -5,8 +5,8 @@ package org.youscope.addon.microscopeaccess;
 
 import java.awt.Dimension;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;

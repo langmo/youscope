@@ -13,7 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.callback.CallbackException;
 import org.youscope.common.scripting.RemoteScriptEngine;
 
 /**

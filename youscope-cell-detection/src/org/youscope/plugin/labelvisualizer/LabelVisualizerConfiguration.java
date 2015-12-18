@@ -5,9 +5,9 @@ package org.youscope.plugin.labelvisualizer;
 
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigDescription;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -50,7 +50,7 @@ public class LabelVisualizerConfiguration extends CellVisualizationConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::LabelVisualizer";
+	public static final String	CONFIGURATION_ID	= "YouScope.LabelVisualizer";
 	
 	@Override
 	public String getTypeIdentifier()

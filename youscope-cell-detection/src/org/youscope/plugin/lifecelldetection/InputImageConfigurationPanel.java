@@ -2,8 +2,8 @@ package org.youscope.plugin.lifecelldetection;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.uielements.SingleComponentDefinitionPanel;
 
 class InputImageConfigurationPanel extends SingleComponentDefinitionPanel<JobConfiguration>

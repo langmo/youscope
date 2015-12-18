@@ -4,8 +4,8 @@
 package org.youscope.plugin.outoffocus;
 
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -27,7 +27,7 @@ public class OutOfFocusJobConfiguration extends JobConfiguration implements Imag
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::OutOfFocusJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.OutOfFocusJob";
 
 	/**
 	 * Configuration of the focus device used for focussing.

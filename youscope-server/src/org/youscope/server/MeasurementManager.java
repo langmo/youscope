@@ -6,11 +6,11 @@ package org.youscope.server;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import org.youscope.common.measurement.ExecutionInformation;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.MicroscopeStateListener;

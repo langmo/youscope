@@ -5,7 +5,7 @@ package org.youscope.uielements;
 
 import java.util.EventListener;
 
-import org.youscope.common.configuration.TaskConfiguration;
+import org.youscope.common.task.TaskConfiguration;
 
 /**
  * Listener which gets notified if a task definition is finished.

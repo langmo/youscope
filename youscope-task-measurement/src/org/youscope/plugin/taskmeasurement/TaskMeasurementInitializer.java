@@ -8,16 +8,16 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
-import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.TaskConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**

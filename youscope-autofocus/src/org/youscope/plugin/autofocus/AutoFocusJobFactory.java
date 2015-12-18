@@ -11,11 +11,11 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.focusscore.FocusScoreResource;
 import org.youscope.addon.focussearch.FocusSearchResource;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -84,7 +84,7 @@ public class AutoFocusJobFactory extends ComponentAddonFactoryAdapter
 				job.setResetFocusAfterSearch(configuration.isResetFocusAfterSearch());
 				if(configuration.getFocusTableSaveName() != null)
 				{
-					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableDataListener(configuration.getFocusTableSaveName()));
+					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getFocusTableSaveName()));
 				}
 				
 				if(configuration.getFocusScoreAlgorithm() == null)

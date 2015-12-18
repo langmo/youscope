@@ -14,11 +14,11 @@ import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.Property;
+import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DeviceSettingsPanel;
 

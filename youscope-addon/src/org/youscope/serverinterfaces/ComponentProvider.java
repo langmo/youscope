@@ -4,12 +4,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.youscope.addon.component.ComponentCreationException;
+import org.youscope.common.Component;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.Component;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
 
 /**
  * Interface to create measurement components like jobs or resources.

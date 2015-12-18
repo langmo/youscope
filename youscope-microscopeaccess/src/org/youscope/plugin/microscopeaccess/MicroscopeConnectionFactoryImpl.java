@@ -15,9 +15,9 @@ import org.youscope.addon.microscopeaccess.MicroscopeInternal;
  */
 public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFactory
 {
-	private final static String CONNECTION_TYPE_STANDALONE = "YouScope::StandAlone";
-	private final static String CONNECTION_TYPE_EXTERNAL_WINDOWS = "YouScope::External_Windows";
-	private final static String CONNECTION_TYPE_EXTERNAL = "YouScope::External";
+	private final static String CONNECTION_TYPE_STANDALONE = "YouScope.StandAlone";
+	private final static String CONNECTION_TYPE_EXTERNAL_WINDOWS = "YouScope.External_Windows";
+	private final static String CONNECTION_TYPE_EXTERNAL = "YouScope.External";
 	
 	// Parameters for standalone type
 	private static final String STANDALONE_64_DLL_LOCATION = "drivers64/";

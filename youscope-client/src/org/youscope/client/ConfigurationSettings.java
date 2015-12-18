@@ -26,13 +26,13 @@ class ConfigurationSettings
     // Property loading and saving
     protected final static String propertiesFile = "youscope_properties.prop";
 
-    public static final String SETTINGS_CONFIG_FILE_LAST_0 = "CSB::configFileLast0";
+    public static final String SETTINGS_CONFIG_FILE_LAST_0 = "YouScope.configFileLast0";
 
-    public static final String SETTINGS_CONFIG_FILE_LAST_1 = "CSB::configFileLast1";
+    public static final String SETTINGS_CONFIG_FILE_LAST_1 = "YouScope.configFileLast1";
 
-    public static final String SETTINGS_CONFIG_FILE_LAST_2 = "CSB::configFileLast2";
+    public static final String SETTINGS_CONFIG_FILE_LAST_2 = "YouScope.configFileLast2";
 
-    public static final String SETTINGS_CONFIG_FILE_LAST_3 = "CSB::configFileLast3";
+    public static final String SETTINGS_CONFIG_FILE_LAST_3 = "YouScope.configFileLast3";
 
     private volatile Properties properties = new Properties();
 

@@ -6,9 +6,9 @@ package org.youscope.plugin.microplatemeasurement;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
-import org.youscope.common.Microplate;
-import org.youscope.common.Well;
-import org.youscope.common.configuration.MicroplateConfiguration;
+import org.youscope.common.measurement.microplate.Microplate;
+import org.youscope.common.measurement.microplate.MicroplateConfiguration;
+import org.youscope.common.measurement.microplate.Well;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;

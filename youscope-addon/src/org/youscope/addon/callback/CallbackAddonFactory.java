@@ -4,8 +4,8 @@
 package org.youscope.addon.callback;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackCreationException;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

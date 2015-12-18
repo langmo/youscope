@@ -43,7 +43,7 @@ class FileSaverManager
 
 	/**
 	 * Waits until all tasks in the queue are executed.
-	 * @throws InterruptedException
+	 * @throws InterruptedException thrown if thread was interrupted.
 	 */
 	public static void waitForExecutions() throws InterruptedException
 	{

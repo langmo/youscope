@@ -6,8 +6,8 @@ package org.youscope.plugin.waitjob;
 import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -110,7 +110,7 @@ public class ExecuteAndWaitJobConfiguration extends JobConfiguration implements 
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::ExecuteAndWaitJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.ExecuteAndWaitJob";
 
 	@Override
 	public String getTypeIdentifier()

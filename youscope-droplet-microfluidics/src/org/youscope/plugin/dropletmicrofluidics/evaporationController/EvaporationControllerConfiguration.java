@@ -2,8 +2,8 @@ package org.youscope.plugin.dropletmicrofluidics.evaporationController;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDoubleRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDoubleRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -62,7 +62,7 @@ public class EvaporationControllerConfiguration extends DropletControllerConfigu
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::DropletMicrofluidics::EvaporationController";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DropletMicrofluidics.EvaporationController";
 	
 	@Override
 	public String getTypeIdentifier()

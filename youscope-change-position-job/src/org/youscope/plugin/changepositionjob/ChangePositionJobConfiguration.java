@@ -4,8 +4,8 @@
 package org.youscope.plugin.changepositionjob;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.ChangePositionJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -46,6 +46,10 @@ public class ChangePositionJobConfiguration extends JobConfiguration
 	@XStreamAsAttribute
 	@XStreamConverter(value = BooleanConverter.class, booleans = {false}, strings = {"yes", "no"})
 	private boolean				absolute			= true;
+	
+	@XStreamAlias("stage-device")
+	@XStreamAsAttribute
+	private String stageDevice = null;
 
 	/**
 	 * @param x the x to set
@@ -119,5 +123,21 @@ public class ChangePositionJobConfiguration extends JobConfiguration
 	public void checkConfiguration() throws ConfigurationException {
 		// nothing to check.
 		
+	}
+
+	/**
+	 * Returns the stage device which should be moved, or null for the default stage.
+	 * @return Stage device to move.
+	 */
+	public String getStageDevice() {
+		return stageDevice;
+	}
+
+	/**
+	 * Set to the stage device which should be moved, or to null for the default stage.
+	 * @param stageDevice Stage which should be moved.
+	 */
+	public void setStageDevice(String stageDevice) {
+		this.stageDevice = stageDevice;
 	}
 }

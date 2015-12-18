@@ -152,7 +152,7 @@ public class JavaScriptStyle implements ScriptStyle
 	@Override
 	public String getScriptStyleID()
 	{
-		return "CSB::ScriptStyle::JavaScript";
+		return "YouScope.ScriptStyle.JavaScript";
 	}
 
 	@Override

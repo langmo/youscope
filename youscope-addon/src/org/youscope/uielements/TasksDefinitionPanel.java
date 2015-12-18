@@ -25,7 +25,7 @@ import javax.swing.SwingConstants;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.TaskConfiguration;
+import org.youscope.common.task.TaskConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

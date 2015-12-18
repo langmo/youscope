@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
-import org.youscope.common.Well;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.uielements.CellSelectionTable;
 import org.youscope.uielements.CellSelectionTableConfiguration;
 

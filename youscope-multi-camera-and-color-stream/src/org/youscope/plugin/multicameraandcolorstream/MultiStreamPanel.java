@@ -15,14 +15,14 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
-import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -341,7 +341,7 @@ class MultiStreamPanel extends JPanel
 			measurement.setLockMicroscopeWhileRunning(false);
 
 			// Create continuous pulling job.
-			ContinuousImagingJob job = server.getComponentProvider(measurement.getUUID(), null).createJob(new PositionInformation(null), ContinuousImagingJob.DEFAULT_TYPE_IDENTIFIER, ContinuousImagingJob.class);
+			ContinuousImagingJob job = server.getComponentProvider(null).createJob(new PositionInformation(null), ContinuousImagingJob.DEFAULT_TYPE_IDENTIFIER, ContinuousImagingJob.class);
 			job.setCameras(usedCameras);
 			job.setExposures(usedExposures);
 			job.setBurstImaging(false);

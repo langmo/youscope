@@ -5,8 +5,8 @@ package org.youscope.plugin.livemodifiablejob;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackException;
 
 /**
  * Callback for registering jobs which can be live modified.
@@ -19,7 +19,7 @@ public interface LiveModifiableJobCallback extends Callback
 	/**
 	 * type identifier of callback.
 	 */
-	public static final String TYPE_IDENTIFIER = "CSB::LiveModifiableJob::Callback";
+	public static final String TYPE_IDENTIFIER = "YouScope.LiveModifiableJob.Callback";
     /**
      * Registers a job to be modifiable by the UI.
      * 

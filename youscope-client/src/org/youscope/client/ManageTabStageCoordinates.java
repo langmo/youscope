@@ -157,7 +157,7 @@ class ManageTabStageCoordinates extends ManageTabElement
 		StandardFormats.addGridBagElement(xIncreasesField, elementsLayout, newLineConstr, elementsPanel);
 		StandardFormats.addGridBagElement(new JLabel("Direction of the y-coordinate:"), elementsLayout, newLineConstr, elementsPanel);
 		StandardFormats.addGridBagElement(yIncreasesField, elementsLayout, newLineConstr, elementsPanel);
-		StandardFormats.addGridBagElement(new JLabel("<html>Not all stages measure distances in μm.<br/>Enter here how many μm correspond to<br />one microscope specific unit (1 unit = X microns).<br />Values are typically simple rational numbers,<br />most often ­but not always­ the number 1.0:</html>"),	elementsLayout, newLineConstr, elementsPanel);
+		StandardFormats.addGridBagElement(new JLabel("<html>Not all stages measure distances in um.<br/>Enter here how many um correspond to<br />one microscope specific unit (1 unit = X microns).<br />Values are typically simple rational numbers,<br />most often ­but not always­ the number 1.0:</html>"),	elementsLayout, newLineConstr, elementsPanel);
 		StandardFormats.addGridBagElement(unitField, elementsLayout, newLineConstr, elementsPanel);
 		JPanel emptyPanel = new JPanel();
 		emptyPanel.setOpaque(false);

@@ -1,10 +1,10 @@
 package org.youscope.addon.component;
 
 import org.youscope.addon.AddonException;
+import org.youscope.common.Component;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.Component;
-import org.youscope.common.measurement.PositionInformation;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**

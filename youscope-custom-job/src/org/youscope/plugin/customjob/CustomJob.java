@@ -4,8 +4,8 @@
 package org.youscope.plugin.customjob;
 
 
-import org.youscope.common.measurement.job.EditableJobContainer;
-import org.youscope.common.measurement.job.Job;
+import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.Job;
 
 
 /**

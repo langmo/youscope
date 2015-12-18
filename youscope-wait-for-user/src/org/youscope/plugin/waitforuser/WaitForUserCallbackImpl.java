@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.callback.CallbackException;
 
 /**
  * @author Moritz Lang

@@ -6,8 +6,8 @@ package org.youscope.common.microscope;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 
 /**
  * @author langmo

@@ -16,14 +16,14 @@ import org.youscope.addon.celldetection.CellDetectionResult;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationException;
 import org.youscope.addon.celldetection.utils.MatlabFunctionCreator;
-import org.youscope.common.ImageAdapter;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration; 
-import org.youscope.common.measurement.MeasurementContext;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException; 
+import org.youscope.common.image.ImageAdapter;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.resource.ResourceException; 
 
 /**
  * @author Moritz Lang

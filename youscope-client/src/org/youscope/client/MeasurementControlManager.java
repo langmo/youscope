@@ -34,8 +34,8 @@ import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**

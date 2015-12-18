@@ -52,9 +52,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 
 /**
  * Easy to use resizeable panel to display an image. Provides a convenient method to display the image in a frame.
@@ -80,6 +80,7 @@ public class ImagePanel extends JPanel
 	private String noImageText = "No image available yet.";
 	private final long VISIBILITY_TIMEOUT = 2000; // 2s
 	private final HideTimer hideTimer;
+	private boolean userChoosesAutoAdjustContrast = false;
 	/**
 	 * Default background color of the image panel.
 	 */
@@ -372,6 +373,7 @@ public class ImagePanel extends JPanel
 			add(contrastButtonsPanel);
 			autoAdjustField.setOpaque(false);
 			add(autoAdjustField);
+			
 			autoAdjustField.addActionListener(new ActionListener() 
 			{	
 				@Override
@@ -385,18 +387,23 @@ public class ImagePanel extends JPanel
 				}
 			});
 			autoAdjustField.setForeground(DEFAULT_FOREGROUND);
-			autoAdjustField.setVisible(false);
+			autoAdjustField.setVisible(userChoosesAutoAdjustContrast);
 		}
 	}
 	
 	/**
 	 * Set to true to display a checkbox with which the user can choose on him/herself if the contrast should be automatically adjusted when a new
 	 * image arrives. Default is false. This does only make sense if it can be expected that more than one image can arrive at all.
-	 * @param userChooses True to display checkbox.
+	 * @param userChoosesAutoAdjustContrast True to display checkbox.
 	 */
-	public void setUserChoosesAutoAdjustContrast(boolean userChooses)
+	public void setUserChoosesAutoAdjustContrast(boolean userChoosesAutoAdjustContrast)
 	{
-		histogramControl.autoAdjustField.setVisible(userChooses);
+		this.userChoosesAutoAdjustContrast  = userChoosesAutoAdjustContrast;
+		histogramControl.autoAdjustField.setVisible(userChoosesAutoAdjustContrast);
+		if(userChoosesAutoAdjustContrast)
+		{
+			setAutoAdjustContrast(histogramControl.autoAdjustField.isSelected());
+		}
 	}
 	
 	/**

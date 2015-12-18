@@ -5,8 +5,8 @@ package org.youscope.plugin.exhaustivefocussearch;
 
 import org.youscope.addon.focussearch.FocusSearchConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigIntegerRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigIntegerRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -53,7 +53,7 @@ public class ExhaustiveFocusSearchConfiguration extends FocusSearchConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::SimpleFocusSearch";
+	public static final String	CONFIGURATION_ID	= "YouScope.SimpleFocusSearch";
 	
 	@Override
 	public String getTypeIdentifier()

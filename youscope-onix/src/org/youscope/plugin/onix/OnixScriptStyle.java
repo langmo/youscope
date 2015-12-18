@@ -114,7 +114,7 @@ public class OnixScriptStyle implements ScriptStyle
 	@Override
 	public String getScriptStyleID()
 	{
-		return "CSB::ScriptStyle::Onix";
+		return "YouScope.ScriptStyle.Onix";
 	}
 
 	@Override

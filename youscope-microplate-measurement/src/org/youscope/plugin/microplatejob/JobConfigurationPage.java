@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 /**
  * Abstract page class for the standard YouScope job configuration layout.

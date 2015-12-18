@@ -21,7 +21,7 @@ class YouPong extends ToolAddonUIAdapter implements YouScopeFrameListener
 {
 	private YouPongField field;
 	
-	public final static String TYPE_IDENTIFIER = "CSB::YouPong";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouPong";
 	
 	static ToolMetadata getMetadata()
 	{

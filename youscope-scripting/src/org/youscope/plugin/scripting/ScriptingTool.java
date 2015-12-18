@@ -60,7 +60,7 @@ class ScriptingTool extends ToolAddonUIAdapter implements EditFileListener
 	 */
 	private Vector<URL> scriptURLs = new Vector<URL>();
 	
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeScripting";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeScripting";
 	
 	static ToolMetadata getMetadata()
 	{

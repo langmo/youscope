@@ -5,8 +5,8 @@ package org.youscope.addon.celldetection;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.resource.Resource;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.Resource;
 
 /**
  * A cell visualization addon is a class supporting to visualize previously detected cells in microscope images by generating new images.

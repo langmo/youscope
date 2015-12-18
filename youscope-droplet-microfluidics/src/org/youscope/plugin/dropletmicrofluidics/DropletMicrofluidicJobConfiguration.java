@@ -6,9 +6,9 @@ package org.youscope.plugin.dropletmicrofluidics;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 import org.youscope.plugin.autofocus.AutoFocusJobConfiguration;
 import org.youscope.plugin.brentfocussearch.BrentFocusSearchConfiguration;
 import org.youscope.plugin.dropletmicrofluidics.defaultobserver.DefaultObserverConfiguration;
@@ -33,7 +33,7 @@ public class DropletMicrofluidicJobConfiguration extends JobConfiguration implem
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "IST::DropletBasedMicrofluidicsJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DropletBasedMicrofluidicsJob";
 
 	@XStreamAlias("autofocus-configuration")
 	private AutoFocusJobConfiguration autofocusConfiguration = new AutoFocusJobConfiguration();

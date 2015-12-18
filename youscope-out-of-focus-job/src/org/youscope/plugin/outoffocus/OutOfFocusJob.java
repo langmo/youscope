@@ -5,9 +5,9 @@ package org.youscope.plugin.outoffocus;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
 
 /**
  * A job which makes a microscope image in the defined channel with a defined focus offset.

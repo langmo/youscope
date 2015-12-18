@@ -4,8 +4,8 @@
 package org.youscope.addon.celldetection;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.ResourceConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.resource.ResourceConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

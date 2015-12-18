@@ -6,10 +6,10 @@ package org.youscope.plugin.simplemeasurement;
 import java.io.Serializable;
 import java.util.Vector;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.PeriodConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.task.PeriodConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -66,7 +66,7 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String								TYPE_IDENTIFIER		= "CSB::SimpleMeasurement";
+	public static final String								TYPE_IDENTIFIER		= "YouScope.SimpleMeasurement";
 
 	/**
 	 * Period in which the jobs should be repeated. NULL is

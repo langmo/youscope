@@ -5,8 +5,8 @@ package org.youscope.plugin.repeatjob;
 
 import java.util.Vector;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -103,7 +103,7 @@ public class RepeatJobConfiguration extends JobConfiguration implements JobConta
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::RepeatJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.RepeatJob";
 
 	@Override
 	public String getTypeIdentifier()

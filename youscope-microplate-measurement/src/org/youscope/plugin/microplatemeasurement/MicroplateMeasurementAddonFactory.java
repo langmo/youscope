@@ -14,7 +14,7 @@ public class MicroplateMeasurementAddonFactory extends MeasurementAddonFactoryAd
 	/**
 	 * Constructor.
 	 */
-	public MicroplateMeasurementAddonFactory()
+	public MicroplateMeasurementAddonFactory() 
 	{
 		super(MicroplateMeasurementAddonUI.class, new MicroplateMeasurementInitializer(), MicroplateMeasurementAddonUI.getMetadata());
 	}

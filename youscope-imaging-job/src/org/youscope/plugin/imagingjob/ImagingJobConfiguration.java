@@ -6,9 +6,9 @@ package org.youscope.plugin.imagingjob;
 import org.youscope.common.configuration.CameraConfiguration;
 import org.youscope.common.configuration.ChannelConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.job.basicjobs.ImagingJob;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.ImagingJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

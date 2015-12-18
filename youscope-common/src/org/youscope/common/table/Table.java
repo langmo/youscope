@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.PositionInformation;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.PositionInformation;
 
 /**
  * A table, containing entries of specific {@link TableEntry} types.

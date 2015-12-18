@@ -41,7 +41,7 @@ class MicroplateMeasurementAddonUI extends MeasurementAddonUIAdapter<MicroplateM
 		ImageIcon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/microplatemeasurement/images/microplate-measurement.jpg", "Microplate Measurement");
 		String imageLegend = "Flowchart of a microplate measurement.";
 		addPage(new DescriptionPage(null, description, microplateMeasurementIcon, imageLegend));
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage(client));
 		addPage(new MicroplatePage(client));
 		addPage(new WellSelectionPage(client, server));
 		addPage(new StartAndEndSettingsPage(client, server));

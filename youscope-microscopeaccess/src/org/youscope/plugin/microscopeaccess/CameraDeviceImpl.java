@@ -13,8 +13,8 @@ import java.util.Formatter;
 
 import org.youscope.addon.microscopeaccess.CameraDeviceInternal;
 import org.youscope.addon.microscopeaccess.ChannelInternal;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeException;

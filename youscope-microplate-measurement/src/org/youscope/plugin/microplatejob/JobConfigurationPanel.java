@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 /**
  * A panel to display and edit several pages of a job configuration. 

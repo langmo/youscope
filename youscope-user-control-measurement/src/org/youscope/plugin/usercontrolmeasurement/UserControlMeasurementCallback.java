@@ -5,8 +5,8 @@ package org.youscope.plugin.usercontrolmeasurement;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.callback.Callback;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.image.ImageEvent;
 
 /**
  * Simple measurement callback to show a message and wait for the user to acknowledge it.
@@ -18,7 +18,7 @@ public interface UserControlMeasurementCallback extends Callback
 	/**
 	 * Type identifier of callback.
 	 */
-	public static final String TYPE_IDENTIFIER = "CSB::UserControlMeasurement::Callback";
+	public static final String TYPE_IDENTIFIER = "YouScope.UserControlMeasurement.Callback";
 	/**
 	 * Adds a listener to the user control callback which gets informed upon user interaction.
 	 * @param listener Listener to add.

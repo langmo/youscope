@@ -20,7 +20,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.measurement.PositionInformation;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.table.ColumnView;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableException;

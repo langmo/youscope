@@ -40,11 +40,11 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 {
 
     private static final String JAVA_SCRIPT_ENGINE = "Oracle Nashorn";
-    private static final String JAVA_SCRIPT_STYLE = "CSB::ScriptStyle::JavaScript";
+    private static final String JAVA_SCRIPT_STYLE = "YouScope.ScriptStyle.JavaScript";
     private static final String MATLAB_SCRIPTING = "Matlab Scripting";
-    private static final String MATLAB_SCRIPTING_STYLE = "CSB::ScriptStyle::Matlab";
+    private static final String MATLAB_SCRIPTING_STYLE = "YouScope.ScriptStyle.Matlab";
     
-    private static final String PROPERTY_LAST_FILE_ = "CSB::Fluigent::lastFile";
+    private static final String PROPERTY_LAST_FILE_ = "YouScope.Fluigent.lastFile";
     
     // script
 	private final ScriptEditor scriptField = new ScriptEditor();
@@ -168,7 +168,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 		mainPanel.add(engineNamesField);
 		mainPanel.add(new JLabel("Fluigent Protocol:"));
 		
-		scriptField.setScriptStyleID("CSB::ScriptStyle::JavaScript");
+		scriptField.setScriptStyleID("YouScope.ScriptStyle.JavaScript");
 		scriptPanel.addFill(scriptField);
 		
 		JPanel loadSavePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

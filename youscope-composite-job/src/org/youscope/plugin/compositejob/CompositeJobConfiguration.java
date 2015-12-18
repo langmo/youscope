@@ -6,9 +6,9 @@ package org.youscope.plugin.compositejob;
 import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.basicjobs.CompositeJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

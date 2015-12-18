@@ -5,11 +5,10 @@ package org.youscope.serverinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.UUID;
 
 import org.youscope.common.MessageListener;
+import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.callback.CallbackProvider;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeStateListener;
 
@@ -44,7 +43,7 @@ public interface YouScopeServer extends Remote
 	 * @return Provider for the construction of new measurement components.
 	 * @throws RemoteException
 	 */
-	ComponentProvider getComponentProvider(UUID measurementUUID, CallbackProvider callbackProvider) throws RemoteException;
+	ComponentProvider getComponentProvider(CallbackProvider callbackProvider) throws RemoteException;
 
 	/**
 	 * Returns an object allowing the access to the microscope.

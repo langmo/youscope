@@ -10,13 +10,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobAdapter;
+import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobAdapter;
-import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
 
 /**

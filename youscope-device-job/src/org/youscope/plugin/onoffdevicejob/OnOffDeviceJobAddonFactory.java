@@ -6,11 +6,11 @@ package org.youscope.plugin.onoffdevicejob;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
-import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.measurement.job.basicjobs.WaitJob;
+import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.DeviceSettingJob;
+import org.youscope.common.job.basicjobs.WaitJob;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**

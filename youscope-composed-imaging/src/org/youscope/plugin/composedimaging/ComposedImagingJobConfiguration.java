@@ -6,8 +6,8 @@ package org.youscope.plugin.composedimaging;
 import java.awt.Dimension;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -281,7 +281,7 @@ public class ComposedImagingJobConfiguration extends JobConfiguration implements
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::ComposedImagingJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.ComposedImagingJob";
 
 	@Override
 	public String getTypeIdentifier()

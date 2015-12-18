@@ -8,11 +8,11 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.celldetection.CellDetectionAddon;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
-import org.youscope.common.ImageListener;
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.Job;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.EditableJobContainer;
-import org.youscope.common.measurement.job.Job;
 import org.youscope.common.table.TableProducer;
 
 

@@ -8,9 +8,9 @@ import java.net.URL;
 import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.measurement.job.basicjobs.ScriptingJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.basicjobs.ScriptingJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

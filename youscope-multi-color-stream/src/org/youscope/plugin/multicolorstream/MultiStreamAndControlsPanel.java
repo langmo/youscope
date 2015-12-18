@@ -27,11 +27,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.HistogramPlot;
 import org.youscope.uielements.StandardFormats;

@@ -6,15 +6,15 @@ package org.youscope.plugin.livemodifiablejob;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.callback.CallbackException;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobAdapter;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.callback.CallbackException;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobAdapter;
-import org.youscope.common.measurement.job.JobException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.serverinterfaces.ConstructionContext;
 
@@ -36,6 +36,10 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
     private ConstructionContext jobInitializer = null;
     private LiveModifiableJobCallback callback = null;
     private volatile boolean initialized = false;
+    
+    private boolean initializationEnabled = true;
+    private final ArrayList<Job>	initializationJobs				= new ArrayList<Job>();
+    private final ArrayList<JobConfiguration> initializationJobConfigurations = new ArrayList<JobConfiguration>();
     
     private final ArrayList<Job>	jobs				= new ArrayList<Job>();
     
@@ -119,6 +123,14 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
         {
             throw new JobException("Could not initialize live modifiable job callback.", e);
         }
+        
+        // store settings which can be modified to reset them when measurement finishes
+        initializationEnabled = enabled;
+        initializationJobs.clear();
+        initializationJobs.addAll(jobs);
+        initializationJobConfigurations.clear();
+        initializationJobConfigurations.addAll(childJobConfigurations);
+        
         initialized = true;
     }
 
@@ -145,6 +157,13 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
                 job.uninitializeJob(microscope, measurementContext);
             }
         }
+        
+        // reset settings which can be manipulated to the settings which were set initially.
+        enabled = initializationEnabled;
+        jobs.clear();
+        jobs.addAll(initializationJobs);
+        childJobConfigurations.clear();
+        childJobConfigurations.addAll(initializationJobConfigurations);
         
         initialized = false;
     }

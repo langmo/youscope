@@ -1,7 +1,7 @@
 package org.youscope.plugin.simplefocusscores;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.ResourceException;
 
 class ImageAdapter {
 

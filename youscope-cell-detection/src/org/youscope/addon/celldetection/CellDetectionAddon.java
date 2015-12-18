@@ -5,8 +5,8 @@ package org.youscope.addon.celldetection;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.resource.Resource;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.Resource;
 import org.youscope.common.table.TableProducer;
 
 /**

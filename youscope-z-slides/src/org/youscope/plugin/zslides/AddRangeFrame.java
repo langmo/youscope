@@ -64,11 +64,11 @@ class AddRangeFrame extends JPanel
 		lowerField.setValue(-10.0);
 		stepField.setValue(0.5);
 		upperField.setValue(10.0);
-		StandardFormats.addGridBagElement(new JLabel("Lower bound of range (μm):"), layout, newLineConstr, this);
+		StandardFormats.addGridBagElement(new JLabel("Lower bound of range (um):"), layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(lowerField, layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(new JLabel("Step size (μm):"), layout, newLineConstr, this);
+		StandardFormats.addGridBagElement(new JLabel("Step size (um):"), layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(stepField, layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(new JLabel("Upper bound of range (μm):"), layout, newLineConstr, this);
+		StandardFormats.addGridBagElement(new JLabel("Upper bound of range (um):"), layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(upperField, layout, newLineConstr, this);
 		
 		// The add button

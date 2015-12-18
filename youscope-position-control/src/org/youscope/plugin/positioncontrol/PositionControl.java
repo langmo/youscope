@@ -70,7 +70,7 @@ class PositionControl extends ToolAddonUIAdapter implements Runnable, YouScopeFr
 	
 	private volatile boolean isChangingFocus = false;
 	
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopePositionControl";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopePositionControl";
 	
 	static ToolMetadata getMetadata()
 	{

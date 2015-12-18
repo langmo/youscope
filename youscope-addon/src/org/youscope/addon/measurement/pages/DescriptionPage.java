@@ -16,8 +16,8 @@ import javax.swing.border.LineBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.util.TextTools;
 import org.youscope.uielements.DynamicPanel;
 
 /**

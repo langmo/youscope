@@ -2,8 +2,8 @@ package org.youscope.plugin.dropletmicrofluidics.defaultobserver;
 
 import org.youscope.addon.dropletmicrofluidics.DropletObserverConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDoubleRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDoubleRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -23,7 +23,7 @@ public class DefaultObserverConfiguration extends DropletObserverConfiguration
 	/**
 	 * Type identifier.
 	 */
-	public static final String TYPE_IDENTIFIER = "CSB::DropletDefaultObserver";
+	public static final String TYPE_IDENTIFIER = "YouScope.DropletDefaultObserver";
 	
 	@YSConfigAlias("Individual droplet's height learn speed (0-1)")
 	@YSConfigDoubleRange(minValue=0.0,maxValue=1.0)

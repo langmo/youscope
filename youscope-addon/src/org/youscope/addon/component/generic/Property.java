@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigConditional;
-import org.youscope.common.configuration.annotations.YSConfigNotVisible;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigConditional;
+import org.youscope.common.configuration.YSConfigNotVisible;
 
 /**
  * Class representing a property in the configuration.

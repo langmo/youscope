@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * Function converting a Matlab script file stored as a resource inside a jar file into a function, and stores this function

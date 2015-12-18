@@ -25,7 +25,7 @@ class LiveStreamOld extends ToolAddonUIAdapter implements YouScopeFrameListener
 		super(getMetadata(), client, server);
 	}
 
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeLiveStreamOld ";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeLiveStreamOld ";
 	
 	static ToolMetadata getMetadata()
 	{

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.Formatter;
 
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -167,7 +167,7 @@ public class ZSlidesJobConfiguration extends JobConfiguration implements JobCont
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::ZSlidesJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.ZSlidesJob";
 
 	@Override
 	public String getTypeIdentifier()

@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.onoffdevicejob;
 
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -144,7 +144,7 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::DeviceJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DeviceJob";
 
 	@Override
 	public String getTypeIdentifier()

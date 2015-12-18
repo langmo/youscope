@@ -39,7 +39,7 @@ class UserControlMeasurementAddonUI extends MeasurementAddonUIAdapter<UserContro
 				"This measurement type incorporates an stage monitoring possibility to automatically detect if images were taken at the same position or not. This optional feature then automatically adjusts the file names of the stored images, such that they are easier to identify lateron.";
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage(client));
 		addPage(new MonitorPage(client, server));
 	}
 	

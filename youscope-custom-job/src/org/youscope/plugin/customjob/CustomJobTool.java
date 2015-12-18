@@ -34,9 +34,31 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author Moritz Lang
  *
  */
-class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
+class CustomJobTool extends ToolAddonUIAdapter
 {
-	private JList<CustomJobConfiguration> customJobsList;
+	private static class CustomJobHolder
+	{
+		private final String typeIdentifier;
+		CustomJobHolder(String typeIdentifier)
+		{
+			this.typeIdentifier = typeIdentifier;
+		}
+		public String getCustomJobName()
+		{
+			return CustomJobManager.getCustomJobName(typeIdentifier);
+		}
+		@Override
+		public String toString()
+		{
+			return  getCustomJobName();
+		}
+		String getTypeIdentifier()
+		{
+			return typeIdentifier;
+		}
+	}
+	
+	private JList<CustomJobHolder> customJobsList;
 	/**
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
@@ -47,7 +69,7 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
 	{
 		super(getMetadata(), client, server);
 	}
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeCustomJob";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeCustomJob";
 	
 	static ToolMetadata getMetadata()
 	{
@@ -74,7 +96,13 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
                 {
                 	YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
                 	CustomJobDefinitionFrame configFrame = new CustomJobDefinitionFrame(getClient(), getServer(), newFrame);
-                	configFrame.addActionListener(CustomJobTool.this);
+                	configFrame.addActionListener(new ActionListener() 
+                	{
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							refreshCustomJobsList();
+						}
+					});
                 	newFrame.setVisible(true);
                 }
             });
@@ -86,23 +114,14 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	CustomJobConfiguration customJob = customJobsList.getSelectedValue();
+                	CustomJobHolder customJob = customJobsList.getSelectedValue();
                     if (customJob == null)
                         return;
                     int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the custom job template \"" + customJob.getCustomJobName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
 					if(shouldDelete != JOptionPane.YES_OPTION)
 						return;
-					try
-					{
-						CustomJobManager.deleteCustomJob(customJob);
-					}
-					catch(CustomJobException e1)
-					{
-						sendErrorMessage("Could not delete custom job template.", e1);
-						return;
-					}
-						
-					CustomJobTool.this.actionPerformed(e);
+					CustomJobManager.deleteCustomJob(customJob.getTypeIdentifier());
+					refreshCustomJobsList();
                 }
             });
 
@@ -113,14 +132,56 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	CustomJobConfiguration customJob = customJobsList.getSelectedValue();
+                	CustomJobHolder customJob = customJobsList.getSelectedValue();
                     if (customJob == null)
                         return;
-               
+                    CustomJobConfiguration configuration;
+					try {
+						configuration = CustomJobManager.getCustomJob(customJob.getTypeIdentifier());
+					} catch (CustomJobException e1) {
+						sendErrorMessage("Could not load custom job with type identifier "+customJob.getTypeIdentifier()+".", e1);
+						return;
+					}
+                    
                     YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
-                    CustomJobDefinitionFrame configFrame = new CustomJobDefinitionFrame(getClient(), getServer(), newFrame, customJob);
-                	configFrame.addActionListener(CustomJobTool.this);
+                    CustomJobDefinitionFrame configFrame = new CustomJobDefinitionFrame(getClient(), getServer(), newFrame, configuration);
+                	configFrame.addActionListener(new ActionListener() 
+                	{
+						@Override
+						public void actionPerformed(ActionEvent e) 
+						{
+							refreshCustomJobsList();
+						}
+					});
                     newFrame.setVisible(true);
+                }
+            });
+        
+        JButton copyCustomJobButton = new JButton("Copy Custom Job", editButtonIcon);
+        copyCustomJobButton.setHorizontalAlignment(SwingConstants.LEFT);
+        copyCustomJobButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	CustomJobHolder customJob = customJobsList.getSelectedValue();
+                    if (customJob == null)
+                        return;
+                    CustomJobConfiguration configuration;
+					try {
+						configuration = CustomJobManager.getCustomJob(customJob.getTypeIdentifier());
+					} catch (CustomJobException e1) {
+						sendErrorMessage("Could not load custom job with type identifier "+customJob.getTypeIdentifier()+".", e1);
+						return;
+					}
+					configuration.setCustomJobName("Copy of "+configuration.getCustomJobName());
+                    try {
+						CustomJobManager.saveCustomJob(configuration);
+					} catch (CustomJobException e1) {
+						sendErrorMessage("Could not save custom job with type identifier "+configuration.getTypeIdentifier()+".", e1);
+						return;
+					}
+                    refreshCustomJobsList();
                 }
             });
 
@@ -129,11 +190,12 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
         buttonPanel.add(newCustomJobButton);
         buttonPanel.add(editCustomJobButton);
         buttonPanel.add(deleteCustomJobButton);
+        buttonPanel.add(copyCustomJobButton);
         buttonPanel.addFillEmpty();
 
-        customJobsList = new JList<CustomJobConfiguration>();
+        customJobsList = new JList<CustomJobHolder>();
         customJobsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        class CustomJobCellRenderer extends JLabel implements ListCellRenderer<CustomJobConfiguration> 
+        class CustomJobCellRenderer extends JLabel implements ListCellRenderer<CustomJobHolder> 
 		{
 			/**
 			 * Serial Version UID
@@ -141,7 +203,7 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
 			private static final long	serialVersionUID	= 239462111656492466L;
 
 			@Override
-			public Component getListCellRendererComponent(JList<? extends CustomJobConfiguration> list, CustomJobConfiguration value, int index, boolean isSelected, boolean cellHasFocus)
+			public Component getListCellRendererComponent(JList<? extends CustomJobHolder> list, CustomJobHolder value, int index, boolean isSelected, boolean cellHasFocus)
 		    {
 				String text = value.getCustomJobName();
 		        setText(text);
@@ -167,14 +229,7 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
         customJobsListPane.setPreferredSize(new Dimension(250, 150));
         customJobsListPane.setMinimumSize(new Dimension(10, 10));
 		
-		try
-		{
-			refreshCustomJobsList();
-		}
-		catch(CustomJobException e1)
-		{
-			throw new AddonException("Custom jobs loading failed.", e1);
-		}        
+		refreshCustomJobsList();      
 		
         // End initializing
 		JPanel contentPane = new JPanel(new BorderLayout());
@@ -185,21 +240,14 @@ class CustomJobTool extends ToolAddonUIAdapter implements ActionListener
 			
 	}
 	
-	private void refreshCustomJobsList() throws CustomJobException
+	private void refreshCustomJobsList()
 	{
-		 customJobsList.setListData(CustomJobManager.loadCustomJobs());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent arg0)
-	{
-		try
+		String[] customJobTypeIdentifiers = CustomJobManager.getCustomJobTypeIdentifiers();
+		CustomJobHolder[] customJobs = new CustomJobHolder[customJobTypeIdentifiers.length];
+		for(int i=0; i<customJobTypeIdentifiers.length; i++)
 		{
-			refreshCustomJobsList();
+			customJobs[i] = new CustomJobHolder(customJobTypeIdentifiers[i]);
 		}
-		catch(CustomJobException e)
-		{
-			sendErrorMessage("Custom jobs loading failed.", e);
-		}	
+		 customJobsList.setListData(customJobs);
 	}
 }

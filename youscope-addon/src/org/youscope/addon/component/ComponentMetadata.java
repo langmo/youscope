@@ -1,8 +1,8 @@
 package org.youscope.addon.component;
 
 import org.youscope.addon.AddonMetadata;
+import org.youscope.common.Component;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.measurement.Component;
 
 /**
  * Provides metadata about a given measurement component.

@@ -6,12 +6,12 @@ package org.youscope.plugin.simplefocusscores;
 import java.rmi.RemoteException;
 
 import org.youscope.addon.focusscore.FocusScoreResource;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * @author Moritz Lang

@@ -21,15 +21,15 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.Well;
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobContainer;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainer;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.common.table.TableProducer;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.util.TextTools;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**

@@ -28,7 +28,7 @@ class LiveStream implements ToolAddonUI
 		this.server = server;
 	}
 
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeLiveStream";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeLiveStream";
 	
 	static ToolMetadata getMetadata()
 	{
@@ -39,7 +39,6 @@ class LiveStream implements ToolAddonUI
 	public YouScopeFrame toFrame() throws AddonException
 	{
 		liveStreamPanel = new LiveStreamPanel(client, server);
-		liveStreamPanel.setAutoStartStream(true);
 		liveStreamPanel.setUserChoosesFullScreen(true);
 		return liveStreamPanel.toFrame();
 	}
@@ -48,7 +47,6 @@ class LiveStream implements ToolAddonUI
 	public Component toPanel(YouScopeFrame containingFrame) throws AddonException
 	{
 		liveStreamPanel = new LiveStreamPanel(client, server);
-		liveStreamPanel.setAutoStartStream(true);
 		liveStreamPanel.setUserChoosesFullScreen(false);
 		containingFrame.addFrameListener(liveStreamPanel.getFrameListener());
 		return liveStreamPanel;

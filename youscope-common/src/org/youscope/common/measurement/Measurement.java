@@ -7,8 +7,10 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
 
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.Component;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.saving.MeasurementSaver;
+import org.youscope.common.task.MeasurementTask;
 
 /**
  * Represents a measurement a microscope should do.

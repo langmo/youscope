@@ -20,7 +20,7 @@ class MultiColorStream extends ToolAddonUIAdapter implements YouScopeFrameListen
 {
 	private MultiStreamAndControlsPanel	mainPanel;
 	
-	public final static String TYPE_IDENTIFIER = "CSB::MultiColorLiveStream";
+	public final static String TYPE_IDENTIFIER = "YouScope.MultiColorLiveStream";
 	
 	static ToolMetadata getMetadata()
 	{

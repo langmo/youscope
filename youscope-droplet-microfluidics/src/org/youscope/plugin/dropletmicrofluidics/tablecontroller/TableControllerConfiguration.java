@@ -2,8 +2,8 @@ package org.youscope.plugin.dropletmicrofluidics.tablecontroller;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDoubleRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDoubleRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -86,7 +86,7 @@ public class TableControllerConfiguration extends DropletControllerConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::DropletMicrofluidics::TableController";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.DropletMicrofluidics.TableController";
 	
 	@Override
 	public String getTypeIdentifier()

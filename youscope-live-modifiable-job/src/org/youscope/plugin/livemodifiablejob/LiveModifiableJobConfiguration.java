@@ -5,8 +5,8 @@ package org.youscope.plugin.livemodifiablejob;
 
 import java.util.Vector;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -80,7 +80,7 @@ public class LiveModifiableJobConfiguration extends JobConfiguration implements 
     /**
      * The identifier for this job type.
      */
-    public static final String TYPE_IDENTIFIER = "CSB::LiveModifiableJob";
+    public static final String TYPE_IDENTIFIER = "YouScope.LiveModifiableJob";
 
     @Override
     public String getTypeIdentifier()

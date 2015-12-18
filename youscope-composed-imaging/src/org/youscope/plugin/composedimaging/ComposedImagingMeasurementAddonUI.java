@@ -9,6 +9,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
+import org.youscope.addon.measurement.pages.GeneralSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -35,7 +36,7 @@ class ComposedImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Compos
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/composedimaging/images/composed-imaging.jpg", "Composed Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
 		
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage<ComposedImagingMeasurementConfiguration>(client, ComposedImagingMeasurementConfiguration.class));
 		addPage(new StartAndEndConfigurationPage(client, server));
 		addPage(new ImagingConfigurationPage(client, server));
 		addPage(new AreaConfigurationPage(client, server));

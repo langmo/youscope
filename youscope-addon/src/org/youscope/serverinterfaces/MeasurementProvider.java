@@ -7,12 +7,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.youscope.addon.component.ComponentCreationException;
-import org.youscope.common.ImageListener;
+import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.callback.CallbackProvider;
-import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 /**
  * A class being able to construct new measurements.

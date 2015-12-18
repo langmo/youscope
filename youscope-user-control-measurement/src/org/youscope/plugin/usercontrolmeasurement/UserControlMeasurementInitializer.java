@@ -7,12 +7,12 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.callback.CallbackCreationException;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.task.MeasurementTask;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**

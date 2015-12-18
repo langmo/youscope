@@ -4,7 +4,7 @@
 package org.youscope.addon.microplate;
 
 import org.youscope.addon.AddonException;
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 
 /**
  * Factory to create layouts of microplates, i.e. how many wells they have, how they are layouted, and how big they are.

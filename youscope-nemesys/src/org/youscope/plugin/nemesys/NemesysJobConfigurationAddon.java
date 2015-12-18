@@ -42,11 +42,11 @@ class NemesysJobConfigurationAddon extends ComponentAddonUIAdapter<NemesysJobCon
 {
 
     private static final String MOZILLA_RHINO = "Oracle Nashorn";
-    private static final String MOZILLA_RHINO_STYLE = "CSB::ScriptStyle::JavaScript";
+    private static final String MOZILLA_RHINO_STYLE = "YouScope.ScriptStyle.JavaScript";
     private static final String MATLAB_SCRIPTING = "Matlab Scripting";
-    private static final String MATLAB_SCRIPTING_STYLE = "CSB::ScriptStyle::Matlab";
+    private static final String MATLAB_SCRIPTING_STYLE = "YouScope.ScriptStyle.Matlab";
     
-    private static final String PROPERTY_LAST_FILE_ = "CSB::Nemesys::lastFile";
+    private static final String PROPERTY_LAST_FILE_ = "YouScope.Nemesys.lastFile";
     
     // script
 	private final ScriptEditor scriptField = new ScriptEditor();
@@ -172,7 +172,7 @@ class NemesysJobConfigurationAddon extends ComponentAddonUIAdapter<NemesysJobCon
 		mainPanel.add(engineNamesField);
 		mainPanel.add(new JLabel("Nemesys Protocol:"));
 		
-		scriptField.setScriptStyleID("CSB::ScriptStyle::JavaScript");
+		scriptField.setScriptStyleID("YouScope.ScriptStyle.JavaScript");
 		scriptPanel.addFill(scriptField);
 		
 		JPanel loadSavePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

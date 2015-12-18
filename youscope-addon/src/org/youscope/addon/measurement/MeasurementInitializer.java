@@ -2,8 +2,8 @@ package org.youscope.addon.measurement;
 
 import org.youscope.addon.AddonException;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**

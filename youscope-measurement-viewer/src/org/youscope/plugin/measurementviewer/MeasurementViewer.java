@@ -93,7 +93,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		imageSelectSlider = new JSlider(1, 1, 1);
 	}
 	
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeMeasurementViewer::1.0";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeMeasurementViewer";
 	
 	static ToolMetadata getMetadata()
 	{
@@ -359,19 +359,20 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		
 		// Paint approximately 10 major ticks + labels
 		int majorDist = (int)Math.round(numImages / 100.0) * 10;
-		if(majorDist <= 1)
+		if(majorDist < 1)
 		{
-			// Less then 15 elements, paint them all as major
-			imageSelectSlider.setMajorTickSpacing(1);
+			majorDist = 1;
 		}
+		imageSelectSlider.setMajorTickSpacing(majorDist);
+		int lowerDist = majorDist / 5;
+		if(lowerDist <= 0)
+			lowerDist = 1;
+		if(majorDist == 1 || lowerDist == 1)
+			imageSelectSlider.setSnapToTicks(true);
 		else
-		{
-			imageSelectSlider.setMajorTickSpacing(majorDist);
-			int lowerDist = majorDist / 5;
-			if(lowerDist <= 0)
-				lowerDist = 1;
-			imageSelectSlider.setMinorTickSpacing(lowerDist);
-		}
+			imageSelectSlider.setSnapToTicks(false);
+		imageSelectSlider.setMinorTickSpacing(lowerDist);
+		imageSelectSlider.setLabelTable(imageSelectSlider.createStandardLabels(majorDist));
 		
 		imageSelectField.setMaximalValue(numImages);
 		imageSelectField.setValue(1);

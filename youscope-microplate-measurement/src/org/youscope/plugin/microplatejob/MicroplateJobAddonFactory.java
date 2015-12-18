@@ -12,15 +12,15 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
-import org.youscope.common.Well;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.ChangePositionJob;
+import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.FocusingJob;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
-import org.youscope.common.measurement.job.basicjobs.FocusingJob;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
@@ -56,7 +56,7 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 				
 				String pathOptimizerID = configuration.getPathOptimizerID();
 				if(pathOptimizerID == null)
-					pathOptimizerID = "CSB::NonOptimizedOptimizer";
+					pathOptimizerID = "YouScope.NonOptimizedOptimizer";
 				PathOptimizer pathOptimizer = getPathOptimizer(pathOptimizerID);
 				if(pathOptimizer == null)
 					throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" not known.");

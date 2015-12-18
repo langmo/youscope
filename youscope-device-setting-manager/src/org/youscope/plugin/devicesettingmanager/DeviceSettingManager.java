@@ -49,7 +49,7 @@ class DeviceSettingManager extends ToolAddonUIAdapter
 		
 	}
 	
-	public final static String TYPE_IDENTIFIER = "CSB::DeviceSettingManager";
+	public final static String TYPE_IDENTIFIER = "YouScope.DeviceSettingManager";
 	
 	static ToolMetadata getMetadata()
 	{

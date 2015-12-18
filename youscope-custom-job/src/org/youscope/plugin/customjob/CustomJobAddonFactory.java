@@ -8,12 +8,12 @@ import org.youscope.addon.component.ComponentAddonFactory;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.Component;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.Component;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -23,71 +23,32 @@ import org.youscope.serverinterfaces.YouScopeServer;
  */
 public class CustomJobAddonFactory implements ComponentAddonFactory
 {
-	private CustomJobConfiguration[] loadCustomJobs() throws CustomJobException
-	{
-		return CustomJobManager.loadCustomJobs();
-	}
-	
 	@Override
 	public ComponentAddonUI<?> createComponentUI(String typeIdentifier, YouScopeClient client,
 			YouScopeServer server) throws AddonException 
 	{
-		//Check if a custom job should be constructed.
-		CustomJobConfiguration[] customJobs;
+		CustomJobConfiguration myJob;
+		try {
+			myJob = CustomJobManager.getCustomJob(typeIdentifier);
+		} catch (CustomJobException e1) {
+			throw new AddonException("Factory does not support creation of components with ID " + typeIdentifier+".", e1);
+		}
+		
+		CustomJobConfigurationAddon addon = new CustomJobConfigurationAddon(client, server, myJob.getTypeIdentifier(), myJob.getCustomJobName());
 		try
 		{
-			customJobs = loadCustomJobs();
+			addon.setConfiguration(myJob);
 		}
-		catch(CustomJobException e)
+		catch(ConfigurationException e)
 		{
-			throw new AddonException("Could not load custom job configurations.", e);
+			throw new AddonException("Could not initialize custom job configuration.", e);
 		}
-		for(CustomJobConfiguration job : customJobs)
-		{
-			if(!job.getTypeIdentifier().equals(typeIdentifier))
-				continue;
-			CustomJobConfiguration myJob;
-			try
-			{
-				myJob = job.clone();
-			}
-			catch(CloneNotSupportedException e)
-			{
-				throw new AddonException("Could not copy configuration of custom job.", e);
-			}
-			
-			CustomJobConfigurationAddon addon = new CustomJobConfigurationAddon(client, server, myJob.getTypeIdentifier(), myJob.getCustomJobName());
-			try
-			{
-				addon.setConfiguration(myJob);
-			}
-			catch(ConfigurationException e)
-			{
-				throw new AddonException("Could not initialize custom job configuration.", e);
-			}
-			return addon;
-		}
-		throw new AddonException("Factory does not support creation of measurement components with ID " + typeIdentifier+".");
-	
+		return addon;
 	}
 
 	@Override
 	public String[] getSupportedTypeIdentifiers() {
-		CustomJobConfiguration[] customJobs;
-		try
-		{
-			customJobs = loadCustomJobs();
-		}
-		catch(@SuppressWarnings("unused") CustomJobException e)
-		{
-			return new String[0];
-		}
-		String[] ids = new String[customJobs.length];
-		for(int i=0; i<customJobs.length; i++)
-		{
-			ids[i] = customJobs[i].getTypeIdentifier();
-		}
-		return ids;
+		return CustomJobManager.getCustomJobTypeIdentifiers();
 	}
 
 	@Override
@@ -102,23 +63,11 @@ public class CustomJobAddonFactory implements ComponentAddonFactory
 
 	@Override
 	public ComponentMetadata<?> getComponentMetadata(String typeIdentifier) throws AddonException {
-		CustomJobConfiguration[] customJobs;
-		try
+		if(!isSupportingTypeIdentifier(typeIdentifier))
 		{
-			customJobs=loadCustomJobs();
+			throw new AddonException("Factory does not support creation of measurement components with ID " + typeIdentifier+".");
 		}
-		catch(CustomJobException e)
-		{
-			throw new AddonException("Could not load custom job configurations.", e);
-		}
-		for(int i=0; i<customJobs.length; i++)
-		{
-			if(customJobs[i].getTypeIdentifier().equals(typeIdentifier))
-			{
-				return CustomJobConfigurationAddon.getMetadata(customJobs[i].getTypeIdentifier(), customJobs[i].getCustomJobName());
-			}
-		}
-		throw new AddonException("Factory does not support creation of measurement components with ID " + typeIdentifier+".");
+		return CustomJobConfigurationAddon.getMetadata(typeIdentifier, CustomJobManager.getCustomJobName(typeIdentifier));
 	}
 
 	@Override

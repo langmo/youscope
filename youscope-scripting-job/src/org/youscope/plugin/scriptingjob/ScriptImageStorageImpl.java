@@ -6,9 +6,9 @@ package org.youscope.plugin.scriptingjob;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.image.ImageProducer;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.scripting.ScriptImageStorage;
 

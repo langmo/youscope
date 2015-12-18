@@ -27,7 +27,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
 
 /**
  * @author langmo

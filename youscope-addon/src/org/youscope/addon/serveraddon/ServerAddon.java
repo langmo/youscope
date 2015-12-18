@@ -59,8 +59,8 @@ public interface ServerAddon extends Remote
 	 * Should return a unique ID of the specific implementation of this interface.
 	 * Thus, two addons implementing the same interface should return a different ID. Furthermore, the ID
 	 * should also be different for different versions of the addon.
-	 * The ID should follow the pattern "distributer::addonName::addonVersion" (e.g. "CSB::OpenBISUploader::1.1"
-	 * or "Bush,G.W.::WMDFinder::0.1"). However, a client should not parse this name to obtain information about the addon,
+	 * The ID should follow the pattern "YourIdentifier.AddonName" (e.g. "YouScope.Livestream"
+	 * or "Bush_GW.WMDFinder"). However, a client should not parse this name to obtain information about the addon,
 	 * as well as not assume that the addon follows this pattern.
 	 * 
 	 * @return ID Unique ID of the addon.

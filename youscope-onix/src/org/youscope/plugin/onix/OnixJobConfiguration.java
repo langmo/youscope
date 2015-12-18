@@ -3,8 +3,8 @@
  */
 package org.youscope.plugin.onix;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.TableConsumerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -46,7 +46,7 @@ public class OnixJobConfiguration extends JobConfiguration implements TableConsu
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::OnixJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.OnixJob";
 
 	@Override
 	public String getTypeIdentifier()

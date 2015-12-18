@@ -6,9 +6,9 @@ package org.youscope.common.scripting;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ImageProducer;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.basicjobs.ScriptingJob;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.basicjobs.ScriptingJob;
 
 /**
  * @author langmo

@@ -20,10 +20,10 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.PeriodConfiguration;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
-import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
+import org.youscope.common.task.PeriodConfiguration;
+import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.TaskConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -45,7 +45,7 @@ public class TaskConfigurationPanel extends JPanel
 
 	private final PeriodField			firstEvaluationField	= new PeriodField();
 
-	private final JRadioButton					stopByUserRadio				= new JRadioButton("When stopped manually.", false);
+	private final JRadioButton					stopByUserRadio				= new JRadioButton("When measurement finishes.", false);
 	private final JRadioButton					stopByExecutionsRadio		= new JRadioButton("After a given number of executions.", false);
 	private final JLabel							numExecutionsFieldLabel	= new JLabel("Number of Executions:");
 	private final JFormattedTextField				numExecutionsField		= new JFormattedTextField(StandardFormats.getIntegerFormat());
@@ -76,7 +76,7 @@ public class TaskConfigurationPanel extends JPanel
 		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
 		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
 				
-		StandardFormats.addGridBagElement(new JLabel("Measurement finishes:"), leftLayout, newLineConstr, leftPanel);
+		StandardFormats.addGridBagElement(new JLabel("Task finishes:"), leftLayout, newLineConstr, leftPanel);
 		ButtonGroup stopConditionGroup = new ButtonGroup();
 		stopConditionGroup.add(stopByUserRadio);
 		stopConditionGroup.add(stopByExecutionsRadio);

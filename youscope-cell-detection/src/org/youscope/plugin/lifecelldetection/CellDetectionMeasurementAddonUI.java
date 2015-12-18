@@ -9,6 +9,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
+import org.youscope.addon.measurement.pages.GeneralSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
@@ -34,7 +35,7 @@ class CellDetectionMeasurementAddonUI extends MeasurementAddonUIAdapter<CellDete
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/lifecelldetection/images/life-cell-detection.jpg", "Life Cell Detection Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
 		
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage<CellDetectionMeasurementConfiguration>(client, CellDetectionMeasurementConfiguration.class));
 		addPage(new StartAndEndConfigurationPage(client, server));
 		addPage(new ImagingConfigurationPage(client, server));
 	}

@@ -7,11 +7,11 @@ package org.youscope.plugin.statistics;
 import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
-import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
-import org.youscope.common.Well;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
@@ -93,7 +93,7 @@ public class ZigZagPathOptimizer implements PathOptimizer
 	@Override
 	public String getOptimizerID()
 	{
-		return "CSB::ZigZagPathOptimizer";
+		return "YouScope.ZigZagPathOptimizer";
 	}
 
 }

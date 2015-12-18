@@ -25,7 +25,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 	 */
 	private static final long				serialVersionUID		= 885352612109223078L;
 
-	private JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics (slower).");
+	private JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics about job runtimes.");
 	private JLabel							statisticsFileFieldLabel		= new JLabel("Statistics file name (without extension):");
 	private JTextField						statisticsFileField				= new JTextField("statistics");
 	

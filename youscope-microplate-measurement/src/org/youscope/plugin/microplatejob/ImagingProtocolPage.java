@@ -10,7 +10,7 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.tools.ConfigurationValidation;
+import org.youscope.common.util.ConfigurationValidation;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.JobsDefinitionPanel;
 

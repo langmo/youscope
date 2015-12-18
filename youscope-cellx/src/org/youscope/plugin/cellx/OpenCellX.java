@@ -24,7 +24,7 @@ import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
@@ -34,7 +34,7 @@ import org.youscope.uielements.StandardFormats;
  */
 class OpenCellX extends ToolAddonUIAdapter
 {
-	public static final String TYPE_IDENTIFIER = "CSB::OpenCellX::1.0";
+	public static final String TYPE_IDENTIFIER = "YouScope.OpenCellX";
 	
 	private final JTextField measurementIDField = new JTextField();
 	private final JTextField measurementFolderField = new JTextField();

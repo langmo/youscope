@@ -11,22 +11,25 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
-import org.youscope.common.Well;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
+import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.ChangePositionJob;
+import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.FocusingJob;
+import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.EditableJobContainer;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
-import org.youscope.common.measurement.job.basicjobs.FocusingJob;
-import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
+import org.youscope.plugin.changepositionjob.ChangePositionJobConfiguration;
+import org.youscope.plugin.focusingjob.FocusingJobConfiguration;
+import org.youscope.plugin.livemodifiablejob.LiveModifiableJob;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -93,7 +96,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 		
 		String pathOptimizerID = configuration.getPathOptimizerID();
 		if(pathOptimizerID == null)
-			pathOptimizerID = "CSB::NonOptimizedOptimizer";
+			pathOptimizerID = "YouScope.NonOptimizedOptimizer";
 		PathOptimizer pathOptimizer = getPathOptimizer(pathOptimizerID);
 		if(pathOptimizer == null)
 			throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" not known.");
@@ -250,7 +253,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						{
 							job = jobInitializer.getComponentProvider().createJob(positionInformation, StatisticsJob.DEFAULT_TYPE_IDENTIFIER, StatisticsJob.class);
 							job.setName("Job container/analyzer for " + locationString);
-							job.addTableListener(jobInitializer.getMeasurementSaver().getSaveTableDataListener(configuration.getStatisticsFileName()));
+							job.addTableListener(jobInitializer.getMeasurementSaver().getSaveTableListener(configuration.getStatisticsFileName()));
 							wellTask.addJob(job);
 							
 						} catch (ComponentCreationException e) {
@@ -263,13 +266,32 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							
 						jobContainer = job;
 					}
+					if(configuration.isAllowEditsWhileRunning())
+					{
+						Job modJob;
+						try {
+							modJob = jobInitializer.getComponentProvider().createJob(positionInformation, "YouScope.LiveModifiableJob");
+							modJob.setName(locationString);
+							jobContainer.addJob(modJob);
+						} catch (RemoteException e) {
+							throw new AddonException("Could not create measurement due to remote exception.", e);
+						} catch (ComponentCreationException e) {
+							throw new AddonException("Microplate measurements need live-modifiable job plugin.",e);
+						}
+						if(!(modJob instanceof EditableJobContainer))
+							throw new AddonException("Live modifiable job does not implement editable job container.");
+						jobContainer = (EditableJobContainer) modJob;
+					}
 					
 					// Set position to well
+					ChangePositionJobConfiguration positionJobConfiguration = new ChangePositionJobConfiguration();
+					positionJobConfiguration.setAbsolute(true);
+					positionJobConfiguration.setX(position.getX());
+					positionJobConfiguration.setY(position.getY());
+					positionJobConfiguration.setStageDevice(stageDeviceID);
 					ChangePositionJob positionJob;
 					try {
-						positionJob = jobInitializer.getComponentProvider().createJob(positionInformation, ChangePositionJob.DEFAULT_TYPE_IDENTIFIER, ChangePositionJob.class);
-						positionJob.setPosition(position.getX(), position.getY());
-						positionJob.setStageDevice(stageDeviceID);
+						positionJob = jobInitializer.getComponentProvider().createJob(positionInformation, positionJobConfiguration, ChangePositionJob.class);
 						positionJob.setName("Moving stage to " + locationString);
 						jobContainer.addJob(positionJob);
 
@@ -282,16 +304,18 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					}
 					
 					// Set Focus
+					FocusingJobConfiguration focusingJobConfiguration = null;
 					if(configuration.getFocusConfiguration() != null)
 					{
+						focusingJobConfiguration = new FocusingJobConfiguration();
+						focusingJobConfiguration.setFocusConfiguration(configuration.getFocusConfiguration());
+						focusingJobConfiguration.setPosition(position.getFocus());
+						focusingJobConfiguration.setRelative(false);
 						FocusingJob focusingJob;
 						try 
 						{
-							focusingJob = jobInitializer.getComponentProvider().createJob(positionInformation, FocusingJob.DEFAULT_TYPE_IDENTIFIER, FocusingJob.class);
-							focusingJob.setFocusAdjustmentTime(configuration.getFocusConfiguration().getAdjustmentTime());
-							focusingJob.setPosition(position.getFocus(), false);
-							focusingJob.setFocusDevice(configuration.getFocusConfiguration().getFocusDevice());
-							focusingJob.setName("Setting focus for " + locationString);
+							focusingJob = jobInitializer.getComponentProvider().createJob(positionInformation, focusingJobConfiguration, FocusingJob.class);
+							focusingJob.setName("Focus for " + locationString);
 							jobContainer.addJob(focusingJob);
 						} 
 						catch (ComponentCreationException e) {
@@ -318,6 +342,20 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						catch (RemoteException e)
 						{
 							throw new AddonException("Could not create measurement due to remote exception.", e);
+						}
+					}
+					
+					if(jobContainer instanceof LiveModifiableJob)
+					{
+						JobConfiguration[] allConfigs = new JobConfiguration[jobConfigurations.length + (focusingJobConfiguration!=null? 2 : 1)];
+						allConfigs[0] = positionJobConfiguration;
+						if(focusingJobConfiguration != null)
+							allConfigs[1]=focusingJobConfiguration;
+						System.arraycopy(jobConfigurations, 0, allConfigs, focusingJobConfiguration == null ? 1 : 2, jobConfigurations.length);
+						try {
+							((LiveModifiableJob)jobContainer).setChildJobConfigurations(allConfigs);
+						} catch (RemoteException | CloneNotSupportedException e) {
+							throw new AddonException("Could not initialize live modifications of jobs.", e);
 						}
 					}
 				}

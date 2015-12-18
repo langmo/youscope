@@ -18,17 +18,17 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
 
+import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
-import org.youscope.common.measurement.MeasurementContext;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.MeasurementState;
-import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.measurement.task.TaskListener;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.TaskListener;
 
 /**
  * @author Moritz Lang

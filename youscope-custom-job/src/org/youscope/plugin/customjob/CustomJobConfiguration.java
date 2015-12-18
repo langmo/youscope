@@ -5,8 +5,8 @@ package org.youscope.plugin.customjob;
 
 import java.util.Vector;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -103,14 +103,14 @@ public class CustomJobConfiguration extends JobConfiguration implements JobConta
 	@Override
 	public String getTypeIdentifier()
 	{
-		return "CSB::CustomJob::" + getCustomJobName();
+		return CustomJobManager.getCustomJobTypeIdentifier(getCustomJobName());
 	}
 
 	/**
 	 * Sets the name or ID of the custom job, with which it is identified. Since used for saving, the ID must be a valid file name, but without file name extension.
 	 * @param customJobName The name of the job template.
 	 */
-	public void setCustomJobName(String customJobName)
+	void setCustomJobName(String customJobName)
 	{
 		this.customJobName = customJobName;
 	}

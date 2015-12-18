@@ -16,16 +16,16 @@ class ConfigurationSettings
     // Properties
     protected final static String propertiesFile = "youscope_properties.prop";
 
-    public static final String		SETTINGS_CONFIG_FILE_LAST_0	= "CSB::configFileLast0";
-	public static final String		SETTINGS_CONFIG_FILE_LAST_1	= "CSB::configFileLast1";
-	public static final String		SETTINGS_CONFIG_FILE_LAST_2	= "CSB::configFileLast2";
-	public static final String		SETTINGS_CONFIG_FILE_LAST_3	= "CSB::configFileLast3";
+    public static final String		SETTINGS_CONFIG_FILE_LAST_0	= "YouScope.configFileLast0";
+	public static final String		SETTINGS_CONFIG_FILE_LAST_1	= "YouScope.configFileLast1";
+	public static final String		SETTINGS_CONFIG_FILE_LAST_2	= "YouScope.configFileLast2";
+	public static final String		SETTINGS_CONFIG_FILE_LAST_3	= "YouScope.configFileLast3";
 	
-    public static final String SETTINGS_SERVER_URL = "CSB::server::lastURL";
+    public static final String SETTINGS_SERVER_URL = "YouScope.server.lastURL";
 
-    public static final String SETTINGS_SERVER_PORT = "CSB::server::lastPort";
+    public static final String SETTINGS_SERVER_PORT = "YouScope.server.lastPort";
 
-    public static final String SETTINGS_STARTUP_TYPE = "CSB::general::startupType";
+    public static final String SETTINGS_STARTUP_TYPE = "YouScope.general.startupType";
     
     private final Properties properties;
     

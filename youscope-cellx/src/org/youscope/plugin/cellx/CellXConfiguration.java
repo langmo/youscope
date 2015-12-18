@@ -51,7 +51,7 @@ public class CellXConfiguration extends CellDetectionConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::CellX";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.CellX";
 	
 	@XStreamAlias("configuration-file")
 	private String configurationFile = null;

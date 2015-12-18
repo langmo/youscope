@@ -10,7 +10,7 @@ public enum StandardProperty
 	/**
      * Name of the boolean property indicating if camera settings should be preinitialized.
      */
-    PROPERTY_PREINITIALIZE_CAMERA_SETTINGS ("CSB::Measurement::cameraStartupSettings", false),
+    PROPERTY_PREINITIALIZE_CAMERA_SETTINGS ("YouScope.Measurement.cameraStartupSettings", false),
     
     /**
      * Name of the skin which is loaded at startup.
@@ -20,64 +20,104 @@ public enum StandardProperty
     /**
      * Name of the boolean property indicating if a measurement control should be docked to the main window (true) or shown in an own window.
      */
-    PROPERTY_DOCK_MEASUREMENT_CONTROL ("CSB::Client::dockMeasurementControl", true),
+    PROPERTY_DOCK_MEASUREMENT_CONTROL ("YouScope.Client.dockMeasurementControl", true),
 
     /**
      * Name of boolean property indicating if youscope is configured.
      */
-    PROPERTY_IS_CONFIGURED ("CSB::isConfigured", false),
+    PROPERTY_IS_CONFIGURED ("YouScope.isConfigured", false),
 
     /**
      * Name of the String property indicating where the last measurement was saved.
      */
-    PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER ("CSB::Measurement::lastMeasurementSaveFolder", null),
+    PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER ("YouScope.Measurement.lastMeasurementSaveFolder", null),
 
     /**
      * Name of the last channel group used in a channel configuration.
      */
-    PROPERTY_LAST_CHANNEL_GROUP ("CSB::Imaging::lastChannelGroup", null),
+    PROPERTY_LAST_CHANNEL_GROUP ("YouScope.Imaging.lastChannelGroup", null),
     
     /**
      * Name of the last channel used in a channel configuration.
      */
-    PROPERTY_LAST_CHANNEL ("CSB::Imaging::lastChannel", null),
+    PROPERTY_LAST_CHANNEL ("YouScope.Imaging.lastChannel", null),
 
     /**
      * Last path to the folder where scripts where loaded or saved.
      */
-    PROPERTY_LAST_SCRIPT_PATH("CSB::Scripting::lastScriptPath", null),
+    PROPERTY_LAST_SCRIPT_PATH("YouScope.Scripting.lastScriptPath", null),
     
     /**
      * If and how the positions of frames should be stored. Check enum FramePositionStorage.StorageType for options.
      */
-    PROPERTY_POSITION_STORAGE ("CSB::FramePositionStorage", FramePositionStorageType.NONE.getIdentifier()),
+    PROPERTY_POSITION_STORAGE ("YouScope.FramePositionStorage", FramePositionStorageType.NONE.getIdentifier()),
     
     /**
      * Last absolute path of an image directly saved to disk from e.g. the LiveView.
      */
-    PROPERTY_LAST_IMAGE_SAVE_FILE_NAME("CSB::LastImageSaveFileName", null),
+    PROPERTY_LAST_IMAGE_SAVE_FILE_NAME("YouScope.LastImageSaveFileName", null),
 
+    
+    
     /**
      * Last exposure time in ms used in live stream, and similar.
      */
-    PROPERTY_LAST_LIVE_EXPOSURE("CSB::LiveStream::Exposure", 50.0),
+    PROPERTY_STREAM_LAST_EXPOSURE("YouScope.LiveStream.LastExposure", 50.0),
     /**
      * Last period in ms used in live stream, and similar.
      */
-    PROPERTY_LAST_LIVE_PERIOD("CSB::LiveStream::Period", 100),
+    PROPERTY_STREAM_LAST_PERIOD("YouScope.LiveStream.LastPeriod", 100),
     /**
      * Name of last camera used in live stream, and similar.
      */
-    PROPERTY_LAST_LIVE_CAMERA("CSB::LiveStream::Camera", null),
-    
-    /**
-     * if contrast should be increased in live stream, and similar.
-     */
-    PROPERTY_LAST_LIVE_INCREASE_CONTRAST ("CSB::LiveStream::IncreaseContrast", true),
+    PROPERTY_STREAM_LAST_CAMERA("YouScope.LiveStream.LastCamera", null),
     /**
      * if contrast should be increased automatically in live stream, and similar.
      */
-    PROPERTY_LAST_LIVE_AUTO_CONTRAST ("CSB::LiveStream::AutoContrast", true);
+    PROPERTY_STREAM_LAST_AUTO_CONTRAST ("YouScope.LiveStream.LastAutoContrast", false),
+	/**
+     * Name of the last channel group used in live stream, and similar.
+     */
+    PROPERTY_STREAM_LAST_CHANNEL_GROUP ("YouScope.LiveStream.LastChannelGroup", null),
+    /**
+     * Name of the last channel used in live stream, and similar.
+     */
+    PROPERTY_STREAM_LAST_CHANNEL ("YouScope.LiveStream.LastChannel", null),
+    
+    /**
+     * Name of the last channel used in live stream, and similar.
+     */
+    PROPERTY_STREAM_USE_DEFAULT_SETTINGS ("YouScope.LiveStream.UseDefaultSettings", false),
+    
+    /**
+     * If the stream should start automatically.
+     */
+    PROPERTY_STREAM_AUTOSTART("YouScope.LiveStream.Autostart", true),
+    /**
+     * Default exposure time in ms used in live stream, and similar. Negative for not set.
+     */
+    PROPERTY_STREAM_DEFAULT_EXPOSURE("YouScope.LiveStream.DefaultExposure", 50.0),
+    /**
+     * Default period in ms used in live stream, and similar. Negative for not set.
+     */
+    PROPERTY_STREAM_DEFAULT_PERIOD("YouScope.LiveStream.DefaultPeriod", 100),
+    /**
+     * Name of default camera used in live stream, and similar.
+     */
+    PROPERTY_STREAM_DEFAULT_CAMERA("YouScope.LiveStream.DefaultCamera", null),
+    /**
+     * if contrast should be increased automatically in live stream, and similar.
+     */
+    PROPERTY_STREAM_DEFAULT_AUTO_CONTRAST ("YouScope.LiveStream.DefaultAutoContrast", false),
+	/**
+     * Name of the default channel group used in live stream, and similar.
+     */
+    PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP ("YouScope.LiveStream.DefaultChannelGroup", null),
+    /**
+     * Name of the default channel used in live stream, and similar.
+     */
+    PROPERTY_STREAM_DEFAULT_CHANNEL ("YouScope.LiveStream.DefaultChannel", null);
+	
     
     private final String propertyName;
     private final Object defaultValue;

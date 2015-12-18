@@ -2,7 +2,7 @@ package org.youscope.plugin.slimjob;
 
 import java.util.Arrays;
 
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 
 class SlimHelper 
 {

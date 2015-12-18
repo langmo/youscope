@@ -39,7 +39,7 @@ class OpenHouse extends ToolAddonUIAdapter
 	private final double MAX_STRESS = 0.5;
 	private final JLabel stressLabel = new JLabel("Stressintensität: 0%");
 	
-	public final static String TYPE_IDENTIFIER = "CSB::OpenHouse";
+	public final static String TYPE_IDENTIFIER = "YouScope.OpenHouse";
 	
 	static ToolMetadata getMetadata()
 	{

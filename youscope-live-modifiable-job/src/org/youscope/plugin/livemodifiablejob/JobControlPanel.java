@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.JobsDefinitionPanel;

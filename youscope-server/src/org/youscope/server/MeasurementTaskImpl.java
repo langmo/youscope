@@ -11,15 +11,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobException;
+import org.youscope.common.job.JobListener;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobException;
-import org.youscope.common.measurement.job.JobListener;
-import org.youscope.common.measurement.task.MeasurementTask;
-import org.youscope.common.measurement.task.TaskListener;
 import org.youscope.common.microscope.Microscope;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.TaskListener;
 
 /**
  * @author langmo

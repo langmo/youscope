@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.multicameracontinuousimaging;
 
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -26,7 +26,7 @@ public class MultiCameraContinousImagingConfiguration extends MeasurementConfigu
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::MultiCameraContinuousImagingMeasurement";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.MultiCameraContinuousImagingMeasurement";
 
 	/**
 	 * The channel where the images should be made. Set to an empty string if

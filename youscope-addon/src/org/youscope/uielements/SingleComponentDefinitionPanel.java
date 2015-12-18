@@ -16,7 +16,7 @@ import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.Configuration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.table.TableProducerConfiguration;
 import org.youscope.uielements.ComponentComboBox;
 import org.youscope.uielements.DynamicPanel;
 

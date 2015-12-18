@@ -6,9 +6,9 @@ package org.youscope.plugin.taskmeasurement;
 import java.util.ArrayList;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.TaskConfiguration;
-import org.youscope.common.configuration.TaskContainerConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.task.TaskConfiguration;
+import org.youscope.common.task.TaskContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -28,7 +28,7 @@ public class TaskMeasurementConfiguration extends MeasurementConfiguration imple
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::ConfiguratableMeasurement";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.ConfiguratableMeasurement";
 
 	@Override 
 	public String getTypeIdentifier()

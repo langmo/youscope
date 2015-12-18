@@ -5,8 +5,8 @@ package org.youscope.plugin.waitforuser;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.job.Job;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
 
 
 /**

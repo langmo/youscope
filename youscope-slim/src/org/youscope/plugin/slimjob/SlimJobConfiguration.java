@@ -3,8 +3,8 @@
  */
 package org.youscope.plugin.slimjob;
 
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -25,7 +25,7 @@ public class SlimJobConfiguration extends JobConfiguration implements ImageProdu
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::ReflectorJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.ReflectorJob";
 	
 	/**
 	 * Minimal phase shift value

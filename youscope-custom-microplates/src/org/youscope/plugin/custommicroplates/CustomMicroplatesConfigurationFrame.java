@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -71,7 +71,7 @@ class CustomMicroplatesConfigurationFrame
         numberPanel.add(numXField);
         numberPanel.add(numYField);
         StandardFormats.addGridBagElement(numberPanel, elementsLayout, newLineConstr, elementsPanel);
-        StandardFormats.addGridBagElement(new JLabel("Distance wells horizontal/vertical (in μm):"), elementsLayout, newLineConstr, elementsPanel);
+        StandardFormats.addGridBagElement(new JLabel("Distance wells horizontal/vertical (in um):"), elementsLayout, newLineConstr, elementsPanel);
         JPanel distancePanel = new JPanel(new GridLayout(1, 2, 0, 3));
         distancePanel.add(widthField);
         distancePanel.add(heightField);

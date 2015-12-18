@@ -5,19 +5,19 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResult;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.resource.ResourceException;
 
 
 class EvaporationController  extends ResourceAdapter<EvaporationControllerConfiguration> implements DropletControllerResource
 {
-	private static final String CONTEXT_PROPERTY_INTEGRATED_ERROR = "CSB::EvaporationController::IntegratedError";
-	private static final String CONTEXT_PROPERTY_LAST_EXECUTION = "CSB::EvaporationController::LastExecution";
+	private static final String CONTEXT_PROPERTY_INTEGRATED_ERROR = "YouScope.EvaporationController.IntegratedError";
+	private static final String CONTEXT_PROPERTY_LAST_EXECUTION = "YouScope.EvaporationController.LastExecution";
 	public EvaporationController(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
 	{
 		super(positionInformation, configuration, EvaporationControllerConfiguration.TYPE_IDENTIFIER,EvaporationControllerConfiguration.class, "Droplet-based microfluidics controller based on syringe table");

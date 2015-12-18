@@ -4,13 +4,11 @@
 package org.youscope.serverinterfaces;
 
 
-import java.util.UUID;
-
 import javax.script.ScriptEngineManager;
 
 import org.youscope.common.MessageListener;
-import org.youscope.common.measurement.MeasurementSaver;
-import org.youscope.common.measurement.callback.CallbackProvider;
+import org.youscope.common.callback.CallbackProvider;
+import org.youscope.common.saving.MeasurementSaver;
 
 /**
  * Interface handed over to addons during the construction/initialization of a measurement and its components. With this interface it is possible for
@@ -32,7 +30,7 @@ public interface ConstructionContext
 	 * Returns a provider with which measurement components, such as jobs and resources, can be created given the corresponding configurations.
 	 * @return Provider to create components.
 	 */
-	ComponentProvider getComponentProvider();
+	ComponentProvider getComponentProvider(); 
 	
 	/**
 	 * Returns a provider with which script engines can be created.
@@ -51,12 +49,4 @@ public interface ConstructionContext
 	 * @return callback provider.
 	 */
 	CallbackProvider getCallbackProvider();
-	
-	/**
-	 * Returns the unique identifier of the measurement in which the component is created. Returns null if the UUID of the measurement is unknown, e.g. 
-	 * because a measurement component is created not belonging to any measurement (typically done in testing the configuration of a measurement component while still
-	 * configuring it in the user interface).
-	 * @return Unique ID of created measurement.
-	 */
-	UUID getMeasurementUUID();
 }

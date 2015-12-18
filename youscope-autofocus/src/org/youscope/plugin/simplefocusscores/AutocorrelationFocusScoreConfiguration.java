@@ -5,8 +5,8 @@ package org.youscope.plugin.simplefocusscores;
 
 import org.youscope.addon.focusscore.FocusScoreConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigIntegerRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigIntegerRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -44,7 +44,7 @@ public class AutocorrelationFocusScoreConfiguration extends FocusScoreConfigurat
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::AutocorrelationFocusScore";
+	public static final String	CONFIGURATION_ID	= "YouScope.AutocorrelationFocusScore";
 	
 	@Override
 	public String getTypeIdentifier()

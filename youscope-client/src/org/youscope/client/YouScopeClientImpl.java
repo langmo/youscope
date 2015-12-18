@@ -65,12 +65,12 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.YouScopeVersion;
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.tools.RMIReader;
-import org.youscope.common.tools.RMIWriter;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.RMIReader;
+import org.youscope.common.util.RMIWriter;
+import org.youscope.common.util.TextTools;
 import org.youscope.serverinterfaces.YouScopeLogin;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.serverinterfaces.YouScopeServerProperties;
@@ -105,8 +105,8 @@ public class YouScopeClientImpl extends JFrame
 	 */
 	private static YouScopeClientImpl			youScopeClient;
 
-	private static final String PROPERTY_LAST_SERVER_URL = "CSB::Connection::lastServerUrl";
-	private static final String PROPERTY_LAST_SERVER_PORT = "CSB::Connection::lastServerPort";
+	private static final String PROPERTY_LAST_SERVER_URL = "YouScope.Connection.lastServerUrl";
+	private static final String PROPERTY_LAST_SERVER_PORT = "YouScope.Connection.lastServerPort";
 	
 	/**
 	 * The main server object.

@@ -1,6 +1,6 @@
 package org.youscope.addon.dropletmicrofluidics;
 
-import org.youscope.common.configuration.ResourceConfiguration;
+import org.youscope.common.resource.ResourceConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

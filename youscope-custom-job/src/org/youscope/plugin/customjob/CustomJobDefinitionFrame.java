@@ -32,15 +32,26 @@ class CustomJobDefinitionFrame
 		
 	private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 	private final YouScopeClient client;
+	private final CustomJobConfiguration customJob;
+	private final String oldCustomJobTypeIdentifier;
 	
 	CustomJobDefinitionFrame(YouScopeClient client, YouScopeServer server, YouScopeFrame frame)
 	{
-		this(client, server, frame, new CustomJobConfiguration());
+		this(client, server, frame, null);
 	}
-	CustomJobDefinitionFrame(YouScopeClient client, YouScopeServer server, YouScopeFrame frame, final CustomJobConfiguration customJob)
+	CustomJobDefinitionFrame(YouScopeClient client, YouScopeServer server, YouScopeFrame frame, CustomJobConfiguration customJob)
 	{
 		this.frame = frame;
 		this.client = client;
+		
+		if(customJob != null)
+			oldCustomJobTypeIdentifier = customJob.getTypeIdentifier(); 
+		else
+		{
+			oldCustomJobTypeIdentifier = null;
+			customJob =new CustomJobConfiguration();
+		}
+		this.customJob = customJob;
 		
 		frame.setTitle("Custom Job Template Definition");
 		frame.setResizable(true);
@@ -68,12 +79,16 @@ class CustomJobDefinitionFrame
                 		JOptionPane.showMessageDialog(null, "Job template name must be longer than three characters.", "Could not initialize microplate type", JOptionPane.INFORMATION_MESSAGE);
                 		return;
                 	}
-                	customJob.setCustomJobName(jobName);
-                	customJob.setJobs(jobPanel.getJobs());
+                	CustomJobDefinitionFrame.this.customJob.setCustomJobName(jobName);
+                	CustomJobDefinitionFrame.this.customJob.setJobs(jobPanel.getJobs());
+                	
+                	// we first delete the old custom job. This is important if the name changed in the meantime
+                	if(oldCustomJobTypeIdentifier != null)
+                		CustomJobManager.deleteCustomJob(oldCustomJobTypeIdentifier);
                 	
                 	try
 					{
-						CustomJobManager.saveCustomJob(customJob);
+						CustomJobManager.saveCustomJob(CustomJobDefinitionFrame.this.customJob);
 					}
 					catch(CustomJobException e1)
 					{

@@ -18,7 +18,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

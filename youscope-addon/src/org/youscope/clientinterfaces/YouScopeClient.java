@@ -3,8 +3,8 @@
  */
 package org.youscope.clientinterfaces;
 
-import org.youscope.common.configuration.MeasurementConfiguration;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 
 /**

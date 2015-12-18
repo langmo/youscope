@@ -24,7 +24,7 @@ class CustomizationFrame
 
     private final CustomizationTabAppearance tabAppearance = new CustomizationTabAppearance();
     private final CustomizationTabSpecial tabSpecial = new CustomizationTabSpecial();
-    
+    private final CustomizationTabLiveStream tabLiveStream;
     CustomizationFrame(YouScopeFrame frame)
     {
         this.frame = frame;
@@ -32,6 +32,8 @@ class CustomizationFrame
         frame.setResizable(false);
         frame.setClosable(true);
         frame.setMaximizable(false);
+        
+        tabLiveStream  = new CustomizationTabLiveStream(frame);
 
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener()
@@ -66,11 +68,13 @@ class CustomizationFrame
 
         // Initialize tabs
         tabAppearance.initializeContent();
+        tabLiveStream.initializeContent();
         tabSpecial.initializeContent();
         
         // Create single tabs
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Appearance", tabAppearance);
+        tabbedPane.addTab("LiveStream", tabLiveStream);
         tabbedPane.addTab("Special", tabSpecial);
 
         JPanel contentPane = new JPanel(new BorderLayout());
@@ -84,6 +88,7 @@ class CustomizationFrame
     {
         tabAppearance.storeContent();
         tabSpecial.storeContent();
+        tabLiveStream.storeContent();
         ConfigurationSettings.setProperty(StandardProperty.PROPERTY_IS_CONFIGURED, true);
 
     }

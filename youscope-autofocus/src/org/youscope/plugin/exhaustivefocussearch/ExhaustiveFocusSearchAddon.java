@@ -4,10 +4,10 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.focussearch.FocusSearchOracle;
 import org.youscope.addon.focussearch.FocusSearchResource;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * Implementation of an exhaustive search focus search algorithm.

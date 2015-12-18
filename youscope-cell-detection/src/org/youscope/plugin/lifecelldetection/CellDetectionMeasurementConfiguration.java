@@ -5,7 +5,7 @@ package org.youscope.plugin.lifecelldetection;
 
 import org.youscope.addon.celldetection.CellDetectionConfiguration;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -27,7 +27,7 @@ public class CellDetectionMeasurementConfiguration extends MeasurementConfigurat
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::ContinuousLifeCellDetectionMeasurement";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.ContinuousLifeCellDetectionMeasurement";
 
 	/**
 	 * The channel where the images should be made. Set to an empty string if

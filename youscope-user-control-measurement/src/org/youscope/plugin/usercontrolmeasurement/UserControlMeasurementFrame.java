@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImagePanel;

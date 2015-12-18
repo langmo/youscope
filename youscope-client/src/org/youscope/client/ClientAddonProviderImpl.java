@@ -23,9 +23,9 @@ import org.youscope.addon.tool.ToolAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.ClientAddonProvider;
-import org.youscope.common.Microplate;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.measurement.microplate.Microplate;
 
 class ClientAddonProviderImpl implements ClientAddonProvider
 {

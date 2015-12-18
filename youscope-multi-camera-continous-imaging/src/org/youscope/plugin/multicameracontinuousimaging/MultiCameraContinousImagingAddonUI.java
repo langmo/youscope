@@ -9,6 +9,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
+import org.youscope.addon.measurement.pages.GeneralSettingsPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
@@ -36,7 +37,7 @@ class MultiCameraContinousImagingAddonUI extends MeasurementAddonUIAdapter<Multi
 				"One can select the channel, the exposure time and the imaging period. Instead of choosing an imaging period, one can also choose to \"bulk image\", which means to image as fast as possible.";
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/multicameracontinuousimaging/images/continous-imaging.jpg", "Multi-Camera Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage<MultiCameraContinousImagingConfiguration>(client, MultiCameraContinousImagingConfiguration.class));
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingDefinitionPage(client, server));
 	}

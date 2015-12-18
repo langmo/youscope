@@ -6,6 +6,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.youscope.common.MeasurementContext;
+
 /**
  * A simple implementation of a measurement context. This implementation can be used to initialize and call measurement components
  * without the need to construct an actual measurement, e.g. during a configuration of a component to show the expected outcome given the current configuration.

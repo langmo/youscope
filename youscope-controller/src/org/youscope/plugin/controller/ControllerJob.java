@@ -5,9 +5,9 @@ package org.youscope.plugin.controller;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobContainer;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.JobContainer;
 import org.youscope.common.table.TableConsumer;
 import org.youscope.common.table.TableProducer;
 

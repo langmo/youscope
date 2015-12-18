@@ -5,8 +5,8 @@ package org.youscope.plugin.dropletmicrofluidics;
 
 import org.youscope.addon.callback.CallbackAddonFactory;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackCreationException;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

@@ -8,10 +8,10 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.job.basicjobs.ChangePositionJob;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.basicjobs.ChangePositionJob;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -41,6 +41,7 @@ public class ChangePositionJobAddonFactory extends ComponentAddonFactoryAdapter
 					job.setPosition(configuration.getX(), configuration.getY());
 				else
 					job.setRelativePosition(configuration.getX(), configuration.getY());
+				job.setStageDevice(configuration.getStageDevice());
 			}
 			catch(MeasurementRunningException e)
 			{

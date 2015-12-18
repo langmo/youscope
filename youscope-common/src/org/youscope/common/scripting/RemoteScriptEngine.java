@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 
 import javax.script.ScriptException;
 
-import org.youscope.common.measurement.callback.Callback;
+import org.youscope.common.callback.Callback;
 
 /**
  * @author langmo

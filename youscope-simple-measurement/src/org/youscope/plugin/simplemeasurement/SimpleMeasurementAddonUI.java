@@ -10,6 +10,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
+import org.youscope.addon.measurement.pages.GeneralSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -37,9 +38,9 @@ class SimpleMeasurementAddonUI extends MeasurementAddonUIAdapter<SimpleMeasureme
 				"To configure a simple measurement, the imaging protocol consisting of several subelements, called jobs, has to be defined, as well as the timing of the measurement (if more than one itertion through the protocol is intended).\n" +
 				"One job thereby corresponds to a single step of the imaging protocol, like taking a bright-field or a green fluorescence image.";
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/simplemeasurement/images/simpleMeasurement.jpg", "Simple Measurement");
-		addPage(new DescriptionPage(null, description, image, null));
+		addPage(new DescriptionPage(null, description, image, null)); 
 		
-		addPage(new GeneralSettingsPage(client, server));
+		addPage(new GeneralSettingsPage<SimpleMeasurementConfiguration>(client, SimpleMeasurementConfiguration.class));
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingProtocolPage(client, server));
 		addPage(new MiscPage(client, server));

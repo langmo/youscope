@@ -60,7 +60,7 @@ public class OpenBISAddonImpl extends UnicastRemoteObject implements OpenBISAddo
 	@Override
 	public String getAddonID() throws RemoteException
 	{
-		return "CSB_CISD::OpenBISUploader";
+		return "YouScope.OpenBISUploader";
 	}
 
 	@Override

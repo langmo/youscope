@@ -3,10 +3,10 @@
  */
 package org.youscope.plugin.fluigent;
 
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.TableConsumerConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -27,7 +27,7 @@ public class FluigentJobConfiguration extends JobConfiguration implements TableC
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::FluigentJob";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.FluigentJob";
 	
 	/**
 	 * Script engine name representing that the script to control the syringes is a simple time-table, for which an own interpreter is written.

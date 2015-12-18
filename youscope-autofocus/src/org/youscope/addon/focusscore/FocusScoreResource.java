@@ -5,9 +5,9 @@ package org.youscope.addon.focusscore;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.resource.Resource;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.resource.Resource;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * A cell focus score resource is a class supporting scoring the quality of the focal plane by an image taken in the plane.

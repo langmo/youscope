@@ -111,7 +111,7 @@ public final class CameraConfiguration  implements Configuration, Comparable<Cam
 	@Override
 	public String getTypeIdentifier() 
 	{
-		return "CSB::Camera";
+		return "YouScope.Camera";
 	}
 	@Override
 	public void checkConfiguration() throws ConfigurationException {

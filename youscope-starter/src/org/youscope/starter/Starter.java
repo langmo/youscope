@@ -19,10 +19,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -556,6 +558,22 @@ public class Starter extends JFrame
 				}
 				Thread.currentThread().setContextClassLoader(classLoader);
 				
+				// Extend java classpath
+				Properties prop = System.getProperties();
+		        String javaclasspath = prop.getProperty("java.class.path", "");
+		        for(URL url : necessaryJARs)
+		        {
+		        	try
+					{
+						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
+					}
+					catch(@SuppressWarnings("unused") URISyntaxException e)
+					{
+						// do nothing
+					}
+		        }
+		        prop.setProperty("java.class.path", javaclasspath);
+				
 				splashScreen.setProgress(20, "Connecting to microscope...");
 				try
 				{
@@ -652,6 +670,22 @@ public class Starter extends JFrame
 					System.exit(1);
 				}
 				Thread.currentThread().setContextClassLoader(classLoader);
+				
+				// Extend java classpath
+				Properties prop = System.getProperties();
+		        String javaclasspath = prop.getProperty("java.class.path", "");
+		        for(URL url : necessaryJARs)
+		        {
+		        	try
+					{
+						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
+					}
+					catch(@SuppressWarnings("unused") URISyntaxException e)
+					{
+						// do nothing
+					}
+		        }
+		        prop.setProperty("java.class.path", javaclasspath);
 				
 				splashScreen.setProgress(30, "Initializing UI...");
 				try
@@ -758,6 +792,22 @@ public class Starter extends JFrame
 					System.exit(1);
 				}
 				Thread.currentThread().setContextClassLoader(classLoader);
+				
+				// Extend java classpath
+				Properties prop = System.getProperties();
+		        String javaclasspath = prop.getProperty("java.class.path", "");
+		        for(URL url : necessaryJARs)
+		        {
+		        	try
+					{
+						javaclasspath += ";" + new File(url.toURI()).getAbsolutePath();
+					}
+					catch(@SuppressWarnings("unused") URISyntaxException e)
+					{
+						// do nothing
+					}
+		        }
+		        prop.setProperty("java.class.path", javaclasspath);
 				
 				// Start server
 				splashScreen.setProgress(20, "Connecting to microscope...");

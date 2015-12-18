@@ -4,10 +4,10 @@
 package org.youscope.plugin.quickdetect;
 
 import org.youscope.addon.celldetection.CellDetectionConfiguration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigDescription;
-import org.youscope.common.configuration.annotations.YSConfigNotVisible;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigDescription;
+import org.youscope.common.configuration.YSConfigNotVisible;
 import org.youscope.common.table.TableDefinition;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -147,7 +147,7 @@ public class QuickDetectConfiguration extends CellDetectionConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::QuickDetect";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.QuickDetect";
 	
 	@Override
 	public String getTypeIdentifier()

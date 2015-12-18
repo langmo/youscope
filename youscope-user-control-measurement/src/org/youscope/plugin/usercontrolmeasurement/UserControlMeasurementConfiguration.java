@@ -5,7 +5,7 @@ package org.youscope.plugin.usercontrolmeasurement;
 
 import java.io.Serializable;
 
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -27,7 +27,7 @@ public class UserControlMeasurementConfiguration extends MeasurementConfiguratio
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String								TYPE_IDENTIFIER		= "CSB::UserControlMeasurement";
+	public static final String								TYPE_IDENTIFIER		= "YouScope.UserControlMeasurement";
 
 	@Override
 	public String getTypeIdentifier()

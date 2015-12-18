@@ -36,7 +36,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
 	
 	private final JCheckBox trackCellsField = new JCheckBox("Track cells.");
 	
-	private static final String PROPERTY_LAST_CELLX_CONFIGFILE = "CSB::CellX::ConfigFile";
+	private static final String PROPERTY_LAST_CELLX_CONFIGFILE = "YouScope.CellX.ConfigFile";
     
     /**
 	 * Constructor.

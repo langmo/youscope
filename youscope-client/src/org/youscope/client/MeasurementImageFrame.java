@@ -8,10 +8,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
-import org.youscope.common.measurement.ImageProducer;
-import org.youscope.common.measurement.PositionInformation;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.image.ImageProducer;
 import org.youscope.uielements.ImagePanel;
 
 /**

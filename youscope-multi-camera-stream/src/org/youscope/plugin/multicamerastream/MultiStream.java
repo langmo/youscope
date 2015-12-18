@@ -47,7 +47,7 @@ class MultiStream extends ToolAddonUIAdapter
 		super(getMetadata(), client, server);
 	}
 	
-	public final static String TYPE_IDENTIFIER = "CSB::YouScopeMultiStream";
+	public final static String TYPE_IDENTIFIER = "YouScope.YouScopeMultiStream";
 	
 	static ToolMetadata getMetadata()
 	{

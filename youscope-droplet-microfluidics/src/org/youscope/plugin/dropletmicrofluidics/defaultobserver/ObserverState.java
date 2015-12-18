@@ -2,8 +2,8 @@ package org.youscope.plugin.dropletmicrofluidics.defaultobserver;
 
 import java.io.Serializable;
 
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * State of the observer.

@@ -29,7 +29,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.TextTools;
 import org.youscope.uielements.DoubleTextField;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImageLoadingTools;

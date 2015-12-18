@@ -5,7 +5,7 @@ package org.youscope.plugin.simplefocusscores;
 
 import org.youscope.addon.focusscore.FocusScoreConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigAlias;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -40,7 +40,7 @@ public class VarianceFocusScoreConfiguration extends FocusScoreConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::VarianceFocusScore";
+	public static final String	CONFIGURATION_ID	= "YouScope.VarianceFocusScore";
 	
 	@Override
 	public String getTypeIdentifier()

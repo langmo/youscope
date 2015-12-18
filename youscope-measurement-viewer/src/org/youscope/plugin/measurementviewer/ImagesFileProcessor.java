@@ -16,10 +16,13 @@ import java.util.Map.Entry;
  */
 class ImagesFileProcessor
 {
+	private static final String SEPARATOR = ":\n \t\n\t:";
+	
 	public static ImageFolderNode processImagesFile(File imagesFile) throws Exception
 	{
 		// Hashmap to store the image data in while parsing the CSV file.
 		final HashMap<String,ImageList> imageFolders = new HashMap<String,ImageList>();
+		
 		
 		// Open the CSV file
 		LineNumberReader lineReader = null;
@@ -68,7 +71,7 @@ class ImagesFileProcessor
 		            }
 		            
 		            // Get the map entry for the given well, position and jobID. If it does not exist, yet, create it.
-		            String imageFolderID = tokens[4] + "-" + tokens[5] + "-" + tokens[7];
+		            String imageFolderID = tokens[4]+SEPARATOR+ tokens[5]+SEPARATOR+ tokens[7];
 		            ImageList imageFolder = imageFolders.get(imageFolderID);
 		            if(imageFolder == null)
 		            {
@@ -89,8 +92,8 @@ class ImagesFileProcessor
 			ImageFolderNode rootNode = new ImageFolderNode(null, "", ImageFolderNode.ImageFolderType.ROOT);
 			for(Entry<String, ImageList> imageFolder : imageFolders.entrySet())
 			{
-				String[] tokens = imageFolder.getKey().split("-");
-				rootNode.insertChild(tokens, imageFolder.getValue());
+				String[] keys = imageFolder.getKey().split(SEPARATOR);
+				rootNode.insertChild(keys, imageFolder.getValue());
 			}
 			
 			// Return result.

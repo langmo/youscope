@@ -9,11 +9,11 @@ import org.youscope.addon.focusscore.FocusScoreConfiguration;
 import org.youscope.addon.focussearch.FocusSearchConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.ImageProducerConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -34,7 +34,7 @@ public class AutoFocusJobConfiguration extends JobConfiguration implements Image
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::AutoFocusJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.AutoFocusJob";
 
 	/**
 	 * The jobs which should be run when the autofocus job has adjusted the focus.

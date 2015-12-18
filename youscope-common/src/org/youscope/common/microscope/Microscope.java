@@ -7,8 +7,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import org.youscope.common.MessageListener;
-import org.youscope.common.tools.RMIReader;
-import org.youscope.common.tools.RMIWriter;
+import org.youscope.common.util.RMIReader;
+import org.youscope.common.util.RMIWriter;
 
 /**
  * This interface represents the microscope and allows access to its devices, its configuration and

@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.Well;
+import org.youscope.common.measurement.microplate.Well;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.LiveStreamPanel;
@@ -179,7 +179,6 @@ public class PositionFineConfigurationFrame
 
 		// Main panel
 		liveStreamPanel = new LiveStreamPanel(client, server);
-		liveStreamPanel.setAutoStartStream(true);
 		frame.addFrameListener(liveStreamPanel.getFrameListener());
 		
 		// Well chooser popup

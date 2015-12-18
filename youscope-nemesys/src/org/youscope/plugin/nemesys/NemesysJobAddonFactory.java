@@ -8,9 +8,9 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
 import org.youscope.plugin.nemesys.NemesysJob;
 import org.youscope.plugin.nemesys.NemesysJobConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
@@ -38,7 +38,7 @@ public class NemesysJobAddonFactory extends ComponentAddonFactoryAdapter
 				job.setNemesysDeviceName(configuration.getNemesysDevice());
 				if(configuration.getTableSaveName() != null)
 				{
-					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableDataListener(configuration.getTableSaveName()));
+					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getTableSaveName()));
 				}
 				return job;
 				

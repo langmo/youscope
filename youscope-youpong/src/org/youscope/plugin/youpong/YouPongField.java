@@ -17,13 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.microscope.FloatProperty;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

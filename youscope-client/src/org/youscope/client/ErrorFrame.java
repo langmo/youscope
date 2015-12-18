@@ -4,7 +4,6 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -111,7 +110,6 @@ class ErrorFrame
 		nextButton.setEnabled(false);
 
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonsPanel.setBackground(Color.WHITE);
 		buttonsPanel.add(previousButton);
 		buttonsPanel.add(nextButton);
 		buttonsPanel.add(closeButton);
@@ -125,7 +123,6 @@ class ErrorFrame
 		errorField.add(new JLabel("<html><p>Scan to sent error report!</p>", SwingConstants.CENTER), BorderLayout.SOUTH);
 		
 		JPanel contentPane = new JPanel(new BorderLayout());
-		contentPane.setBackground(Color.WHITE);
 		contentPane.add(new JLabel("<html><h1>Error occured</h1>", SwingConstants.CENTER), BorderLayout.NORTH);
 		contentPane.add(buttonsPanel, BorderLayout.SOUTH);
 		contentPane.add(errorField, BorderLayout.WEST);
@@ -340,7 +337,7 @@ class ErrorFrame
 				error = content.get(currentErrorID);
 		}
 		
-		String text = "<html><body>";
+		String text = "<html>";
 		if(error == null)
 		{
 			text += "<p>No more errors.</p>";
@@ -354,23 +351,22 @@ class ErrorFrame
 			}
 			if(error.exception != null)
 			{
-				text += "<p style=\"margin-left:15pt;margin-top:0pt;font-family:monospace\">Details:";
+				text += "<p style=\"margin-top:0pt;color:#666666;font-family:monospace\">Details:</p>";
 				Throwable throwable = error.exception;
 				for(; throwable != null; throwable = throwable.getCause())
 				{
 					if(throwable.getMessage() != null)
 					{
-						text += "<br /><span style=\"color:#666666\">" + throwable.getClass().getSimpleName() + ": " + throwable.getMessage().replace("\n", "<br />") + "</span>";
+						text += "<p style=\"margin-left:15pt;margin-top:0pt;color:#666666;font-family:monospace\">" + throwable.getClass().getSimpleName() + ": " + throwable.getMessage().replace("\n", "<br />") + "</p>";
 					}
 					else
 					{
-						text += "<br /><span style=\"color:#666666\">" + throwable.getClass().getSimpleName() + ": No error descirption.</span>";
+						text += "<p style=\"margin-left:15pt;margin-top:0pt;color:#666666;font-family:monospace\">" + throwable.getClass().getSimpleName() + ": No error descirption.</p>";
 					}
 				}
-				text += "</p>";
 			}
 		}
-		text += "</body></html>";
+		text += "</html>";
 		setErrorText(text);
 		qrImageField.setError(error);
 	}

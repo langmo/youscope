@@ -5,9 +5,9 @@ package org.youscope.plugin.glowvisualizer;
 
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigDescription;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigDescription;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -48,7 +48,7 @@ public class GlowVisualizerConfiguration extends CellVisualizationConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::GlowVisualizer";
+	public static final String	CONFIGURATION_ID	= "YouScope.GlowVisualizer";
 	
 	@Override
 	public String getTypeIdentifier()

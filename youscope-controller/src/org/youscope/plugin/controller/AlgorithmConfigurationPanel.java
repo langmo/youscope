@@ -34,10 +34,10 @@ class AlgorithmConfigurationPanel extends JPanel
 	private final JButton templateButton = new JButton("Create from template"); 
 	private final YouScopeClient client;
 	private static final String MOZILLA_RHINO = "Oracle Nashorn";
-    private static final String MOZILLA_RHINO_STYLE = "CSB::ScriptStyle::JavaScript";
+    private static final String MOZILLA_RHINO_STYLE = "YouScope.ScriptStyle.JavaScript";
     private static final String MATLAB_SCRIPTING = "Matlab Scripting";
-    private static final String MATLAB_SCRIPTING_STYLE = "CSB::ScriptStyle::Matlab";
-    private static final String PROPERTY_LAST_FILE_ = "CSB::controller::lastFile";
+    private static final String MATLAB_SCRIPTING_STYLE = "YouScope.ScriptStyle.Matlab";
+    private static final String PROPERTY_LAST_FILE_ = "YouScope.controller.lastFile";
     
     private ColumnDefinition<?>[] inputColumns = null;
     private ColumnDefinition<?>[] outputColumns = null;
@@ -75,7 +75,7 @@ class AlgorithmConfigurationPanel extends JPanel
 		engineNamesField.setOpaque(false);
 		algorithmPanel.add(engineNamesField);
 		algorithmPanel.add(new JLabel("Controller algorithm:"));
-		controllerScript.setScriptStyleID("CSB::ScriptStyle::JavaScript");
+		controllerScript.setScriptStyleID("YouScope.ScriptStyle.JavaScript");
 		algorithmPanel.addFill(controllerScript);
 		
 		JPanel loadSavePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

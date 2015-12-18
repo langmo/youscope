@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.youscope.addon.ConfigurationManagement;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 class LastMeasurementManager
 {

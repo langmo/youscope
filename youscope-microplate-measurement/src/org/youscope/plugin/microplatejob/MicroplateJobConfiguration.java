@@ -6,8 +6,8 @@ package org.youscope.plugin.microplatejob;
 import java.util.Vector;
 
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -67,7 +67,7 @@ public class MicroplateJobConfiguration extends JobConfiguration implements JobC
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String								TYPE_IDENTIFIER		= "CSB::MicroPlateJob";
+	public static final String								TYPE_IDENTIFIER		= "YouScope.MicroPlateJob";
 
 	/**
 	 * Type of plate.

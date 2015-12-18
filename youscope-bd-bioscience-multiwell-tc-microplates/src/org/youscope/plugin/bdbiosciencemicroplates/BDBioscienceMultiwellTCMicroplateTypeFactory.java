@@ -4,7 +4,7 @@
 package org.youscope.plugin.bdbiosciencemicroplates;
 
 import org.youscope.addon.microplate.MicroplateAddonFactory;
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 
 /**
  * @author langmo

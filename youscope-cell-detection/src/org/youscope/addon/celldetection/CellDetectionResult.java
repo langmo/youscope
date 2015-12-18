@@ -5,7 +5,7 @@ package org.youscope.addon.celldetection;
 
 import java.io.Serializable;
 
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.common.table.Table;
 
 /**

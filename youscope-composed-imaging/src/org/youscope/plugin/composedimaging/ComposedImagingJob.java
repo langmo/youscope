@@ -6,9 +6,9 @@ package org.youscope.plugin.composedimaging;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.job.Job;
 
 
 /**

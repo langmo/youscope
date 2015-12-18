@@ -11,7 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import org.youscope.common.MessageListener;
-import org.youscope.common.tools.RMIReader;
+import org.youscope.common.util.RMIReader;
 
 import onix.ONIXDevice;
 
@@ -75,7 +75,7 @@ class OnixAddonImpl extends UnicastRemoteObject implements OnixAddon
 	@Override
 	public String getAddonID() throws RemoteException
 	{
-		return "CSB::OnixController";
+		return "YouScope.OnixController";
 	}
 
 	@Override

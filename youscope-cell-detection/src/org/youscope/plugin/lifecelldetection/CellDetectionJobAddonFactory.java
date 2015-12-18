@@ -13,12 +13,12 @@ import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.measurement.ImageProducer;
+import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.Job;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -99,7 +99,7 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 				
 				if(configuration.getCellTableSaveName() != null)
 				{
-					cellDetectionJob.addTableListener(constructionContext.getMeasurementSaver().getSaveTableDataListener(configuration.getCellTableSaveName()));
+					cellDetectionJob.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getCellTableSaveName()));
 				}
 				cellDetectionJob.addJob(detectionImageProducer);
 				

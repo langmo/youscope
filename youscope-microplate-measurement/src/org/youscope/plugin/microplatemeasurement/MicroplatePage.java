@@ -26,7 +26,7 @@ import javax.swing.border.TitledBorder;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.uielements.StandardFormats;
 
 /**
@@ -47,7 +47,7 @@ class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfigu
 
 	private JPanel									numberPanel					= new JPanel(new GridLayout(1, 2, 5, 5));
 
-	private JLabel									distanceLabel				= new JLabel("Distance wells horizontal/vertical (in μm):");
+	private JLabel									distanceLabel				= new JLabel("Distance wells horizontal/vertical (in um):");
 
 	private JPanel									distancePanel				= new JPanel(new GridLayout(1, 2, 5, 5));
 

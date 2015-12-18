@@ -12,7 +12,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
+import org.youscope.common.job.basicjobs.DeviceSettingJob;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DeviceSettingsPanel;
 import org.youscope.uielements.DynamicPanel;

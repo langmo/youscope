@@ -11,9 +11,9 @@ import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
-import org.youscope.common.Microplate;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.measurement.microplate.Microplate;
 
 /**
  * Provider with which YouScop client addons can be constructed.

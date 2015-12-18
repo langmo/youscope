@@ -9,8 +9,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import org.youscope.addon.microscopeaccess.CameraDeviceInternal;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 import org.youscope.common.microscope.MicroscopeException;
 
 import mmcorej.CMMCore;

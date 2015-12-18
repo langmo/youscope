@@ -5,8 +5,8 @@ package org.youscope.addon.focussearch;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.resource.Resource;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.Resource;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * A focus search algorithm addon is a class defining an algorithm to autofocus based on a given focus score.

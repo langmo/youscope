@@ -29,7 +29,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.Microplate;
+import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.StandardFormats;
@@ -51,7 +51,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 	{
 		super(getMetadata(), client, server);
 	}
-	public final static String TYPE_IDENTIFIER = "CSB::CustomMicroplates";
+	public final static String TYPE_IDENTIFIER = "YouScope.CustomMicroplates";
 	
 	static ToolMetadata getMetadata()
 	{

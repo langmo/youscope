@@ -6,13 +6,13 @@ import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.complex.ComplexUtils;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResource;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResult;
+import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.measurement.ExecutionInformation;
-import org.youscope.common.measurement.MeasurementContext;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.resource.ResourceAdapter;
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.resource.ResourceException;
 
 class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> implements DropletObserverResource
 {
@@ -80,7 +80,7 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 	}
 	private static String getStateIdentifier(int microfluidicChipID)
 	{
-		return DefaultObserverConfiguration.TYPE_IDENTIFIER+"::Observer"+Integer.toString(microfluidicChipID);
+		return DefaultObserverConfiguration.TYPE_IDENTIFIER+".Observer"+Integer.toString(microfluidicChipID);
 	}
 	private ObserverState loadState(MeasurementContext measurementContext) throws RemoteException
 	{

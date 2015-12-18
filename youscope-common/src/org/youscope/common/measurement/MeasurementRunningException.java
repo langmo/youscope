@@ -3,6 +3,8 @@
  */
 package org.youscope.common.measurement;
 
+import org.youscope.common.ComponentException;
+
 /**
  * Exception thrown if a measurement component should be changed while measurement is running.
  * 

@@ -4,10 +4,10 @@
 package org.youscope.plugin.devicejob;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.TableConsumerConfiguration;
-import org.youscope.common.measurement.job.basicjobs.DeviceSettingJob;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.DeviceSettingJob;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;

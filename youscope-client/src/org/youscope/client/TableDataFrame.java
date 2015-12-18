@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.measurement.PositionInformation;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableException;

@@ -118,7 +118,7 @@ public final class FocusConfiguration implements Configuration
 	@Override
 	public String getTypeIdentifier() 
 	{
-		return "CSB::Focus";
+		return "YouScope.Focus";
 	}
 
 	/**

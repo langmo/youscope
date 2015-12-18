@@ -117,7 +117,7 @@ public class MatlabScriptStyle implements ScriptStyle
 	@Override
 	public String getScriptStyleID()
 	{
-		return "CSB::ScriptStyle::Matlab";
+		return "YouScope.ScriptStyle.Matlab";
 	}
 
 	@Override

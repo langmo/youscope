@@ -9,15 +9,17 @@ import java.rmi.server.UnicastRemoteObject;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.common.ImageListener;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.callback.CallbackProvider;
-import org.youscope.common.measurement.job.basicjobs.ContinuousImagingJob;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.saving.SaveSettings;
+import org.youscope.common.saving.SaveSettingsConfiguration;
+import org.youscope.common.task.MeasurementTask;
 import org.youscope.serverinterfaces.MeasurementProvider;
 
 /**
@@ -60,10 +62,19 @@ class MeasurementFactoryImpl extends UnicastRemoteObject implements MeasurementP
 	{
 		// Initialize measurement
 		Measurement measurement = createMeasurement(configuration.getMeasurementRuntime());
+		ConstructionContextImpl constructionContext = new ConstructionContextImpl(measurement.getSaver(), callbackProvider);
 		try
 		{
 			measurement.getSaver().setConfiguration(configuration);
-			measurement.getSaver().setSaveSettings(configuration.getSaveSettings());
+			SaveSettings saveSettings;
+			SaveSettingsConfiguration saveSettingsConfiguration = configuration.getSaveSettings();
+			if(saveSettingsConfiguration != null)
+			{
+				saveSettings = constructionContext.getComponentProvider().createComponent(new PositionInformation(), saveSettingsConfiguration, SaveSettings.class);
+			}
+			else
+				saveSettings = null;
+			measurement.getSaver().setSaveSettings(saveSettings);
 			measurement.setName(configuration.getName());
 			measurement.setTypeIdentifier(configuration.getTypeIdentifier());
 
@@ -78,7 +89,7 @@ class MeasurementFactoryImpl extends UnicastRemoteObject implements MeasurementP
 
 		// Initialize the tasks of this measurement
 		
-		initializeMeasurement(measurement, configuration, callbackProvider);
+		initializeMeasurement(measurement, configuration, constructionContext);
 
 		return measurement;
 	}
@@ -87,7 +98,7 @@ class MeasurementFactoryImpl extends UnicastRemoteObject implements MeasurementP
 	public Measurement createContinuousMeasurement(String cameraID, String configGroup, String channel, int imagingPeriod, double exposure, ImageListener imageListener) throws RemoteException, ComponentCreationException
 	{
 		Measurement measurement = createMeasurement();
-		ConstructionContextImpl initializer = new ConstructionContextImpl(measurement.getSaver(), null, measurement.getUUID());
+		ConstructionContextImpl initializer = new ConstructionContextImpl(measurement.getSaver(), null);
 		try
 		{
 			measurement.setName("Continuous Imaging");
@@ -123,14 +134,13 @@ class MeasurementFactoryImpl extends UnicastRemoteObject implements MeasurementP
 		return measurement;
 	}
 	
-	private void initializeMeasurement(Measurement measurement, MeasurementConfiguration measurementConfiguration, CallbackProvider callbackProvider)
+	private void initializeMeasurement(Measurement measurement, MeasurementConfiguration measurementConfiguration, ConstructionContextImpl constructionContext)
             throws ConfigurationException, RemoteException, ComponentCreationException
     {
         MeasurementAddonFactory addon =
                 ServerSystem.getMeasurementAddonFactory(measurementConfiguration.getTypeIdentifier());
         if (addon == null)
             throw new ComponentCreationException("Type of measurement configuration (" + measurementConfiguration.getTypeIdentifier() + ") unknown.");
-        ConstructionContextImpl constructionContext = new ConstructionContextImpl(measurement.getSaver(), callbackProvider, measurement.getUUID());
         try {
 			addon.initializeMeasurement(measurement, measurementConfiguration, constructionContext);
 		} catch (AddonException e) {

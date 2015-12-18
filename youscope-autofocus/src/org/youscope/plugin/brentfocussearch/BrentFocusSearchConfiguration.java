@@ -5,9 +5,9 @@ package org.youscope.plugin.brentfocussearch;
 
 import org.youscope.addon.focussearch.FocusSearchConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigDoubleRange;
-import org.youscope.common.configuration.annotations.YSConfigIntegerRange;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigDoubleRange;
+import org.youscope.common.configuration.YSConfigIntegerRange;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -56,7 +56,7 @@ public class BrentFocusSearchConfiguration extends FocusSearchConfiguration
 	/**
 	 * The identifier for this configuration.
 	 */
-	public static final String	CONFIGURATION_ID	= "CSB::BrentFocusSearch";
+	public static final String	CONFIGURATION_ID	= "YouScope.BrentFocusSearch";
 	
 	@Override
 	public String getTypeIdentifier()

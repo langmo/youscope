@@ -20,7 +20,7 @@ import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.TextTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

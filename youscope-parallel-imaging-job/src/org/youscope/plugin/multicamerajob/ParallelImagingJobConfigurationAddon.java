@@ -26,7 +26,7 @@ import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.job.basicjobs.ImagingJob;
+import org.youscope.common.job.basicjobs.ImagingJob;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceType;

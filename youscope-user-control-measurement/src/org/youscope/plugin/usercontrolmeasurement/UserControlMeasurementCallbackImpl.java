@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.measurement.callback.CallbackException;
+import org.youscope.common.callback.CallbackException;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**

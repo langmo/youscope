@@ -29,11 +29,11 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.measurement.PositionInformation;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.table.ColumnDefinition;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableProducer;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.util.TextTools;
 import org.youscope.uielements.StandardFormats;
 
 /**

@@ -59,7 +59,7 @@ public final class ChannelConfiguration implements Configuration, Comparable<Cha
 	@Override
 	public String getTypeIdentifier() 
 	{
-		return "CSB::Channel";
+		return "YouScope.Channel";
 	}
 
 	/**

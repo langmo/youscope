@@ -6,8 +6,8 @@ package org.youscope.plugin.composedimaging;
 import java.awt.Dimension;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.PeriodConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.task.PeriodConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -30,7 +30,7 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::ComposedImagingMeasurement";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.ComposedImagingMeasurement";
 
 	/**
 	 * The channel where the images should be made. Set to an empty string if

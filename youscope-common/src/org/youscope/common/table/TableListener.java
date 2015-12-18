@@ -7,7 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.EventListener;
 
-import org.youscope.common.measurement.job.Job;
+import org.youscope.common.job.Job;
 
 /**
  * Listener which can be registered at a table producing measurement component to get informed when new table data was produced.

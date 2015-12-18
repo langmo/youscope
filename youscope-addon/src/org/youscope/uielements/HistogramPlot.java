@@ -99,6 +99,8 @@ public class HistogramPlot extends JPanel
 				// When resizing, don't change the cuttoffs.
 				dividerActualizing = true;
 				int thisWidth = HistogramPlot.this.getWidth();
+				if(thisWidth <= 0 || thisWidth == lastWidth)
+					return;
 				if(lastWidth > 0)
 				{
 					double[] minMax = getMinMaxInternal();
@@ -239,6 +241,8 @@ public class HistogramPlot extends JPanel
 	 */
 	public void setMinMax(double min, double max)
 	{
+		if(min >= 1 || min < 0 || max > 1 || max <= 0 || min>=max)
+			return;
 		setMinMaxInternal(min, max);
 		
 		actualizeDividerLocations();

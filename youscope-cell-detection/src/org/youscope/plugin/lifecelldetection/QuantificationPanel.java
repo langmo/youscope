@@ -2,7 +2,7 @@ package org.youscope.plugin.lifecelldetection;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.ImageProducerConfiguration;
+import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.JobsDefinitionPanel;

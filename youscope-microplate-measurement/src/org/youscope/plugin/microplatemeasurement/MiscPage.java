@@ -1,7 +1,6 @@
 package org.youscope.plugin.microplatemeasurement;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -11,7 +10,6 @@ import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -20,7 +18,7 @@ import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.StandardFormats;
+import org.youscope.uielements.DynamicPanel;
 
 class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
 {
@@ -32,11 +30,12 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 
 	private final YouScopeClient	client;
 
-	private JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics (slower).");
-	private JLabel							statisticsFileFieldLabel		= new JLabel("Statistics file name (without extension):");
-	private JTextField						statisticsFileField				= new JTextField("statistics");
+	private final JCheckBox 							allowEditsField = new JCheckBox("Allow measurement to be edited while running.");
+	private final JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics about job runtimes.");
+	private final JLabel							statisticsFileFieldLabel		= new JLabel("Statistics file name (without extension):");
+	private final JTextField						statisticsFileField				= new JTextField("statistics");
 	
-	private JComboBox<ComparableOptimizer>						pathOptimizerField	= new JComboBox<ComparableOptimizer>();
+	private final JComboBox<ComparableOptimizer>						pathOptimizerField	= new JComboBox<ComparableOptimizer>();
 
 	/**
 	 * Constructor.
@@ -65,6 +64,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 			statisticsFileField.setVisible(true);
 			statisticsFileField.setText(statisticsFileName);			
 		}
+		allowEditsField.setSelected(configuration.isAllowEditsWhileRunning());
 		
 		loadPathOptimizers(configuration);
 	}
@@ -149,7 +149,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		{
 			configuration.setStatisticsFileName(null);
 		}
-		
+		configuration.setAllowEditsWhileRunning(allowEditsField.isSelected());
 		configuration.setPathOptimizerID(((ComparableOptimizer)pathOptimizerField.getSelectedItem()).getOptimizerID());
 		return true;
 	}
@@ -163,22 +163,19 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	@Override
 	public String getPageName()
 	{
-		return "Miscellaneous";
+		return "Misc";
 	}
 
 	@Override
 	public void createUI(YouScopeFrame frame)
 	{
-		GridBagLayout layout = new GridBagLayout();
-		setLayout(layout);
-
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
+		setLayout(new BorderLayout());
 		
-		// Panel to store statistics
-		StandardFormats.addGridBagElement(storeStatisticsField, layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(statisticsFileFieldLabel, layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(statisticsFileField, layout, newLineConstr, this);
+		DynamicPanel mainPanel = new DynamicPanel();
+		mainPanel.add(allowEditsField);
+		mainPanel.add(storeStatisticsField);
+		mainPanel.add(statisticsFileFieldLabel);
+		mainPanel.add(statisticsFileField);
 		storeStatisticsField.addActionListener(new ActionListener()
 		{
 			@Override
@@ -191,10 +188,11 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		});
 		
 		// Path optimizer
-		StandardFormats.addGridBagElement(new JLabel("Path:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(pathOptimizerField, layout, newLineConstr, this);
+		mainPanel.add(new JLabel("Path:"));
+		mainPanel.add(pathOptimizerField);
 		
-		StandardFormats.addGridBagElement(new JPanel(), layout, bottomConstr, this);
+		mainPanel.addFillEmpty();
+		add(mainPanel, BorderLayout.CENTER);
 		setBorder(new TitledBorder("Miscellaneous"));
 	}
 	

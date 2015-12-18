@@ -3,7 +3,7 @@ package org.youscope.addon.focussearch;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.youscope.common.measurement.resource.ResourceException;
+import org.youscope.common.resource.ResourceException;
 
 /**
  * Oracle for a focus score algorithm to get the focus score for a given focal plane.

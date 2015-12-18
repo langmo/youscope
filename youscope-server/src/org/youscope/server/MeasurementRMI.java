@@ -10,14 +10,14 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.youscope.common.MessageListener;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.MeasurementSaver;
 import org.youscope.common.measurement.MeasurementState;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.task.MeasurementTask;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.saving.MeasurementSaver;
+import org.youscope.common.task.MeasurementTask;
 
 /**
  * @author Moritz Lang

@@ -3,6 +3,8 @@
  */
 package org.youscope.common.measurement;
 
+import org.youscope.common.ComponentException;
+
 /**
  * Exception thrown by a measurement to indicate that its initialization, execution or deinitialization failed.
  * @author Moritz Lang

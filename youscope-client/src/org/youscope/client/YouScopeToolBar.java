@@ -25,8 +25,8 @@ import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.tools.TextTools;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.util.TextTools;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
@@ -256,14 +256,14 @@ class YouScopeToolBar extends JToolBar
 		try
 		{
 			PrintStream fileStream = new PrintStream(configFile);
-			fileStream.println("CSB::YouScopeLiveStream");
-			fileStream.println("CSB::YouScopePositionControl");
+			fileStream.println("YouScope.YouScopeLiveStream");
+			fileStream.println("YouScope.YouScopePositionControl");
 			fileStream.println();
-			fileStream.println("CSB::DeviceSettingManager");
-			fileStream.println("CSB::YouScopeMeasurementViewer::1.0");
+			fileStream.println("YouScope.DeviceSettingManager");
+			fileStream.println("YouScope.YouScopeMeasurementViewer");
 			fileStream.println();
-			fileStream.println("CSB::SimpleMeasurement");
-			fileStream.println("CSB::MicroPlateMeasurement");
+			fileStream.println("YouScope.SimpleMeasurement");
+			fileStream.println("YouScope.MicroPlateMeasurement");
 			fileStream.println();
 			fileStream.close();
 		}

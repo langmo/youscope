@@ -30,7 +30,7 @@ import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.MessageListener;
-import org.youscope.common.tools.RMIReader;
+import org.youscope.common.util.RMIReader;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DoubleTextField;
 import org.youscope.uielements.ImageLoadingTools;
@@ -69,7 +69,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 	private final JTextField xPressureField = new JTextField("0.25");
 	private final JTextField yPressureField = new JTextField("0.25");
 	
-	final static String PROPERTY_PROTOCOL = "CSB::Onix::LastProtocol";
+	final static String PROPERTY_PROTOCOL = "YouScope.Onix.LastProtocol";
 	
 	private final JButton switchButton = new JButton("Switch");
 	
@@ -99,7 +99,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 	private final JButton pwmyStartField = new JButton("Start");
 	private final JButton pwmyStopField = new JButton("Stop");
 	
-	public final static String TYPE_IDENTIFIER = "CSB::OnixController";
+	public final static String TYPE_IDENTIFIER = "YouScope.OnixController";
 	
 	static ToolMetadata getMetadata()
 	{
@@ -733,7 +733,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 		GridBagLayout protocolLayout = new GridBagLayout();
         JPanel protocolPanel = new JPanel(protocolLayout);
         protocolPanel.setOpaque(false);
-        protocolArea.setScriptStyleID("CSB::ScriptStyle::Onix");
+        protocolArea.setScriptStyleID("YouScope.ScriptStyle.Onix");
         protocolArea.setText("% Cell loading \n"
         		+ "close all\n"
         		+ "setflow Y 8\n"

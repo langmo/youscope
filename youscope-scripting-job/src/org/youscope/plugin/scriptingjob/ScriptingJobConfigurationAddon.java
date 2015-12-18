@@ -31,7 +31,7 @@ import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.job.basicjobs.ScriptingJob;
+import org.youscope.common.job.basicjobs.ScriptingJob;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.JobsDefinitionPanel;
 import org.youscope.uielements.StandardFormats;

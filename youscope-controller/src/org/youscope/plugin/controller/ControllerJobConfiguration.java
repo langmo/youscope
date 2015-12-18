@@ -4,11 +4,11 @@
 package org.youscope.plugin.controller;
 
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.TableConsumerConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.table.ColumnDefinition;
+import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
+import org.youscope.common.table.TableProducerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -29,7 +29,7 @@ public class ControllerJobConfiguration extends JobConfiguration  implements Tab
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String	TYPE_IDENTIFIER		= "CSB::ControllerJob";
+	public static final String	TYPE_IDENTIFIER		= "YouScope.ControllerJob";
 	
 	@XStreamAlias("input-job")
 	private JobConfiguration inputJob = null;

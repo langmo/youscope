@@ -24,7 +24,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.StandardFormats;
 
@@ -34,7 +34,7 @@ import org.youscope.uielements.StandardFormats;
  */
 class OpenBISUploader extends ToolAddonUIAdapter
 {
-	public static final String TYPE_IDENTIFIER = "CSB::OpenBISUploader::1.0";
+	public static final String TYPE_IDENTIFIER = "YouScope.OpenBISUploader";
 	
 	private final String measurementFolder;
 	
@@ -48,8 +48,8 @@ class OpenBISUploader extends ToolAddonUIAdapter
 	private final static GridBagConstraints newLineCnstr = StandardFormats.getNewLineConstraint();
 	private final TransferSettings settings = new TransferSettings();
 	
-	public static final String OPEN_BIS_USER_PROPERTY = "CSB_CISD::OpenBIS::OpenBISUserID";
-	public static final String OPEN_BIS_PROJECT_PROPERTY = "CSB_CISD::OpenBIS::OpenBISProjectID";
+	public static final String OPEN_BIS_USER_PROPERTY = "YouScope.OpenBIS.OpenBISUserID";
+	public static final String OPEN_BIS_PROJECT_PROPERTY = "YouScope.OpenBIS.OpenBISProjectID";
 	
 	static ToolMetadata getMetadata()
 	{

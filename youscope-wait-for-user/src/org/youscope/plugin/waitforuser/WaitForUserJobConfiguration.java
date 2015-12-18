@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.waitforuser;
 
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -59,7 +59,7 @@ public class WaitForUserJobConfiguration extends JobConfiguration
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::WaitForUserJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.WaitForUserJob";
 
 	@Override
 	public String getTypeIdentifier()

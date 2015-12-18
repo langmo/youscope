@@ -71,7 +71,7 @@
 					<equals arg1="${project}" arg2="matlab-scripting" />
 					<!-- isClientJar -->
 					<equals arg1="${project}" arg2="youscope-client" />
-					
+					<equals arg1="${project}" arg2="youscope-client-uielements" />
 					<!-- isServerJar -->
 					<equals arg1="${project}" arg2="youscope-server" />
 					

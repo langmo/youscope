@@ -4,11 +4,11 @@
 package org.youscope.plugin.focusingjob;
 
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.annotations.YSConfigAlias;
-import org.youscope.common.configuration.annotations.YSConfigClassification;
-import org.youscope.common.configuration.annotations.YSConfigIcon;
-import org.youscope.common.measurement.job.basicjobs.FocusingJob;
+import org.youscope.common.configuration.YSConfigAlias;
+import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigIcon;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.FocusingJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

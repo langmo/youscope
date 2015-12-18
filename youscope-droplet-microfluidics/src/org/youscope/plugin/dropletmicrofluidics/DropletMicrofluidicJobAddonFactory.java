@@ -13,10 +13,10 @@ import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResource;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.callback.CallbackCreationException;
 import org.youscope.plugin.autofocus.AutoFocusJob;
 import org.youscope.plugin.autofocus.AutoFocusJobConfiguration;
 import org.youscope.plugin.nemesys.NemesysJob;
@@ -61,7 +61,7 @@ public class DropletMicrofluidicJobAddonFactory extends ComponentAddonFactoryAda
 				
 				if(configuration.getDropletTableSaveName() != null)
 				{
-					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableDataListener(configuration.getDropletTableSaveName()));
+					job.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getDropletTableSaveName()));
 				}
 				
 				DropletMicrofluidicJobCallback callback;

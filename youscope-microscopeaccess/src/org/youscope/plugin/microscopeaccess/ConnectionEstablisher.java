@@ -65,7 +65,7 @@ class ConnectionEstablisher
 		// Get URL to microManager JAR file.
 		if(!jarFile.exists())
 		{
-			throw new MicroscopeConnectionException("The URL to the μManager plugin JAR file could not be found under " + jarFile + ".");
+			throw new MicroscopeConnectionException("The URL to the MicroManager JAR file could not be found under " + jarFile + ".");
 		}
 		URL jarURL;
 		try
@@ -74,7 +74,7 @@ class ConnectionEstablisher
 		}
 		catch(MalformedURLException e1)
 		{
-			throw new MicroscopeConnectionException("The URL to the μManager plugin JAR file (" + jarFile + ") is not valid.", e1);
+			throw new MicroscopeConnectionException("The URL to the MicroMicroManager JAR file (" + jarFile + ") is not valid.", e1);
 		}
 		
 		// Initialize class loader to load the microManager JAR file and connect it to YouScope.
@@ -123,9 +123,9 @@ class ConnectionEstablisher
 			if(e.getCause() instanceof NoClassDefFoundError)
 				throw new MicroscopeConnectionException("Could not find definition of a Micro-Manager class.\n\n" + getSystemConfiguration(driverFolder, jarFile), e.getCause());
 			else if(e.getCause() instanceof UnsatisfiedLinkError)
-				throw new MicroscopeConnectionException("Could not load native μManager libraries (μManager DLLs in Windows).\n\n" + getSystemConfiguration(driverFolder, jarFile), e.getCause());
+				throw new MicroscopeConnectionException("Could not load driver libraries (DLLs in Windows).\n\n" + getSystemConfiguration(driverFolder, jarFile), e.getCause());
 			else
-				throw new MicroscopeConnectionException("Connection failed due to internal error in μManager.\n\n" + getSystemConfiguration(driverFolder, jarFile), e.getCause());
+				throw new MicroscopeConnectionException("Connection failed due to internal error in driver connection.\n\n" + getSystemConfiguration(driverFolder, jarFile), e.getCause());
 		}
 		
 		// Debug log
@@ -139,7 +139,7 @@ class ConnectionEstablisher
 			}
 			catch(Exception e)
 			{
-				throw new MicroscopeConnectionException("Could not enable μManager debug log.", e);
+				throw new MicroscopeConnectionException("Could not enable MicroManager debug log.", e);
 			}
 		}
 		
@@ -157,7 +157,7 @@ class ConnectionEstablisher
 			}
 			catch(Exception e)
 			{
-				throw new MicroscopeConnectionException("μManager was loaded, but it was not possible to tell him where to search for the device libraries.", e);
+				throw new MicroscopeConnectionException("Error in searching for device libraries.", e);
 			}
 		}
 
@@ -174,7 +174,7 @@ class ConnectionEstablisher
 		}
 		catch(Exception e)
 		{
-			throw new MicroscopeConnectionException("μManager was loaded, but internal error occured while using its functions.", e);
+			throw new MicroscopeConnectionException("Device interface was loaded, but internal error occured while using its functions.", e);
 		}
 		
 		return microscope;

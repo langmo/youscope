@@ -4,19 +4,18 @@
 package org.youscope.server;
 
 import java.rmi.RemoteException;
-import java.util.UUID;
 
 import javax.script.ScriptEngineManager;
 
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
 import org.youscope.common.MessageListener;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.measurement.MeasurementSaveSettings;
-import org.youscope.common.measurement.MeasurementSaver;
-import org.youscope.common.measurement.callback.Callback;
-import org.youscope.common.measurement.callback.CallbackCreationException;
-import org.youscope.common.measurement.callback.CallbackProvider;
+import org.youscope.common.callback.Callback;
+import org.youscope.common.callback.CallbackCreationException;
+import org.youscope.common.callback.CallbackProvider;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.saving.MeasurementSaver;
+import org.youscope.common.saving.SaveSettings;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableListener;
 import org.youscope.serverinterfaces.ComponentProvider;
@@ -30,9 +29,8 @@ class ConstructionContextImpl implements ConstructionContext
 	private final ComponentProvider 				componentProvider;
 	private final MeasurementSaver				measurementSaver;
 	private final CallbackProvider	callbackProvider;
-	private final UUID measurementUUID;
 
-	public ConstructionContextImpl(MeasurementSaver measurementSaver, CallbackProvider callbackProvider, UUID measurementUUID) throws RemoteException
+	public ConstructionContextImpl(MeasurementSaver measurementSaver, CallbackProvider callbackProvider) throws RemoteException
 	{
 		this.componentProvider = new ComponentProviderImpl(this);
 		if(measurementSaver != null)
@@ -43,7 +41,6 @@ class ConstructionContextImpl implements ConstructionContext
 			this.callbackProvider = callbackProvider;
 		else
 			this.callbackProvider = getDummyMeasurementCallbackProvider();
-		this.measurementUUID = measurementUUID;
 	}
 
 	private static MeasurementSaver getDummyMeasurementSaver()
@@ -65,7 +62,7 @@ class ConstructionContextImpl implements ConstructionContext
 			}
 
 			@Override
-			public TableListener getSaveTableDataListener(String tableSaveName) throws RemoteException
+			public TableListener getSaveTableListener(String tableSaveName) throws RemoteException
 			{
 				return new TableListener()
 				{
@@ -78,13 +75,13 @@ class ConstructionContextImpl implements ConstructionContext
 			}
 
 			@Override
-			public void setSaveSettings(MeasurementSaveSettings saveSettings)
+			public void setSaveSettings(SaveSettings saveSettings)
 			{
 				// Do nothing (dummy).
 			}
 
 			@Override
-			public MeasurementSaveSettings getSaveSettings() throws RemoteException
+			public SaveSettings getSaveSettings() throws RemoteException
 			{
 				return null;
 			}
@@ -171,10 +168,5 @@ class ConstructionContextImpl implements ConstructionContext
 	@Override
 	public ComponentProvider getComponentProvider() {
 		return componentProvider;
-	}
-
-	@Override
-	public UUID getMeasurementUUID() {
-		return measurementUUID;
 	}
 }

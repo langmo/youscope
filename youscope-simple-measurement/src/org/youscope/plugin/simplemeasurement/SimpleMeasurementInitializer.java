@@ -8,19 +8,19 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.ComponentException;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.RegularPeriodConfiguration;
-import org.youscope.common.configuration.VaryingPeriodConfiguration;
-import org.youscope.common.measurement.ComponentException;
+import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.Job;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.PositionInformation;
-import org.youscope.common.measurement.job.EditableJobContainer;
-import org.youscope.common.measurement.job.Job;
-import org.youscope.common.measurement.job.basicjobs.CompositeJob;
-import org.youscope.common.measurement.job.basicjobs.StatisticsJob;
-import org.youscope.common.measurement.task.MeasurementTask;
+import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -102,7 +102,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 				try {
 					job = jobInitializer.getComponentProvider().createJob(positionInformation, StatisticsJob.DEFAULT_TYPE_IDENTIFIER, StatisticsJob.class);
 					job.setName("Job container/analyzer for simple measurement imaging protocol");
-					job.addTableListener(jobInitializer.getMeasurementSaver().getSaveTableDataListener(configuration.getStatisticsFileName()));
+					job.addTableListener(jobInitializer.getMeasurementSaver().getSaveTableListener(configuration.getStatisticsFileName()));
 					job.addMessageListener(jobInitializer.getLogger());
 					mainTask.addJob(job);
 				} 

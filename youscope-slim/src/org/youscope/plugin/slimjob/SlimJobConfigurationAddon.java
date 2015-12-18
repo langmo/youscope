@@ -34,7 +34,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.ImageEvent;
+import org.youscope.common.image.ImageEvent;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
@@ -89,7 +89,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 	private final IntegerTextField[] phaseShiftMaskFields = new IntegerTextField[SlimJobConfiguration.NUM_PHASE_SHIFT_MASK];
 	private final IntegerTextField reflectorDelayField = new IntegerTextField();
 	
-	private final static String LAST_SLIM_PATH_PROPERTY = "CSB::SLIM::lastPath";
+	private final static String LAST_SLIM_PATH_PROPERTY = "YouScope.SLIM.lastPath";
 
 	/**
 	 * Constructor.

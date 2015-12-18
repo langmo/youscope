@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.oscillatinginput;
 
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -23,7 +23,7 @@ public class OscillatingDeviceJobConfiguration extends JobConfiguration
 	/**
 	 * The identifier for this job type.
 	 */
-	public static final String	TYPE_IDENTIFIER	= "CSB::OscillatingDeviceJob";
+	public static final String	TYPE_IDENTIFIER	= "YouScope.OscillatingDeviceJob";
 	
 	@XStreamAlias("max-value")
 	@XStreamAsAttribute

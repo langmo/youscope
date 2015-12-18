@@ -3,8 +3,8 @@
  */
 package org.youscope.addon.celldetection;
 
-import org.youscope.common.configuration.ResourceConfiguration;
-import org.youscope.common.configuration.TableProducerConfiguration;
+import org.youscope.common.resource.ResourceConfiguration;
+import org.youscope.common.table.TableProducerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

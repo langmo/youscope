@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import org.youscope.addon.AddonException;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 
 /**
  * Abstract page class for the standard YouScope measurement configuration layout.

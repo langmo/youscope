@@ -24,7 +24,7 @@ import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.configuration.JobConfiguration;
+import org.youscope.common.job.JobConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -42,8 +42,8 @@ public class JobsDefinitionPanel extends JPanel
 
     private ComponentComboBox<JobConfiguration> newJobField = null;
     
-    private static final String DEFAULT_IMAGING_JOB_ID_SINGLE = "CSB::ImagingJob";
-    private static final String DEFAULT_IMAGING_JOB_ID_MULTI = "CSB::ParallelImagingJob";
+    private static final String DEFAULT_IMAGING_JOB_ID_SINGLE = "YouScope.ImagingJob";
+    private static final String DEFAULT_IMAGING_JOB_ID_MULTI = "YouScope.ParallelImagingJob";
     
     private final Vector<JobConfiguration> jobs = new Vector<JobConfiguration>();
     /**

@@ -75,7 +75,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
 		contentPane.add(waitCheckBox);
 		
 		contentPane.add(new JLabel("Onix Protocol"));
-		protocolArea.setScriptStyleID("CSB::ScriptStyle::Onix");
+		protocolArea.setScriptStyleID("YouScope.ScriptStyle.Onix");
 		protocolArea.setText(configuration.getOnixProtocol());
 		contentPane.addFill(new JScrollPane(protocolArea));
 		

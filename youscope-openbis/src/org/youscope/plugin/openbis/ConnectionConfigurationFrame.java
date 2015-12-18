@@ -30,9 +30,9 @@ class ConnectionConfigurationFrame
 	private final YouScopeFrame frame;
 	private final YouScopeClient client;
 	
-	public static final String SSH_USER_PROPERTY = "CSB_CISD::OpenBIS::SSHUser";
-	public static final String SSH_SERVER_PROPERTY = "CSB_CISD::OpenBIS::SSHServer";
-	public static final String SSH_PATH_PROPERTY = "CSB_CISD::OpenBIS::SSHPath";
+	public static final String SSH_USER_PROPERTY = "YouScope.OpenBIS.SSHUser";
+	public static final String SSH_SERVER_PROPERTY = "YouScope.OpenBIS.SSHServer";
+	public static final String SSH_PATH_PROPERTY = "YouScope.OpenBIS.SSHPath";
 	
 	private final JTextField sshUserField = new JTextField();
 	private final JTextField sshServerField = new JTextField();

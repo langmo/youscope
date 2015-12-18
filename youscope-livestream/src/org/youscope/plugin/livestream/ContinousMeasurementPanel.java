@@ -38,11 +38,11 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.ImageEvent;
-import org.youscope.common.ImageListener;
+import org.youscope.common.image.ImageEvent;
+import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.tools.ImageConvertException;
-import org.youscope.common.tools.ImageTools;
+import org.youscope.common.util.ImageConvertException;
+import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.MeasurementProvider;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
@@ -87,7 +87,7 @@ public class ContinousMeasurementPanel extends JPanel
 	
 	private final LowerPanel lowerPanel = new LowerPanel();
 	
-	private static final String LAST_IMAGE_FILE_PROPERTY = "CSB::LAST_IMAGE_FILE";
+	private static final String LAST_IMAGE_FILE_PROPERTY = "YouScope.LAST_IMAGE_FILE";
 	
     /**
      * Constructor.

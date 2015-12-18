@@ -755,7 +755,7 @@ class MicroscopeImpl implements MicroscopeInternal
 		}
 		catch(Exception e)
 		{
-			throw new UnsupportedOperationException("Manipulation of the installed device drivers is only supported for uManager versions 1.4 and higher. Please either install a new version of μManager and configure YouScope respectively, or edit the respective parts of the configuration file manually or by using the uManager UI.", e);
+			throw new UnsupportedOperationException("Manipulation of the installed device drivers is only supported for driver versions corresponding to MicroManager 1.4 and higher. Please either install a new version of uManager and configure YouScope respectively, or edit the respective parts of the configuration file manually or by using the uManager UI.", e);
 		}		
 		
 		return new DeviceLoaderImpl(this, driverFolder);

@@ -20,7 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.youscope.common.configuration.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceSetting;

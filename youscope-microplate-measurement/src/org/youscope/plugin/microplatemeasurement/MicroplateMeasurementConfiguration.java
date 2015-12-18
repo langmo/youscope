@@ -8,10 +8,10 @@ import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.configuration.JobConfiguration;
-import org.youscope.common.configuration.JobContainerConfiguration;
-import org.youscope.common.configuration.MeasurementConfiguration;
-import org.youscope.common.configuration.PeriodConfiguration;
+import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.task.PeriodConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -37,6 +37,9 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	@XStreamAlias("statistics-file")
 	private String statisticsFileName = "statistics";
 	
+	@XStreamAlias("allow-edits-while-running")
+	private boolean allowEditsWhileRunning = false;
+
 	@XStreamAlias("path-optimizer")
 	private String pathOptimizerID = null;
 	
@@ -50,7 +53,7 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	}
 
 	@Override
-	public void setJobs(JobConfiguration[] jobs)
+	public void setJobs(JobConfiguration[] jobs) 
 	{
 		this.jobs.clear();
 		for(JobConfiguration job:jobs)
@@ -70,11 +73,27 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	{
 		jobs.clear();
 	}
+	
+	/**
+	 * Returns true if measurement configuration can be edited while it is running.
+	 * @return True if measurement can be edited.
+	 */
+	public boolean isAllowEditsWhileRunning() {
+		return allowEditsWhileRunning;
+	}
+
+	/**
+	 * Set to true to allow the measurement to be edited while running.
+	 * @param allowEditsWhileRunning True if measurement should be changeable while running.
+	 */
+	public void setAllowEditsWhileRunning(boolean allowEditsWhileRunning) {
+		this.allowEditsWhileRunning = allowEditsWhileRunning;
+	}
 
 	/**
 	 * The identifier for this measurement type.
 	 */
-	public static final String								TYPE_IDENTIFIER		= "CSB::MicroPlateMeasurement";
+	public static final String								TYPE_IDENTIFIER		= "YouScope.MicroPlateMeasurement";
 
 	/**
 	 * Time maximal needed per well in microseconds. Set to "-1" for
