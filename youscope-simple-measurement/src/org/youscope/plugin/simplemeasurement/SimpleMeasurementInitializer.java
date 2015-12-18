@@ -21,6 +21,8 @@ import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.task.MeasurementTask;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.common.task.VaryingPeriodConfiguration;
+import org.youscope.plugin.livemodifiablejob.LiveModifiableJob;
+import org.youscope.plugin.livemodifiablejob.LiveModifiableJobConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -117,9 +119,31 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 					
 				jobContainer = job;
 			}
+			JobConfiguration[] jobConfigurations = configuration.getJobs();
+			if(configuration.isAllowEditsWhileRunning())
+			{
+				LiveModifiableJob modJob;
+				try {
+					modJob = jobInitializer.getComponentProvider().createJob(positionInformation, LiveModifiableJobConfiguration.TYPE_IDENTIFIER, LiveModifiableJob.class);
+					
+					JobConfiguration[] allConfigs = new JobConfiguration[jobConfigurations.length];
+					System.arraycopy(jobConfigurations, 0, allConfigs, 0, jobConfigurations.length);
+					try {
+						modJob.setChildJobConfigurations(allConfigs);
+					} catch (RemoteException | CloneNotSupportedException e) {
+						throw new AddonException("Could not initialize live modifications of jobs.", e);
+					}
+					
+					jobContainer.addJob(modJob);
+				} catch (RemoteException e) {
+					throw new AddonException("Could not create measurement due to remote exception.", e);
+				} catch (ComponentCreationException e) {
+					throw new AddonException("Microplate measurements need live-modifiable job plugin.",e);
+				}
+				jobContainer = modJob;
+			}
 			
 			// Add all jobs
-			JobConfiguration[] jobConfigurations = configuration.getJobs();
 			for(JobConfiguration jobConfiguration : jobConfigurations)
 			{
 				Job job;

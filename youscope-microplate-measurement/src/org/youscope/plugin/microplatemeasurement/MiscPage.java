@@ -30,7 +30,7 @@ class MiscPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 
 	private final YouScopeClient	client;
 
-	private final JCheckBox 							allowEditsField = new JCheckBox("Allow measurement to be edited while running.");
+	private final JCheckBox 							allowEditsField = new JCheckBox("Allow measurement to be edited while running (experimental).");
 	private final JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics about job runtimes.");
 	private final JLabel							statisticsFileFieldLabel		= new JLabel("Statistics file name (without extension):");
 	private final JTextField						statisticsFileField				= new JTextField("statistics");

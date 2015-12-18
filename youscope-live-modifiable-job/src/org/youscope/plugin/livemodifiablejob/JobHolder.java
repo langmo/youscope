@@ -30,7 +30,6 @@ class JobHolder
     @Override
     public String toString()
     {
-        String jobDescription = null;
         PositionInformation position;
         try
         {
@@ -45,20 +44,17 @@ class JobHolder
             return "unknown job";
         }
         Well well = position.getWell();
+        String jobDescription = "Jobs ";
         if(well != null)
-            jobDescription = "Well " + well.getWellName();
+            jobDescription += "well " + well.getWellName();
         for(int i=0; i<position.getNumPositions();i++)
         {
             String type = position.getPositionType(i);
             int pos = position.getPosition(i);
-            if(jobDescription == null)
-                jobDescription = "";
-            else
+            if(i>0 || well != null)
                 jobDescription +=", ";
             jobDescription += type +" "+Integer.toString(pos);
         }
-        if(jobDescription != null)
-            return jobDescription;
-		return "empty position information";
+        return jobDescription;
     }
 }

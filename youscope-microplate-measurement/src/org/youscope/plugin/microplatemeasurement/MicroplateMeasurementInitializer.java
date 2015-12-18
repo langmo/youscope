@@ -30,6 +30,7 @@ import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.plugin.changepositionjob.ChangePositionJobConfiguration;
 import org.youscope.plugin.focusingjob.FocusingJobConfiguration;
 import org.youscope.plugin.livemodifiablejob.LiveModifiableJob;
+import org.youscope.plugin.livemodifiablejob.LiveModifiableJobConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -268,9 +269,9 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					}
 					if(configuration.isAllowEditsWhileRunning())
 					{
-						Job modJob;
+						LiveModifiableJob modJob;
 						try {
-							modJob = jobInitializer.getComponentProvider().createJob(positionInformation, "YouScope.LiveModifiableJob");
+							modJob = jobInitializer.getComponentProvider().createJob(positionInformation, LiveModifiableJobConfiguration.TYPE_IDENTIFIER, LiveModifiableJob.class);
 							modJob.setName(locationString);
 							jobContainer.addJob(modJob);
 						} catch (RemoteException e) {
@@ -278,9 +279,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Microplate measurements need live-modifiable job plugin.",e);
 						}
-						if(!(modJob instanceof EditableJobContainer))
-							throw new AddonException("Live modifiable job does not implement editable job container.");
-						jobContainer = (EditableJobContainer) modJob;
+						jobContainer = modJob;
 					}
 					
 					// Set position to well

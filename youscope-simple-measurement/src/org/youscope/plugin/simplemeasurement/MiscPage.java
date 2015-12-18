@@ -25,6 +25,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 	 */
 	private static final long				serialVersionUID		= 885352612109223078L;
 
+	private final JCheckBox 							allowEditsField = new JCheckBox("Allow measurement to be edited while running (experimental).");
 	private JCheckBox 							storeStatisticsField = new JCheckBox("Gather statistics about job runtimes.");
 	private JLabel							statisticsFileFieldLabel		= new JLabel("Statistics file name (without extension):");
 	private JTextField						statisticsFileField				= new JTextField("statistics");
@@ -56,6 +57,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 			statisticsFileField.setVisible(true);
 			statisticsFileField.setText(statisticsFileName);			
 		}
+		allowEditsField.setSelected(configuration.isAllowEditsWhileRunning());
 	}
 
 	@Override
@@ -69,7 +71,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 		{
 			configuration.setStatisticsFileName(null);
 		}
-		
+		configuration.setAllowEditsWhileRunning(allowEditsField.isSelected());
 		return true;
 	}
 
@@ -95,6 +97,7 @@ class MiscPage extends MeasurementAddonUIPage<SimpleMeasurementConfiguration>
 		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
 		
 		// Panel to store statistics
+		StandardFormats.addGridBagElement(allowEditsField, layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(storeStatisticsField, layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(statisticsFileFieldLabel, layout, newLineConstr, this);
 		StandardFormats.addGridBagElement(statisticsFileField, layout, newLineConstr, this);

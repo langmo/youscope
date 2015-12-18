@@ -33,7 +33,10 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
 
 	@XStreamAlias("statistics-file")
-	private String statisticsFileName = null;
+	private String statisticsFileName =  "statistics";
+	
+	@XStreamAlias("allow-edits-while-running")
+	private boolean allowEditsWhileRunning = false;
 	
 	@Override
 	public JobConfiguration[] getJobs()
@@ -61,6 +64,22 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	public void clearJobs()
 	{
 		jobs.clear();
+	}
+	
+	/**
+	 * Returns true if measurement configuration can be edited while it is running.
+	 * @return True if measurement can be edited.
+	 */
+	public boolean isAllowEditsWhileRunning() {
+		return allowEditsWhileRunning;
+	}
+
+	/**
+	 * Set to true to allow the measurement to be edited while running.
+	 * @param allowEditsWhileRunning True if measurement should be changeable while running.
+	 */
+	public void setAllowEditsWhileRunning(boolean allowEditsWhileRunning) {
+		this.allowEditsWhileRunning = allowEditsWhileRunning;
 	}
 
 	/**
