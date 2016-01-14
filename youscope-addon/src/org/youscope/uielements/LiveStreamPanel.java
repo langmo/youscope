@@ -44,6 +44,7 @@ public class LiveStreamPanel extends ImagePanel {
 	
 	private final ChannelControl channelControl;
 	private final StartStopControl startStopControl;
+	private final Object measurementControlLock = new Object();
 	private volatile Measurement measurement = null;
 	private volatile ImageHandler imageHandler = null;
 	private volatile boolean streamRunning = false;
@@ -329,6 +330,7 @@ public class LiveStreamPanel extends ImagePanel {
 			if(cameraField.isChoice())
 			{
 				label = new JLabel("Camera:");
+				label.setForeground(Color.WHITE);
 				add(label);
 				add(cameraField);
 				cameraField.addActionListener(changeListener);
@@ -586,10 +588,9 @@ public class LiveStreamPanel extends ImagePanel {
      */
     public void stopLiveStream()
     {
-    	streamRunning = false;
-    	startStopControl.updateButtons();
-        synchronized (this)
+        synchronized (measurementControlLock)
         {
+        	streamRunning = false;
             if (measurement != null)
             {
                 try
@@ -608,6 +609,7 @@ public class LiveStreamPanel extends ImagePanel {
                 imageHandler = null;
             }
         }
+        startStopControl.updateButtons();
     }
     
     /**
@@ -616,23 +618,23 @@ public class LiveStreamPanel extends ImagePanel {
      */
     public void stopLiveStreamAndWait()
     {
-    	streamRunning = false;
-    	startStopControl.updateButtons();
-    	synchronized (this)
+    	Measurement measurement;
+    	synchronized (measurementControlLock)
         {
+    		measurement = this.measurement;
+    		streamRunning = false;
             if (measurement != null)
             {
                 try
                 {
                     measurement.stopMeasurement();
-                    measurement.waitForMeasurementFinish();
                 } 
                 catch (RemoteException e)
                 {
                 	client.sendError("Could not stop measurement.", e);
                 }
 
-                measurement = null;
+                this.measurement = null;
             }
             if(imageHandler != null)
             {
@@ -640,6 +642,17 @@ public class LiveStreamPanel extends ImagePanel {
                 imageHandler = null;
             }
         }
+    	
+    	try 
+    	{
+    		if (measurement != null)
+    			measurement.waitForMeasurementFinish();
+		}
+    	catch (RemoteException e) {
+			client.sendError("Could not wait for measurement to finish.", e);
+		}
+    	
+    	startStopControl.updateButtons();
     }
 
     /**
@@ -647,15 +660,24 @@ public class LiveStreamPanel extends ImagePanel {
      */
     public void snapImage()
     {
-    	String camera = channelControl.getCamera();
-    	String channelGroup = channelControl.getChannelGroup();
-    	String channel = channelControl.getChannel();
-    	double exposure = channelControl.getExposure();
-    	try {
-			setImage(server.getMicroscope().getCameraDevice(camera).makeImage(channelGroup, channel, exposure));
-		} catch (Exception e) {
-			client.sendError("Could not snap image.", e);
-		} 
+    	ImageEvent<?> image;
+    	synchronized(measurementControlLock)
+    	{
+    		if(measurement != null)
+    			return;
+	    	String camera = channelControl.getCamera();
+	    	String channelGroup = channelControl.getChannelGroup();
+	    	String channel = channelControl.getChannel();
+	    	double exposure = channelControl.getExposure();
+	    	try {
+	    		image =server.getMicroscope().getCameraDevice(camera).makeImage(channelGroup, channel, exposure);
+			} catch (Exception e) {
+				client.sendError("Could not snap image.", e);
+				image = null;
+			}
+    	}
+    	if(image != null)
+    		setImage(image);
     }
     
     /**
@@ -663,39 +685,41 @@ public class LiveStreamPanel extends ImagePanel {
      */
     public void startLiveStream()
     {
-    	String camera = channelControl.getCamera();
-    	String channelGroup = channelControl.getChannelGroup();
-    	String channel = channelControl.getChannel();
-    	double exposure = channelControl.getExposure();
-    	int imagingPeriod = channelControl.getImagingPeriod();
-    	
-    	// stop any previous measurement
-    	if(streamRunning)
+    	synchronized(measurementControlLock)
     	{
-    		stopLiveStreamAndWait();	
-    	}
-    	streamRunning = true;
-    	startStopControl.updateButtons();
-    	
-        // Create measurement on server
-        try
-        {
-            MeasurementProvider measurementFactory =server.getMeasurementProvider();
-            synchronized (this)
-            {
+	    	String camera = channelControl.getCamera();
+	    	String channelGroup = channelControl.getChannelGroup();
+	    	String channel = channelControl.getChannel();
+	    	double exposure = channelControl.getExposure();
+	    	int imagingPeriod = channelControl.getImagingPeriod();
+	    	
+	    	// stop any previous measurement
+	    	if(streamRunning)
+	    	{
+	    		stopLiveStreamAndWait();	
+	    	}
+	    	streamRunning = true;
+	    	
+	    	
+	        // Create measurement on server
+	        try
+	        {
+	            MeasurementProvider measurementFactory =server.getMeasurementProvider();
+	            
                 // Create measurement
             	imageHandler = new ImageHandler();
                 measurement = measurementFactory.createContinuousMeasurement((camera == null || camera.length() < 1) ? null : camera, channelGroup, channel, imagingPeriod, exposure, imageHandler.startListening());
                 
                 // Start measurement
                 measurement.startMeasurement();
-            }
-        } 
-        catch (Exception e)
-        {
-        	client.sendError("Could not create/start measurement", e);
-            measurement = null;
-            return;
-        }
+	        } 
+	        catch (Exception e)
+	        {
+	        	client.sendError("Could not create/start measurement", e);
+	            measurement = null;
+	            return;
+	        }
+    	}
+    	startStopControl.updateButtons();
     }
 }

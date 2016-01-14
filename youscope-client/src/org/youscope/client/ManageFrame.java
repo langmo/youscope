@@ -4,7 +4,6 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -97,7 +96,6 @@ class ManageFrame
 		{
 			tabLabels[i] = new JLabel(Integer.toString(i+1)+". " + tabbedPane.getTitleAt(i), SwingConstants.LEFT);
 			tabLabels[i].setFont(tabLabels[i].getFont().deriveFont(Font.BOLD, 12));
-			tabLabels[i].setForeground(Color.DARK_GRAY);
 			if(tabLabels[i].getPreferredSize().width > maxWidth)
 				maxWidth = tabLabels[i].getPreferredSize().width;
 			if(tabLabels[i].getPreferredSize().height > maxHeight)

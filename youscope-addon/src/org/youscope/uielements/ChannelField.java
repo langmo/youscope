@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -34,6 +35,9 @@ public class ChannelField extends JPanel
 	private final JComboBox<String>								channelField			= new JComboBox<String>();
     private final YouScopeClient client;
     private final YouScopeServer server;
+    private volatile boolean channelGroupChanging = false;
+    
+    private final ArrayList<ActionListener> actionListeners = new ArrayList<>();
     
     /**
      * Constructor.
@@ -93,16 +97,21 @@ public class ChannelField extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
+				channelGroupChanging = true;
 				loadChannels();
 				setLastChannelGroup(getChannelGroup());
-				
+				channelGroupChanging = false;
+				fireChannelChanged();
 			}
 		});
     	channelField.addActionListener(new ActionListener()
     			{
 					@Override
-					public void actionPerformed(ActionEvent e) {
+					public void actionPerformed(ActionEvent e) 
+					{
 						setLastChannel(getChannel());
+						if(!channelGroupChanging)
+							fireChannelChanged();
 					}
     			});
     	if(channelGroupField.getItemCount() > 1)
@@ -176,7 +185,10 @@ public class ChannelField extends JPanel
      */
     public void addActionListener(ActionListener listener)
     {
-    	channelField.addActionListener(listener);
+    	synchronized(actionListeners)
+    	{
+    		actionListeners.add(listener);
+    	}
     }
     
     /**
@@ -185,7 +197,21 @@ public class ChannelField extends JPanel
      */
     public void removeActionListener(ActionListener listener)
     {
-    	channelField.removeActionListener(listener);
+    	synchronized(actionListeners)
+    	{
+    		actionListeners.remove(listener);
+    	}
+    }
+    
+    private void fireChannelChanged()
+    {
+    	synchronized(actionListeners)
+    	{
+    		for(ActionListener listener : actionListeners)
+    		{
+    			listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_FIRST, "channel changed"));
+    		}
+    	}
     }
     
     /**

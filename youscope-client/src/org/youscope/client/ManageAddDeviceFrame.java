@@ -300,7 +300,6 @@ class ManageAddDeviceFrame
 					+"</p></html>");
 			deviceNameField.setText(identifier);
 			deviceDescriptionLabel.setOpaque(true);
-			deviceDescriptionLabel.setBackground(Color.WHITE);
 			deviceDescriptionLabel.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(4,4,4,4)));
 			StandardFormats.addGridBagElement(deviceDescriptionLabel, deviceLayout, newLineConstr, this);
 			
@@ -555,7 +554,6 @@ class ManageAddDeviceFrame
 					+"Description: <i>" + description + "</i>"
 					+"</p></html>");
 			deviceDescriptionLabel.setOpaque(true);
-			deviceDescriptionLabel.setBackground(Color.WHITE);
 			deviceDescriptionLabel.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(4,4,4,4)));
 			StandardFormats.addGridBagElement(deviceDescriptionLabel, deviceLayout, newLineConstr, this);
 			

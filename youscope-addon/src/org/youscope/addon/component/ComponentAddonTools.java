@@ -1,7 +1,6 @@
 package org.youscope.addon.component;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -85,11 +84,11 @@ public class ComponentAddonTools {
 			    }
 		};
 		errorText.setEditable(false);
-		errorText.setBackground(Color.WHITE);
-		errorText.setForeground(Color.BLACK);
+		//errorText.setBackground(Color.WHITE);
+		//errorText.setForeground(Color.BLACK);
 		errorText.setOpaque(true);
 		JScrollPane scrollPane = new JScrollPane(errorText);
-		scrollPane.getViewport().setBackground(Color.WHITE);
+		scrollPane.getViewport().setBackground(errorText.getBackground());
 		errorPanel.add(scrollPane, BorderLayout.CENTER);
 		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(new ActionListener() {

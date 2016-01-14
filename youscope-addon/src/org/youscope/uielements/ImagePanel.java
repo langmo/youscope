@@ -39,11 +39,13 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -68,13 +70,24 @@ public class ImagePanel extends JPanel
 	 */
 	private static final long	serialVersionUID	= 848031651200033010L;
 	/**
-	 * The current image, or null, if no image arrived yet.
+	 * The current image--independently if drawn or not-- or null, if no image arrived, yet.
 	 */
-    private ImageEvent<?> imageEvent = null;
-    private BufferedImage bufferedImage = null;
+    private ImageEvent<?> orgImageEvent = null;
+    private BufferedImage orgBufferedImage = null;
+    
+    /**
+     * The last drawn image, or null, if no image was drawn, yet.
+     */
+    private ImageEvent<?> lastDrawnOrgImageEvent = null;
+    private BufferedImage lastDrawnOrgBufferedImage = null;
+    private BufferedImage lastDrawnRenderedImage = null;
+    
+    /**
+     * Temporary place to save the rendered image. 
+     */
+    private BufferedImage renderedImage = null;
     
     private HistogramPlot				histogram				= new HistogramPlot();
-    private BufferedImage lastBuffered = null;
     private final ControlsPanel controlsPanel;
 	private final YouScopeClient client;
 	private String noImageText = "No image available yet.";
@@ -89,6 +102,18 @@ public class ImagePanel extends JPanel
 	 * Default foreground (text) color of the image panel.
 	 */
 	public final static Color DEFAULT_FOREGROUND = new Color(1f, 1f, 1f);
+	
+	/**
+	 * Default color of lines in image to measure distances.
+	 */
+	public final static Color DEFAULT_DRAW_LINE_COLOR = new Color(0.8f, 0f, 0f);
+	
+	/**
+	 * Drawing of lines, e.g. to measure distances
+	 */
+	private Point startLine = null;
+	private Point endLine = null;
+	
 	private boolean autoAdjustContrast = false;
 	private static final double ZOOM_IN_STEP = Math.sqrt(2);
 	private static final double ZOOM_OUT_STEP = 1/Math.sqrt(2);
@@ -99,9 +124,53 @@ public class ImagePanel extends JPanel
 	private final UserListener userListener;
 	private String title = "Image Viewer";
 	private final ArrayList<PixelListener> pixelListeners = new ArrayList<PixelListener>();
+	private final ArrayList<LineListener> lineListeners = new ArrayList<LineListener>();
 	private final HistogramControl histogramControl;
 	private final ArrayList<Control> controlsList = new ArrayList<Control>(1);
 	private YouScopeFrame frame = null;
+	private final LineInfoPopup lineInfoPopup = new LineInfoPopup();
+	private class LineInfoPopup extends DynamicPanel 
+	{
+		/**
+		 * Serial Version UID
+		 */
+		private static final long serialVersionUID = -1259165079716663081L;
+		private final JLabel dxLabel = new JLabel("dx=+XXXX px");
+		private final JLabel dyLabel = new JLabel("dy=+XXXX px");
+		private final JLabel dlLabel = new JLabel("dl=XXXX.XX px");
+		LineInfoPopup()
+		{
+			setOpaque(true);
+			setBackground(DEFAULT_BACKGROUND);
+			dxLabel.setOpaque(false);
+			dyLabel.setOpaque(false);
+			dlLabel.setOpaque(false);
+			
+			dxLabel.setForeground(DEFAULT_FOREGROUND);
+			dyLabel.setForeground(DEFAULT_FOREGROUND);
+			dlLabel.setForeground(DEFAULT_FOREGROUND);
+			
+			Font font = new Font("Monospaced", Font.BOLD, 10);
+			dxLabel.setFont(font);
+			dyLabel.setFont(font);
+			dlLabel.setFont(font);
+			
+			add(dxLabel);
+			add(dyLabel);
+			add(dlLabel);
+			
+			setBorder(new CompoundBorder(new LineBorder(DEFAULT_FOREGROUND, 1), new EmptyBorder(2,2,2,2)));
+		}
+		public void setLine(int x1, int y1, int x2, int y2)
+		{
+			dxLabel.setText(String.format("\u0394x: %+6dpx", x2-x1));
+			dyLabel.setText(String.format("\u0394y: %+6dpx", y2-y1));
+			dlLabel.setText(String.format("\u0394l: %6.2fpx", Math.sqrt(Math.pow(x1-x2, 2)+Math.pow(y1-y2, 2))));
+		}
+	} 
+	
+	
+	
 	private class Control
 	{
 		final String title;
@@ -114,6 +183,8 @@ public class ImagePanel extends JPanel
 			this.fill = fill;
 		}
 	}
+	
+	
 	
 	/**
 	 * Information about a pixel in the image.
@@ -175,6 +246,73 @@ public class ImagePanel extends JPanel
 	}
 	
 	/**
+	 * Information about a drawn line in the image.
+	 * @author Moritz Lang
+	 *
+	 */
+	public static class LineInfo implements Serializable
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = -1739180587131372289L;
+		private final int x1;
+		private final int y1;
+		private final int x2;
+		private final int y2;
+		/**
+		 * Constructor.
+		 * @param x1 x-coordinate of start pixel.
+		 * @param y1 y-coordinate of start pixel.
+		 * @param x2 x-coordinate of end pixel.
+		 * @param y2 y-coordinate of end pixel.
+		 */
+		public LineInfo(int x1, int y1, int x2, int y2)
+		{
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+		/**
+		 * Returns (zero based) x-coordinate of the start pixel, counted from the left.
+		 * Note: If the original image is an {@link ImageEvent}, the returned coordinate might have to be backtransformed into the original
+		 * image coordinate system using e.g. {@link ImageTools#backTransformCoordinate(ImageEvent, Point)}.
+		 * @return x-coordinate of start pixel.
+		 */
+		public int getX1() {
+			return x1;
+		}
+		/**
+		 * Returns (zero based) y-coordinate of the start pixel, counted from the top.
+		 * Note: If the original image is an {@link ImageEvent}, the returned coordinate might have to be backtransformed into the original
+		 * image coordinate system using e.g. {@link ImageTools#backTransformCoordinate(ImageEvent, Point)}.
+		 * @return y-coordinate of start pixel.
+		 */
+		public int getY1() {
+			return y1;
+		}
+		/**
+		 * Returns (zero based) x-coordinate of the end pixel, counted from the left.
+		 * Note: If the original image is an {@link ImageEvent}, the returned coordinate might have to be backtransformed into the original
+		 * image coordinate system using e.g. {@link ImageTools#backTransformCoordinate(ImageEvent, Point)}.
+		 * @return x-coordinate of end pixel.
+		 */
+		public int getX2() {
+			return x2;
+		}
+		/**
+		 * Returns (zero based) y-coordinate of the end pixel, counted from the top.
+		 * Note: If the original image is an {@link ImageEvent}, the returned coordinate might have to be backtransformed into the original
+		 * image coordinate system using e.g. {@link ImageTools#backTransformCoordinate(ImageEvent, Point)}.
+		 * @return y-coordinate of end pixel.
+		 */
+		public int getY2() {
+			return y2;
+		}
+	}
+	
+	/**
 	 * Listener which gets informed about the currently hovered pixel in the image.
 	 * @author Moritz Lang
 	 *
@@ -186,6 +324,20 @@ public class ImagePanel extends JPanel
 		 * @param pixel The newly hovered pixel, or null if no pixel is hovered anymore.
 		 */
 		public void activePixelChanged(PixelInfo pixel);
+	}
+	
+	/**
+	 * Listener which gets informed about a currently drawn line in the image.
+	 * @author Moritz Lang
+	 *
+	 */
+	public static interface LineListener extends EventListener
+	{
+		/**
+		 * Notifies a listener that the currently drawn line has changed.
+		 * @param line The drawn line, or null if line drawing stopped.
+		 */
+		public void lineChanged(LineInfo line);
 	}
 	/**
 	 * Adds a listener which gets informed over which pixels the user hovers with the mouse.
@@ -207,6 +359,29 @@ public class ImagePanel extends JPanel
 		synchronized (pixelListeners) 
 		{
 			pixelListeners.remove(listener);
+		}
+	}
+	
+	/**
+	 * Adds a listener which gets informed over lines drawn in the image.
+	 * @param listener Line listener to add.
+	 */
+	public void addLineListener(LineListener listener)
+	{
+		synchronized (lineListeners) 
+		{
+			lineListeners.add(listener);
+		}
+	}
+	/**
+	 * Removes a previously added line listener.
+	 * @param listener Line listener to remove.
+	 */
+	public void removeLineListener(LineListener listener)
+	{
+		synchronized(lineListeners) 
+		{
+			lineListeners.remove(listener);
 		}
 	}
 	
@@ -264,7 +439,7 @@ public class ImagePanel extends JPanel
 	{
 		if(e == null)
 			return;
-		BufferedImage image = ImagePanel.this.lastBuffered;
+		BufferedImage image = ImagePanel.this.lastDrawnRenderedImage;
 		if(image == null)
 			return;
 		if(zoomIn)
@@ -592,11 +767,7 @@ public class ImagePanel extends JPanel
 		{
 			while(true)
 			{
-				long lastAction;
-				synchronized(this)
-				{
-					lastAction = this.lastAction;
-				}
+				long lastAction = this.lastAction;
 				long currentTime = System.currentTimeMillis();
 				if(lastAction == Long.MAX_VALUE)
 				{
@@ -676,15 +847,102 @@ public class ImagePanel extends JPanel
 			}
 		}
 	}
+	private void calculateDragedLine(MouseEvent mouseDown, MouseEvent mouseCurrent)
+	{
+		LineInfo lineInfo = null;
+		synchronized(this)
+		{
+			if(lastDrawnRenderedImage == null || (lastDrawnOrgImageEvent == null && lastDrawnOrgBufferedImage == null))
+			{
+				mouseDown = null;
+				mouseCurrent = null;
+			}
+			else if(mouseDown != null && mouseCurrent != null)
+			{
+				// check if valid position
+				int imageWidth = lastDrawnRenderedImage.getWidth();
+				int imageHeight = lastDrawnRenderedImage.getHeight();
+					
+				AffineTransform imageTransform = getTransform(imageWidth, imageHeight);
+				Point2D pos1;
+				Point2D pos2;
+				try 
+				{
+					pos1 = imageTransform.createInverse().transform(new Point(mouseDown.getX(), mouseDown.getY()), null);
+					pos2 = imageTransform.createInverse().transform(new Point(mouseCurrent.getX(), mouseCurrent.getY()), null);
+				} catch (@SuppressWarnings("unused") NoninvertibleTransformException e1) {
+					// will not happen.
+					return;
+				}
+				int x1 = (int) pos1.getX();
+				int x2 = (int) pos2.getX();
+				int y1 = (int) pos1.getY();
+				int y2 = (int) pos2.getY();
+				
+				if(x1 < 0 || x1 >= imageWidth || x2 < 0 || x2 >= imageWidth || y1 < 0 || y1 >= imageHeight || y2 < 0 || y2 >= imageHeight)
+				{
+					mouseDown = null;
+					mouseCurrent = null;
+				}
+				else
+				{
+					lineInfoPopup.setLine(x1,y1,x2,y2);
+					lineInfo = new LineInfo(x1, y1, x2, y2);
+				}
+			}
+			
+			
+			if((mouseDown == null || mouseCurrent == null) && (startLine != null || endLine != null))
+			{
+				// == previously drawing line, but not anymore
+				startLine = null;
+				endLine = null;
+				lineInfoPopup.setVisible(false);
+			}
+			else if(mouseDown == null || mouseCurrent == null)
+			{
+				// == didn't draw line, and don't want to draw line...
+				return;
+			}
+			else
+			{
+				// == draw line!
+				startLine = new Point(mouseDown.getX(), mouseDown.getY());
+				endLine = new Point(mouseCurrent.getX(), mouseCurrent.getY());
+				
+				Dimension d = lineInfoPopup.getPreferredSize();
+				if(startLine.x < endLine.x)
+					lineInfoPopup.setBounds(endLine.x+10,endLine.y-d.height/2, d.width, d.height);
+				else
+					lineInfoPopup.setBounds(endLine.x-10-d.width,endLine.y-d.height/2, d.width, d.height);
+				lineInfoPopup.setVisible(true);
+			}
+		}
+		repaint();
+		synchronized(lineListeners)
+		{
+			for(LineListener listener : lineListeners)
+			{
+				listener.lineChanged(lineInfo);
+			}
+		}
+	}
+	
 	private void calculateHoveredPixel(MouseEvent mouseEvent)
 	{
-		BufferedImage lastBuffered = ImagePanel.this.lastBuffered;
-		BufferedImage bufferedImage = ImagePanel.this.bufferedImage;
-		ImageEvent<?> imageEvent = ImagePanel.this.imageEvent;
-		if(mouseEvent == null || lastBuffered == null || (imageEvent == null && bufferedImage == null))
+		BufferedImage lastDrawnRenderedImage;
+		BufferedImage lastDrawnOrgBufferedImage;
+		ImageEvent<?> lastDrawnOrgImageEvent;
+		synchronized(this)
+		{
+			lastDrawnRenderedImage = ImagePanel.this.lastDrawnRenderedImage;
+			lastDrawnOrgBufferedImage = ImagePanel.this.lastDrawnOrgBufferedImage;
+			lastDrawnOrgImageEvent = ImagePanel.this.lastDrawnOrgImageEvent;
+		}
+		if(mouseEvent == null || lastDrawnRenderedImage == null || (lastDrawnOrgImageEvent == null && lastDrawnOrgBufferedImage == null))
 			return;
-		int imageWidth = lastBuffered.getWidth();
-		int imageHeight = lastBuffered.getHeight();
+		int imageWidth = lastDrawnRenderedImage.getWidth();
+		int imageHeight = lastDrawnRenderedImage.getHeight();
 			
 		AffineTransform imageTransform = getTransform(imageWidth, imageHeight);
 		Point2D pos;
@@ -696,22 +954,22 @@ public class ImagePanel extends JPanel
 			return;
 		}
 		PixelInfo pixelInfo;
-		if(imageEvent != null)
+		if(lastDrawnOrgImageEvent != null)
 		{
-			Point orgCoord = ImageTools.backTransformCoordinate(imageEvent, new Point((int)pos.getX(), (int)pos.getY()));
+			Point orgCoord = ImageTools.backTransformCoordinate(lastDrawnOrgImageEvent, new Point((int)pos.getX(), (int)pos.getY()));
 			
 			if(orgCoord != null)
 			{
-				long pixelValue = ImageTools.getPixelValue(imageEvent, orgCoord.x, orgCoord.y);
-				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/imageEvent.getMaxIntensity());
+				long pixelValue = ImageTools.getPixelValue(lastDrawnOrgImageEvent, orgCoord.x, orgCoord.y);
+				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/lastDrawnOrgImageEvent.getMaxIntensity());
 			}
 			else
 				pixelInfo = null;
 		}
 		else
 		{
-			long pixelValue = ImageTools.getPixelValue(bufferedImage, (int)pos.getX(), (int)pos.getY());
-			long maxValue = ImageTools.getMaximalPixelValue(bufferedImage);
+			long pixelValue = ImageTools.getPixelValue(lastDrawnOrgBufferedImage, (int)pos.getX(), (int)pos.getY());
+			long maxValue = ImageTools.getMaximalPixelValue(lastDrawnOrgBufferedImage);
 			if(pixelValue >= 0 && maxValue >= 0)
 				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/maxValue);
 			else
@@ -729,12 +987,20 @@ public class ImagePanel extends JPanel
 	private class UserListener implements MouseListener, MouseMotionListener, MouseWheelListener
 	{
 		private MouseEvent lastClick = null;
+		private MouseEvent lastDown = null;
 		@Override
 		public void mouseDragged(MouseEvent mouseEvent) {
 			hideTimer.userAction(mouseEvent);
 			calculateHoveredPixel(mouseEvent);
+			if(isLineMouse(mouseEvent))
+				calculateDragedLine(lastDown, mouseEvent);
 		}
 
+		private boolean isLineMouse(MouseEvent e)
+		{
+			return SwingUtilities.isLeftMouseButton(e) && !e.isControlDown();
+		}
+		
 		@Override
 		public void mouseMoved(MouseEvent mouseEvent) {
 			hideTimer.userAction(mouseEvent);
@@ -763,6 +1029,7 @@ public class ImagePanel extends JPanel
 					||!(mouseEvent.getY() < getHeight() && mouseEvent.getY() > 0))
             {
 				hideTimer.userAction(null);
+				calculateDragedLine(null, null);
             }
 			else
 				hideTimer.userAction(mouseEvent);
@@ -772,12 +1039,17 @@ public class ImagePanel extends JPanel
 		public void mousePressed(MouseEvent mouseEvent) {
 			hideTimer.userAction(mouseEvent);
 			lastClick = mouseEvent;
+			if(isLineMouse(mouseEvent))
+				lastDown = mouseEvent;
 			requestFocusInWindow();
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent mouseEvent) {
 			hideTimer.userAction(mouseEvent);
+			
+			lastDown = null;
+			calculateDragedLine(null, null);
 		}
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) 
@@ -786,7 +1058,6 @@ public class ImagePanel extends JPanel
 			if(direction == 0)
 				return;
 			boolean zoomIn = direction < 0;
-			
 			
 			zoom(e, zoomIn);
 		}
@@ -805,7 +1076,11 @@ public class ImagePanel extends JPanel
 		histogramControl = new HistogramControl();
 		addControl("Contrast", histogramControl);
 		hideTimer = new HideTimer();
+		lineInfoPopup.setVisible(false);
+		
 		add(controlsPanel);
+		add(lineInfoPopup);
+		
 		histogram.setAutoAdjusting(false);
 		histogram.addActionListener(new ActionListener()
 		{
@@ -840,7 +1115,7 @@ public class ImagePanel extends JPanel
 	
 	synchronized void fireImageChanged()
 	{
-		lastBuffered = null;
+		renderedImage = null;
 		repaint();
 	}
 	
@@ -900,35 +1175,42 @@ public class ImagePanel extends JPanel
     {
 		grp.setColor(DEFAULT_BACKGROUND);
 		grp.fillRect(0, 0, getWidth(), getHeight());
-		ImageEvent<?> imageEvent;
 		BufferedImage image;
-		BufferedImage bufferedImage;
+		Point startLine;
+		Point endLine;
 		synchronized(this)
 		{
-			imageEvent = this.imageEvent;
-			bufferedImage = this.bufferedImage;
+			ImageEvent<?> imageEvent = this.orgImageEvent;
+			BufferedImage bufferedImage = this.orgBufferedImage;
 			if(imageEvent == null && bufferedImage == null)
-				lastBuffered = null;
-			else if(lastBuffered == null)
+				renderedImage = null;
+			else if(renderedImage == null)
 	        {
 				double[] minMax = histogram.getMinMax();
 				if(imageEvent != null)
 				{
 		        	
 		        	try {
-		        		lastBuffered = ImageTools.getScaledMicroscopeImage(imageEvent, (float)minMax[0], (float)minMax[1]);
+		        		renderedImage = ImageTools.getScaledMicroscopeImage(imageEvent, (float)minMax[0], (float)minMax[1]);
 					} catch (ImageConvertException e) {
 						client.sendError("Could not generate image.", e);
 						noImageText = "Error painting image.";
-						lastBuffered = null;
+						renderedImage = null;
 					}
 				}
 				else
 				{
-					lastBuffered = ImageTools.getScaledImage(bufferedImage, (float)minMax[0], (float)minMax[1], null);
+					renderedImage = ImageTools.getScaledImage(bufferedImage, (float)minMax[0], (float)minMax[1], null);
 				}
 	        }
-			image = lastBuffered;
+			image = renderedImage;
+			
+			startLine = this.startLine;
+			endLine = this.endLine;
+			
+			lastDrawnOrgImageEvent = imageEvent;
+		    lastDrawnOrgBufferedImage = bufferedImage;
+		    lastDrawnRenderedImage = renderedImage;
 		}
         if (image != null)
         {
@@ -937,6 +1219,12 @@ public class ImagePanel extends JPanel
 		    int imageHeight = image.getHeight(this);
 		    
 		    g2D.drawImage(image, getTransform(imageWidth, imageHeight), this);
+		    
+		    if(startLine != null && endLine != null)
+		    {
+		    	g2D.setColor(DEFAULT_DRAW_LINE_COLOR);
+		    	g2D.drawLine(startLine.x, startLine.y, endLine.x, endLine.y);
+		    }
 		    
         }
         else if(noImageText != null)
@@ -960,14 +1248,33 @@ public class ImagePanel extends JPanel
 	private void saveImage()
 	{
 		// make local copy of image.
-		BufferedImage image;
-		try {
-			image = ImageTools.getMicroscopeImage(imageEvent);
-		} catch (ImageConvertException e1) {
-			client.sendError("Could not parse image.", e1);
-			return;
+		BufferedImage lastDrawnOrgBufferedImage;
+		ImageEvent<?> lastDrawnOrgImageEvent;
+		synchronized(this)
+		{
+			lastDrawnOrgBufferedImage = this.lastDrawnOrgBufferedImage;
+			lastDrawnOrgImageEvent = this.lastDrawnOrgImageEvent;
 		}
 		
+		// get buffered image to save
+		BufferedImage saveImage;
+		if(lastDrawnOrgImageEvent != null)
+		{
+			try {
+				saveImage = ImageTools.getMicroscopeImage(lastDrawnOrgImageEvent);
+			} catch (ImageConvertException e1) {
+				client.sendError("Could not parse image.", e1);
+				return;
+			}
+		}
+		else if(lastDrawnOrgBufferedImage != null)
+		{
+			saveImage = lastDrawnOrgBufferedImage;
+		}
+		else
+		{
+			return;
+		}
 		// Let user select file to save to
         String lastFile = "image.tif";
         JFileChooser fileChooser = new JFileChooser(lastFile);
@@ -1040,7 +1347,7 @@ public class ImagePanel extends JPanel
 		{
         	ios = ImageIO.createImageOutputStream(file);
             imageWriter.setOutput(ios);
-            imageWriter.write(image);
+            imageWriter.write(saveImage);
 		}
 		catch(IOException e)
 		{
@@ -1115,8 +1422,8 @@ public class ImagePanel extends JPanel
 		{
 			client.sendError("Could not calculate histogram of image.", e);
 		}
-		this.bufferedImage = bufferedImage;
-		this.imageEvent = null;
+		this.orgBufferedImage = bufferedImage;
+		this.orgImageEvent = null;
 		fireImageChanged();
 	}
 	
@@ -1138,8 +1445,8 @@ public class ImagePanel extends JPanel
 		{
 			client.sendError("Could not calculate histogram of image.", e);
 		}
-		this.bufferedImage = null;
-		this.imageEvent = imageEvent;
+		this.orgBufferedImage = null;
+		this.orgImageEvent = imageEvent;
 		fireImageChanged();
 	}
 	/**
