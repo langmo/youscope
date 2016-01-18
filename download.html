@@ -1,0 +1,736 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+        <title>YouScope - Microscope Control Software</title>
+
+        <style type="text/css">
+      body {
+        color: black;
+        background-color: #eeeeee;
+        font-family: Helvetica,Arial,sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      div#page {
+        margin: 5px 5px 5px 5px;
+        width: 950px;
+        padding: 0;
+        background: #ffffff;
+        border: 1px solid #777777;
+      }
+
+      div#header
+      {
+        height:100px;
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px solid #777777;
+         vertical-align:bottom;
+      }
+      div#headerLeft
+      {
+        height:100px;
+        margin: 0;
+        padding: 0;
+        float: left;
+      }
+      div#headerRight
+      {
+        height:100px;
+        margin: 0;
+        padding: 0;
+        text-align:right;
+        vertical-align:bottom;
+      }
+
+      div#leftColumn
+      {
+        font-size: 10pt;
+        float: left;
+        width: 140px;
+        margin: 40px 0px 0 0;
+        padding: 5px 0px 5px 0;
+        border-right:1px solid #777777;
+        text-align:right;
+      }
+      div#leftColumn ul
+      {
+        margin: 0;
+        padding: 0;
+      }
+      div#leftColumn li
+      {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      div#leftColumn a {
+        display: block;
+        float:right;
+        padding: 3px 13px 3px 3px;
+        margin:0 0px 0 0px;
+        font-weight: bold;
+        width:110px;
+
+      }
+      div#leftColumn a:link
+      {
+        color: #000000;
+        background-color:#FFFFFF;
+        text-decoration:none;
+        border-top:1px solid #FFFFFF;
+        border-bottom:1px solid #FFFFFF;
+      }
+      div#leftColumn a:visited
+      {
+        color: #000000;
+        background-color:#FFFFFF;
+        text-decoration:none;
+        border-top:1px solid #FFFFFF;
+        border-bottom:1px solid #FFFFFF;
+      }
+      div#leftColumn a:hover
+      {
+        color: #555555;
+        background-color:#FFFFFF;
+        background-color:#F8F8F8;
+        text-decoration:none;
+        border-top:1px solid #AAAAAA;
+        border-bottom:1px solid #AAAAAA;
+      }
+      div#leftColumn a:active
+      {
+        color:#000000;
+        background-color:#FFFFFF;
+        text-decoration:none;
+        border-top:1px solid #FFFFFF;
+        border-bottom:1px solid #FFFFFF;
+      }
+
+      div#rightColumn
+      {
+        font-size: 10pt;
+        float: right;
+        width: 285px;
+        margin: 20px 5px 10px 10px;
+        padding: 0;
+      }
+      div.plusMinusSign
+      {
+        width:13px;
+        height:13px;
+        float: right;
+        margin: 0px;
+        padding: 0px;
+      }
+      img.plusMinusSign
+      {
+         margin:0px;
+         padding:0px;
+         border:none;
+      }
+
+      div.rightBox
+      {
+        font-size: 10pt;
+        margin: 5px 0px 5px 0px;
+        padding: 0;
+        border:1px solid #BBBBBB;
+      }
+      div.rightBoxHeader
+      {
+        margin:0;
+              padding:3px 3px 3px 3px;
+              color:#555555;
+        font-size: 10pt;
+        background:#eeeeee;
+        font-weight:bold;
+        border-bottom:1px dashed #BBBBBB;
+      }
+      div.rightBoxMain
+      {
+        font-size: 10pt;
+        margin: 0;
+        padding: 5px 5px 5px 5px;
+      }
+
+      div.rightBox h3
+      {
+              margin:5px 0px 0px 0px;
+              padding:0;
+        font-size: 10pt;
+                font-weight:bold;
+      }
+          div.rightBox ul
+          {
+                  margin:0 0 0 20px;
+                  padding:0;
+          }
+      div.rightBox p
+      {
+              margin:0px 0px 5px 0px;
+              padding:0;
+        font-size: 10pt;
+      }
+      div.rightBox li
+      {
+              margin:0px 0px 0px 0px;
+              padding:0;
+        font-size: 10pt;
+      }
+
+      div#main
+      {
+        margin: 0 300px 0 160px;
+        padding: 10px;
+      }
+      div#main h1
+      {
+        font-size: 12pt;
+        margin: 15px 0 5px 0;
+        font-weight:bold;
+      }
+      div#main h2
+      {
+        font-size: 10pt;
+        margin: 15px 0 5px 0;
+        font-weight:bold;
+      }
+      div#main p
+      {
+        font-size: 10pt;
+        margin: 5px 0 5px 0;
+      }
+      div#main li
+      {
+        font-size: 10pt;
+        margin: 5px 0 5px 0;
+      }
+
+      div#footer
+      {
+        clear: both;
+        font-size: 40px;
+        margin: 20px 0 5px 0;
+        padding: 0 5px 0 0;
+        background-color: #FFFFFF;
+        border-top: 1px dashed #AAAAAA;
+      }
+
+          div#footer p
+      {
+        font-size: 8pt;
+        color: #777777;
+        margin: 5px 10px 0 5px;
+      }
+
+      table.plate
+      {
+              border:1px solid #000000;
+              background-color:#aaaaaa;
+              padding:5px;
+              margin:5px;
+      }
+
+      td.plate
+      {
+              width:20px;
+              height:20px;
+              background-color:#7777FF;
+              margin:2px;
+              padding:0px;
+              border:1px solid #333333;
+              cursor:crosshair;
+      }
+      div.figure
+      {
+         float:left;
+         margin:0px 10px 0px 0px;
+         width:250px;
+      }
+      img.figure
+      {
+         border:1px solid #000000;
+         width:250px;
+      }
+</style>
+
+
+        <script type="text/javascript">
+                // Parameters for scope movement.
+                plateX = 10;//680;
+                plateY = 110;//310;
+
+                wellWidth = 23.65;
+                wellHeight = 8.5;
+                deltaXVert = -17.75;
+                nWellX = 8;
+                nWellY = 3;
+                nextWell = new Array(0, 0);
+                wellSpeedX = Math.ceil(wellWidth / 10);
+                wellSpeedY = Math.ceil(wellHeight / 10);
+                well0X = 10.5;
+                well0Y = -112;
+
+                scopeX = well0X;
+                scopeY = well0Y;
+
+                deltaBeamX = 36;//30;
+                deltaBeamY = 44;//45;
+
+                var beam = new Array(2);
+                waitInWell = new Array(10, 0);
+                waitTimes = -1;
+                beamNr = 0;
+
+                doNotChangeWell = false;
+
+                var scope, plate, beam;
+
+                wellActivation = new Array(new Array(true, true, true, true, true, true, true, true),
+                                new Array(true, true, true, true, true, true, true, true),
+                                new Array(true, true, true, true, false, false, false, false));
+
+                // Detection of used browser
+                var DHTML = false, DOM = false, MSIE4 = false, NS4 = false, OP = false;
+                function detectBrowser()
+                {
+                        if (document.getElementById)
+                        {
+                                  DHTML = true;
+                                  DOM = true;
+                        }
+                        else if (document.all)
+                        {
+                                    DHTML = true;
+                                    MSIE4 = true;
+                          }
+                }
+                function minimizeMaximize(elementID)
+                {
+                        if(!DHTML)
+                                return;
+                        if(DOM)
+                        {
+                                element = document.getElementById(elementID);
+                                plusMinus = document.getElementById(elementID + "-plusMinus");
+                        }
+                        else if(MSIE4)
+                        {
+                                element = document.all(elementID);
+                                plusMinus = document.all(elementID + "-plusMinus");
+                        }
+
+                        if(element.style.display == "none")
+                        {
+                                element.style.display = "block";
+                                plusMinus.src = "images/minus.gif";
+                        }
+                        else
+                        {
+                                element.style.display = "none";
+                                plusMinus.src = "images/plus.gif";
+                        }
+                }
+
+                function setExposure(beam, select)
+                {
+                        waitInWell[beam] = select.options[select.options.selectedIndex].value / 10;
+                }
+
+                // Main function for scope movement.
+                function moveScope()
+                {
+                        if(waitTimes > 0 && waitTimes == waitInWell[beamNr])
+                        {
+                                beam[beamNr].style.visibility = "visible";
+                        }
+                        if(waitTimes > 0)
+                        {
+                                waitTimes--;
+                                if(beam[beamNr].filters)
+                                {
+                                         beam[beamNr].filters[0].phase += 20;
+                                }
+                                return;
+                        }
+                        else if(waitTimes == 0)
+                        {
+                                beam[beamNr].style.visibility = "hidden";
+                                beamNr++;
+                                if(beamNr < beam.length)
+                                {
+                                        waitTimes = waitInWell[beamNr];
+                                }
+                                else
+                                {
+                                        beamNr = 0;
+                                        waitTimes = -1;
+                                }
+                                return;
+                        }
+
+                        gotoX = well0X + nextWell[0] * wellWidth + nextWell[1] * deltaXVert ;
+                        gotoY = well0Y + nextWell[1] * wellHeight;
+
+                        // Move scope
+                        if(Math.abs(scopeX - gotoX) < wellSpeedX)
+                        {
+                                scopeX = gotoX;
+                        }
+                        else if(scopeX < gotoX)
+                        {
+                                scopeX = scopeX + wellSpeedX;
+                        }
+                        else if(scopeX > gotoX)
+                        {
+                                scopeX = scopeX - wellSpeedX;
+                        }
+
+                        if(Math.abs(scopeY - gotoY) < wellSpeedY)
+                        {
+                                scopeY = gotoY;
+                        }
+                        else if(scopeY < gotoY)
+                        {
+                                scopeY = scopeY + wellSpeedY;
+                        }
+                        else if(scopeY > gotoY)
+                        {
+                                scopeY = scopeY - wellSpeedY;
+                        }
+
+                        // Detect if we arrived at the goal.
+                        if(scopeX == gotoX && scopeY == gotoY)
+                        {
+                                if(doNotChangeWell)
+                                        waitTimes = 99999;
+                                else
+                                        waitTimes = waitInWell[0];
+                                if(!doNotChangeWell)
+                                {
+                                        gotoNextWell();
+                                }
+                        }
+
+                        // Set position
+                        scope.style.left = Math.round(plateX + scopeX) + "px";
+                        scope.style.top = Math.round(plateY + scopeY) + "px";
+                        for(i=0; i<beam.length;i++)
+                        {
+                                beam[i].style.left = Math.round(plateX + scopeX + deltaBeamX) + "px";
+                                beam[i].style.top = Math.round(plateY + scopeY + deltaBeamY) + "px";
+                        }
+                }
+
+                var moveRight = true;
+                function gotoNextWell()
+                {
+                        startX = nextWell[0];
+                        startY = nextWell[1];
+                        while(true)
+                        {
+                            if(moveRight)
+                {
+                    nextWell[0]++;
+                }
+                else
+                {
+                    nextWell[0]--;
+                }
+                if(nextWell[0] >= nWellX)
+                {
+                        if(nextWell[1] == startY)
+                        {
+                                moveRight = !moveRight;
+                                nextWell[0] = nWellX -1;
+                        }
+                        else
+                                nextWell[0] = 0;
+                    nextWell[1]++;
+                }
+                else if(nextWell[0] < 0)
+                {
+                        if(nextWell[1] == startY)
+                        {
+                                moveRight = !moveRight;
+                            nextWell[0] = 0;
+                    }
+                    else
+                            nextWell[0] = nWellX -1;
+                    nextWell[1]++;
+                }
+                if(nextWell[1] >= nWellY)
+                {
+                        moveRight = true;
+                    nextWell[0] = 0;
+                    nextWell[1] = 0;
+                }
+                if(wellActivation[nextWell[1]][nextWell[0]] ||
+                                (startX == nextWell[0] && startY == nextWell[1]))
+                        break;
+            }
+                }
+
+                // Goto a predefined well when mouse is over a link.
+                function activateWell(wellX, wellY)
+                {
+                        nextWell[0] = wellX;
+                        nextWell[1] = wellY;
+                        doNotChangeWell = true;
+                        waitTimes = 0;
+                }
+
+                // Continue normal processing when mouse leaves link
+                function continueMoving()
+                {
+                        doNotChangeWell = false;
+                        if(nextWell[1] % 2 == 0)
+                        {
+                                nextWell[0]++;
+                        }
+                        else
+                        {
+                                nextWell[0]--;
+                        }
+                        waitTimes = 0;
+                }
+                function switchWellState(wellX, wellY)
+                {
+                        if(!DHTML)
+                                return;
+                        if(DOM)
+                        {
+                                well = document.getElementById("well" + wellX + wellY);
+                        }
+                        else if(MSIE4)
+                        {
+                                well = document.all("well" + wellX + wellY);
+                        }
+                        wellActivation[wellY][wellX] = !wellActivation[wellY][wellX];
+                        if(wellActivation[wellY][wellX])
+                                well.style.backgroundColor="#7777FF";
+                        else
+                                well.style.backgroundColor="#eeeeee";
+                }
+
+                // Initializes plate measurement
+                function initializeMeasurement()
+                {
+                        detectBrowser();
+                        if(!DHTML)
+                                return;
+
+                        // Get scope object
+                        if(DOM)
+                        {
+                                scope = document.getElementById("scope");
+                                beam[0] = document.getElementById("beam_blue");
+                                beam[1] = document.getElementById("beam_green");
+                                plate = document.getElementById("plate");
+                        }
+                        else if(MSIE4)
+                        {
+                                scope = document.all("scope");
+                                beam[0] = document.all("beam_blue");
+                                beam[1] = document.all("beam_green");
+                                plate = document.all("plate");
+                        }
+                        if(!scope || !beam || !plate)
+                                return;
+
+                        scope.style.left = Math.round(plateX + scopeX) + "px";
+                        scope.style.top = Math.round(plateY + scopeY) + "px";
+                        for(i=0; i<beam.length; i++)
+                        {
+                                beam[i].style.left = Math.round(plateX + scopeX + deltaBeamX) + "px";
+                                beam[i].style.top = Math.round(plateY + scopeY + deltaBeamY) + "px";
+                        }
+                        plate.style.left = Math.round(plateX) + "px";
+                        plate.style.top = Math.round(plateY) + "px";
+
+                        for(wellY = 0; wellY < wellActivation.length; wellY++)
+                        {
+                                for(wellX = 0; wellX < wellActivation[wellY].length; wellX++)
+                                {
+                                        if(DOM)
+                                        {
+                                                 well = document.getElementById("well" + wellX + wellY);
+                                        }
+                                        else if(MSIE4)
+                                        {
+                                            well = document.all("well" + wellX + wellY);
+                                        }
+                                        if(wellActivation[wellY][wellX])
+                                            well.style.backgroundColor="#7777FF";
+                                        else
+                                                well.style.backgroundColor="#eeeeee";
+                                }
+                        }
+
+                        window.setInterval('moveScope()', 100)
+                }
+        </script>
+</head>
+<body onload="initializeMeasurement()">
+        <div id="page">
+                <div id="header">
+                        <div id="headerLeft"><img src="images/header.jpg" /></div>
+                        <div id="headerRight"><a href="index.html"><img src="images/YouScope.jpg" style="vertical-align:bottom;border:0px;" /></a></div>
+                </div>
+
+                <div id="leftColumn">
+                      <ul>
+                         <li><a href="index.html">About</a></li>
+                         <li><a href="download.html">Download</a></li>
+                         <li><a href="documentation.html">Documentation</a></li>
+                         <li><a href="community.html">Community</a></li>
+                         <li><a href="faq.html">FAQ</a></li>
+                         <li><a href="contact.html">Contact</a></li>
+                      </ul>
+                 </div>
+
+                 <div id="rightColumn">
+                         <div class="rightBox">
+                                 <div class="rightBoxHeader">
+                                       <div class="plusMinusSign"><a href="javascript:minimizeMaximize('downloadNow');"><img src="images/minus.gif" class="plusMinusSign" id="downloadNow-plusMinus" /></a></div>
+                                       Download Now
+                                  </div>
+                                  <div class="rightBoxMain" id="downloadNow">
+                                       <p>Download now the latest stable version or the nightly build of YouScope for free!</p>
+                                       <p>Latest stable version: <br /><b>YouScope 1.2 Build R2012-01 Beta</b></p>
+                                       <div align="center"><a href="download.html"><img src="images/download.jpg" border="0" /></a></div>
+                                  </div>
+                         </div>
+                         <div class="rightBox">
+                                 <div class="rightBoxHeader">
+                                         <div class="plusMinusSign"><a href="javascript:minimizeMaximize('appwindow');"><img src="images/minus.gif" class="plusMinusSign" id="appwindow-plusMinus" /></a></div>
+                                         Mode of Operation
+                                 </div>
+                                 <div class="rightBoxMain" id="appwindow">
+                                         <p>The following small interactive app exemplifies &ndash;in a simplified way&ndash; the interaction between the experimentalist and YouScope to set up a microplate measurement.</p>
+                                         <div style="position:relative;top:0px;left:0px;width:100%;height:160px;margin:0x;padding:0px;">
+                                             <div id="plate" style="position:absolute; top:110px;  left:10px;  z-index:30; border:0px; margin:0px;"><img src="images/plate.gif" /></div>
+                                             <div id="scope" style="position:absolute; top:-2px; left:20px; z-index:40; border:0px; margin:0px;filter:Alpha(opacity=10, finishopacity=100, style=1, startx=49, starty=0, finishx=49, finishy=50);" ><img src="images/scope.gif" /></div>
+                                             <div id="beam_blue" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=60, style=2);" ><img src="images/beam_blue.gif" /></div>
+                                             <div id="beam_green" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=50, style=2);" ><img src="images/beam_green.gif" /></div>
+                                         </div>
+                                         <h3>Measured Wells:</h3>
+                                         <p>(Click to activate/deactivate)</p>
+                                         <table class="plate">
+                                             <tr>
+                                                 <td class="plate" id="well00" onmousedown="switchWellState(0,0)"></td>
+                                                 <td class="plate" id="well10" onmousedown="switchWellState(1,0)"></td>
+                                                 <td class="plate" id="well20" onmousedown="switchWellState(2,0)"></td>
+                                                 <td class="plate" id="well30" onmousedown="switchWellState(3,0)"></td>
+                                                 <td class="plate" id="well40" onmousedown="switchWellState(4,0)"></td>
+                                                 <td class="plate" id="well50" onmousedown="switchWellState(5,0)"></td>
+                                                 <td class="plate" id="well60" onmousedown="switchWellState(6,0)"></td>
+                                                 <td class="plate" id="well70" onmousedown="switchWellState(7,0)"></td>
+                                             </tr>
+                                             <tr>
+                                                 <td class="plate" id="well01" onmousedown="switchWellState(0,1)"></td>
+                                                 <td class="plate" id="well11" onmousedown="switchWellState(1,1)"></td>
+                                                 <td class="plate" id="well21" onmousedown="switchWellState(2,1)"></td>
+                                                 <td class="plate" id="well31" onmousedown="switchWellState(3,1)"></td>
+                                                 <td class="plate" id="well41" onmousedown="switchWellState(4,1)"></td>
+                                                 <td class="plate" id="well51" onmousedown="switchWellState(5,1)"></td>
+                                                 <td class="plate" id="well61" onmousedown="switchWellState(6,1)"></td>
+                                                 <td class="plate" id="well71" onmousedown="switchWellState(7,1)"></td>
+                                             </tr>
+                                             <tr>
+                                                 <td class="plate" id="well02" onmousedown="switchWellState(0,2)"></td>
+                                                 <td class="plate" id="well12" onmousedown="switchWellState(1,2)"></td>
+                                                 <td class="plate" id="well22" onmousedown="switchWellState(2,2)"></td>
+                                                 <td class="plate" id="well32" onmousedown="switchWellState(3,2)"></td>
+                                                 <td class="plate" id="well42" onmousedown="switchWellState(4,2)"></td>
+                                                 <td class="plate" id="well52" onmousedown="switchWellState(5,2)"></td>
+                                                 <td class="plate" id="well62" onmousedown="switchWellState(6,2)"></td>
+                                                 <td class="plate" id="well72" onmousedown="switchWellState(7,2)"></td>
+                                             </tr>
+                                         </table>
+                                         <h3>Channels:</h3>
+                                         <form action="" style="padding:0;margin:0">
+                                         <ul>
+                                             <li><i>CFP</i>, Exposure: <select size="1" name="blueExposure" onchange="setExposure(0, this)" width="250">
+                                                 <option value="0">Do not image</option>
+                                                 <option value="10"> 10ms</option>
+                                                 <option value="20"> 20ms</option>
+                                                 <option value="30"> 30ms</option>
+                                                 <option value="40"> 40ms</option>
+                                                 <option value="50"> 50ms</option>
+                                                 <option value="60"> 60ms</option>
+                                                 <option value="70"> 70ms</option>
+                                                 <option value="80"> 80ms</option>
+                                                 <option value="90"> 90ms</option>
+                                                 <option value="100" selected="selected">100ms</option>
+                                                 <option value="200">200ms</option>
+                                                 <option value="300">300ms</option>
+                                                 <option value="500">500ms</option>
+                                                 </select>
+                                             </li>
+                                             <li><i>GFP</i>, Exposure: <select size="1" name="greenExposure" onchange="setExposure(1, this)" width="250">
+                                                 <option value="0" selected="selected">Do not image</option>
+                                                 <option value="10"> 10ms</option>
+                                                 <option value="20"> 20ms</option>
+                                                 <option value="30"> 30ms</option>
+                                                 <option value="40"> 40ms</option>
+                                                 <option value="50"> 50ms</option>
+                                                 <option value="60"> 60ms</option>
+                                                 <option value="70"> 70ms</option>
+                                                 <option value="80"> 80ms</option>
+                                                 <option value="90"> 90ms</option>
+                                                 <option value="100">100ms</option>
+                                                 <option value="200">200ms</option>
+                                                 <option value="300">300ms</option>
+                                                 <option value="500">500ms</option>
+                                                 </select>
+                                             </li>
+                                         </ul>
+                                         </form>
+                                 </div>
+                       </div>
+                       <div class="rightBox">
+                          <div class="rightBoxHeader">
+                               <div class="plusMinusSign"><a href="javascript:minimizeMaximize('exampleExperiment');"><img src="images/minus.gif" class="plusMinusSign" id="exampleExperiment-plusMinus" /></a></div>
+                               Example Experiment
+                          </div>
+                          <div class="rightBoxMain" id="exampleExperiment">
+                               <iframe title="YouTube vid    eo player" class="youtube-player" type="text/html" width="260" height="211" src="http://www.youtube.com/embed/mulRvAVExSc?rel=0&amp;hd=1" frameborder="0"></iframe>
+                               <p>The movie was created as part of the <a href="http://2010.igem.org/Team:ETHZ_Basel" target="_blank">ETH's 2010<sup>th</sup> contribution to iGEM</a>. For this task, out-of-focus images where send via the YouScope interface to Matlab. In Matlab, cells where detected and tracked, and &ndash;depending on their position&ndash; YouScope was used to send light signals of different wavelengths back to the cells (closed loop). At the same time, post-processed microscope images (see movie) were shown in real-time.</p>
+                          </div>
+                       </div>
+           </div>
+
+           <div id="main">
+                 <h1>Download YouScope 1.1 Stable</h1>
+                 <p>To obtain the last stable release of YouScope, <i>YouScope 1.1 Build R2011-02</i>, download the respective file for your operation system.</p>
+		 <p><i>We recommend downloading the 32-bit Windows version. The 64-bit version currently supports less device drivers. You can run the 32-bit version of YouScope on a 64-bit Windows OS. The POSIX version is currently still in experimental mode, and we recommend only experienced system administrator downloading it.</i></p>
+                 <ul>
+			 <li><b>Windows 32-bit (XP or higher):</b> Download <a href="downloads/v1.1/YouScopeInstaller32.exe">YouScopeInstaller32.exe</a></li>
+                         <li><b>Windows 64-bit (XP or higher):</b> Download <a href="downloads/v1.1/YouScopeInstaller64.exe">YouScopeInstaller64.exe</a></li>
+                         <li><b>POSIX (Apple OS, Linux, ...):</b> Download <a href="downloads/v1.1/youscope.tar.gz">youscope.tar.gz</a> <b>(Experimental)</b></li>
+                 </ul>
+		<h1>Download YouScope 1.2 Beta</h1>
+                 <p><i>YouScope 1.2 Build R2012-01</i> is currently still in the testing phase and may be less reliable than the stable 1.1 version. It provides several experimental features, like life cell-detection or multi-camera support, more measurement and job types, and many more. If you only need YouScope basic features, we recommend downloading the stable 1.1 version.</p>
+		 <p><i>Currently, only the Windows 32bit and 64bit versions are available. The POSIX (Apple, Linux, ...) version will follow soon. As for the previous release, the 32bit version offers a wider variety of device drivers. The 32bit version can be also run on a 64bit Windows OS, with marginal speed differences.</i></p>
+                 <ul>
+			 <li><b>Windows 32-bit (XP or higher):</b> Download <a href="downloads/v1.2/YouScopeInstaller32.exe">YouScopeInstaller32.exe</a></li>
+                         <li><b>Windows 64-bit (XP or higher):</b> Download <a href="downloads/v1.2/YouScopeInstaller64.exe">YouScopeInstaller64.exe</a></li>
+                 </ul>
+                 <h1>Nightly Builds</h1>
+                 <p>We also offer to download nightly builds of YouScope. These builds are commonly not as stable as a major release, but already include new features and bug-fixes of the next major release.</p>
+                 <p>To download the actual or a previous nightly build of YouScope, please visit <a href="http://bs-ci01.ethz.ch:8090/job/youscope/" target="_blank">http://cisd-ci.ethz.ch:8090/job/youscope/</a>.</p>
+		<h1>Source Code</h1>
+		<p>The source code of YouScope can be downloaded at <a href="http://svncisd.ethz.ch/repositories/youscope" target="_blank">http://svncisd.ethz.ch/repositories/youscope</a>. Please read the license agreements in the respective folders.</p>
+           </div>
+
+           <div id="footer">
+                <a href="http://www.csb.ethz.ch" target="_blank"><img src="images/csb-logo.gif"   style="float:right;border:0px;" /></a>
+                <p>Department of Biosystems Science and Engineering (D-BSSE), Mattenstrasse 26, 4058 Basel, Switzerland.<br />
+                   Phone: +41 61 387 31 11. Fax: +41 61 387 39 94.</p>
+           </div>
+     </div>
+</body>
+</html>
