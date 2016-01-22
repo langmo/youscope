@@ -54,6 +54,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
+import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
@@ -86,6 +87,8 @@ public class ImagePanel extends JPanel
      * Temporary place to save the rendered image. 
      */
     private BufferedImage renderedImage = null;
+    
+    private final Object imageLock = new Object();
     
     private HistogramPlot				histogram				= new HistogramPlot();
     private final ControlsPanel controlsPanel;
@@ -127,7 +130,7 @@ public class ImagePanel extends JPanel
 	private final ArrayList<LineListener> lineListeners = new ArrayList<LineListener>();
 	private final HistogramControl histogramControl;
 	private final ArrayList<Control> controlsList = new ArrayList<Control>(1);
-	private YouScopeFrame frame = null;
+	protected YouScopeFrame frame = null;
 	private final LineInfoPopup lineInfoPopup = new LineInfoPopup();
 	private class LineInfoPopup extends DynamicPanel 
 	{
@@ -704,8 +707,13 @@ public class ImagePanel extends JPanel
 		{
 			setOpaque(false);
 			setBorder(new EmptyBorder(10,3,10,3));
-			revalidateControls();
-			setPreferredSize(new Dimension(150, 500));
+		}
+		@Override
+		public Dimension getPreferredSize()
+		{
+			Dimension superPreferred = super.getPreferredSize();
+			superPreferred.width = 150;
+			return superPreferred;
 		}
 		void revalidateControls()
 		{
@@ -737,15 +745,17 @@ public class ImagePanel extends JPanel
 						}
 						if(!anyFill)
 							addFillEmpty();
-						revalidate();
+						//if(isVisible())
+							//revalidate();
 					}
 				}
 			};
 			if(SwingUtilities.isEventDispatchThread())
 				runner.run();
 			else
+			{
 				SwingUtilities.invokeLater(runner);
-			
+			}
 		}
 		@Override
 	    public void paintComponent(Graphics g)
@@ -850,7 +860,7 @@ public class ImagePanel extends JPanel
 	private void calculateDragedLine(MouseEvent mouseDown, MouseEvent mouseCurrent)
 	{
 		LineInfo lineInfo = null;
-		synchronized(this)
+		synchronized(imageLock)
 		{
 			if(lastDrawnRenderedImage == null || (lastDrawnOrgImageEvent == null && lastDrawnOrgBufferedImage == null))
 			{
@@ -933,7 +943,7 @@ public class ImagePanel extends JPanel
 		BufferedImage lastDrawnRenderedImage;
 		BufferedImage lastDrawnOrgBufferedImage;
 		ImageEvent<?> lastDrawnOrgImageEvent;
-		synchronized(this)
+		synchronized(imageLock)
 		{
 			lastDrawnRenderedImage = ImagePanel.this.lastDrawnRenderedImage;
 			lastDrawnOrgBufferedImage = ImagePanel.this.lastDrawnOrgBufferedImage;
@@ -1019,7 +1029,7 @@ public class ImagePanel extends JPanel
 
 		@Override
 		public void mouseEntered(MouseEvent mouseEvent) {
-			hideTimer.userAction(mouseEvent);
+			//hideTimer.userAction(mouseEvent);
 		}
 
 		@Override
@@ -1096,6 +1106,17 @@ public class ImagePanel extends JPanel
 			@Override
 			public void componentResized(ComponentEvent e) 
 			{
+				if(!isVisible())
+					return;
+				int controlsWidth = (int) controlsPanel.getPreferredSize().getWidth();
+				controlsPanel.setBounds(getWidth()-controlsWidth, 0, controlsWidth, getHeight());
+			}
+			
+			@Override
+			public void componentShown(ComponentEvent e) 
+			{
+				if(!isVisible())
+					return;
 				int controlsWidth = (int) controlsPanel.getPreferredSize().getWidth();
 				controlsPanel.setBounds(getWidth()-controlsWidth, 0, controlsWidth, getHeight());
 			}
@@ -1112,10 +1133,13 @@ public class ImagePanel extends JPanel
 		
 		setFocusable(true);
     }
-	
-	synchronized void fireImageChanged()
+
+	void fireImageChanged()
 	{
-		renderedImage = null;
+		synchronized(imageLock)
+		{
+			renderedImage = null;
+		}
 		repaint();
 	}
 	
@@ -1178,7 +1202,7 @@ public class ImagePanel extends JPanel
 		BufferedImage image;
 		Point startLine;
 		Point endLine;
-		synchronized(this)
+		synchronized(imageLock)
 		{
 			ImageEvent<?> imageEvent = this.orgImageEvent;
 			BufferedImage bufferedImage = this.orgBufferedImage;
@@ -1238,6 +1262,27 @@ public class ImagePanel extends JPanel
     }
 	
 	/**
+	 * Returns a frame listener which can be added to the frame to which this panel is added, taking care of all default behavior.
+	 * Listener is automatically added if {@link #toFrame()} is used.
+	 * @return Frame listener.
+	 */
+	public YouScopeFrameListener getFrameListener()
+	{
+		return new YouScopeFrameListener() {
+			
+			@Override
+			public void frameOpened() {
+				hideTimer.userAction(null);
+			}
+			
+			@Override
+			public void frameClosed() {
+				// do nothing.
+			}
+		};
+	}
+	
+	/**
 	 * Sets the text which should be displayed if no image is available, yet. Set to null to not display any text.
 	 * @param noImageText Text to display if no images are available.
 	 */
@@ -1250,7 +1295,7 @@ public class ImagePanel extends JPanel
 		// make local copy of image.
 		BufferedImage lastDrawnOrgBufferedImage;
 		ImageEvent<?> lastDrawnOrgImageEvent;
-		synchronized(this)
+		synchronized(imageLock)
 		{
 			lastDrawnOrgBufferedImage = this.lastDrawnOrgBufferedImage;
 			lastDrawnOrgImageEvent = this.lastDrawnOrgImageEvent;
@@ -1401,6 +1446,7 @@ public class ImagePanel extends JPanel
 				}
 			}
 		});
+        frame.addFrameListener(getFrameListener());
         frame.pack();
 		return frame;
 	}
@@ -1422,9 +1468,12 @@ public class ImagePanel extends JPanel
 		{
 			client.sendError("Could not calculate histogram of image.", e);
 		}
-		this.orgBufferedImage = bufferedImage;
-		this.orgImageEvent = null;
-		fireImageChanged();
+		synchronized(imageLock)
+		{
+			this.orgBufferedImage = bufferedImage;
+			this.orgImageEvent = null;
+			fireImageChanged();
+		}
 	}
 	
 	/**
@@ -1445,9 +1494,12 @@ public class ImagePanel extends JPanel
 		{
 			client.sendError("Could not calculate histogram of image.", e);
 		}
-		this.orgBufferedImage = null;
-		this.orgImageEvent = imageEvent;
-		fireImageChanged();
+		synchronized(imageLock)
+		{
+			this.orgBufferedImage = null;
+			this.orgImageEvent = imageEvent;
+			fireImageChanged();
+		}
 	}
 	/**
 	 * Sets the title of the frame, which is opened by {@link #toFrame()}. Has no effect when using this panel directly.

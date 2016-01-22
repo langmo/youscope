@@ -16,6 +16,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
+import org.youscope.plugin.slimjob.SlimProperties;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DoubleTextField;
 import org.youscope.uielements.DynamicPanel;
@@ -25,7 +26,7 @@ import org.youscope.uielements.DynamicPanel;
  */
 class SlimIdentification extends ToolAddonUIAdapter
 {
-	private final DoubleTextField attenuationFactorField = new DoubleTextField(4); 
+	private final DoubleTextField attenuationFactorField = new DoubleTextField(); 
 	SlimIdentification(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
 		super(getMetadata(), client, server);
@@ -42,22 +43,38 @@ class SlimIdentification extends ToolAddonUIAdapter
 	protected Component createUI() throws AddonException {
 		setMaximizable(true);
 		setResizable(true);
-		setTitle("Attenuation Factor Wizzard");
+		setTitle("SLIM Identification");
 		
 		DynamicPanel contentPane = new DynamicPanel();
 		contentPane.add(new JLabel("Attenuation Factor"));
 		attenuationFactorField.setMinimalValue(0);
 		contentPane.add(attenuationFactorField);
-		JButton wizzardButton = new JButton("Attenuation Factor Wizzard");
+		JButton wizzardButton = new JButton("Attenuation Factor Wizard");
 		wizzardButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				YouScopeFrame frame = new AttenuationFactorWizzard(getClient(), getServer()).toFrame();
+				AttenuationFactorWizard wizard = new AttenuationFactorWizard(getClient(), getServer());
+				wizard.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) 
+					{
+						actualizeValues();
+					}
+				});
+				YouScopeFrame frame = wizard.toFrame();
 				getContainingFrame().addModalChildFrame(frame);
 				frame.setVisible(true);
 			}
 		});
 		contentPane.add(wizzardButton);
+		actualizeValues();
 		return contentPane;
+	}
+	
+	private void actualizeValues()
+	{
+		SlimProperties properties = new SlimProperties(getClient());
+		attenuationFactorField.setValue(properties.getAttenuationFactor());
 	}
 }

@@ -11,8 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -24,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 /**
+ * A plot showing a histogram.
  * @author langmo
  * 
  */
@@ -46,12 +45,10 @@ public class HistogramPlot extends JPanel
 	private volatile double				lowerAdjustmentCuttoff	= 0.03;					// in percent.
 	private volatile double				upperAdjustmentCuttoff	= 0.03;					// in percent.
 
-	private int					lastWidth				= -1;
-
 	private volatile double min = 0;
 	private volatile double max = 1;
 	
-	private boolean dividerActualizing = false;
+	private volatile boolean dividerActualizing = false;
 	
 	private final ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	
@@ -91,27 +88,6 @@ public class HistogramPlot extends JPanel
 		setOpaque(false);
 		setBorder(new LineBorder(Color.BLACK, 1));
 		add(leftSplitPane, BorderLayout.CENTER);
-		this.addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				// When resizing, don't change the cuttoffs.
-				dividerActualizing = true;
-				int thisWidth = HistogramPlot.this.getWidth();
-				if(thisWidth <= 0 || thisWidth == lastWidth)
-					return;
-				if(lastWidth > 0)
-				{
-					double[] minMax = getMinMaxInternal();
-					setMinMax(minMax[0] * (thisWidth) / (lastWidth), 1.0 - (1.0 - minMax[1]) * (thisWidth) / (lastWidth));
-				}
-				lastWidth = thisWidth;
-				dividerActualizing = false;
-				
-			}
-
-		});
 
 		PropertyChangeListener splitPaneListener = new PropertyChangeListener()
 		{
@@ -224,12 +200,11 @@ public class HistogramPlot extends JPanel
 	
 	private double[] getMinMaxInternal()
 	{
-		if(rightSplitPane.getMaximumDividerLocation() < 0)
-			return new double[]{0,1};
-		
 		double right = rightSplitPane.getMaximumDividerLocation()- rightSplitPane.getDividerLocation();
 		double left = leftSplitPane.getDividerLocation();
 		double total = leftSplitPane.getMaximumDividerLocation();
+		if(total <= 0 || left/total < 0 || right/total < 0 || left/total >= 1-right/total)
+			return new double[]{0,1};
 		return new double[]{left/total, 1-right/total};
 	}
 
@@ -250,6 +225,8 @@ public class HistogramPlot extends JPanel
 	
 	private void setMinMaxInternal(double min, double max)
 	{
+		if(min >= 1 || min < 0 || max > 1 || max <= 0 || min>=max)
+			return;
 		this.min = min;
 		this.max = max;
 	}
@@ -261,11 +238,15 @@ public class HistogramPlot extends JPanel
 			@Override
 			public void run()
 			{
+				double min = HistogramPlot.this.min;
+				double max = HistogramPlot.this.max;
+				if(min < 0 || min >= 1 || max < 0 || max > 1 || max-min < 0)
+					return;
 				dividerActualizing = true;
 				leftSplitPane.setDividerLocation(min);
-				leftSplitPane.validate();
+				HistogramPlot.this.validate();
 				rightSplitPane.setDividerLocation((max - min) / (1.0 - min));
-				rightSplitPane.validate();
+				HistogramPlot.this.validate();
 				dividerActualizing = false;
 			}
 		};
@@ -280,17 +261,24 @@ public class HistogramPlot extends JPanel
 	 * Sets the histogram data.
 	 * @param bins The bins of the histogram.
 	 */
-	public void setBins(int[][] bins)
+	public void setBins(final int[][] bins)
 	{
-		synchronized(this)
-		{
-			this.bins = bins;
-		}
-		if(autoAdjusting)
-		{
-			adjust();
-		}
-		repaint();
+		Runnable runner = new Runnable() {
+			
+			@Override
+			public void run() {
+				HistogramPlot.this.bins = bins;
+				if(autoAdjusting)
+				{
+					adjust();
+				}
+				repaint();
+			}
+		};	
+		if(SwingUtilities.isEventDispatchThread())
+			runner.run();
+		else
+			SwingUtilities.invokeLater(runner);
 	}
 	
 	/**
@@ -339,13 +327,16 @@ public class HistogramPlot extends JPanel
 	}
 
 	@Override
-	public synchronized void paintComponent(Graphics grp)
+	public void paintComponent(Graphics grp)
 	{
+		int[][] bins = this.bins;
 		grp.setColor(Color.WHITE);
 		grp.fillRect(0, 0, getWidth(), getHeight());
 		Graphics2D g2D = (Graphics2D)grp;
 		int width = this.getWidth();
 		int height = this.getHeight();
+		if(width <= 0 || height <= 0)
+			return;
 		if(bins == null)
 		{
 			String text = "No data available.";

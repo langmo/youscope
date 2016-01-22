@@ -2,6 +2,7 @@ package org.youscope.uielements;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,10 +17,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.image.ImageEvent;
@@ -48,9 +49,10 @@ public class LiveStreamPanel extends ImagePanel {
 	private volatile Measurement measurement = null;
 	private volatile ImageHandler imageHandler = null;
 	private volatile boolean streamRunning = false;
-	private JFrame fullScreenFrame = null;
 	
-	private YouScopeFrame frame = null;
+	private final Object fullScreenLock = new Object();
+	private JFrame fullScreenFrame = null;
+	private volatile boolean fullScreenOn = false;
 	
 	private boolean autostart = false;
 	/**
@@ -93,44 +95,72 @@ public class LiveStreamPanel extends ImagePanel {
 	 * Set to true to show the LiveStream in full-screen mode. Set to fals again to stop full-sceen again.
 	 * @param fullScreen True to start, false to stop full-screen.
 	 */
-	public void setFullScreen(boolean fullScreen)
+	public void setFullScreen(final boolean fullScreen)
 	{
-		if(!fullScreen && fullScreenFrame != null)
+		synchronized(fullScreenLock)
 		{
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(null);
-			fullScreenFrame.setVisible(false);
-			fullScreenFrame.dispose();
-			fullScreenFrame = null;
-			if(frame != null)
+			if(fullScreen == fullScreenOn)
+				return;
+			fullScreenOn = fullScreen;
+		}
+		
+		Runnable runner = new Runnable() {
+			
+			@Override
+			public void run() 
 			{
-				frame.setContentPane(this);
+				if(!fullScreen && fullScreenFrame != null)
+				{
+					GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(null);
+					fullScreenFrame.setVisible(false);
+					fullScreenFrame.getContentPane().removeAll();
+					if(frame != null)
+					{
+						frame.setContentPane(LiveStreamPanel.this);
+					}
+				}
+				else if(fullScreen)
+				{
+					if(frame != null)
+					{
+						frame.setContentPane(new JLabel("<html>LiveStream is currently<br />in full-screen mode</html>"));
+						try {
+							Thread.sleep(100);
+						} catch (@SuppressWarnings("unused") InterruptedException e) {
+							// do nothing.
+						}
+					}
+					if(fullScreenFrame == null)
+					{
+						fullScreenFrame = new JFrame("LiveStream");
+						fullScreenFrame.setUndecorated(true);
+						fullScreenFrame.setLayout(new BorderLayout());
+						fullScreenFrame.addWindowListener(new WindowAdapter()
+						{
+							@Override
+							public void windowClosed(WindowEvent arg0) {
+								setFullScreen(false);
+							}
+				
+							@Override
+							public void windowClosing(WindowEvent arg0) {
+								setFullScreen(false);
+							}
+						});
+					}
+					fullScreenFrame.getContentPane().removeAll();
+					fullScreenFrame.getContentPane().add(LiveStreamPanel.this, BorderLayout.CENTER);
+					fullScreenFrame.setVisible(true);
+					
+					GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(fullScreenFrame);
+				}
+				startStopControl.updateButtons();
 			}
-		}
-		else if(fullScreen)
-		{
-			if(frame != null)
-				frame.setContentPane(new JLabel("<html>LiveStream is currently<br />in full-screen mode</html>"));
-			fullScreenFrame = new JFrame("LiveStream");
-			fullScreenFrame.setUndecorated(true);
-			fullScreenFrame.setLayout(new BorderLayout());
-			fullScreenFrame.add(this, BorderLayout.CENTER);
-			fullScreenFrame.pack();
-			fullScreenFrame.setVisible(true);
-			fullScreenFrame.addWindowListener(new WindowAdapter()
-			{
-				@Override
-				public void windowClosed(WindowEvent arg0) {
-					setFullScreen(false);
-				}
-	
-				@Override
-				public void windowClosing(WindowEvent arg0) {
-					setFullScreen(false);
-				}
-			});
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(fullScreenFrame);
-		}
-		startStopControl.updateButtons();
+		};
+		if(SwingUtilities.isEventDispatchThread())
+			runner.run();
+		else
+			SwingUtilities.invokeLater(runner);
 	}
 	
 	/**
@@ -159,12 +189,16 @@ public class LiveStreamPanel extends ImagePanel {
 	 * stops when the frame closes (and, that it automatically starts when the frame opens, if autostart is set to true).
 	 * @return Frame listener.
 	 */
+	@Override
 	public YouScopeFrameListener getFrameListener()
 	{
+		final YouScopeFrameListener superListener = super.getFrameListener();
 		return new YouScopeFrameListener() {
 			
 			@Override
-			public void frameOpened() {
+			public void frameOpened() 
+			{
+				superListener.frameOpened();
 				if(autostart)
 					startLiveStream();
 			}
@@ -173,19 +207,9 @@ public class LiveStreamPanel extends ImagePanel {
 			public void frameClosed() {
 				stopLiveStream();
 				saveSettings();
+				superListener.frameClosed();
 			}
 		};
-	}
-	
-	@Override
-	public YouScopeFrame toFrame()
-	{
-		if(frame == null)
-		{
-			frame = super.toFrame();
-			frame.addFrameListener(getFrameListener());
-		}
-		return frame;
 	}
 	
 	private class ImageHandler extends Thread
@@ -450,6 +474,14 @@ public class LiveStreamPanel extends ImagePanel {
 	 */
 	public void setUserChoosesFullScreen(boolean userChooses)
 	{
+		GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		if(screens.length < 1)
+			userChooses = false;
+		else
+		{
+			userChooses = userChooses && screens[0].isFullScreenSupported();
+		}
+		
 		startStopControl.fullScreenButton.setVisible(userChooses);
 	}
 	
@@ -531,7 +563,7 @@ public class LiveStreamPanel extends ImagePanel {
 				@Override
 				public void actionPerformed(ActionEvent e) 
 				{
-					if(fullScreenFrame != null)
+					if(fullScreenOn)
 						setFullScreen(false);
 					else
 						setFullScreen(true);
@@ -561,7 +593,7 @@ public class LiveStreamPanel extends ImagePanel {
 				startStopButton.setToolTipText(START_TEXT);
 				snapImageButton.setEnabled(true);
 			}
-			if(fullScreenFrame != null)
+			if(fullScreenOn)
 			{
 				fullScreenButton.setText(STOP_FULLSCREEN_TEXT);
 				if(stopFullScreenIcon != null)
