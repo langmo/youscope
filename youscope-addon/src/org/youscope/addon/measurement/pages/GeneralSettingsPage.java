@@ -13,7 +13,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
@@ -238,11 +237,7 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 	@Override
 	public void setToDefault(MeasurementConfiguration configuration)
 	{
-		try {
-			configuration.setSaveSettings(client.getAddonProvider().getComponentMetadata("YouScope.StandardSaveSettings", SaveSettingsConfiguration.class).getConfigurationClass().newInstance());
-		} catch (@SuppressWarnings("unused") InstantiationException | IllegalAccessException | AddonException e) {
-			// do nothing.
-		}
+		// do nothing
 	}
 
 	@Override

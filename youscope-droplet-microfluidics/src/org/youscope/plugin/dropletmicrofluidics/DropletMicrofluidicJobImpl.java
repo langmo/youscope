@@ -287,7 +287,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		if(callback != null)
 		{
 			try {
-				callback.initializeCallback();
+				callback.initializeCallback(getPositionInformation());
 			} catch (Exception e) {
 				callback = null;
 				sendErrorMessage("Exception occurred in initializing visual callback. Not sending any state updates anymore, but continuing normally.", e);

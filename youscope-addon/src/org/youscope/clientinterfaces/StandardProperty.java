@@ -57,7 +57,15 @@ public enum StandardProperty
      */
     PROPERTY_LAST_IMAGE_SAVE_FILE_NAME("YouScope.LastImageSaveFileName", null),
 
+    /**
+     * Standard file name makro for images in measurement.
+     */
+    PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_NAME("YouScope.Measurement.StandardImageFileName", "%N_position%4w%2p_time%n"),
     
+    /**
+     * Standard file extension for images in measurement.
+     */
+    PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE("YouScope.Measurement.StandardImageFileType", "tif"),
     
     /**
      * Last exposure time in ms used in live stream, and similar.

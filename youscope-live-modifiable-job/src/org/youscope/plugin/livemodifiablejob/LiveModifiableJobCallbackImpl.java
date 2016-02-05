@@ -2,6 +2,7 @@ package org.youscope.plugin.livemodifiablejob;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -174,7 +175,7 @@ class LiveModifiableJobCallbackImpl extends UnicastRemoteObject implements LiveM
 	}
 
 	@Override
-	public synchronized void initializeCallback() throws RemoteException, CallbackException {
+	public synchronized void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException {
 		numRegistered++;
 		setupUI();
 	}

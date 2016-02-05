@@ -66,6 +66,12 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ComponentMetadata<?> metadata = componentBox.getSelectedElement(); 
+				if(currentAddon != null)
+				{
+					ComponentMetadata<? extends C> oldMetadata = currentAddon.getAddonMetadata();
+					if(oldMetadata!= null && metadata!=null && oldMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
+						return;
+				}
 				displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
 			}
 		});
@@ -125,13 +131,7 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	}
 	private void displayAddonConfiguration(String typeIdentifier)
 	{
-		if(currentAddon != null)
-		{
-			ComponentMetadata<? extends C> metadata = currentAddon.getAddonMetadata();
-			if(metadata!= null && typeIdentifier!= null && metadata.getTypeIdentifier().equals(typeIdentifier))
-				return;
-			currentAddon = null;
-		}
+		currentAddon = null;
 		if(addonConfigurationPanel != null)
 			remove(addonConfigurationPanel);
 		int pos = getComponentCount()-1;

@@ -137,8 +137,13 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 	{
 		String lastFolder = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
 		configuration.setBaseFolder(lastFolder == null ? "" : lastFolder);
-		configuration.setImageFileName(FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
+		
+		String imageName = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_NAME);
+		configuration.setImageFileName(imageName != null ? imageName : FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
+		
 		configuration.setFolderStructureType(FolderStructureType.ALL_IN_ONE_FOLDER);
-		configuration.setImageFileType("tif");
+		
+		String imageType = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE);
+		configuration.setImageFileType(imageType != null ? imageType : "tif");
 	}
 }

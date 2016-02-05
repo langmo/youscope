@@ -3,6 +3,7 @@
  */
 package org.youscope.common.callback;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -31,10 +32,11 @@ public interface Callback extends Remote
 
 	/**
 	 * Has to be called by the measurement component upon initialization prior to using any functionality of the callback (except {@link Callback#pingCallback()}).
+	 * @param arguments Optional arguments to be send to the callback.
 	 * @throws RemoteException
 	 * @throws CallbackException
 	 */
-	public void initializeCallback() throws RemoteException, CallbackException;
+	public void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException;
 
 	/**
 	 * Has to be called by the measurement component upon uninitialization. After calling this function, no functionality of the callback is allowed to be used anymore (except {@link Callback#pingCallback()}) until

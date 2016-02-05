@@ -4,6 +4,7 @@
 package org.youscope.plugin.usercontrolmeasurement;
 
 import java.awt.Dimension;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ class UserControlMeasurementCallbackImpl extends UnicastRemoteObject implements 
 	}
 
 	@Override
-	public synchronized void initializeCallback() throws RemoteException, CallbackException
+	public synchronized void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException
 	{
 		frame = client.createFrame();
 		// Allow closing, at stop measurement if frame is closed.

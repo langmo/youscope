@@ -6,6 +6,7 @@ package org.youscope.plugin.waitforuser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -53,7 +54,7 @@ class WaitForUserCallbackImpl extends UnicastRemoteObject implements WaitForUser
 	}
 
 	@Override
-	public void initializeCallback() throws RemoteException, CallbackException
+	public void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException
 	{
 		finishWaiting = true;
 	}

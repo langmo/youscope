@@ -6,6 +6,7 @@ package org.youscope.plugin.scripting;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -96,7 +97,7 @@ class RemoteScriptEngineImpl extends UnicastRemoteObject implements RemoteScript
 	}
 
 	@Override
-	public void initializeCallback() throws RemoteException, CallbackException {
+	public void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException {
 		// do nothing.
 	}
 

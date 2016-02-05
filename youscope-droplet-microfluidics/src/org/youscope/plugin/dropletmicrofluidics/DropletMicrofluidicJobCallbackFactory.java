@@ -15,18 +15,14 @@ import org.youscope.serverinterfaces.YouScopeServer;
  */
 public class DropletMicrofluidicJobCallbackFactory implements CallbackAddonFactory
 {
-    private DropletMicrofluidicJobCallbackImpl callback = null;
-	@Override
+    @Override
 	public synchronized Callback createCallback(String typeIdentifier, YouScopeClient client,
 			YouScopeServer server) throws CallbackCreationException {
 		if(!DropletMicrofluidicJobCallback.TYPE_IDENTIFIER.equals(typeIdentifier))
 		{
 			throw new CallbackCreationException("Construction of callbacks with type identifiers "+typeIdentifier+" not supported by this factory.");
 		}
-		if(callback != null)
-			return callback;
-		callback = new DropletMicrofluidicJobCallbackImpl(client);
-		return callback;
+		return new DropletMicrofluidicJobCallbackImpl(client);
 	}
 
 	@Override

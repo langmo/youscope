@@ -48,6 +48,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.MaskFormatter;
@@ -102,11 +103,6 @@ public class Starter extends JFrame
 
 	private JButton						startButton						= new JButton("Start");
 
-	// The layout
-	private GridBagLayout				layout							= new GridBagLayout();
-
-	private GridBagConstraints			newLineConstr					= new GridBagConstraints();
-
 	// How the system should be started up
 	private enum StartUpType
 	{
@@ -142,7 +138,7 @@ public class Starter extends JFrame
 		{
 			// Do nothing.
 		}
-
+		setUndecorated(true);
 		
 
 		/*****************************************
@@ -167,32 +163,47 @@ public class Starter extends JFrame
 		/*****************************************
 		 * Initialize layout
 		 *****************************************/
-		setResizable(false);
-		getContentPane().setLayout(new BorderLayout());
+		setResizable(true);
+		JPanel contentPane = new JPanel(new BorderLayout());
+		contentPane.setOpaque(true);
+		contentPane.setBackground(Color.WHITE);
+		
+		GridBagConstraints newLineConstr = new GridBagConstraints();
 		newLineConstr.fill = GridBagConstraints.HORIZONTAL;
 		newLineConstr.gridwidth = GridBagConstraints.REMAINDER;
 		newLineConstr.anchor = GridBagConstraints.NORTHWEST;
 		newLineConstr.gridx = 0;
 		newLineConstr.weightx = 1.0;
 		newLineConstr.weighty = 0;
+		
+		GridBagConstraints bottomConstr = new GridBagConstraints();
+		bottomConstr.weighty = 1.0;
+		bottomConstr.weightx = 1.0;
+		bottomConstr.fill = GridBagConstraints.BOTH;
+		bottomConstr.gridwidth = GridBagConstraints.REMAINDER;
+		
+		GridBagLayout layout = new GridBagLayout();
 		JPanel contentPanel = new JPanel(layout);
+		contentPanel.setOpaque(false);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		/****************************************
 		 * Add icon and teaser images
 		 ****************************************/
-		String topImageFile = "org/youscope/starter/images/csb-logo-long.gif";
+		String leftImageFile = "org/youscope/starter/images/logo.jpg";
 		try
 		{
-			URL topImageURL = getClass().getClassLoader().getResource(topImageFile);
-			if(topImageURL != null)
+			URL leftImageURL = getClass().getClassLoader().getResource(leftImageFile);
+			if(leftImageURL != null)
 			{
-				BufferedImage topImage = ImageIO.read(topImageURL);
-				JLabel imageLabel = new JLabel(new ImageIcon(topImage));
+				BufferedImage leftImage = ImageIO.read(leftImageURL);
+				JLabel imageLabel = new JLabel(new ImageIcon(leftImage));
 				imageLabel.setHorizontalAlignment(SwingConstants.LEFT);
+				imageLabel.setVerticalAlignment(SwingConstants.TOP);
 				imageLabel.setBackground(Color.WHITE);
 				imageLabel.setOpaque(true);
-				getContentPane().add(imageLabel, BorderLayout.NORTH);
+				imageLabel.setBorder(new EmptyBorder(2, 6, 6, 4));
+				contentPane.add(imageLabel, BorderLayout.WEST); 
 			}
 		}
 		catch(@SuppressWarnings("unused") Exception e)
@@ -222,11 +233,15 @@ public class Starter extends JFrame
 		 ****************************************/
 		GridBagLayout startTypeLayout = new GridBagLayout();
 		JPanel startTypePanel = new JPanel(startTypeLayout);
+		startTypePanel.setOpaque(false);
 		startTypePanel.setBorder(new TitledBorder("Startup Type"));
 
 		ButtonGroup startTypeButtonGroup = new ButtonGroup();
+		startClientServerButton.setOpaque(false);
 		startTypeButtonGroup.add(startClientServerButton);
+		startClientButton.setOpaque(false);
 		startTypeButtonGroup.add(startClientButton);
+		startServerButton.setOpaque(false);
 		startTypeButtonGroup.add(startServerButton);
 		boolean serverExists = new Server().exists();
 		boolean clientExists = new Client().exists();
@@ -296,8 +311,9 @@ public class Starter extends JFrame
 
 		// Panel to choose config file
 		JPanel configFileChooserPanel = new JPanel(new BorderLayout(5, 0));
+		configFileChooserPanel.setOpaque(false);
 		configFileChooserPanel.add(configFileField, BorderLayout.CENTER);
-		JButton openFolderChooser = new JButton("Edit");
+		JButton openFolderChooser = new JButton("Select");
 		openFolderChooser.addActionListener(new ActionListener()
 		{
 			@Override
@@ -312,32 +328,20 @@ public class Starter extends JFrame
 		 * Add UI elements which can be switched on and off
 		 ****************************************/
 		GridBagLayout startOptionsLayout = new GridBagLayout();
-		JPanel startOptionsPanel = new JPanel(startOptionsLayout)
-		{
-			/**
-			 * Serial Version UID.
-			 */
-			private static final long	serialVersionUID	= 6506857121933869886L;
-
-			@Override
-			public Dimension getPreferredSize()
-			{
-				// Force a given size of this frame.
-				Dimension dim = super.getPreferredSize();
-				dim.width = 300;
-				return dim;
-			}
-		};
+		JPanel startOptionsPanel = new JPanel(startOptionsLayout);
+		startOptionsPanel.setOpaque(false);
 		startOptionsPanel.setBorder(new TitledBorder("Startup Options"));
 
 		GridBagLayout serverURLLayout = new GridBagLayout();
 		serverURLPanel = new JPanel(serverURLLayout);
+		serverURLPanel.setOpaque(false);
 		addConfElement(new JLabel("Server URL:"), serverURLLayout, newLineConstr, serverURLPanel);
 		addConfElement(urlField, serverURLLayout, newLineConstr, serverURLPanel);
 		addConfElement(serverURLPanel, startOptionsLayout, newLineConstr, startOptionsPanel);
 
 		GridBagLayout serverPortLayout = new GridBagLayout();
 		serverPortPanel = new JPanel(serverPortLayout);
+		serverPortPanel.setOpaque(false);
 		addConfElement(new JLabel("Server port:"), serverPortLayout, newLineConstr, serverPortPanel);
 		addConfElement(portField, serverPortLayout, newLineConstr, serverPortPanel);
 		addConfElement(serverPortPanel, startOptionsLayout, newLineConstr, startOptionsPanel);
@@ -345,21 +349,23 @@ public class Starter extends JFrame
 		GridBagLayout passwordLayout = new GridBagLayout();
 		passwordField = new JPasswordField();
 		passwordPanel = new JPanel(passwordLayout);
+		passwordPanel.setOpaque(false);
 		addConfElement(new JLabel("Password:"), passwordLayout, newLineConstr, passwordPanel);
 		addConfElement(passwordField, passwordLayout, newLineConstr, passwordPanel);
 		addConfElement(passwordPanel, startOptionsLayout, newLineConstr, startOptionsPanel);
 
 		GridBagLayout configFileLayout = new GridBagLayout();
 		configFilePanel = new JPanel(configFileLayout);
+		configFilePanel.setOpaque(false);
 		addConfElement(new JLabel("Microscope configuration file:"), configFileLayout, newLineConstr, configFilePanel);
 		addConfElement(configFileChooserPanel, configFileLayout, newLineConstr, configFilePanel);
 		addConfElement(configFilePanel, startOptionsLayout, newLineConstr, startOptionsPanel);
 
+		resetMicroManagerConfiguration.setOpaque(false);
 		resetMicroManagerConfiguration.setSelected(false);
 		addConfElement(resetMicroManagerConfiguration, startOptionsLayout, newLineConstr, startOptionsPanel);
 
 		addConfElement(startOptionsPanel, layout, newLineConstr, contentPanel);
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
 		/******************************************
 		 * Add Buttons
@@ -376,7 +382,7 @@ public class Starter extends JFrame
 				dispose();
 			}
 		});
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Exit");
 		cancelButton.addActionListener(new ActionListener()
 		{
 			@Override
@@ -386,12 +392,20 @@ public class Starter extends JFrame
 			}
 		});
 
+		JPanel emptyPanel = new JPanel();
+		emptyPanel.setOpaque(false);
+		addConfElement(emptyPanel, layout, bottomConstr, contentPanel);
+		
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+		buttonPanel.setOpaque(false);
 		buttonPanel.add(startButton);
 		buttonPanel.add(cancelButton);
 		buttonPanel.setBorder(new EmptyBorder(0, 5, 5, 5));
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-
+		addConfElement(buttonPanel, layout, newLineConstr, contentPanel);
+		
+		
+		contentPane.add(contentPanel, BorderLayout.CENTER);
+		
 		if(!serverExists && !clientExists)
 		{
 			startButton.setEnabled(false);
@@ -434,6 +448,10 @@ public class Starter extends JFrame
 				startClientServerButton.doClick();
 				break;
 		}
+		
+		contentPane.setBorder(new LineBorder(Color.BLACK, 1));
+		setContentPane(contentPane);
+		
 		// Get the size of the default screen
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		pack();
@@ -934,7 +952,9 @@ public class Starter extends JFrame
 
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			configFileField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+			File file = fileChooser.getSelectedFile();
+			configFileField.insertItemAt(file, 0);
+			configFileField.setSelectedItem(file);
 		}
 	}
 
@@ -945,38 +965,47 @@ public class Starter extends JFrame
 		 */
 		private static final long	serialVersionUID	= -4785284511036306325L;
 		private final static String	SEPARATOR			= "SEPARATOR";
-		private final static String	EMPTY_CONFIGURATION	= "Empty Configuration";
-		private final static String	DEFINE_LOCATION		= "<Define location>";
+		private final static String	EMPTY_CONFIGURATION	= "&lt;Empty Configuration&gt;";
+		private final static String	DEFINE_LOCATION		= "&lt;Define location&gt;";
 
 		private final String[]		settingsList		= {ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_0, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_1, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_2, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_3};
 
 		ConfigFileChooserComboBox(String lastConfigFile, ConfigurationSettings configuration)
 		{
-			setEditable(true);
-
-			addItem(DEFINE_LOCATION);
-
+			setEditable(false);
+			boolean atLeastOne = false;
 			for(String setting : settingsList)
 			{
 				String conf = configuration.getProperty(setting, null);
-				if(conf != null)
+				if(conf != null) 
 				{
-					File file = new File(conf);
+					File file = new File(conf).getAbsoluteFile();
 					if(file.exists())
+					{
 						addItem(file);
+						atLeastOne = true;
+					}
 				}
 			}
+			if(!atLeastOne)
+			{
+				// try to add demo file.
+				File file = new File("YSConfig_demo.cfg").getAbsoluteFile();
+				if(file.exists())
+					addItem(file);
+			}
 			addItem(SEPARATOR);
+			addItem(DEFINE_LOCATION);
 			addItem(EMPTY_CONFIGURATION);
 
 			if(lastConfigFile != null)
-				setSelectedItem(lastConfigFile);
+				setSelectedItem(new File(lastConfigFile));
 			else
 			{
 				if(getItemCount() > 3)
-					setSelectedIndex(1);
+					setSelectedIndex(0);
 				else
-					setSelectedItem("");
+					setSelectedIndex(2);
 			}
 
 			addActionListener(new ConfigFileChooserComboBoxListener());
@@ -1016,67 +1045,123 @@ public class Starter extends JFrame
 			return value;
 		}
 
-		public void setText(String text)
-		{
-			setSelectedItem(text);
-			setEditable(true);
-		}
-
 		class ConfigFileChooserComboBoxRenderer extends JLabel implements ListCellRenderer<Object>
 		{
 			/**
 			 * Serial Version UID.
 			 */
 			private static final long	serialVersionUID	= 4144921105492912843L;
-			JSeparator					separator;
-
+			private final JSeparator					separator;
+			private final String foregroundUnselected;
+			private final String foregroundSelected;
+			private final String foregroundSubUnselected;
+			private final String foregroundSubSelected;
 			public ConfigFileChooserComboBoxRenderer()
 			{
-				setOpaque(true);
 				setBorder(new EmptyBorder(1, 1, 1, 1));
 				separator = new JSeparator(JSeparator.HORIZONTAL);
+				JList<?> list = new JList<Object>();
+				foregroundUnselected = Integer.toHexString(list.getForeground().getRGB()).substring(2);
+				foregroundSelected = Integer.toHexString(list.getSelectionForeground().getRGB()).substring(2);
+				foregroundSubUnselected = Integer.toHexString(list.getForeground().brighter().brighter().getRGB()).substring(2);
+				foregroundSubSelected = Integer.toHexString(list.getSelectionForeground().brighter().brighter().getRGB()).substring(2);
+				setBackground(list.getBackground());
 			}
-
+			@Override
+			public Dimension getPreferredSize() 
+			{
+				Dimension dim = super.getPreferredSize();
+				dim.width = 220;
+				return dim;
+			}
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
 			{
-				if(index == 0)
+				String pNormal;
+				String pSub;
+				int width = 200;
+				if(index < 0)
 				{
-					setText(DEFINE_LOCATION);
-				}
-				else if(index == ConfigFileChooserComboBox.this.getItemCount() - 2)
-				{
-					return separator;
-				}
-				else if(index == ConfigFileChooserComboBox.this.getItemCount() - 1)
-				{
-					setText(EMPTY_CONFIGURATION);
-				}
-				else if(value instanceof File)
-				{
-					setText(((File)value).getName());
-				}
-				else if(value != null)
-				{
-					setText(value.toString());
+					setOpaque(false);
+					pNormal = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;text-indent:-6px;color:#"+foregroundUnselected+"\">";
+					pSub = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;color:#"+foregroundSubUnselected+"\">";
 				}
 				else
 				{
-					setText("unknown");
+					setOpaque(true);
+					if(isSelected)
+					{
+						pNormal = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;text-indent:-6px;color:#"+foregroundSelected+"\">";
+						pSub = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;color:#"+foregroundSubSelected+"\">";
+					}
+					else
+					{
+						pNormal = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;text-indent:-6px;color:#"+foregroundUnselected+"\">";
+						pSub = "<p style=\"width:"+width+"px;word-wrap:break-word;padding-left: 8px;color:#"+foregroundSubUnselected+"\">";
+					}
+				}
+				if(value == DEFINE_LOCATION)
+				{
+					setText("<html>"+pNormal+DEFINE_LOCATION+"</p></html>");
+				}
+				else if(value == SEPARATOR)
+				{
+					return separator;
+				}
+				else if(value == EMPTY_CONFIGURATION)
+				{
+					setText("<html>"+pNormal+EMPTY_CONFIGURATION+"</p></html>");
+				}
+				else if(value instanceof File)
+				{
+					File file = (File)value;
+					String text = "<html>"
+							+ pNormal
+							+ addBreaks(file.getName())
+							+ "</p>"
+							+ pSub
+							+ addBreaks(file.getParent())
+							+ "</p></html>";
+					setText(text);
+				}
+				else if(value != null)
+				{
+					setText("<html>"+pNormal+value.toString()+"</p></html>");
+				}
+				else
+				{
+					setText("<html>"+pNormal+"unknown</p></html>");
 				}
 
-				if(isSelected && index != ConfigFileChooserComboBox.this.getItemCount() - 2)
+				if(isSelected)
 				{
 					setBackground(list.getSelectionBackground());
-					setForeground(list.getSelectionForeground());
 				}
 				else
 				{
 					setBackground(list.getBackground());
-					setForeground(list.getForeground());
 				}
 				setFont(list.getFont());
 				return this;
+			}
+			
+			public String addBreaks(String text)
+			{
+				String insert ="<wbr />";
+				int period = 5;
+				StringBuilder builder = new StringBuilder(
+				         text.length() + insert.length() * (text.length()/period)+1);
+				int index = 0;
+			    String prefix = "";
+			    while (index < text.length())
+			    {
+			        builder.append(prefix);
+			        prefix = insert;
+			        builder.append(text.substring(index, 
+			            Math.min(index + period, text.length())));
+			        index += period;
+			    }
+				return builder.toString();
 			}
 		}
 
@@ -1092,26 +1177,25 @@ public class Starter extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				int index = ConfigFileChooserComboBox.this.getSelectedIndex();
-				if(index == 0)
+				Object item = ConfigFileChooserComboBox.this.getSelectedItem();
+				if(item == null)
+					return;
+				if(item == DEFINE_LOCATION)
 				{
-					ConfigFileChooserComboBox.this.setEditable(true);
 					setSelectedItem("");
 					chooseFile();
 				}
-				else if(index == ConfigFileChooserComboBox.this.getItemCount() - 2)
+				else if(item == SEPARATOR)
 				{
 					setSelectedItem(currentItem);
 					return;
 				}
-				else if(index == ConfigFileChooserComboBox.this.getItemCount() - 1)
+				else if(item == EMPTY_CONFIGURATION)
 				{
-					ConfigFileChooserComboBox.this.setEditable(false);
 					currentItem = getSelectedItem();
 				}
 				else
 				{
-					ConfigFileChooserComboBox.this.setEditable(true);
 					currentItem = getSelectedItem();
 				}
 			}
