@@ -5,7 +5,7 @@ pagetitle : The Microscope Control Software
 ---
 
 <div class="figure">
-	<a href="/img/multicam_org.jpg" target="_blank"><img src="/img/multicam_small.jpg" class="figure" /></a>
+	<a href="{{ site.github.url }}/img/multicam_org.jpg" target="_blank"><img src="{{ site.github.url }}/img/multicam_small.jpg" class="figure" /></a>
 	<p>
 		<small><b>Figure 1:</b> YouScope supports multiple cameras.</small>
 	</p>
@@ -14,7 +14,7 @@ pagetitle : The Microscope Control Software
 	YouScope is a free, open-source microscope control software compatible with most present-day automized microscopes. YouScope allows to easily automatize complex microscopy protocols using an user-friendly graphical interface. Besides a wide range of built-in configurable standard protocols, it is easily extendible to support specific custom protocols. 
 </p>
 <p style="text-align:right;">
-	<a href="documentation.html">Read More</a>&nbsp;&nbsp;<a href="download">Download</a>
+	<a href="{{ site.github.url }}/documentation.html">Read More</a>&nbsp;&nbsp;<a href="{{ site.github.url }}/download.html">Download</a>
 </p>
 <br style="clear:left;" />
 <h2>News</h2>
@@ -23,7 +23,7 @@ pagetitle : The Microscope Control Software
 	<h3>{{ post.date | date: "%d.%m.%Y"}}&nbsp;&ndash;&nbsp;{{ post.title }}</h3>
 	<p>{{ post.excerpt | remove: '<p>' | remove: '</p>' }}</p>
 	<p style="text-align:right;">
-		<a href="{{ post.url }}">Read More</a>
+		<a href="{{ post.url | prepend: site.github.url }}">Read More</a>
 	</p>
 </div>
 {% endfor %}

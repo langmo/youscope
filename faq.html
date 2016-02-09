@@ -6,41 +6,41 @@ title : Frequently Asked Questions (FAQ)
 <h2>General Questions</h2>
 <ul style="list-style-type:none">
 	 <li>
-		<a href="javascript:minimizeMaximize('costs');"><img src="img/plus.gif" class="faq" id="costs-plusMinus" />Is YouScope free?</a>
+		<a href="javascript:minimizeMaximize('costs');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="costs-plusMinus" />Is YouScope free?</a>
 		<div class="faq" id="costs">
 			<p>YouScope is an open-source software which comes free of charge; you do not have to pay anything to use YouScope. However, depending on the microscope you use it might happen that you need to purchase third party software (e.g. drivers from the microscope producer). Typically, this is not the case.</p>
 		</div>
 	 </li>
 	  <li>
-		<a href="javascript:minimizeMaximize('licence');"><img src="img/plus.gif" class="faq" id="licence-plusMinus" />What is the license of YouScope?</a>
+		<a href="javascript:minimizeMaximize('licence');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="licence-plusMinus" />What is the license of YouScope?</a>
 		<div class="faq" id="licence">
 			<p>YouScope is an open-source software. However, open-source is not equal to open-source. Most of YouScope is licensed under the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General Public License</a>. However, some parts of YouScope, such as images, plugins or shipped libraries, stay under a different licence. For more information, please read carefully all information shipped with YouScope (typically files having the string &quot;LICENSE&quot;, &quot;NOTICE&quot; or similar in their name, and being in the same folder as the corresponding library).</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('warranty');"><img src="img/plus.gif" class="faq" id="warranty-plusMinus" />Warranty</a>
+		<a href="javascript:minimizeMaximize('warranty');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="warranty-plusMinus" />Warranty</a>
 		<div class="faq" id="warranty">
 			<p>YouScope is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General public License</a> for more details.</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('general_why');"><img src="img/plus.gif" class="faq" id="general_why-plusMinsu" />Why did you develop YouScope?</a>
+		<a href="javascript:minimizeMaximize('general_why');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="general_why-plusMinsu" />Why did you develop YouScope?</a>
 		<div class="faq" id="general_why">
 			<p>We started developing YouScope since we needed its functionality on our own, and there was no other software available which could provide it to us. The functionality of YouScope quickly increased when more and more people started to use YouScope for their projects and requested us to add certain features. Thus, most features YouScope provides today are directly related to academic projects and have proven (at least once) to be useful.</p>
 			<p>When more and more features were added, we realized that the functionality YouScope allocated over time could help external (academic and non-academic) research groups, too. We spent considerably time to further develop YouScope, such that it can be employed in other laboratory environments without too specific previous knowledge.</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('general_who');"><img src="img/plus.gif" class="faq" id="general_who-plusMinus" />Who developed YouScope?</a>
+		<a href="javascript:minimizeMaximize('general_who');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="general_who-plusMinus" />Who developed YouScope?</a>
 		<div class="faq" id="general_who">
 			<div class="figure" style="width:100px;">
-			<div><img src="img/langmo.jpg" class="figure" style="width:100px;" /><p><small><b>Moritz Lang</b></small></p></div>
-			<p>YouScope was initially developed by group members of the <a href="http://www.csb.ethz.ch/" target="_blank">Computational Systems Biology (csb) Group</a> of the <a href="http://www.ethz.ch" target="_blank">ETH Zurich</a>, Switzerland, with support of the <a href="http://www.cisd.ethz.ch/" target="_blank">Center for Information Sciences and Databases (CISD)</a>.</p>
+			<div><img src="{{ site.github.url }}/img/langmo.jpg" class="figure" style="width:100px;" /><p><small><b>Moritz Lang</b></small></p></div>
+			<p>YouScope was initially developed by group members of the <a href="http://www.csb.ethz.ch/" target="_blank">Computational Systems Biology (csb) Group</a> of the <a href="http://www.ethz.ch" target="_blank">ETH Zurich</a>, Switzerland.</p>
 			<p>While many people contributed to the project over the time, Moritz Lang wrote most of the initial code.</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('general_micromanager');"><img src="img/plus.gif" class="faq" id="general_micromanager-plusMinus" />Comparison with Micro-Manager</a>
+		<a href="javascript:minimizeMaximize('general_micromanager');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="general_micromanager-plusMinus" />Comparison with Micro-Manager</a>
 		<div class="faq" id="general_micromanager">
 			<p><a href="http://www.micro-manager.org" target="_blank">Micro-Manager</a> is a microscope control software developed by Arthur Edelstein et al. from the laboratory of Ron Vale at the University of California San Francisco, which can control various microscope types through a common user interface and &ndash;among others&ndash; allow to control the microscope by scripting. YouScope depends on the functionality of Micro-Manager, especially on the wide variety of drivers provided by Micro-Manager to communicate with the various types of microscopes on the market. This is possible due to the good design of the Micro-Manager software, which allows &ndash;by purpose (see  <a href="http://www.micro-manager.org">www.micro-manager.org</a>)&ndash; to use the Micro-Manager microscope drivers without the Micro-Manager graphical user interface.</p>
 			<p>As compared to the Micro-Manager user interface, there are significant conceptual differences how an user is intended to interact with YouScope: Whereas in YouScope one defines an abstract imaging protocol (e.g. <i>do a bright-field image and a red-fluorescence image every 20 minutes in every well of a microplate</i>), in Micro-Manager one (rather) directly controls the physical devices (e.g. <i>move the stage to a specific x/y-position, set the focus, open the shutter, take a picture, save the picture, close the shutter, wait for a given time, go to the next position, ...</i>). Even though it is possible to use a higher abstraction level in Micro-Manager (or a lower-level one in YouScope), the focus of the two programs (that is, how the respective program is intended to be used) are at different levels of abstraction.</p>
@@ -52,13 +52,13 @@ title : Frequently Asked Questions (FAQ)
 <h2>Bugs and Erros</h2>
 <ul style="list-style-type:none">
 	 <li>
-		<a href="javascript:minimizeMaximize('bugs_general');"><img src="img/plus.gif" class="faq" id="bugs_general-plusMinus" />General</a>
+		<a href="javascript:minimizeMaximize('bugs_general');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="bugs_general-plusMinus" />General</a>
 		<div class="faq" id="bugs_general">
-			<p>We try to reduce the number of bugs and errors as much as possible. However, there exist no complex software products for which it can be guaranteed that they are error-free. If you found a bug, we ask for your help to remove the bug. To do so, please read the corresponding section in the <a href="contact.html">contact page</a>.</p>
+			<p>We try to reduce the number of bugs and errors as much as possible. However, there exist no complex software products for which it can be guaranteed that they are error-free. If you found a bug, we ask for your help to remove the bug. To do so, please read the corresponding section in the <a href="{{ site.github.url }}/contact.html">contact page</a>.</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('bugs_report');"><img src="img/plus.gif" class="faq" id="bugs_report-plusMinus" />Report a bug</a>
+		<a href="javascript:minimizeMaximize('bugs_report');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="bugs_report-plusMinus" />Report a bug</a>
 		<div class="faq" id="bugs_report">
 			<p>If you want to report a bug, please visit the page <a href="contact.html">contact</a> for more details.</p>
 		</div>
@@ -67,25 +67,25 @@ title : Frequently Asked Questions (FAQ)
 <h2>Configuration</h2>
 <ul style="list-style-type:none">
 	 <li>
-		<a href="javascript:minimizeMaximize('conf_general');"><img src="img/plus.gif" class="faq" id="conf_general-plusMinus" />General</a>
+		<a href="javascript:minimizeMaximize('conf_general');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="conf_general-plusMinus" />General</a>
 		<div class="faq" id="conf_general">
 			<p>YouScope uses the microscope device drivers of <a href="http://www.micro-manager.org" target="_blank">Micro-Manager</a>. Eventually existing microscope configuration files (*.cfg) of Micro-Manager can be readily used, even though it is advisable to adjust the configurations to YouScope. To create a microscope configuration in YouScope, select <i>File</i>-><i>Edit Microscope Configuration</i>. Every device has to be separately added by pressing <i>Add Device</i>, selecting the device to add and eventually entering device specific configuration settings. Since each device has to be configured slightly different, no general statements are possible. Therefore, it is recommended to consult the documentation of each device which should be added before adding it. These documentations are available at the Micro-Manager homepage (<a href="https://micro-manager.org/wiki/Device%20Support" target="_blank">https://micro-manager.org/wiki/Device%20Support</a>.
-			See also the <a href="documentation.html">documentation</a> page for addition details. If you have problems during the configuration of YouScope, please <a href="contact.html">contact us</a>.</p>
+			See also the <a href="{{ site.github.url }}/documentation.html">documentation</a> page for addition details. If you have problems during the configuration of YouScope, please <a href="{{ site.github.url }}/contact.html">contact us</a>.</p>
 		</div>
 	 </li>
 </ul>
 <h2>Features / Services</h2>
 <ul style="list-style-type:none">
 	 <li>
-		<a href="javascript:minimizeMaximize('feat_general');"><img src="img/plus.gif" class="faq" id="feat_general-plusMinus" />General Remarks</a>
+		<a href="javascript:minimizeMaximize('feat_general');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_general-plusMinus" />General Remarks</a>
 		<div class="faq" id="feat_general">
 			<p>We would like that many people are able to use YouScope, for many &ndash;even specific&ndash; research or even economic proposes. Thus, we are interested to steadily improve the functionality of YouScope. However, please understand that YouScope is free-of-charge and that we do not earn any money with YouScope. Thus, the fulfilment of any feature request or similar are conditioned on that we find time to implement them. Also, try to pose any request as general as possible. Your chances that we implement the requested feature are the higher, the more like the feature can be used by a broad audience.</p>
 		</div>
 	 </li>
 	  <li>
-		<a href="javascript:minimizeMaximize('feat_request');"><img src="img/plus.gif" class="faq" id="feat_request-plusMinus" />Request a Feature / Service</a>
+		<a href="javascript:minimizeMaximize('feat_request');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_request-plusMinus" />Request a Feature / Service</a>
 		<div class="faq" id="feat_request">
-			<p>You are welcome to send us any feature request or ask us for any service you want connected to YouScope (see general remarks). How to contact us we describe in the <a href="contact.html">contact section</a>. However, before requesting a feature, you should ask yourself if you might even be able to include your feature on your own (see below).<br />
+			<p>You are welcome to send us any feature request or ask us for any service you want connected to YouScope (see general remarks). How to contact us we describe in the <a href="{{ site.github.url }}/contact.html">contact section</a>. However, before requesting a feature, you should ask yourself if you might even be able to include your feature on your own (see below).<br />
 			To request a feature it would be nice to include the following information in the request:</p>
 			<ul>
 				<li>Describe the feature in as general terms as possible (e.g. <i>I have to be able to use multiple stages</i>).</li>
@@ -97,29 +97,29 @@ title : Frequently Asked Questions (FAQ)
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('feat_diy');"><img src="img/plus.gif" class="faq" id="feat_diy-plusMinus" />Do It Yourself</a>
+		<a href="javascript:minimizeMaximize('feat_diy');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_diy-plusMinus" />Do It Yourself</a>
 		<div class="faq" id="feat_diy">
-			<p>YouScope is built in a modular way. This allows to simply include various kinds of Plugins to the program which increase its functionality. Furthermore, YouScope has a scripting interface which allows to include additional functionality even if one only has limited programming experience or time. To learn how to write a plugin, please visit the respective section of the <a href="documentation.html">documentation</a>.</p>
+			<p>YouScope is built in a modular way. This allows to simply include various kinds of Plugins to the program which increase its functionality. Furthermore, YouScope has a scripting interface which allows to include additional functionality even if one only has limited programming experience or time. To learn how to write a plugin, please visit the respective section of the <a href="{{ site.github.url }}/documentation.html">documentation</a>.</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('feat_publish');"><img src="img/plus.gif" class="faq" id="feat_publish-plusMinus" />Publish a Plugin</a>
+		<a href="javascript:minimizeMaximize('feat_publish');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_publish-plusMinus" />Publish a Plugin</a>
 		<div class="faq" id="feat_publish">
 			<p>YouScope is provided free of charge. If you have written a plugin which might be usefull for others, too, think about giving back something to the microscope community by publishing the plugin. Preferably you will publish the plugin for free and open-source. However, the licence agreement also allows you to develop proprietary plugins. In any case, contact us: We might link your homepage where you provide the plugin or, if the plugin is for free, even provide the download at the official YouScope page (including citation, tribute, your licence, ...). The amount of available methods for microscopy only increases if many people contribute in the development process!</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('feat_develop');"><img src="img/plus.gif" class="faq" id="feat_develop-plusMinus" />Contribute to the Development Process</a>
+		<a href="javascript:minimizeMaximize('feat_develop');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_develop-plusMinus" />Contribute to the Development Process</a>
 		<div class="faq" id="feat_develop">
-			<p>YouScope is not only free, most parts of it are also open-source. This means that you can download and manipulate the source code of YouScope (for more details, see <a href="documentation.html">documentation section</a>). Instead of manipulating YouScope on your own, it would be better to join the development group of YouScope and help us to prepare the next official release.
-			If you want to join the development team of YouScope, contact us (see <a href="contact.html"> contact page</a>)</p>
+			<p>YouScope is not only free, most parts of it are also open-source. This means that you can download and manipulate the source code of YouScope (for more details, see <a href="{{ site.github.url }}/documentation.html">documentation section</a>). Instead of manipulating YouScope on your own, it would be better to join the development group of YouScope and help us to prepare the next official release.
+			If you want to join the development team of YouScope, contact us (see <a href="{{ site.github.url }}/contact.html"> contact page</a>)</p>
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('feat_pay');"><img src="img/plus.gif" class="faq" id="feat_pay-plusMinus" />Pay for a Feature / Service</a>
+		<a href="javascript:minimizeMaximize('feat_pay');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="feat_pay-plusMinus" />Pay for a Feature / Service</a>
 		<div class="faq" id="feat_pay">
 			<p>As mentioned above, it might not be possible for us to provide any service or plugin you may want us to provide, since we have our own jobs/research projects, too. However, if you have a task you want us to fulfil where we normally would not have enough time or man power for, things might change if you would agree in paying for the service/plugin.</p>
-			<p>This does not mean that we will ask for money whenever you contact us with a reasonable request. However, if the task you intend us to do means a lot of work, is only interesting for your special project, if you will earn money with the product we help you to develop, or if you do not want anybody else to e.g. also obtain a plugin you requested us to develop for you, then it might be a reasonable idea that you pay us for our work. If you are interested in such an agreement, please <a href="contact.html">contact us</a>.
+			<p>This does not mean that we will ask for money whenever you contact us with a reasonable request. However, if the task you intend us to do means a lot of work, is only interesting for your special project, if you will earn money with the product we help you to develop, or if you do not want anybody else to e.g. also obtain a plugin you requested us to develop for you, then it might be a reasonable idea that you pay us for our work. If you are interested in such an agreement, please <a href="{{ site.github.url }}/contact.html">contact us</a>.
 			</p>
 		</div>
 	 </li>
@@ -127,7 +127,7 @@ title : Frequently Asked Questions (FAQ)
 <h2>Science</h2>
 <ul style="list-style-type:none">
 	 <li>
-		<a href="javascript:minimizeMaximize('sience_cite');"><img src="img/plus.gif" class="faq" id="sience_cite-plusMinus" />You Cite Us</a>
+		<a href="javascript:minimizeMaximize('sience_cite');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="sience_cite-plusMinus" />You Cite Us</a>
 		<div class="faq" id="sience_cite">
 			<p>As everybody in academia knows, citations are important. Since we, the people who developed YouScope, predominantly work in the academia, we would consider ourselves lucky if you might think about citing YouScope in your next paper/book/... If you want to cite YouScope, please cite the following article:</p>
 			<p>
@@ -138,9 +138,9 @@ title : Frequently Asked Questions (FAQ)
 		</div>
 	 </li>
 	 <li>
-		<a href="javascript:minimizeMaximize('sience_recite');"><img src="img/plus.gif" class="faq" id="sience_recite-plusMinus" />We Cite You</a>
+		<a href="javascript:minimizeMaximize('sience_recite');"><img src="{{ site.github.url }}/img/plus.gif" class="faq" id="sience_recite-plusMinus" />We Cite You</a>
 		<div class="faq" id="sience_recite">
-			<p>If you are using YouScope in your lab or even published a paper for which you used YouScope to generate data for, please <a href="contact.html">tell us</a>. We have a small collection of the labs in which YouScope is used, and the papers citing YouScope, and might&dash;if you agree&dash; even publish this information in the future on this homepage.</p>
+			<p>If you are using YouScope in your lab or even published a paper for which you used YouScope to generate data for, please <a href="{{ site.github.url }}/contact.html">tell us</a>. We have a small collection of the labs in which YouScope is used, and the papers citing YouScope, and might&dash;if you agree&dash; even publish this information in the future on this homepage.</p>
 		</div>
 	 </li>
 </ul>
