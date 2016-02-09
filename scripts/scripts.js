@@ -62,7 +62,7 @@ function minimizeMaximize(elementID)
 		plusMinus = document.all(elementID + "-plusMinus");
 	}
 
-	if(element.style.display == "none")
+	if(element.style.display != "block")
 	{
 		element.style.display = "block";
 		plusMinus.src = "img/minus.gif";
