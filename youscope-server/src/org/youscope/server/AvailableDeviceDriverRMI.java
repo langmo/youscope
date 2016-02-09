@@ -18,7 +18,7 @@ import org.youscope.common.microscope.PreInitDeviceProperty;
 /**
  * @author langmo
  */
-public class AvailableDeviceDriverRMI extends UnicastRemoteObject implements AvailableDeviceDriver
+class AvailableDeviceDriverRMI extends UnicastRemoteObject implements AvailableDeviceDriver
 {
 	/**
 	 * Serial Version UID.
