@@ -1,3 +1,6 @@
+---
+layout: nil
+---
 <?xml version="1.0"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
@@ -6,18 +9,17 @@
     <atom:link href="http://domain/rss.xml" rel="self" type="application/rss+xml" />
     <description></description>
     <language>en-au</language>
-    <pubDate>Di, 09 Feb 2016 12:51:44 +01:00</pubDate>
-    <lastBuildDate>Di, 09 Feb 2016 12:51:44 +01:00</lastBuildDate>
-    
+    <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
+    <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %Z" }}</lastBuildDate>
+    {% for post in site.posts %}
     <item>
-      <title>YouScope 2.0 coming</title>
-      <link>http://domain/2016/02/09/YouScope-2-coming.html</link>
-      <pubDate>Di, 09 Feb 2016 00:00:00 +01:00</pubDate>
+      <title>{{ post.title | xml_escape }}</title>
+      <link>http://domain{{ post.url }}</link>
+      <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %Z" }}</pubDate>
       <author>Author</author>
-      <guid>http://domain/2016/02/09/YouScope-2-coming.html</guid>
-      <description>&lt;p&gt;We are currently preparing the stable release of YouScope 2.0. As compared to the 1.X versions, YouScope 2.0 offers an exciting new user interface, with an revised LiveStream, functionality to view all images of a running or finished measurement, Skins (check it out!) and much more.&lt;/p&gt;
-&lt;p&gt;We already released the second beta version of YouScope 2.0. As compared to the final version, we expect only minor changes/bug-fixes to still happen. The second beta is stable, meaning that we recommend switching right now! You can download the latest release of Youscope in our &lt;a href=&quot;/download.html&quot;&gt;download area&lt;/a&gt;.</description>
+      <guid>http://domain{{ post.url }}</guid>
+      <description>{{ post.content | xml_escape }}</description>
     </item>
-    
+    {% endfor %}
   </channel> 
 </rss>
