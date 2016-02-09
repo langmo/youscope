@@ -1,0 +1,332 @@
+body 
+{
+	color: black;
+	background-color: #eeeeee;
+	font-family: Helvetica,Arial,sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+div#page {
+	margin: 5px 5px 5px 5px;
+	width: 950px;
+	padding: 0;
+	background: #ffffff;
+	border: 1px solid #777777;
+}
+
+div#header
+{
+	height:100px;
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #777777;
+	vertical-align:bottom;
+}
+div#headerLeft
+{
+	height:100px;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+div#headerRight
+{
+	height:100px;
+	margin: 0;
+	padding: 0;
+	text-align:right;
+	vertical-align:bottom;
+}
+
+div#leftColumn
+{
+	font-size: 10pt;
+	float: left;
+	width: 140px;
+	margin: 40px 0px 0 0;
+	padding: 5px 0px 5px 0;
+	border-right:1px solid #777777;
+	text-align:right;
+}
+div#leftColumn ul
+{
+	margin: 0;
+	padding: 0;
+}
+div#leftColumn li
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+div#leftColumn a 
+{
+	display: block;
+	float:right;
+	padding: 3px 13px 3px 3px;
+	margin:0 0px 0 0px;
+	font-weight: bold;
+	width:110px;
+}
+div#leftColumn a:link
+{
+	color: #000000;
+	background-color:#FFFFFF;
+	text-decoration:none;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #FFFFFF;
+}
+div#leftColumn a:visited
+{
+	color: #000000;
+	background-color:#FFFFFF;
+	text-decoration:none;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #FFFFFF;
+}
+div#leftColumn a:hover
+{
+	color: #555555;
+	background-color:#FFFFFF;
+	background-color:#F8F8F8;
+	text-decoration:none;
+	border-top:1px solid #AAAAAA;
+	border-bottom:1px solid #AAAAAA;
+}
+div#leftColumn a:active
+{
+	color:#000000;
+	background-color:#FFFFFF;
+	text-decoration:none;
+	border-top:1px solid #FFFFFF;
+	border-bottom:1px solid #FFFFFF;
+}
+div#rightColumn
+{
+	font-size: 10pt;
+	float: right;
+	width: 285px;
+	margin: 20px 5px 10px 10px;
+	padding: 0;
+}
+div.plusMinusSign
+{
+	width:13px;
+	height:13px;
+	float: right;
+	margin: 0px;
+	padding: 0px;
+}
+img.plusMinusSign
+{
+	margin:0px;
+	padding:0px;
+	border:none;
+}
+div.rightBox
+{
+	font-size: 10pt;
+	margin: 5px 0px 5px 0px;
+	padding: 0;
+	border:1px solid #BBBBBB;
+}
+div.rightBoxHeader
+{
+	margin:0;
+	padding:3px 3px 3px 3px;
+	color:#555555;
+	font-size: 10pt;
+	background:#eeeeee;
+	font-weight:bold;
+	border-bottom:1px dashed #BBBBBB;
+}
+div.rightBoxMain
+{
+	font-size: 10pt;
+	margin: 0;
+	padding: 5px 5px 5px 5px;
+}
+
+div.rightBox h3
+{
+	margin:5px 0px 0px 0px;
+	padding:0;
+	font-size: 10pt;
+	font-weight:bold;
+}
+div.rightBox ul
+{
+	margin:0 0 0 20px;
+	padding:0;
+}
+div.rightBox p
+{
+	margin:0px 0px 5px 0px;
+	padding:0;
+	font-size: 10pt;
+}
+div.rightBox li
+{
+	margin:0px 0px 0px 0px;
+	padding:0;
+	font-size: 10pt;
+}
+div.rightBox a 
+{
+	font-weight: bold;
+}
+div.rightBox a:link
+{
+	color: #000000;
+	text-decoration:underline;
+}
+div.rightBox a:visited
+{
+	color: #000000;
+	text-decoration:underline;
+}
+div.rightBox a:hover
+{
+	color: #555555;
+	text-decoration:underline;
+}
+div.rightBox a:active
+{
+	color:#000000;
+	text-decoration:underline;
+}
+
+div#main
+{
+	margin: 0 300px 0 160px;
+	padding: 10px;
+}
+div#main h1
+{
+	font-size: 14pt;
+	margin: 15px 0 5px 0;
+	font-weight:bold;
+}
+div#main h2
+{
+	font-size: 12pt;
+	margin: 15px 0 5px 0;
+	font-weight:bold;
+}
+div#main h3
+{
+	font-size: 10pt;
+	margin: 15px 0 5px 0;
+	font-weight:bold;
+}
+div#main p
+{
+	font-size: 10pt;
+	margin: 5px 0 5px 0;
+}
+div#main li
+{
+	font-size: 10pt;
+	margin: 5px 0 5px 0;
+}
+div#main a 
+{
+	font-weight: bold;
+}
+div#main a:link
+{
+	color: #000000;
+	text-decoration:underline;
+}
+div#main a:visited
+{
+	color: #000000;
+	text-decoration:underline;
+}
+div#main a:hover
+{
+	color: #555555;
+	text-decoration:underline;
+}
+div#main a:active
+{
+	color:#000000;
+	text-decoration:underline;
+}
+
+div#footer
+{
+	clear: both;
+	height: 40px;
+	font-size: 40px;
+	margin: 20px 0 5px 0;
+	padding: 0 5px 0 0;
+	background-color: #FFFFFF;
+	border-top: 1px dashed #AAAAAA;
+}
+div#footer p
+{
+	font-size: 8pt;
+	color: #777777;
+	margin: 5px 10px 0 5px;
+}
+div.post h3
+{
+	font-size: 12pt;
+	margin: 5px 0 5px 0;
+	padding: 0 20px 0 0;
+	font-weight:bold;
+}
+div.post p
+{
+	font-size: 10pt;
+	color: #555555;
+	padding: 0px 0px 0px 20px;
+	margin: 5px 0 5px 0;
+}
+
+
+table.plate
+{
+	border:1px solid #000000;
+	background-color:#aaaaaa;
+	padding:5px;
+	margin:5px;
+}
+
+td.plate
+{
+	width:20px;
+	height:20px;
+	background-color:#7777FF;
+	margin:2px;
+	padding:0px;
+	border:1px solid #333333;
+	cursor:crosshair;
+}
+div.figure
+{
+	float:left;
+	margin:0px 10px 0px 0px;
+	width:204px;
+}
+img.figure
+{
+	border:2px solid #000000;
+	width:200px;
+}
+div.faq
+{
+	margin: 2px 2px 2px 17px;
+	padding: 0px;
+	display: none;
+}
+img.faq
+{
+	margin:0px;
+	padding:0px 5px 0px 0px;
+	border:none;
+	width:12px;
+	height:12px;
+}

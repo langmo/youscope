@@ -1,887 +1,325 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-        <title>YouScope - Microscope Control Software</title>
-
-        <style type="text/css">
-      body {
-        color: black;
-        background-color: #eeeeee;
-        font-family: Helvetica,Arial,sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-
-      div#page {
-        margin: 5px 5px 5px 5px;
-        width: 950px;
-        padding: 0;
-        background: #ffffff;
-        border: 1px solid #777777;
-      }
-
-      div#header
-      {
-        height:100px;
-        margin: 0;
-        padding: 0;
-        border-bottom: 1px solid #777777;
-         vertical-align:bottom;
-      }
-      div#headerLeft
-      {
-        height:100px;
-        margin: 0;
-        padding: 0;
-        float: left;
-      }
-      div#headerRight
-      {
-        height:100px;
-        margin: 0;
-        padding: 0;
-        text-align:right;
-        vertical-align:bottom;
-      }
-
-      div#leftColumn
-      {
-        font-size: 10pt;
-        float: left;
-        width: 140px;
-        margin: 40px 0px 0 0;
-        padding: 5px 0px 5px 0;
-        border-right:1px solid #777777;
-        text-align:right;
-      }
-      div#leftColumn ul
-      {
-        margin: 0;
-        padding: 0;
-      }
-      div#leftColumn li
-      {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      div#leftColumn a {
-        display: block;
-        float:right;
-        padding: 3px 13px 3px 3px;
-        margin:0 0px 0 0px;
-        font-weight: bold;
-        width:110px;
-
-      }
-      div#leftColumn a:link
-      {
-        color: #000000;
-        background-color:#FFFFFF;
-        text-decoration:none;
-        border-top:1px solid #FFFFFF;
-        border-bottom:1px solid #FFFFFF;
-      }
-      div#leftColumn a:visited
-      {
-        color: #000000;
-        background-color:#FFFFFF;
-        text-decoration:none;
-        border-top:1px solid #FFFFFF;
-        border-bottom:1px solid #FFFFFF;
-      }
-      div#leftColumn a:hover
-      {
-        color: #555555;
-        background-color:#FFFFFF;
-        background-color:#F8F8F8;
-        text-decoration:none;
-        border-top:1px solid #AAAAAA;
-        border-bottom:1px solid #AAAAAA;
-      }
-      div#leftColumn a:active
-      {
-        color:#000000;
-        background-color:#FFFFFF;
-        text-decoration:none;
-        border-top:1px solid #FFFFFF;
-        border-bottom:1px solid #FFFFFF;
-      }
-
-      div#rightColumn
-      {
-        font-size: 10pt;
-        float: right;
-        width: 285px;
-        margin: 20px 5px 10px 10px;
-        padding: 0;
-      }
-      div.plusMinusSign
-      {
-        width:13px;
-        height:13px;
-        float: right;
-        margin: 0px;
-        padding: 0px;
-      }
-      img.plusMinusSign
-      {
-         margin:0px;
-         padding:0px;
-         border:none;
-      }
-
-      div.rightBox
-      {
-        font-size: 10pt;
-        margin: 5px 0px 5px 0px;
-        padding: 0;
-        border:1px solid #BBBBBB;
-      }
-      div.rightBoxHeader
-      {
-        margin:0;
-              padding:3px 3px 3px 3px;
-              color:#555555;
-        font-size: 10pt;
-        background:#eeeeee;
-        font-weight:bold;
-        border-bottom:1px dashed #BBBBBB;
-      }
-      div.rightBoxMain
-      {
-        font-size: 10pt;
-        margin: 0;
-        padding: 5px 5px 5px 5px;
-      }
-
-      div.rightBox h3
-      {
-              margin:5px 0px 0px 0px;
-              padding:0;
-        font-size: 10pt;
-                font-weight:bold;
-      }
-          div.rightBox ul
-          {
-                  margin:0 0 0 20px;
-                  padding:0;
-          }
-      div.rightBox p
-      {
-              margin:0px 0px 5px 0px;
-              padding:0;
-        font-size: 10pt;
-      }
-      div.rightBox li
-      {
-              margin:0px 0px 0px 0px;
-              padding:0;
-        font-size: 10pt;
-      }
-
-      div#main
-      {
-        margin: 0 300px 0 160px;
-        padding: 10px;
-      }
-       div#main h1
-      {
-        font-size: 12pt;
-        margin: 15px 0 5px 0;
-        font-weight:bold;
-      }
-      div#main h2
-      {
-        font-size: 10pt;
-        margin: 15px 0 5px 0;
-        font-weight:bold;
-      }
-      div#main p
-      {
-        font-size: 10pt;
-        margin: 5px 0 5px 0;
-      }
-      div#main li
-      {
-        font-size: 10pt;
-        margin: 5px 0 5px 0;
-      }
-
-      div#footer
-      {
-        clear: both;
-        font-size: 40px;
-        margin: 20px 0 5px 0;
-        padding: 0 5px 0 0;
-        background-color: #FFFFFF;
-        border-top: 1px dashed #AAAAAA;
-      }
-
-          div#footer p
-      {
-        font-size: 8pt;
-        color: #777777;
-        margin: 5px 10px 0 5px;
-      }
-
-      table.plate
-      {
-              border:1px solid #000000;
-              background-color:#aaaaaa;
-              padding:5px;
-              margin:5px;
-      }
-
-      td.plate
-      {
-              width:20px;
-              height:20px;
-              background-color:#7777FF;
-              margin:2px;
-              padding:0px;
-              border:1px solid #333333;
-              cursor:crosshair;
-      }
-      div.figure
-      {
-         float:left;
-         margin:0px 10px 0px 0px;
-         width:250px;
-      }
-      img.figure
-      {
-         border:1px solid #000000;
-         width:250px;
-      }
-      
-      div.faq
-      {
-        margin: 2px 2px 2px 17px;
-        padding: 0px;
-        display: none;
-      }
-      img.faq
-      {
-         margin:0px;
-         padding:0px 5px 0px 0px;
-         border:none;
-         width:12px;
-         height:12px;
-      }
-</style>
-
-
-        <script type="text/javascript">
-                // Parameters for scope movement.
-                plateX = 10;//680;
-                plateY = 110;//310;
-
-                wellWidth = 23.65;
-                wellHeight = 8.5;
-                deltaXVert = -17.75;
-                nWellX = 8;
-                nWellY = 3;
-                nextWell = new Array(0, 0);
-                wellSpeedX = Math.ceil(wellWidth / 10);
-                wellSpeedY = Math.ceil(wellHeight / 10);
-                well0X = 10.5;
-                well0Y = -112;
-
-                scopeX = well0X;
-                scopeY = well0Y;
-
-                deltaBeamX = 36;//30;
-                deltaBeamY = 44;//45;
-
-                var beam = new Array(2);
-                waitInWell = new Array(10, 0);
-                waitTimes = -1;
-                beamNr = 0;
-
-                doNotChangeWell = false;
-
-                var scope, plate, beam;
-
-                wellActivation = new Array(new Array(true, true, true, true, true, true, true, true),
-                                new Array(true, true, true, true, true, true, true, true),
-                                new Array(true, true, true, true, false, false, false, false));
-
-                // Detection of used browser
-                var DHTML = false, DOM = false, MSIE4 = false, NS4 = false, OP = false;
-                function detectBrowser()
-                {
-                        if (document.getElementById)
-                        {
-                                  DHTML = true;
-                                  DOM = true;
-                        }
-                        else if (document.all)
-                        {
-                                    DHTML = true;
-                                    MSIE4 = true;
-                          }
-                }
-                function minimizeMaximize(elementID)
-                {
-                        if(!DHTML)
-                                return;
-                        if(DOM)
-                        {
-                                element = document.getElementById(elementID);
-                                plusMinus = document.getElementById(elementID + "-plusMinus");
-                        }
-                        else if(MSIE4)
-                        {
-                                element = document.all(elementID);
-                                plusMinus = document.all(elementID + "-plusMinus");
-                        }
-                        if(element.style.display == "none" || element.style.display == "")
-                        {
-                                element.style.display = "block";
-                                plusMinus.src = "images/minus.gif";
-                        }
-                        else
-                        {
-                                element.style.display = "none";
-                                plusMinus.src = "images/plus.gif";
-                        }
-                }
-
-                function setExposure(beam, select)
-                {
-                        waitInWell[beam] = select.options[select.options.selectedIndex].value / 10;
-                }
-
-                // Main function for scope movement.
-                function moveScope()
-                {
-                        if(waitTimes > 0 && waitTimes == waitInWell[beamNr])
-                        {
-                                beam[beamNr].style.visibility = "visible";
-                        }
-                        if(waitTimes > 0)
-                        {
-                                waitTimes--;
-                                if(beam[beamNr].filters)
-                                {
-                                         beam[beamNr].filters[0].phase += 20;
-                                }
-                                return;
-                        }
-                        else if(waitTimes == 0)
-                        {
-                                beam[beamNr].style.visibility = "hidden";
-                                beamNr++;
-                                if(beamNr < beam.length)
-                                {
-                                        waitTimes = waitInWell[beamNr];
-                                }
-                                else
-                                {
-                                        beamNr = 0;
-                                        waitTimes = -1;
-                                }
-                                return;
-                        }
-
-                        gotoX = well0X + nextWell[0] * wellWidth + nextWell[1] * deltaXVert ;
-                        gotoY = well0Y + nextWell[1] * wellHeight;
-
-                        // Move scope
-                        if(Math.abs(scopeX - gotoX) < wellSpeedX)
-                        {
-                                scopeX = gotoX;
-                        }
-                        else if(scopeX < gotoX)
-                        {
-                                scopeX = scopeX + wellSpeedX;
-                        }
-                        else if(scopeX > gotoX)
-                        {
-                                scopeX = scopeX - wellSpeedX;
-                        }
-
-                        if(Math.abs(scopeY - gotoY) < wellSpeedY)
-                        {
-                                scopeY = gotoY;
-                        }
-                        else if(scopeY < gotoY)
-                        {
-                                scopeY = scopeY + wellSpeedY;
-                        }
-                        else if(scopeY > gotoY)
-                        {
-                                scopeY = scopeY - wellSpeedY;
-                        }
-
-                        // Detect if we arrived at the goal.
-                        if(scopeX == gotoX && scopeY == gotoY)
-                        {
-                                if(doNotChangeWell)
-                                        waitTimes = 99999;
-                                else
-                                        waitTimes = waitInWell[0];
-                                if(!doNotChangeWell)
-                                {
-                                        gotoNextWell();
-                                }
-                        }
-
-                        // Set position
-                        scope.style.left = Math.round(plateX + scopeX) + "px";
-                        scope.style.top = Math.round(plateY + scopeY) + "px";
-                        for(i=0; i<beam.length;i++)
-                        {
-                                beam[i].style.left = Math.round(plateX + scopeX + deltaBeamX) + "px";
-                                beam[i].style.top = Math.round(plateY + scopeY + deltaBeamY) + "px";
-                        }
-                }
-
-                var moveRight = true;
-                function gotoNextWell()
-                {
-                        startX = nextWell[0];
-                        startY = nextWell[1];
-                        while(true)
-                        {
-                            if(moveRight)
-                {
-                    nextWell[0]++;
-                }
-                else
-                {
-                    nextWell[0]--;
-                }
-                if(nextWell[0] >= nWellX)
-                {
-                        if(nextWell[1] == startY)
-                        {
-                                moveRight = !moveRight;
-                                nextWell[0] = nWellX -1;
-                        }
-                        else
-                                nextWell[0] = 0;
-                    nextWell[1]++;
-                }
-                else if(nextWell[0] < 0)
-                {
-                        if(nextWell[1] == startY)
-                        {
-                                moveRight = !moveRight;
-                            nextWell[0] = 0;
-                    }
-                    else
-                            nextWell[0] = nWellX -1;
-                    nextWell[1]++;
-                }
-                if(nextWell[1] >= nWellY)
-                {
-                        moveRight = true;
-                    nextWell[0] = 0;
-                    nextWell[1] = 0;
-                }
-                if(wellActivation[nextWell[1]][nextWell[0]] ||
-                                (startX == nextWell[0] && startY == nextWell[1]))
-                        break;
-            }
-                }
-
-                // Goto a predefined well when mouse is over a link.
-                function activateWell(wellX, wellY)
-                {
-                        nextWell[0] = wellX;
-                        nextWell[1] = wellY;
-                        doNotChangeWell = true;
-                        waitTimes = 0;
-                }
-
-                // Continue normal processing when mouse leaves link
-                function continueMoving()
-                {
-                        doNotChangeWell = false;
-                        if(nextWell[1] % 2 == 0)
-                        {
-                                nextWell[0]++;
-                        }
-                        else
-                        {
-                                nextWell[0]--;
-                        }
-                        waitTimes = 0;
-                }
-                function switchWellState(wellX, wellY)
-                {
-                        if(!DHTML)
-                                return;
-                        if(DOM)
-                        {
-                                well = document.getElementById("well" + wellX + wellY);
-                        }
-                        else if(MSIE4)
-                        {
-                                well = document.all("well" + wellX + wellY);
-                        }
-                        wellActivation[wellY][wellX] = !wellActivation[wellY][wellX];
-                        if(wellActivation[wellY][wellX])
-                                well.style.backgroundColor="#7777FF";
-                        else
-                                well.style.backgroundColor="#eeeeee";
-                }
-
-                // Initializes plate measurement
-                function initializeMeasurement()
-                {
-                        detectBrowser();
-                        if(!DHTML)
-                                return;
-
-                        // Get scope object
-                        if(DOM)
-                        {
-                                scope = document.getElementById("scope");
-                                beam[0] = document.getElementById("beam_blue");
-                                beam[1] = document.getElementById("beam_green");
-                                plate = document.getElementById("plate");
-                        }
-                        else if(MSIE4)
-                        {
-                                scope = document.all("scope");
-                                beam[0] = document.all("beam_blue");
-                                beam[1] = document.all("beam_green");
-                                plate = document.all("plate");
-                        }
-                        if(!scope || !beam || !plate)
-                                return;
-
-                        scope.style.left = Math.round(plateX + scopeX) + "px";
-                        scope.style.top = Math.round(plateY + scopeY) + "px";
-                        for(i=0; i<beam.length; i++)
-                        {
-                                beam[i].style.left = Math.round(plateX + scopeX + deltaBeamX) + "px";
-                                beam[i].style.top = Math.round(plateY + scopeY + deltaBeamY) + "px";
-                        }
-                        plate.style.left = Math.round(plateX) + "px";
-                        plate.style.top = Math.round(plateY) + "px";
-
-                        for(wellY = 0; wellY < wellActivation.length; wellY++)
-                        {
-                                for(wellX = 0; wellX < wellActivation[wellY].length; wellX++)
-                                {
-                                        if(DOM)
-                                        {
-                                                 well = document.getElementById("well" + wellX + wellY);
-                                        }
-                                        else if(MSIE4)
-                                        {
-                                            well = document.all("well" + wellX + wellY);
-                                        }
-                                        if(wellActivation[wellY][wellX])
-                                            well.style.backgroundColor="#7777FF";
-                                        else
-                                                well.style.backgroundColor="#eeeeee";
-                                }
-                        }
-
-                        window.setInterval('moveScope()', 100)
-                }
-        </script>
+	<head>
+	<meta content="en-au" http-equiv="Content-Language" />
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<base href="http://langmo.github.io/youscope/" />
+	<title>YouScope - Frequently Asked Questions (FAQ)</title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css" />
+	<link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+	<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="/favicon-194x194.png" sizes="194x194" />
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192" />
+	<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+	<link rel="manifest" href="/manifest.json" />
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+	<meta name="apple-mobile-web-app-title" content="YouScope" />
+	<meta name="application-name" content="YouScope" />
+	<meta name="msapplication-TileColor" content="#b91d47" />
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+	<meta name="theme-color" content="#ffffff" />
+	<script type="text/javascript" src="/scripts/scripts.js"></script>
 </head>
-<body onload="initializeMeasurement()">
-        <div id="page">
-                <div id="header">
-                        <div id="headerLeft"><img src="images/header.jpg" /></div>
-                        <div id="headerRight"><a href="index.html"><img src="images/YouScope.jpg" style="vertical-align:bottom;border:0px;" /></a></div>
-                </div>
 
-                <div id="leftColumn">
-                      <ul>
-                         <li><a href="index.html">About</a></li>
-                         <li><a href="download.html">Download</a></li>
-                         <li><a href="documentation.html">Documentation</a></li>
-                         <li><a href="community.html">Community</a></li>
-                         <li><a href="faq.html">FAQ</a></li>
-                         <li><a href="contact.html">Contact</a></li>
-                      </ul>
-                 </div>
+	<body onload="initialize()">
+		<div id="page">
+			<div id="header">
+				<div id="headerLeft"><img src="/img/header.jpg" /></div>
+<div id="headerRight"><a href="/index.html"><img src="/img/logo_horizontal.jpg" style="vertical-align:bottom;border:0px;" /></a></div>
+			</div>
+			<div id="leftColumn">
+				<ul>
+	<li><a href="index.html">About</a></li>
+	<li><a href="download.html">Download</a></li>
+	<li><a href="documentation.html">Tutorials & Documentation</a></li>
+	<li><a href="faq.html">FAQ</a></li>
+	<li><a href="contact.html">Contact</a></li>
+</ul>
+			</div>
+			<div id="rightColumn">
+				<div class="rightBox">
+	 <div class="rightBoxHeader">
+		   <div class="plusMinusSign"><a href="javascript:minimizeMaximize('downloadNow');"><img src="/img/minus.gif" class="plusMinusSign" id="downloadNow-plusMinus" /></a></div>
+		   Download Now
+	  </div>
+	  <div class="rightBoxMain" id="downloadNow">
+		   <p>Latest stable build: <br /><b>YouScope R2016 Beta 2</b></p>
+		   <a href="https://github.com/langmo/youscope/releases/download/v2.0.0-beta.2/YouScope_64bit_Installer.exe" target="_blank">Windows XP, Vista, 7, 8, 10 (64bit)</a>
+		   <br />
+		   <a href="https://github.com/langmo/youscope/releases/download/v2.0.0-beta.2/YouScope_32bit_Installer.exe" target="_blank">Windows XP, Vista, 7, 8, 10 (32bit)</a>
+		   <br />
+		   <a href="https://github.com/langmo/youscope/releases" target="_blank">All options</a>
+		   <br />
+	  </div>
+</div>
+<div class="rightBox">
+	<div class="rightBoxHeader">
+		<div class="plusMinusSign">
+			<a href="javascript:minimizeMaximize('citeNow');"><img src="/img/minus.gif" class="plusMinusSign" id="downloadNow-plusMinus" /></a>
+		</div>
+		Cite YouScope
+	</div>
+	<div class="rightBoxMain" id="citeNow">
+		<p>
+			Lang, M., Rudolf, F., & Stelling, J. (2012).<br />
+			Use of YouScope to Implement Systematic Microscopy Protocols.<br />
+			<i>Current Protocols in Molecular Biology, 14-21.</i><br />
+		</p>
+		<p style="text-align:right;"><a href="bibtex.bib" target="_blank">BibTeX</a>&nbsp;&nbsp;<a href="endnote.enw" target="_blank">EndNote</a></p>
+	</div>
+</div>
 
-                 <div id="rightColumn">
-                         <div class="rightBox">
-                                 <div class="rightBoxHeader">
-                                       <div class="plusMinusSign"><a href="javascript:minimizeMaximize('downloadNow');"><img src="images/minus.gif" class="plusMinusSign" id="downloadNow-plusMinus" /></a></div>
-                                       Download Now
-                                  </div>
-                                  <div class="rightBoxMain" id="downloadNow">
-                                       <p>Download now the latest stable version or the nightly build of YouScope for free!</p>
-                                       <p>Latest stable version: <br /><b>YouScope 1.0 Build R2011-01</b></p>
-                                       <div align="center"><a href="download.html"><img src="images/download.jpg" border="0" /></a></div>
-                                  </div>
-                         </div>
-                         <div class="rightBox">
-                                 <div class="rightBoxHeader">
-                                         <div class="plusMinusSign"><a href="javascript:minimizeMaximize('appwindow');"><img src="images/minus.gif" class="plusMinusSign" id="appwindow-plusMinus" /></a></div>
-                                         Mode of Operation
-                                 </div>
-                                 <div class="rightBoxMain" id="appwindow">
-                                         <p>The following small interactive app exemplifies &ndash;in a simplified way&ndash; the interaction between the experimentalist and YouScope to set up a microplate measurement.</p>
-                                         <div style="position:relative;top:0px;left:0px;width:100%;height:160px;margin:0x;padding:0px;">
-                                             <div id="plate" style="position:absolute; top:110px;  left:10px;  z-index:30; border:0px; margin:0px;"><img src="images/plate.gif" /></div>
-                                             <div id="scope" style="position:absolute; top:-2px; left:20px; z-index:40; border:0px; margin:0px;filter:Alpha(opacity=10, finishopacity=100, style=1, startx=49, starty=0, finishx=49, finishy=50);" ><img src="images/scope.gif" /></div>
-                                             <div id="beam_blue" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=60, style=2);" ><img src="images/beam_blue.gif" /></div>
-                                             <div id="beam_green" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=50, style=2);" ><img src="images/beam_green.gif" /></div>
-                                         </div>
-                                         <h3>Measured Wells:</h3>
-                                         <p>(Click to activate/deactivate)</p>
-                                         <table class="plate">
-                                             <tr>
-                                                 <td class="plate" id="well00" onmousedown="switchWellState(0,0)"></td>
-                                                 <td class="plate" id="well10" onmousedown="switchWellState(1,0)"></td>
-                                                 <td class="plate" id="well20" onmousedown="switchWellState(2,0)"></td>
-                                                 <td class="plate" id="well30" onmousedown="switchWellState(3,0)"></td>
-                                                 <td class="plate" id="well40" onmousedown="switchWellState(4,0)"></td>
-                                                 <td class="plate" id="well50" onmousedown="switchWellState(5,0)"></td>
-                                                 <td class="plate" id="well60" onmousedown="switchWellState(6,0)"></td>
-                                                 <td class="plate" id="well70" onmousedown="switchWellState(7,0)"></td>
-                                             </tr>
-                                             <tr>
-                                                 <td class="plate" id="well01" onmousedown="switchWellState(0,1)"></td>
-                                                 <td class="plate" id="well11" onmousedown="switchWellState(1,1)"></td>
-                                                 <td class="plate" id="well21" onmousedown="switchWellState(2,1)"></td>
-                                                 <td class="plate" id="well31" onmousedown="switchWellState(3,1)"></td>
-                                                 <td class="plate" id="well41" onmousedown="switchWellState(4,1)"></td>
-                                                 <td class="plate" id="well51" onmousedown="switchWellState(5,1)"></td>
-                                                 <td class="plate" id="well61" onmousedown="switchWellState(6,1)"></td>
-                                                 <td class="plate" id="well71" onmousedown="switchWellState(7,1)"></td>
-                                             </tr>
-                                             <tr>
-                                                 <td class="plate" id="well02" onmousedown="switchWellState(0,2)"></td>
-                                                 <td class="plate" id="well12" onmousedown="switchWellState(1,2)"></td>
-                                                 <td class="plate" id="well22" onmousedown="switchWellState(2,2)"></td>
-                                                 <td class="plate" id="well32" onmousedown="switchWellState(3,2)"></td>
-                                                 <td class="plate" id="well42" onmousedown="switchWellState(4,2)"></td>
-                                                 <td class="plate" id="well52" onmousedown="switchWellState(5,2)"></td>
-                                                 <td class="plate" id="well62" onmousedown="switchWellState(6,2)"></td>
-                                                 <td class="plate" id="well72" onmousedown="switchWellState(7,2)"></td>
-                                             </tr>
-                                         </table>
-                                         <h3>Channels:</h3>
-                                         <form action="" style="padding:0;margin:0">
-                                         <ul>
-                                             <li><i>CFP</i>, Exposure: <select size="1" name="blueExposure" onchange="setExposure(0, this)" width="250">
-                                                 <option value="0">Do not image</option>
-                                                 <option value="10"> 10ms</option>
-                                                 <option value="20"> 20ms</option>
-                                                 <option value="30"> 30ms</option>
-                                                 <option value="40"> 40ms</option>
-                                                 <option value="50"> 50ms</option>
-                                                 <option value="60"> 60ms</option>
-                                                 <option value="70"> 70ms</option>
-                                                 <option value="80"> 80ms</option>
-                                                 <option value="90"> 90ms</option>
-                                                 <option value="100" selected="selected">100ms</option>
-                                                 <option value="200">200ms</option>
-                                                 <option value="300">300ms</option>
-                                                 <option value="500">500ms</option>
-                                                 </select>
-                                             </li>
-                                             <li><i>GFP</i>, Exposure: <select size="1" name="greenExposure" onchange="setExposure(1, this)" width="250">
-                                                 <option value="0" selected="selected">Do not image</option>
-                                                 <option value="10"> 10ms</option>
-                                                 <option value="20"> 20ms</option>
-                                                 <option value="30"> 30ms</option>
-                                                 <option value="40"> 40ms</option>
-                                                 <option value="50"> 50ms</option>
-                                                 <option value="60"> 60ms</option>
-                                                 <option value="70"> 70ms</option>
-                                                 <option value="80"> 80ms</option>
-                                                 <option value="90"> 90ms</option>
-                                                 <option value="100">100ms</option>
-                                                 <option value="200">200ms</option>
-                                                 <option value="300">300ms</option>
-                                                 <option value="500">500ms</option>
-                                                 </select>
-                                             </li>
-                                         </ul>
-                                         </form>
-                                 </div>
-                       </div>
-                       <div class="rightBox">
-                          <div class="rightBoxHeader">
-                               <div class="plusMinusSign"><a href="javascript:minimizeMaximize('exampleExperiment');"><img src="images/minus.gif" class="plusMinusSign" id="exampleExperiment-plusMinus" /></a></div>
-                               Example Experiment
-                          </div>
-                          <div class="rightBoxMain" id="exampleExperiment">
-                               <iframe title="YouTube video player" class="youtube-player" type="text/html" width="260" height="211" src="http://www.youtube.com/embed/mulRvAVExSc?rel=0&amp;hd=1" frameborder="0"></iframe>
-                               <p>The movie was created as part of the <a href="http://2010.igem.org/Team:ETHZ_Basel" target="_blank">ETH's 2010<sup>th</sup> contribution to iGEM</a>. For this task, out-of-focus images where send via the YouScope interface to Matlab. In Matlab, cells where detected and tracked, and &ndash;depending on their position&ndash; YouScope was used to send light signals of different wavelengths back to the cells (closed loop). At the same time, post-processed microscope images (see movie) were shown in real-time.</p>
-                          </div>
-                       </div>
-           </div>
-
-           <div id="main">
-           		 <h1>Frequently Asked Questions (FAQ)</h1>
-           		 <h2>General Questions</h2>
-           		 <ul style="list-style-type:none">
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('costs');"><img src="images/plus.gif" class="faq" id="costs-plusMinus" />How expensive is YouScope?</a>
-           		 	 	<div class="faq" id="costs">
-           		 	 		<p>YouScope is an open-source software which comes free of charge, thus you do not have to pay anything to use YouScope. However, depending on the microscope you use it might happen that you need to purchase third party software (e.g. drivers from the microscope producer). However, typically this is not the case. If it is the case, we as the developers have nothing to do with these additional software, and do not get any money or any other advantage from any purchase.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	  <li>
-           		 	 	<a href="javascript:minimizeMaximize('licence');"><img src="images/plus.gif" class="faq" id="licence-plusMinus" />What is the license of YouScope?</a>
-           		 	 	<div class="faq" id="licence">
-           		 	 		<p>YouScope is an open-source software. However, open-source is not equal to open-source. Most of the YouScope program is either licensed under the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General Public License</a> (YouScope client, some plugins) or the <a href="http://www.gnu.org/licenses/" target="_blank">GNU Lesser General Public License</a> (YouScope server, some plugins). However, some parts of YouScope, such as images, plugins or shipped libraries, stay under a different licence. For more information, please read carefully all information shipped with YouScope (typically files having the string "licence" or similar in their name).</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('warranty');"><img src="images/plus.gif" class="faq" id="warranty-plusMinus" />Warranty</a>
-           		 	 	<div class="faq" id="warranty">
-           		 	 		<p>YouScope is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General public License</a> for more details.
-
-.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('general_why');"><img src="images/plus.gif" class="faq" id="general_why-plusMinsu" />Why did you develop YouScope?</a>
-           		 	 	<div class="faq" id="general_why">
-           		 	 		<p>The simple answer is, we started to develop YouScope in the first place since we needed its functionality on our own, and there was no other software available which could provide it to us. The functionality of YouScope quickly increased when more and more members of our and related groups started to use YouScope for their projects and requested us to add certain features. Thus, most features YouScope provides today are directly related to academic projects and thus have proven at least once to be useful.</p>
-           		 	 		<p>When more and more features were added, we realized in discussions with other groups, e.g. on conferences, that the functionality YouScope allocated over time could help to tackle their research questions and daily scientific live, too. Thus, we did spend considerably time to further develop YouScope, such that it can be employed in other laboratory environments without too specific previous knowledge, too.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('general_who');"><img src="images/plus.gif" class="faq" id="general_who-plusMinus" />Who developed YouScope?</a>
-           		 	 	<div class="faq" id="general_who">
-           		 	 		<div class="figure" style="width:100px;">
-           		 	 		<div><img src="images/langmo.jpg" class="figure" style="width:100px;" /><p><small><b>Moritz Lang</b></small></p></div>
-           		 	 		<div class="figure" style="width:100px;"><img src="images/rudolff.jpg" class="figure" style="width:100px;" /><p><small><b>Fabian Rudolf</b></small></p></div>
-           		 	 		</div>
-           		 	 		<p>YouScope was mainly developed by group members of the <a href="http://www.csb.ethz.ch/" target="_blank">Computational Systems Biology (csb) Group</a> of the <a href="http://www.ethz.ch" target="_blank">ETH Zurich</a>, Switzerland, with support of the <a href="http://www.cisd.ethz.ch/" target="_blank">Center for Information Sciences and Databases (CISD)</a>.</p>
-							<p>The two people contributed most for the development of YouScope are <a href="http://www.csb.ethz.ch/people/langmo" target="_blank">Moritz Lang</a>, a trained engineer with experience in automatization and software engineering (among other things), and <a href="http://www.csb.ethz.ch/people/rudolff" target="_blank">Fabian Rudolf</a>, a trained biologists with a broad background in practical microscopy (among other things). However, several other group members of the csb group and the CISD contributed actively or by valuable discussions and testing to the success of YouScope.</p>
-
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('general_micromanager');"><img src="images/plus.gif" class="faq" id="general_micromanager-plusMinus" />Why do you want to replace Micro-Manager?</a>
-           		 	 	<div class="faq" id="general_micromanager">
-           		 	 		<p>Background: <a href="http://www.micro-manager.org">Micro-Manager</a> is a complex microscope control software developed by Arthur Edelstein et al. from the laboratory of Ron Vale at the University of California San Francisco, which can control various microscope types through a common user interface and &ndash;among others&ndash; allow to control the microscope by scripting. Theoretically it would have been possible to include (parts of) the functionality of YouScope in Micro-Manager.</p>
-           		 	 		
-           		 	 		<p>The simple answer is: we do not want to replace Micro-Manager. In fact, YouScope depends on the functionality of Micro-Manager, especially on the wide variety of drivers provided by Micro-Manager to communicate with the various types of microscopes on the market. This is possible due to the good design of the Micro-Manager software, which allows &ndash;by purpose (see  <a href="http://www.micro-manager.org">www.micro-manager.org</a>)&ndash; to use the Micro-Manager microscope drivers (the &quot;Micro-Manager server&quot;) without the Micro-Manager graphical user interface for other software projects.</p>
-           		 	 		<p>To understand why we did not integrate the functionality of YouScope into the Micro-Manager user interface, one has to be aware that there are significant conceptual differences how an user is intended to use the two programs. We consider Micro-Manager to provide mainly a low-level access to the microscope, whereas YouScope is considered to be mainly used as a high-level interface to the microscope (although one might argue about this definition): Whereas in YouScope one rather defines an abstract imaging procedure (e.g. <i>do a bright-field image and a red-fluorescence image every 20 minutes in every well of a microplate</i>), in Micro-Manager one rather tells every device of a microscope directly what to do (e.g. <i>move the stage to a specific x/y-position, set the focus, open the shutter, take a picture, save the picture, close the shutter, wait for a given time, go to the next position, ...</i>). Although both, a higher-level abstractation in Micro-Manager as well as a lower-level one in YouScope, is possible, too, the focus of the program is definitly different. Thereby, depending on what exactly one intends to do with the microscope, either a higher or a lower-level abstractation can be favorable.</p>
-           		 	 		
-           		 	 		<p>The &quot;theoretical&quot; higher-level abstractation of YouScope lead to an additional level of abstractation in the programming level (the &quot;YouScope server&quot;), to e.g. include precise timings of events and to protect the microscope from concurrent access (mulit-threading). Furthermore, it was necessary to redesign the user interface (the &quot;YouScope client&quot;), not only to provide easy access to the additional functionality, but also to &quot;lead&quot; the experimentalists who finally use YouScope to unperceived, but automatically, use the additional functionality in the right way without significant training, thus increasing the quality of the outcomes. Together with some other features of YouScope which would have been only hardly been possible to include in Micro-Manager (e.g. access to the microscope via a network connection, access to Matlab in a master-slave relationship, wide varyity of extendability using the Java plugin architecture, ...), these were the reasons why we decided to rather start a new software project which utilizes the drivers provided by Micro-Manager, rather than extending Micro-Manager itself.
-           		 	 	</div>
-           		 	 </li>
-				</ul>
-				<h2>Bugs and Erros</h2>
-				<ul style="list-style-type:none">
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('bugs_general');"><img src="images/plus.gif" class="faq" id="bugs_general-plusMinus" />General</a>
-           		 	 	<div class="faq" id="bugs_general">
-           		 	 		<p>We try to reduce the number of bugs and errors as much as possible. However, there exist no complex software products for which it can be guaranteed that they are error-free. Furthermore, YouScope can integrate or communicate with a wide variety of third party software, drivers and plugins. We, as the developers of YouScope, might &ndash;due to the modular design of YouScope&ndash; not even know all software with which YouScope interacts on your specific system for your specific installation.<br />
-           		 	 		However, although it is (practically) impossible to make YouScope bug-free, one should try to reduce the amount of bugs as far as possible. If you found a bug, we herewith want to excuse us, but also ask you to help us to remove the bug. Therefore, we want to first ask you to read the list of known bugs in the <a href="documentation.html">documentation</a>. Maybe the bug is already known and there might even exist a workaround for it. If this is not the case, please contact us (how to do so, see below), such that we get aware of the bug.</p>
-           		 	 	</div>
-           		 	 </li>
-					<li>
-           		 	 	<a href="javascript:minimizeMaximize('bugs_known');"><img src="images/plus.gif" class="faq" id="bugs_known-plusMinus" />Known Bugs</a>
-           		 	 	<div class="faq" id="bugs_known">
-           		 	 		<p>There are several bugs which are already known. For some of them a workaround exist, some of them we simply did not yet have enough time to remove them, and for others we simply have no idea how they can be tackled at all. To see the list of known bugs, please visit the respective section of the <a href="documentation.html">documentation</a>.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('bugs_report');"><img src="images/plus.gif" class="faq" id="bugs_report-plusMinus" />Report a bug</a>
-           		 	 	<div class="faq" id="bugs_report">
-           		 	 		<p>If you want to report a bug (please visit the <a href="documentation.html">documentation</a> to check if the bug is already known before), please visit the page <a href="contact.html">contact</a> for more details.</p>
-           		 	 	</div>
-           		 	 </li>
-				</ul>
-				<h2>Configuration</h2>
-				<ul style="list-style-type:none">
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('conf_general');"><img src="images/plus.gif" class="faq" id="conf_general-plusMinus" />General</a>
-           		 	 	<div class="faq" id="conf_general">
-           		 	 		<p>YouScope does not communicate with a microscope directly, nor does it provide directly any drivers to do so. Instead, YouScope uses parts of the software <a href="http://valelab.ucsf.edu/~MM/MMwiki/index.php/Micro-Manager" target="_blank">Micro-Manager</a> for this propose. To set up the configuration of the microscope (the <i>*.cfg</i> file which has to be provided when YouScope starts), we currently recommend to directly use the Micro-Manager GUI. For more information on how to do so, please visit the Micro-Manager project homepage (<a href="http://www.micro-manager.org">www.micro-manager.org</a>).<br />
-           		 	 		After the microscope is configured using Micro-Manager, some additional information has to be provided to make YouScope run probably. To learn more how to do so, please visit the respective section of the <a href="documentation.html">documentation</a>. If you have problems during the configuration of YouScope, please <a href="contact.html">contact us</a>.</p>
-           		 	 	</div>
-           		 	 </li>
-				</ul>
-				<h2>Features / Services</h2>
-				<ul style="list-style-type:none">
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_general');"><img src="images/plus.gif" class="faq" id="feat_general-plusMinus" />General Remarks</a>
-           		 	 	<div class="faq" id="feat_general">
-           		 	 		<p>We would like that many people are able to use YouScope, for many &ndash;even specific&ndash; research or even economic proposes, and are thus interested to steadily improve the functionality of YouScope. However, please understand that YouScope is free-of-charge and (at least currently), we do not earn any money by providing this program to the public. Thus, although you are welcome to send us any feature request or ask us for any service you would like to have, we ask for your understanding that we reserve the right to decline any request, e.g. if we simply don't have the required man power.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	  <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_request');"><img src="images/plus.gif" class="faq" id="feat_request-plusMinus" />Request a Feature / Service</a>
-           		 	 	<div class="faq" id="feat_request">
-           		 	 		<p>You are welcome to send us any feature request or ask us for any service you want connected to YouScope (see general remarks). How to contact us we describe in the <a href="contact.html">contact section</a>. However, before requesting a feature, you should ask yourself if you might even be able to include your feature on your own (see below).<br />
-           		 	 		To request a feature it would be nice to include the following information in the request:</p>
-           		 	 		<ul>
-           		 	 			<li>Describe the feature in as general terms as possible (e.g. <i>I have to be able to use multiple stages</i>).</li>
-           		 	 			<li>Describe where you think the feature should be integrated (e.g. New Microplate Measurement - second window), or how you would like to interact with this feature (e.g. a new window where I can press a button and then the microscope does something).</li> 
-           		 	 			<li>Include if you think this feature might be interesting for other users, too, and who might be these users. If so, this might significantly increase the chance that the requested feature is actually implemented</li>
-           		 	 			<li>If there is another program which already has a similar feature, name it.</li>
-           		 	 			<li>And, most important, give your own contact information.</li>
-           		 	 		</ul>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_diy');"><img src="images/plus.gif" class="faq" id="feat_diy-plusMinus" />Do It Yourself</a>
-           		 	 	<div class="faq" id="feat_diy">
-           		 	 		<p>YouScope is built in a modular way. This allows to simply include various kinds of java-plugins to the program which increase its functionality. Furthermore, YouScope has a scripting interface which allows to include additional functionality even if one only has limited programming experience or time. To learn how to write a plugin, please visit the respective section of the <a href="documentation.html">documentation</a>.</p>
-           		 	 	</div>
-           		 	 </li>
-           			 <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_publish');"><img src="images/plus.gif" class="faq" id="feat_publish-plusMinus" />Publish a Plugin</a>
-           		 	 	<div class="faq" id="feat_publish">
-           		 	 		<p>YouScope is provided free of charge. If you have written a plugin which might be helpfull for others, too, think about to give back something to the microscope community by publishing the plugin. Preferably you will publish the plugin for free, but the licence agreement also alows you to ask for payment for certain types of plugins (see the respective licences provided in your YouScope installation). In any case, contact us: We might link a webpage where you provide the plugin or, if the plugin is for free, even provide the download at the official YouScope page (including citation, tribute, your licence, ...). The amount of available methods for microscopy only increases if many people contribute in the development process!</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_develop');"><img src="images/plus.gif" class="faq" id="feat_develop-plusMinus" />Contribute to the Development Process</a>
-           		 	 	<div class="faq" id="feat_develop">
-           		 	 		<p>YouScope is not only free, most parts of it are also open source (for the licences of the respective modules, see your installation folders). This means that you can download and manipulate the source code of YouScope (for more details, see the licences). However, if you do so silently, all your changes will not be included in the next release of YouScope. Instead, it would be better to join the development group of YouScope and help us to prepare the next official release.</p>
-           		 	 		<p>We here have to add that, currently, YouScope is still programmed by a small group of people. Thus, we yet did not spend time in organizing a professional distributed development process as one might be used from other bigger open source projects. However, if we would realize that interest of other developers exist to take part in the development of YouScope (by you <a href="contact.html"> contacting us</a>), we will take care of this topic.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('feat_pay');"><img src="images/plus.gif" class="faq" id="feat_pay-plusMinus" />Pay for a Feature / Service</a>
-           		 	 	<div class="faq" id="feat_pay">
-           		 	 		<p>As mentioned above, it might not be possible for us to provide any service or plugin you may want us to provide, since we have to care to earn real money, too. However, if you have a task you want us to fulfill where we normally would not have enough time or man power for, things might change if you would agree in paying for the service/plugin.</p>
-           		 	 		<p>This does not mean that we will ask for money whenever you contact us with a reasonable request. However, if the task you intend us to do means a lot of work, is only interesting for your special project, if you will earn money with the product we help you to develop, or if you do not want anybody else to e.g. also obtain a plugin you requested us to develop for you, then it might be a reasonable idea that you pay us for our work. If you are interested in such an agreement, please <a href="contact.html">contact us</a>.
-           		 	 		</p>
-           		 	 	</div>
-           		 	 </li>
-				</ul>
-				<h2>Sience</h2>
-				<ul style="list-style-type:none">
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('sience_cite');"><img src="images/plus.gif" class="faq" id="sience_cite-plusMinus" />You Cite Us</a>
-           		 	 	<div class="faq" id="sience_cite">
-           		 	 		<p>As everybody in academia knows, citations are the unofficial payment for everybody doing science. Since we, the people who developed YouScope, predominantly work in the academia, we would consider ourselves lucky if you might think about citing YouScope in your next paper/book/... if you used YouScope to generate the data therein. In the nearer future we plan to publish several articles in scientific journals describing YouScope and how to use it. Until these papers are published, please shortly <a href="contact.html">contact us</a> to get to know how you can cite us.</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('sience_recite');"><img src="images/plus.gif" class="faq" id="sience_recite-plusMinus" />We Cite You</a>
-           		 	 	<div class="faq" id="sience_recite">
-           		 	 		<p>If you are using YouScope in your lab or even published a paper for which you used YouScope to generate data for, please <a href="contact.html">tell us</a>. We will collect all labs in which YouScope is used and all papers for which YouScope was used and publish them on this homepage (youscope.org).</p>
-           		 	 	</div>
-           		 	 </li>
-           		 	 <li>
-           		 	 	<a href="javascript:minimizeMaximize('sience_coll');"><img src="images/plus.gif" class="faq" id="sience_coll-plusMinus" />Collaborate</a>
-           		 	 	<div class="faq" id="sience_coll">
-           		 	 		<p>If you are planing a project/a publication in which (microscope) automatization plays a role, you might consider to start a collaboration with us. We have a wide experise in automatization and microscopy, which might help you in your project. However, in such a case we might to be included in the author's list, too. If you consider a collaboration, please <a href="contact.html">contact us</a>.</p>
-           		 	 	</div>
-           		 	 </li>
-				</ul>
-           </div>
-
-           <div id="footer">
-                <a href="http://www.csb.ethz.ch" target="_blank"><img src="images/csb-logo.gif"   style="float:right;border:0px;" /></a>
-                <p>Department of Biosystems Science and Engineering (D-BSSE), Mattenstrasse 26, 4058 Basel, Switzerland.<br />
-                   Phone: +41 61 387 31 11. Fax: +41 61 387 39 94.</p>
-           </div>
-     </div>
-</body>
+<div class="rightBox">
+	 <div class="rightBoxHeader">
+			 <div class="plusMinusSign"><a href="javascript:minimizeMaximize('appwindow');"><img src="/img/minus.gif" class="plusMinusSign" id="appwindow-plusMinus" /></a></div>
+			 Mode of Operation
+	 </div>
+	 <div class="rightBoxMain" id="appwindow">
+			 <p>The following small interactive app exemplifies &ndash;in a simplified way&ndash; the interaction between the experimentalist and YouScope to set up a microplate measurement.</p>
+			 <div style="position:relative;top:0px;left:0px;width:100%;height:160px;margin:0x;padding:0px;">
+				 <div id="plate" style="position:absolute; top:110px;  left:10px;  z-index:30; border:0px; margin:0px;"><img src="/img/plate.gif" /></div>
+				 <div id="scope" style="position:absolute; top:-2px; left:20px; z-index:40; border:0px; margin:0px;filter:Alpha(opacity=10, finishopacity=100, style=1, startx=49, starty=0, finishx=49, finishy=50);" ><img src="/img/scope.gif" /></div>
+				 <div id="beam_blue" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=60, style=2);" ><img src="/img/beam_blue.gif" /></div>
+				 <div id="beam_green" style="position:absolute; top:42px; left:56px; z-index:35; border:0px; margin:0px;visibility:hidden;filter:Wave(freq=5, lightstrength=10, phase=0, strength=2) Alpha(opacity=100, finishopacity=50, style=2);" ><img src="/img/beam_green.gif" /></div>
+			 </div>
+			 <h3>Measured Wells:</h3>
+			 <p>(Click to activate/deactivate)</p>
+			 <table class="plate">
+				 <tr>
+					 <td class="plate" id="well00" onmousedown="switchWellState(0,0)"></td>
+					 <td class="plate" id="well10" onmousedown="switchWellState(1,0)"></td>
+					 <td class="plate" id="well20" onmousedown="switchWellState(2,0)"></td>
+					 <td class="plate" id="well30" onmousedown="switchWellState(3,0)"></td>
+					 <td class="plate" id="well40" onmousedown="switchWellState(4,0)"></td>
+					 <td class="plate" id="well50" onmousedown="switchWellState(5,0)"></td>
+					 <td class="plate" id="well60" onmousedown="switchWellState(6,0)"></td>
+					 <td class="plate" id="well70" onmousedown="switchWellState(7,0)"></td>
+				 </tr>
+				 <tr>
+					 <td class="plate" id="well01" onmousedown="switchWellState(0,1)"></td>
+					 <td class="plate" id="well11" onmousedown="switchWellState(1,1)"></td>
+					 <td class="plate" id="well21" onmousedown="switchWellState(2,1)"></td>
+					 <td class="plate" id="well31" onmousedown="switchWellState(3,1)"></td>
+					 <td class="plate" id="well41" onmousedown="switchWellState(4,1)"></td>
+					 <td class="plate" id="well51" onmousedown="switchWellState(5,1)"></td>
+					 <td class="plate" id="well61" onmousedown="switchWellState(6,1)"></td>
+					 <td class="plate" id="well71" onmousedown="switchWellState(7,1)"></td>
+				 </tr>
+				 <tr>
+					 <td class="plate" id="well02" onmousedown="switchWellState(0,2)"></td>
+					 <td class="plate" id="well12" onmousedown="switchWellState(1,2)"></td>
+					 <td class="plate" id="well22" onmousedown="switchWellState(2,2)"></td>
+					 <td class="plate" id="well32" onmousedown="switchWellState(3,2)"></td>
+					 <td class="plate" id="well42" onmousedown="switchWellState(4,2)"></td>
+					 <td class="plate" id="well52" onmousedown="switchWellState(5,2)"></td>
+					 <td class="plate" id="well62" onmousedown="switchWellState(6,2)"></td>
+					 <td class="plate" id="well72" onmousedown="switchWellState(7,2)"></td>
+				 </tr>
+			 </table>
+			 <h3>Channels:</h3>
+			 <form action="" style="padding:0;margin:0">
+			 <ul>
+				 <li><i>CFP</i>, Exposure: <select size="1" name="blueExposure" onchange="setExposure(0, this)" width="250">
+					 <option value="0">Do not image</option>
+					 <option value="10"> 10ms</option>
+					 <option value="20"> 20ms</option>
+					 <option value="30"> 30ms</option>
+					 <option value="40"> 40ms</option>
+					 <option value="50"> 50ms</option>
+					 <option value="60"> 60ms</option>
+					 <option value="70"> 70ms</option>
+					 <option value="80"> 80ms</option>
+					 <option value="90"> 90ms</option>
+					 <option value="100" selected="selected">100ms</option>
+					 <option value="200">200ms</option>
+					 <option value="300">300ms</option>
+					 <option value="500">500ms</option>
+					 </select>
+				 </li>
+				 <li><i>GFP</i>, Exposure: <select size="1" name="greenExposure" onchange="setExposure(1, this)" width="250">
+					 <option value="0" selected="selected">Do not image</option>
+					 <option value="10"> 10ms</option>
+					 <option value="20"> 20ms</option>
+					 <option value="30"> 30ms</option>
+					 <option value="40"> 40ms</option>
+					 <option value="50"> 50ms</option>
+					 <option value="60"> 60ms</option>
+					 <option value="70"> 70ms</option>
+					 <option value="80"> 80ms</option>
+					 <option value="90"> 90ms</option>
+					 <option value="100">100ms</option>
+					 <option value="200">200ms</option>
+					 <option value="300">300ms</option>
+					 <option value="500">500ms</option>
+					 </select>
+				 </li>
+			 </ul>
+			 </form>
+	 </div>
+</div>
+			</div>
+			<div id="main">
+				<h1>Frequently Asked Questions (FAQ)</h1>
+				<h2>General Questions</h2>
+<ul style="list-style-type:none">
+	 <li>
+		<a href="javascript:minimizeMaximize('costs');"><img src="img/plus.gif" class="faq" id="costs-plusMinus" />Is YouScope free?</a>
+		<div class="faq" id="costs">
+			<p>YouScope is an open-source software which comes free of charge; you do not have to pay anything to use YouScope. However, depending on the microscope you use it might happen that you need to purchase third party software (e.g. drivers from the microscope producer). Typically, this is not the case.</p>
+		</div>
+	 </li>
+	  <li>
+		<a href="javascript:minimizeMaximize('licence');"><img src="img/plus.gif" class="faq" id="licence-plusMinus" />What is the license of YouScope?</a>
+		<div class="faq" id="licence">
+			<p>YouScope is an open-source software. However, open-source is not equal to open-source. Most of YouScope is licensed under the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General Public License</a>. However, some parts of YouScope, such as images, plugins or shipped libraries, stay under a different licence. For more information, please read carefully all information shipped with YouScope (typically files having the string &quot;LICENSE&quot;, &quot;NOTICE&quot; or similar in their name, and being in the same folder as the corresponding library).</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('warranty');"><img src="img/plus.gif" class="faq" id="warranty-plusMinus" />Warranty</a>
+		<div class="faq" id="warranty">
+			<p>YouScope is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/" target="_blank">GNU General public License</a> for more details.</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('general_why');"><img src="img/plus.gif" class="faq" id="general_why-plusMinsu" />Why did you develop YouScope?</a>
+		<div class="faq" id="general_why">
+			<p>We started developing YouScope since we needed its functionality on our own, and there was no other software available which could provide it to us. The functionality of YouScope quickly increased when more and more people started to use YouScope for their projects and requested us to add certain features. Thus, most features YouScope provides today are directly related to academic projects and have proven (at least once) to be useful.</p>
+			<p>When more and more features were added, we realized that the functionality YouScope allocated over time could help external (academic and non-academic) research groups, too. We spent considerably time to further develop YouScope, such that it can be employed in other laboratory environments without too specific previous knowledge.</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('general_who');"><img src="img/plus.gif" class="faq" id="general_who-plusMinus" />Who developed YouScope?</a>
+		<div class="faq" id="general_who">
+			<div class="figure" style="width:100px;">
+			<div><img src="img/langmo.jpg" class="figure" style="width:100px;" /><p><small><b>Moritz Lang</b></small></p></div>
+			<p>YouScope was initially developed by group members of the <a href="http://www.csb.ethz.ch/" target="_blank">Computational Systems Biology (csb) Group</a> of the <a href="http://www.ethz.ch" target="_blank">ETH Zurich</a>, Switzerland, with support of the <a href="http://www.cisd.ethz.ch/" target="_blank">Center for Information Sciences and Databases (CISD)</a>.</p>
+			<p>While many people contributed to the project over the time, Moritz Lang wrote most of the initial code.</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('general_micromanager');"><img src="img/plus.gif" class="faq" id="general_micromanager-plusMinus" />Comparison with Micro-Manager</a>
+		<div class="faq" id="general_micromanager">
+			<p><a href="http://www.micro-manager.org" target="_blank">Micro-Manager</a> is a microscope control software developed by Arthur Edelstein et al. from the laboratory of Ron Vale at the University of California San Francisco, which can control various microscope types through a common user interface and &ndash;among others&ndash; allow to control the microscope by scripting. YouScope depends on the functionality of Micro-Manager, especially on the wide variety of drivers provided by Micro-Manager to communicate with the various types of microscopes on the market. This is possible due to the good design of the Micro-Manager software, which allows &ndash;by purpose (see  <a href="http://www.micro-manager.org">www.micro-manager.org</a>)&ndash; to use the Micro-Manager microscope drivers without the Micro-Manager graphical user interface.</p>
+			<p>As compared to the Micro-Manager user interface, there are significant conceptual differences how an user is intended to interact with YouScope: Whereas in YouScope one defines an abstract imaging protocol (e.g. <i>do a bright-field image and a red-fluorescence image every 20 minutes in every well of a microplate</i>), in Micro-Manager one (rather) directly controls the physical devices (e.g. <i>move the stage to a specific x/y-position, set the focus, open the shutter, take a picture, save the picture, close the shutter, wait for a given time, go to the next position, ...</i>). Even though it is possible to use a higher abstraction level in Micro-Manager (or a lower-level one in YouScope), the focus of the two programs (that is, how the respective program is intended to be used) are at different levels of abstraction.</p>
+			
+			<p>Practically, this different focus of YouScope lead to several requirements at the code level: e.g. precise timings of events, concurrent access (multi-threading) and right management, logging, and similar. Furthermore, YouScope's user interface was not only designed to provide easy access to the functionality, but also to &quot;lead&quot; the user to unperceived perform &quot;clean&quot; measurements, that is, to generate data which can be still interpreted, say, one year after acquisition. This design goal comes at a price: in YouScope, &quot;just&quot; taking some image and saving it somewhere is harder&ndash;instead, one has to configure a measurement, which ensures that not only the image, but the whole configuration of the microscope is saved, including channel settings and similar.</p>
+		</div>
+	 </li>
+</ul>
+<h2>Bugs and Erros</h2>
+<ul style="list-style-type:none">
+	 <li>
+		<a href="javascript:minimizeMaximize('bugs_general');"><img src="img/plus.gif" class="faq" id="bugs_general-plusMinus" />General</a>
+		<div class="faq" id="bugs_general">
+			<p>We try to reduce the number of bugs and errors as much as possible. However, there exist no complex software products for which it can be guaranteed that they are error-free. If you found a bug, we ask for your help to remove the bug. To do so, please read the corresponding section in the <a href="contact.html">contact page</a>.</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('bugs_report');"><img src="img/plus.gif" class="faq" id="bugs_report-plusMinus" />Report a bug</a>
+		<div class="faq" id="bugs_report">
+			<p>If you want to report a bug, please visit the page <a href="contact.html">contact</a> for more details.</p>
+		</div>
+	 </li>
+</ul>
+<h2>Configuration</h2>
+<ul style="list-style-type:none">
+	 <li>
+		<a href="javascript:minimizeMaximize('conf_general');"><img src="img/plus.gif" class="faq" id="conf_general-plusMinus" />General</a>
+		<div class="faq" id="conf_general">
+			<p>YouScope uses the microscope device drivers of <a href="http://www.micro-manager.org" target="_blank">Micro-Manager</a>. Eventually existing microscope configuration files (*.cfg) of Micro-Manager can be readily used, even though it is advisable to adjust the configurations to YouScope. To create a microscope configuration in YouScope, select <i>File</i>-><i>Edit Microscope Configuration</i>. Every device has to be separately added by pressing <i>Add Device</i>, selecting the device to add and eventually entering device specific configuration settings. Since each device has to be configured slightly different, no general statements are possible. Therefore, it is recommended to consult the documentation of each device which should be added before adding it. These documentations are available at the Micro-Manager homepage (<a href="https://micro-manager.org/wiki/Device%20Support" target="_blank">https://micro-manager.org/wiki/Device%20Support</a>.
+			See also the <a href="documentation.html">documentation</a> page for addition details. If you have problems during the configuration of YouScope, please <a href="contact.html">contact us</a>.</p>
+		</div>
+	 </li>
+</ul>
+<h2>Features / Services</h2>
+<ul style="list-style-type:none">
+	 <li>
+		<a href="javascript:minimizeMaximize('feat_general');"><img src="img/plus.gif" class="faq" id="feat_general-plusMinus" />General Remarks</a>
+		<div class="faq" id="feat_general">
+			<p>We would like that many people are able to use YouScope, for many &ndash;even specific&ndash; research or even economic proposes. Thus, we are interested to steadily improve the functionality of YouScope. However, please understand that YouScope is free-of-charge and that we do not earn any money with YouScope. Thus, the fulfilment of any feature request or similar are conditioned on that we find time to implement them. Also, try to pose any request as general as possible. Your chances that we implement the requested feature are the higher, the more like the feature can be used by a broad audience.</p>
+		</div>
+	 </li>
+	  <li>
+		<a href="javascript:minimizeMaximize('feat_request');"><img src="img/plus.gif" class="faq" id="feat_request-plusMinus" />Request a Feature / Service</a>
+		<div class="faq" id="feat_request">
+			<p>You are welcome to send us any feature request or ask us for any service you want connected to YouScope (see general remarks). How to contact us we describe in the <a href="contact.html">contact section</a>. However, before requesting a feature, you should ask yourself if you might even be able to include your feature on your own (see below).<br />
+			To request a feature it would be nice to include the following information in the request:</p>
+			<ul>
+				<li>Describe the feature in as general terms as possible (e.g. <i>I have to be able to use multiple stages</i>).</li>
+				<li>Describe where you think the feature should be integrated (e.g. <i>Microplate Measurement - second window</i>), or how you would like to interact with this feature (e.g. <i>a new window where I can press a button and then the microscope does something</i>).</li> 
+				<li>Include if you think this feature might be interesting for other users, too, and who might be these users. This can significantly increase the chance that the requested feature is actually implemented by us.</li>
+				<li>If there is another program which already has a similar feature, name it.</li>
+				<li>And, most important, provide us with your contact information in case we might have questions about the request.</li>
+			</ul>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('feat_diy');"><img src="img/plus.gif" class="faq" id="feat_diy-plusMinus" />Do It Yourself</a>
+		<div class="faq" id="feat_diy">
+			<p>YouScope is built in a modular way. This allows to simply include various kinds of Plugins to the program which increase its functionality. Furthermore, YouScope has a scripting interface which allows to include additional functionality even if one only has limited programming experience or time. To learn how to write a plugin, please visit the respective section of the <a href="documentation.html">documentation</a>.</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('feat_publish');"><img src="img/plus.gif" class="faq" id="feat_publish-plusMinus" />Publish a Plugin</a>
+		<div class="faq" id="feat_publish">
+			<p>YouScope is provided free of charge. If you have written a plugin which might be usefull for others, too, think about giving back something to the microscope community by publishing the plugin. Preferably you will publish the plugin for free and open-source. However, the licence agreement also allows you to develop proprietary plugins. In any case, contact us: We might link your homepage where you provide the plugin or, if the plugin is for free, even provide the download at the official YouScope page (including citation, tribute, your licence, ...). The amount of available methods for microscopy only increases if many people contribute in the development process!</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('feat_develop');"><img src="img/plus.gif" class="faq" id="feat_develop-plusMinus" />Contribute to the Development Process</a>
+		<div class="faq" id="feat_develop">
+			<p>YouScope is not only free, most parts of it are also open-source. This means that you can download and manipulate the source code of YouScope (for more details, see <a href="documentation.html">documentation section</a>). Instead of manipulating YouScope on your own, it would be better to join the development group of YouScope and help us to prepare the next official release.
+			If you want to join the development team of YouScope, contact us (see <a href="contact.html"> contact page</a>)</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('feat_pay');"><img src="img/plus.gif" class="faq" id="feat_pay-plusMinus" />Pay for a Feature / Service</a>
+		<div class="faq" id="feat_pay">
+			<p>As mentioned above, it might not be possible for us to provide any service or plugin you may want us to provide, since we have our own jobs/research projects, too. However, if you have a task you want us to fulfil where we normally would not have enough time or man power for, things might change if you would agree in paying for the service/plugin.</p>
+			<p>This does not mean that we will ask for money whenever you contact us with a reasonable request. However, if the task you intend us to do means a lot of work, is only interesting for your special project, if you will earn money with the product we help you to develop, or if you do not want anybody else to e.g. also obtain a plugin you requested us to develop for you, then it might be a reasonable idea that you pay us for our work. If you are interested in such an agreement, please <a href="contact.html">contact us</a>.
+			</p>
+		</div>
+	 </li>
+</ul>
+<h2>Science</h2>
+<ul style="list-style-type:none">
+	 <li>
+		<a href="javascript:minimizeMaximize('sience_cite');"><img src="img/plus.gif" class="faq" id="sience_cite-plusMinus" />You Cite Us</a>
+		<div class="faq" id="sience_cite">
+			<p>As everybody in academia knows, citations are important. Since we, the people who developed YouScope, predominantly work in the academia, we would consider ourselves lucky if you might think about citing YouScope in your next paper/book/... If you want to cite YouScope, please cite the following article:</p>
+			<p>
+				Lang, M., Rudolf, F., & Stelling, J. (2012).<br />
+				Use of YouScope to Implement Systematic Microscopy Protocols.<br />
+				<i>Current Protocols in Molecular Biology, 14-21.</i><br />
+			</p>
+		</div>
+	 </li>
+	 <li>
+		<a href="javascript:minimizeMaximize('sience_recite');"><img src="img/plus.gif" class="faq" id="sience_recite-plusMinus" />We Cite You</a>
+		<div class="faq" id="sience_recite">
+			<p>If you are using YouScope in your lab or even published a paper for which you used YouScope to generate data for, please <a href="contact.html">tell us</a>. We have a small collection of the labs in which YouScope is used, and the papers citing YouScope, and might&dash;if you agree&dash; even publish this information in the future on this homepage.</p>
+		</div>
+	 </li>
+</ul>
+			</div>
+			<div id="footer">
+				<a href="http://www.csb.ethz.ch" target="_blank"><img src="/img/csb-logo.gif"   style="float:right;border:0px;" /></a>
+<p>
+	Department of Biosystems Science and Engineering (D-BSSE), Mattenstrasse 26, 4058 Basel, Switzerland.
+	<br />
+	Phone: +41 61 387 31 11. Fax: +41 61 387 39 94.
+</p>
+			</div>
+		</div>
+	</body>
 </html>
