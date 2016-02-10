@@ -729,6 +729,12 @@ public class LiveStreamPanel extends ImagePanel {
 	    	if(streamRunning)
 	    	{
 	    		stopLiveStreamAndWait();	
+	    		// wait some additional time to reduce risk for snc errors.
+	    		try {
+					Thread.sleep(500);
+				} catch (@SuppressWarnings("unused") InterruptedException e) {
+					// do nothing...
+				}
 	    	}
 	    	streamRunning = true;
 	    	
