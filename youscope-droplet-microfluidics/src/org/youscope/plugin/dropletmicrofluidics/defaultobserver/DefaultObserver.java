@@ -22,10 +22,10 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 	}
 	@Override
 	public DropletObserverResult runObserver(ExecutionInformation executionInformation, MeasurementContext measurementContext,
-			double dropletOffset) throws ResourceException, RemoteException 
+			double dropletOffset, int microfluidicChipID) throws ResourceException, RemoteException 
 	{
 		assertInitialized();
-		ObserverState state = loadState(measurementContext);
+		ObserverState state = loadState(measurementContext, microfluidicChipID);
 		int l = state.getNextDropletID(executionInformation);
 		
 		double[] x = state.getEstimatedOffsets();
@@ -72,7 +72,7 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 		
 		// Save result
 		state.setEstimatedOffsets(x);
-		saveState(state, measurementContext);
+		saveState(state, measurementContext, microfluidicChipID);
 		
 		sendMessage("Observed droplet offset of " + Integer.toString((int)dropletOffset) + "um, estimated before "+Integer.toString((int)y) + "um. Changed mean droplet offset estimate to "+Integer.toString((int)z[0].getReal())+"um.");
 		
@@ -80,27 +80,34 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 	}
 	private static String getStateIdentifier(int microfluidicChipID)
 	{
-		return DefaultObserverConfiguration.TYPE_IDENTIFIER+".Observer"+Integer.toString(microfluidicChipID);
+		return DefaultObserverConfiguration.TYPE_IDENTIFIER+".Chip"+Integer.toString(microfluidicChipID);
 	}
-	private ObserverState loadState(MeasurementContext measurementContext) throws RemoteException
+	private ObserverState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
-		String identifier = getStateIdentifier(getConfiguration().getMicrofluidicChipID());
+		String identifier = getStateIdentifier(microfluidicChipID);
 		ObserverState observerState = measurementContext.getProperty(identifier, ObserverState.class);
 		if(observerState == null)
 			observerState = new ObserverState();
 		return observerState;
 	}
-	private void saveState(ObserverState state, MeasurementContext measurementContext) throws RemoteException
+	private void saveState(ObserverState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
-		String identifier = getStateIdentifier(getConfiguration().getMicrofluidicChipID());
+		String identifier = getStateIdentifier(microfluidicChipID);
 		measurementContext.setProperty(identifier, state);
 	}
+	
 	@Override
-	public void initialize(MeasurementContext measurementContext) throws ResourceException, RemoteException 
-	{
-		super.initialize(measurementContext);
-		ObserverState state = loadState(measurementContext);
+	public void registerDroplet(MeasurementContext measurementContext, int microfluidicChipID)
+			throws ResourceException, RemoteException {
+		ObserverState state = loadState(measurementContext, microfluidicChipID);
 		state.registerDroplet(getConfiguration());
-		saveState(state, measurementContext);
+		saveState(state, measurementContext, microfluidicChipID);
+		
+	}
+	@Override
+	public void unregisterDroplet(MeasurementContext measurementContext, int microfluidicChipID)
+			throws ResourceException, RemoteException {
+		// Do nothing; Observer is anyway reseted when measurement finishes.
+		
 	}
 }

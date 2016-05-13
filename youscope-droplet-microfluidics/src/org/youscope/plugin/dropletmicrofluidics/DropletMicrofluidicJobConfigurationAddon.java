@@ -5,6 +5,7 @@ package org.youscope.plugin.dropletmicrofluidics;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.youscope.plugin.autofocus.AutoFocusJobConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ComponentComboBox;
 import org.youscope.uielements.DynamicPanel;
+import org.youscope.uielements.IntegerTextField;
 
 /**
  * @author langmo
@@ -42,6 +44,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
     private ComponentAddonUI<? extends AutoFocusJobConfiguration> autofocusAddon = null;
     private ControllerConfigurationPanel controllerConfigurationPanel;
     private ObserverConfigurationPanel observerConfigurationPanel;
+    private PhysicalConfigurationPanel physicalConfigurationPanel;
 	/**
 	 * Constructor.
 	 * @param client Interface to the client.
@@ -79,28 +82,38 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			}
 		Component autofocusPanel = autofocusAddon.toPanel(getContainingFrame());
 		
-		JTabbedPane contentPane = new JTabbedPane(JTabbedPane.TOP);
-		contentPane.addTab("Autofocus Configuration", autofocusPanel);
+		physicalConfigurationPanel = new PhysicalConfigurationPanel(configuration);
+		int[] connectedSyringes = physicalConfigurationPanel.getConnectedSyringes();
 		observerConfigurationPanel = new ObserverConfigurationPanel(configuration);
+		controllerConfigurationPanel = new ControllerConfigurationPanel(configuration, connectedSyringes); 
+		
+		
+		JTabbedPane contentPane = new JTabbedPane(JTabbedPane.TOP);
+		contentPane.addTab("Physical Configuration", physicalConfigurationPanel);
+		contentPane.addTab("Autofocus Configuration", autofocusPanel);
 		contentPane.addTab("Observer Configuration", observerConfigurationPanel);
-		controllerConfigurationPanel = new ControllerConfigurationPanel(configuration);
 		contentPane.addTab("Controller Configuration", controllerConfigurationPanel);
 		return contentPane; 
     }
 	
-	private class ControllerConfigurationPanel extends DynamicPanel
+	private class PhysicalConfigurationPanel extends DynamicPanel
 	{
 		/**
 		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = -4969819162642361145L;
-		private final ComponentComboBox<DropletControllerConfiguration>	controllerTypeField;
-		private Component addonConfigurationPanel = null;
-		private ComponentAddonUI<? extends DropletControllerConfiguration> currentAddon = null;
-		private final JComboBox<String> nemesysDeviceField = new JComboBox<String>();
 		
-		ControllerConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
+		private IntegerTextField chipField = new IntegerTextField(1);
+		private final JComboBox<String> nemesysDeviceField = new JComboBox<String>();
+		private final DynamicPanel syringesPanel = new DynamicPanel();
+		private JCheckBox[] selectedSyringes = new JCheckBox[0];
+		PhysicalConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
 		{
+			add(new JLabel("Microfluidic chip number:"));
+			chipField.setMinimalValue(1);
+			chipField.setValue(configuration.getMicrofluidicChipID());
+			add(chipField);
+			
 			String[] nemesysDeviceIds = getNemesysDevices();
 			for(String nemesysDeviceId : nemesysDeviceIds)
 			{
@@ -113,16 +126,101 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 				@Override
 				public void actionPerformed(ActionEvent arg0) 
 				{
-					if(currentAddon != null && currentAddon instanceof DropletControllerConfigurationAddon<?>)
-					{
-						int numSyringes = getNumSyringes((String)nemesysDeviceField.getSelectedItem());
-						((DropletControllerConfigurationAddon<?>)currentAddon).setNumFlowUnits(numSyringes);
-					}
+					updateSyringes(null);
 				}
 			});
 			add(new JLabel("Nemesys device:"));
 			add(nemesysDeviceField);
+			add(new JLabel("Connected Syringes:"));
+			add(syringesPanel);
+			addFillEmpty();
+			updateSyringes(configuration.getConnectedSyringes());
+		}
+		void commitChanges(DropletMicrofluidicJobConfiguration configuration)
+		{
+			configuration.setMicrofluidicChipID(chipField.getValue());
+			String nemesysDevice = (String)nemesysDeviceField.getSelectedItem();
+	    	configuration.setNemesysDevice(nemesysDevice);
+	    	configuration.setConnectedSyringes(getConnectedSyringes());
+		}
+		private void updateSyringes(int[] controlledSyringes)
+		{
+			int numSyringes = getNumSyringes((String)nemesysDeviceField.getSelectedItem());
 			
+			boolean[] isSelected = new boolean[numSyringes];
+			if(controlledSyringes != null)
+			{
+				for(int i=0; i<numSyringes; i++)
+				{
+					isSelected[i] = false;
+				}
+				for(int i=0; i<controlledSyringes.length; i++)
+				{
+					if(controlledSyringes[i]>=0 && controlledSyringes[i]<numSyringes)
+						isSelected[controlledSyringes[i]]=true;
+				}
+			}
+			else
+			{
+				for(int i=0; i<isSelected.length; i++)
+				{
+					if(selectedSyringes.length > i)
+						isSelected[i] = selectedSyringes[i].isSelected();
+					else
+						isSelected[i] = true;
+				}
+			}
+			
+			syringesPanel.removeAll();
+			syringesPanel.setLayout(new GridLayout((int)Math.ceil(numSyringes/3.0), 3));
+			
+			selectedSyringes = new JCheckBox[numSyringes];
+			for(int i=0; i<numSyringes; i++)
+			{
+				selectedSyringes[i] = new JCheckBox("Syringe " + Integer.toString(i+1));
+				selectedSyringes[i].setSelected(isSelected[i]);
+				selectedSyringes[i].setOpaque(false);
+				selectedSyringes[i].addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						controllerConfigurationPanel.setConnectedSyringes(getConnectedSyringes());
+					}
+				});
+				syringesPanel.add(selectedSyringes[i]);
+			}
+			validate();
+		}
+		private int[] getConnectedSyringes()
+		{
+			ArrayList<Integer> controlledSyringesList = new ArrayList<>(selectedSyringes.length);
+			for(int i=0; i<selectedSyringes.length; i++)
+			{
+				if(selectedSyringes[i].isSelected())
+					controlledSyringesList.add(i);
+			}
+			int[] controlledSyringes = new int[controlledSyringesList.size()];
+			for(int i=0; i<controlledSyringes.length; i++)
+			{
+				controlledSyringes[i] = controlledSyringesList.get(i).intValue();
+			}
+			return controlledSyringes;
+		}
+	}
+	private class ControllerConfigurationPanel extends DynamicPanel
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = -4969819162642361145L;
+		private final ComponentComboBox<DropletControllerConfiguration>	controllerTypeField;
+		private Component addonConfigurationPanel = null;
+		private ComponentAddonUI<? extends DropletControllerConfiguration> currentAddon = null;
+		private int[] connectedSyringes;
+		
+		ControllerConfigurationPanel(DropletMicrofluidicJobConfiguration configuration, int[] connectedSyringes) throws AddonException
+		{
+			this.connectedSyringes = connectedSyringes;
 			DropletControllerConfiguration lastConfiguration = configuration.getControllerConfiguration();
 			controllerTypeField = new ComponentComboBox<DropletControllerConfiguration>(getClient(), DropletControllerConfiguration.class);
 			if(lastConfiguration != null)
@@ -139,6 +237,17 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			add(controllerTypeField);
 			displayAddonConfiguration(controllerTypeField.getSelectedElement());
 		}
+		
+		private void setConnectedSyringes(int[] connectedSyringes)
+		{
+			this.connectedSyringes = connectedSyringes;
+			if(connectedSyringes!= null && currentAddon != null && currentAddon instanceof DropletControllerConfigurationAddon<?>)
+			{
+				((DropletControllerConfigurationAddon<?>)currentAddon).setConnectedSyringes(connectedSyringes);
+			}
+		}
+		
+		
 		private Component createErrorUI(String message, Exception exception)
 		{
 			if(exception != null)
@@ -173,10 +282,9 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 			try 
 			{
 				currentAddon = getClient().getAddonProvider().createComponentUI(controllerOption);
-				if(currentAddon instanceof DropletControllerConfigurationAddon<?>)
+				if(connectedSyringes!= null && currentAddon instanceof DropletControllerConfigurationAddon<?>)
 				{
-					int numSyringes = getNumSyringes((String)nemesysDeviceField.getSelectedItem());
-					((DropletControllerConfigurationAddon<?>)currentAddon).setNumFlowUnits(numSyringes);
+					((DropletControllerConfigurationAddon<?>)currentAddon).setConnectedSyringes(connectedSyringes);
 				}
 				
 				DropletControllerConfiguration currentConfiguration = getConfiguration().getControllerConfiguration();
@@ -207,9 +315,6 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		
 		void commitChanges(DropletMicrofluidicJobConfiguration configuration)
 		{
-			String nemesysDevice = (String)nemesysDeviceField.getSelectedItem();
-	    	configuration.setNemesysDevice(nemesysDevice);
-	    	
 			configuration.setControllerConfiguration(currentAddon==null ? null : currentAddon.getConfiguration());
 		}
 	}
@@ -393,6 +498,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 	@Override
 	protected void commitChanges(DropletMicrofluidicJobConfiguration configuration)
 	{
+		physicalConfigurationPanel.commitChanges(configuration);
 		configuration.setAutofocusConfiguration(autofocusAddon.getConfiguration());
 		controllerConfigurationPanel.commitChanges(configuration);
 		observerConfigurationPanel.commitChanges(configuration);

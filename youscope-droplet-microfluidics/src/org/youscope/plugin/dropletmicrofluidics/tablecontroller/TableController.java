@@ -1,6 +1,5 @@
 package org.youscope.plugin.dropletmicrofluidics.tablecontroller;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
@@ -16,15 +15,13 @@ import org.youscope.common.resource.ResourceException;
 
 class TableController  extends ResourceAdapter<TableControllerConfiguration> implements DropletControllerResource
 {
-	private static final String CONTEXT_PROPERTY_INTEGRATED_ERROR = "YouScope.TableController.IntegratedError";
-	private static final String CONTEXT_PROPERTY_LAST_EXECUTION = "YouScope.TableController.LastExecution";
 	public TableController(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
 	{
 		super(positionInformation, configuration, TableControllerConfiguration.TYPE_IDENTIFIER,TableControllerConfiguration.class, "Droplet-based microfluidics controller based on syringe table");
 	}
 
 	@Override
-	public DropletControllerResult runController(ExecutionInformation executionInformation, MeasurementContext measurementContext, double meanDropletOffset) throws ResourceException, RemoteException 
+	public DropletControllerResult runController(ExecutionInformation executionInformation, MeasurementContext measurementContext, double meanDropletOffset, int microfluidicChipID) throws ResourceException, RemoteException 
 	{
 		double targetFlowRate = getConfiguration().getTargetFlowRate();
 		double f = getConfiguration().getRatioHeightToVolume();
@@ -33,34 +30,16 @@ class TableController  extends ResourceAdapter<TableControllerConfiguration> imp
 		double maxDeltaFlowRate = getConfiguration().getMaxDeltaFlowRate();
 		boolean correctByOutflow = getConfiguration().isCorrectByOutflow();
 		
-		// get last execution
-		long lastExecution;
-		Serializable lastExecutionProperty = measurementContext.getProperty(CONTEXT_PROPERTY_LAST_EXECUTION);
-		if(lastExecutionProperty != null && lastExecutionProperty instanceof Long)
-		{
-			lastExecution = ((Long)lastExecutionProperty).longValue();
-		}
-		else
-		{
-			lastExecution = -1;
-		}
+		// get and update state
+		ControllerState state = loadState(measurementContext, microfluidicChipID);
+		long lastExecution = state.getLastExecutionTime();
 		long currentExecution = executionInformation.getMeasurementRuntime();
-		measurementContext.setProperty(CONTEXT_PROPERTY_LAST_EXECUTION, new Long(currentExecution));
-		
-		// update integral error.
-		double intError;
-		Serializable intErrorProperty = measurementContext.getProperty(CONTEXT_PROPERTY_INTEGRATED_ERROR);
-		if(intErrorProperty != null && intErrorProperty instanceof Double)
-		{
-			intError = ((Double)intErrorProperty).doubleValue();
-		}
-		else
-		{
-			intError = 0;
-		}
+		double intError = state.getIntegralError();
 		if(lastExecution >= 0)
 			intError += meanDropletOffset * (currentExecution-lastExecution)/60/1000;
-		measurementContext.setProperty(CONTEXT_PROPERTY_INTEGRATED_ERROR, new Double(intError));
+		state.setLastExecutionTime(currentExecution);
+		state.setIntegralError(intError);
+		saveState(state, measurementContext, microfluidicChipID);
 		
 		// Calculate delta flow
 		double deltaFlow = - meanDropletOffset / propTimeConstant / f
@@ -142,19 +121,23 @@ class TableController  extends ResourceAdapter<TableControllerConfiguration> imp
 		}
 		return new DropletControllerResult(flows, deltaFlow);
 	}
-
-	@Override
-	public void initialize(MeasurementContext measurementContext) throws ResourceException, RemoteException
+	
+	private static String getStateIdentifier(int microfluidicChipID)
 	{
-		super.initialize(measurementContext);
-		measurementContext.setProperty(CONTEXT_PROPERTY_INTEGRATED_ERROR, new Double(0));
+		return TableControllerConfiguration.TYPE_IDENTIFIER+".Chip"+Integer.toString(microfluidicChipID);
 	}
-
-	@Override
-	public void uninitialize(MeasurementContext measurementContext) throws ResourceException, RemoteException 
+	private ControllerState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
-		measurementContext.setProperty(CONTEXT_PROPERTY_INTEGRATED_ERROR, new Double(0));
-		super.uninitialize(measurementContext);
+		String identifier = getStateIdentifier(microfluidicChipID);
+		ControllerState controllerState = measurementContext.getProperty(identifier, ControllerState.class);
+		if(controllerState == null)
+			controllerState = new ControllerState();
+		return controllerState;
+	}
+	private void saveState(ControllerState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
+	{
+		String identifier = getStateIdentifier(microfluidicChipID);
+		measurementContext.setProperty(identifier, state);
 	}
 
 }

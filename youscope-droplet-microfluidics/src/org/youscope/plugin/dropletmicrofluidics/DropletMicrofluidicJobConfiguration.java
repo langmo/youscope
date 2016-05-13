@@ -6,6 +6,7 @@ package org.youscope.plugin.dropletmicrofluidics;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverConfiguration;
 import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableProducerConfiguration;
@@ -47,6 +48,13 @@ public class DropletMicrofluidicJobConfiguration extends JobConfiguration implem
 	@XStreamAlias("nemesys-device")
 	private String nemesysDevice = null;
 	
+	@XStreamAlias("connected-syringes")
+	private int[] connectedSyringes = null;
+	
+	@YSConfigAlias("Microfluidic chip number")
+	@XStreamAlias("microfluidic-chip-id")
+	private int microfluidicChipID = 1;
+		
 	/**
 	 * Default name for droplet table.
 	 */
@@ -73,6 +81,28 @@ public class DropletMicrofluidicJobConfiguration extends JobConfiguration implem
 		autofocusConfiguration.setFocusSearchAlgorithm(focusSearch);
 		autofocusConfiguration.setRememberFocus(true);
 		autofocusConfiguration.setResetFocusAfterSearch(false);
+	}
+	
+	/**
+	 * Returns the ID of the droplet microfluidic chip/part of the chip which is controlled by this job.
+	 * The controllers and observers of different chips are independent.
+	 * All jobs having the same chip ID have to be called sequentially and equally often, since they considered to observe and control the height of droplets on the same chip.
+	 * Thus, it is possible to control the droplet heights of several chips by having different IDs.
+	 * @return microfluidic chip id.
+	 */
+	public int getMicrofluidicChipID() {
+		return microfluidicChipID;
+	}
+
+	/**
+	 * Sets the ID of the droplet microfluidic chip/part of the chip which is controlled by this job.
+	 * The controllers and observers of different chips are independent.
+	 * All jobs having the same chip ID have to be called sequentially and equally often, since they considered to observe and control the height of droplets on the same chip.
+	 * Thus, it is possible to control the droplet heights of several chips by having different IDs.
+	 * @param microfluidicChipID  chip id.
+	 */
+	public void setMicrofluidicChipID(int microfluidicChipID) {
+		this.microfluidicChipID = microfluidicChipID;
 	}
 	
 	/**
@@ -190,6 +220,22 @@ public class DropletMicrofluidicJobConfiguration extends JobConfiguration implem
 		if(observerConfiguration == null)
 			throw new ConfigurationException("Observer not configured.");
 		observerConfiguration.checkConfiguration();
+	}
+
+	/**
+	 * Sets the IDs of the syringes of the nemesys device connected to the chip/part of the chip.
+	 * @param connectedSyringes IDs (zero based) of nemesys syringes, or null if not yet configured.
+	 */
+	public void setConnectedSyringes(int[] connectedSyringes) {
+		this.connectedSyringes = connectedSyringes;
+	}
+	
+	/**
+	 * Returns the IDs of the syringes of the nemesys device connected to the chip/part of the chip.
+	 * @return Ds (zero based) of nemesys syringes, or null if not yet configured.
+	 */
+	public int[]  getConnectedSyringes() {
+		return connectedSyringes;
 	}
 
 }

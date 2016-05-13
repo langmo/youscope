@@ -537,15 +537,15 @@ public class YouScopeServerImpl implements YouScopeServer
 		final PopupMenu popup = new PopupMenu();
 
 		// Get tray icon image.
-		final String TRAY_ICON_URL64 = "org/youscope/server/images/csb-logo-icon64.png";
-		URL trayIconURL64 = getClass().getClassLoader().getResource(TRAY_ICON_URL64);
+		final String TRAY_ICON_URL96 = "org/youscope/server/images/icon-96.png";
+		URL trayIconURL96 = getClass().getClassLoader().getResource(TRAY_ICON_URL96);
 
-		if(trayIconURL64 == null)
+		if(trayIconURL96 == null)
 		{
 			ServerSystem.err.println("Could not find system tray icon.", null);
 			return false;
 		}
-		Image trayIconImage = (new ImageIcon(trayIconURL64, "tray icon")).getImage();
+		Image trayIconImage = (new ImageIcon(trayIconURL96, "tray icon")).getImage();
 
 		// Set tray icon
 		trayIcon = new TrayIcon(trayIconImage);

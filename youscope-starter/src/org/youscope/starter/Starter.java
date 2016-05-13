@@ -212,19 +212,23 @@ public class Starter extends JFrame
 		}
 		
 		// Set tray icon image.
-		final String TRAY_ICON_URL16 = "org/youscope/starter/images/csb-logo-icon16.png";
-		final String TRAY_ICON_URL32 = "org/youscope/starter/images/csb-logo-icon32.png";
-		final String TRAY_ICON_URL64 = "org/youscope/starter/images/csb-logo-icon64.png";
+		final String TRAY_ICON_URL16 = "org/youscope/starter/images/icon-16.png";
+		final String TRAY_ICON_URL32 = "org/youscope/starter/images/icon-32.png";
+		final String TRAY_ICON_URL96 = "org/youscope/starter/images/icon-96.png";
+		final String TRAY_ICON_URL194 = "org/youscope/starter/images/icon-194.png";
 		URL trayIconURL16 = getClass().getClassLoader().getResource(TRAY_ICON_URL16);
 		URL trayIconURL32 = getClass().getClassLoader().getResource(TRAY_ICON_URL32);
-		URL trayIconURL64 = getClass().getClassLoader().getResource(TRAY_ICON_URL64);
+		URL trayIconURL96 = getClass().getClassLoader().getResource(TRAY_ICON_URL96);
+		URL trayIconURL194 = getClass().getClassLoader().getResource(TRAY_ICON_URL194);
 		Vector<Image> trayIcons = new Vector<Image>();
 		if(trayIconURL16 != null)
 			trayIcons.addElement((new ImageIcon(trayIconURL16, "tray icon")).getImage());
 		if(trayIconURL32 != null)
 			trayIcons.addElement((new ImageIcon(trayIconURL32, "tray icon")).getImage());
-		if(trayIconURL64 != null)
-			trayIcons.addElement((new ImageIcon(trayIconURL64, "tray icon")).getImage());
+		if(trayIconURL96 != null)
+			trayIcons.addElement((new ImageIcon(trayIconURL96, "tray icon")).getImage());
+		if(trayIconURL194 != null)
+			trayIcons.addElement((new ImageIcon(trayIconURL194, "tray icon")).getImage());
 		if(trayIcons.size() > 0)
 			this.setIconImages(trayIcons);
 

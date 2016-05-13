@@ -27,7 +27,7 @@ class EvaporationControllerUI extends ComponentAddonUIAdapter<EvaporationControl
 	private final DoubleTextField ratioHeightToVolumeField = new DoubleTextField();
 	private final PeriodField timeConstantProportionalField = new PeriodField();
 	private final PeriodField timeConstantIntegralField = new PeriodField();
-	private int numFlowUnits = 0;
+	private int[] connectedSyringes = new int[0];
 	private JCheckBox[] useSyringeFields;
 	private final DynamicPanel flowUnitsPanel = new DynamicPanel();
 	
@@ -77,11 +77,11 @@ class EvaporationControllerUI extends ComponentAddonUIAdapter<EvaporationControl
 		contentPane.add(timeConstantIntegralField);
 		
 		contentPane.add(new JLabel("Flow units used for evaporation correction (only inflow):"));
-		useSyringeFields = new JCheckBox[numFlowUnits];
+		useSyringeFields = new JCheckBox[connectedSyringes.length];
 		boolean[] useSyringe = configuration.getUseSyringe();
 		for(int i=0; i< useSyringeFields.length; i++)
 		{
-			useSyringeFields[i] = new JCheckBox("Flow Unit "+Integer.toString(i+1));
+			useSyringeFields[i] = new JCheckBox("Flow Unit "+Integer.toString(connectedSyringes[i]+1));
 			useSyringeFields[i].setOpaque(false);
 			if((useSyringe == null ||useSyringe.length <= i)&& i==0)
 				useSyringeFields[i].setSelected(true);
@@ -114,10 +114,13 @@ class EvaporationControllerUI extends ComponentAddonUIAdapter<EvaporationControl
     	configuration.setTimeConstantProportional(timeConstantProportionalField.getDurationLong());
     }
 
-	@Override
-	public void setNumFlowUnits(int numFlowUnits) {
-		this.numFlowUnits = numFlowUnits > 0 ? numFlowUnits : 0;
-		if(isInitialized() && numFlowUnits != useSyringeFields.length)
+    @Override
+	public void setConnectedSyringes(int[] connectedSyringes) {
+		if(connectedSyringes == null)
+			connectedSyringes = new int[0];
+		this.connectedSyringes = connectedSyringes;
+		
+		if(isInitialized() && connectedSyringes.length != useSyringeFields.length)
 		{
 			boolean[] useSyringes = new boolean[useSyringeFields.length];
 	    	for(int i=0; i<useSyringeFields.length; i++)
@@ -125,10 +128,10 @@ class EvaporationControllerUI extends ComponentAddonUIAdapter<EvaporationControl
 	    		useSyringes[i] = useSyringeFields[i].isSelected();
 	    	}
 	    	flowUnitsPanel.removeAll();
-	    	useSyringeFields = new JCheckBox[numFlowUnits];
-	    	for(int i=0; i<numFlowUnits; i++)
+	    	useSyringeFields = new JCheckBox[connectedSyringes.length];
+	    	for(int i=0; i<connectedSyringes.length; i++)
 	    	{
-	    		useSyringeFields[i] = new JCheckBox("Flow Unit "+Integer.toString(i+1));
+	    		useSyringeFields[i] = new JCheckBox("Flow Unit "+Integer.toString(connectedSyringes[i]+1));
 	    		useSyringeFields[i].setOpaque(false);
 	    		if(useSyringes.length > i)
 	    		{

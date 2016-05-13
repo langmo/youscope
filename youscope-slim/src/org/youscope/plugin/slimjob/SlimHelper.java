@@ -10,7 +10,7 @@ class SlimHelper
 	{
 		// static functions only
 	}
-	public static ImageEvent<short[]> calculateSlimImage(ImageEvent<?>[] images) throws Exception
+	public static ImageEvent<short[]> calculateSlimImage(ImageEvent<?>[] images, double attenuationFactor) throws Exception
 	{
 		if(images.length!=4)
 			throw new Exception("Expected 4 SLIM images, found " + Integer.toString(images.length));
@@ -70,6 +70,8 @@ class SlimHelper
 			TU0 = (TU0s[TU0s.length/2] + TU0s[TU0s.length/2 - 1])/2;
 		else
 			TU0 = TU0s[TU0s.length/2];
+		
+		TU0 *= attenuationFactor; // Multiply TU_0 with either manual or directly derived attenuation factor
 		
 		short[] result= new short[width*height];
 		

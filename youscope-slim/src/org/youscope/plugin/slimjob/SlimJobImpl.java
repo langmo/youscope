@@ -46,7 +46,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	private final int[] phaseShiftsMask = {0,64,128,192};
 	private volatile String maskFileName = null;
 	private ImageAdapter[] imageAdapters = null;
-	
+	private volatile double attenuationFactor = 1;
 	public SlimJobImpl(PositionInformation positionInformation) throws RemoteException
 	{
 		super(positionInformation);
@@ -179,7 +179,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 		}
 		ImageEvent<?> slimImage;
 		try {
-			slimImage = SlimHelper.calculateSlimImage(images);
+			slimImage = SlimHelper.calculateSlimImage(images, attenuationFactor);
 		} catch (Exception e) {
 			throw new JobException("Could not calclate slim image.", e);
 		}
@@ -343,5 +343,16 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	public String getMaskFileName()
 	{
 		return maskFileName;
+	}
+	@Override
+	public double getAttenuationFactor()
+	{
+		return attenuationFactor;
+	}
+	@Override
+	public void setAttenuationFactor(double attenuationFactor) throws MeasurementRunningException 
+	{
+		assertRunning();
+		this.attenuationFactor=attenuationFactor;
 	}
 }

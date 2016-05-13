@@ -49,14 +49,14 @@ class FlexibleSyringeTable extends JPanel
 	private static final long	serialVersionUID	= -147210452248761222L;
 	private final JTable syringeTable;
 	private final SyringeTableModel syringeTableModel;
-	private int numSyringes;
+	private int[] connectedSyringes;
 	private ArrayList<FlexibleSyringeTableRow> rows = new ArrayList<FlexibleSyringeTableRow>();
 	private final YouScopeClient client;
-	public FlexibleSyringeTable(YouScopeClient client, final int numSyringes)
+	public FlexibleSyringeTable(YouScopeClient client, final int[] connectedSyringes)
 	{
 		super(new BorderLayout(0, 0));
 		this.client = client;
-		this.numSyringes = numSyringes;
+		this.connectedSyringes = connectedSyringes;
 		this.syringeTableModel = new SyringeTableModel();
 		this.syringeTable = new JTable(syringeTableModel);
 		syringeTable.setAutoCreateColumnsFromModel(true);
@@ -132,8 +132,8 @@ class FlexibleSyringeTable extends JPanel
 		}
 		else
 		{
-			newRow = new FlexibleSyringeTableRow(0, numSyringes);
-			if(numSyringes > 0)
+			newRow = new FlexibleSyringeTableRow(0, connectedSyringes.length);
+			if(connectedSyringes.length > 0)
 			{
 				newRow.setTargetFlowRate(0, 4);
 				newRow.setMaxDeltaFlowRate(2);
@@ -144,19 +144,19 @@ class FlexibleSyringeTable extends JPanel
         syringeTableModel.fireTableDataChanged();
 	}
 	
-	public void setNumSyringes(int numSyringes)
+	public void setConnectedSyringes(int[] connectedSyringes)
 	{
-		if(numSyringes == this.numSyringes)
+		if(connectedSyringes.length == this.connectedSyringes.length)
 			return;
 		ArrayList<FlexibleSyringeTableRow> newRows = new ArrayList<FlexibleSyringeTableRow>();
-		this.numSyringes = numSyringes;
+		this.connectedSyringes = connectedSyringes;
 		for(FlexibleSyringeTableRow row : rows)
 		{
-			if(row.getNumSyringes() != numSyringes)
+			if(row.getNumSyringes() != connectedSyringes.length)
 			{
-				FlexibleSyringeTableRow newRow = new FlexibleSyringeTableRow(row.getStartTimeMS(), numSyringes);
+				FlexibleSyringeTableRow newRow = new FlexibleSyringeTableRow(row.getStartTimeMS(), connectedSyringes.length);
 				newRow.setMaxDeltaFlowRate(row.getMaxDeltaFlowRate());
-				for(int i=0; i<numSyringes && i<row.getNumSyringes(); i++)
+				for(int i=0; i<connectedSyringes.length && i<row.getNumSyringes(); i++)
 				{
 					newRow.setSyringeControlState(i, row.getSyringeControlState(i));
 					newRow.setTargetFlowRate(i, row.getTargetFlowRate(i));
@@ -190,18 +190,18 @@ class FlexibleSyringeTable extends JPanel
 		boolean firstError = true;
 		for(FlexibleSyringeTableRow row : syringeTableRows)
 		{
-			if(row.getNumSyringes() != numSyringes)
+			if(row.getNumSyringes() != connectedSyringes.length)
 			{
 				if(firstError)
 				{
 					client.sendError("Configuration has " + Integer.toString(row.getNumSyringes()) + " syringes defined, while currently only "+
-								Integer.toString(numSyringes) + " syringes are defined. Trying to take over as much information about which syringe should be on when as possible, however, syringe table needs manual check.");
+								Integer.toString(connectedSyringes.length) + " syringes are defined. Trying to take over as much information about which syringe should be on when as possible, however, syringe table needs manual check.");
 					firstError = false;
 				}
 				
-				FlexibleSyringeTableRow newRow = new FlexibleSyringeTableRow(row.getStartTimeMS(), numSyringes);
+				FlexibleSyringeTableRow newRow = new FlexibleSyringeTableRow(row.getStartTimeMS(), connectedSyringes.length);
 				newRow.setMaxDeltaFlowRate(row.getMaxDeltaFlowRate());
-				for(int i=0; i<numSyringes && i<row.getNumSyringes(); i++)
+				for(int i=0; i<connectedSyringes.length && i<row.getNumSyringes(); i++)
 				{
 					newRow.setSyringeControlState(i, row.getSyringeControlState(i));
 					newRow.setTargetFlowRate(i, row.getTargetFlowRate(i));
@@ -239,10 +239,12 @@ class FlexibleSyringeTable extends JPanel
         		return "Time";
         	if(col == 1)
         		return "Max delta flow (ul/min)";
+        	if(col>=getColumnCount())
+        		return "[INVALID COLUMN]";
         	int syrID = (col-2)/2;
         	if((col-2)%2 == 0)
-        		return "Flow rate Syringe " +Integer.toString(syrID+1);
-			return "Control type " +Integer.toString(syrID+1);
+        		return "Flow Syringe " +Integer.toString(connectedSyringes[syrID]+1);
+			return "Control Syringe" +Integer.toString(connectedSyringes[syrID]+1);
         }
 
         @Override
@@ -254,7 +256,7 @@ class FlexibleSyringeTable extends JPanel
         @Override
         public int getColumnCount()
         {
-            return numSyringes*2+2;
+            return connectedSyringes.length*2+2;
         }
 
         @Override

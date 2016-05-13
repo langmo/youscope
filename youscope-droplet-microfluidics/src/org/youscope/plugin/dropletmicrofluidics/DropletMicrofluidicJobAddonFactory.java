@@ -39,6 +39,8 @@ public class DropletMicrofluidicJobAddonFactory extends ComponentAddonFactoryAda
 			try
 			{
 				DropletMicrofluidicJobImpl job = new DropletMicrofluidicJobImpl(positionInformation);
+				job.setMicrofluidicChipID(configuration.getMicrofluidicChipID());
+				job.setConnectedSyringes(configuration.getConnectedSyringes());
 				
 				AutoFocusJobConfiguration autofocusConfiguration = configuration.getAutofocusConfiguration();
 				if(autofocusConfiguration == null)

@@ -13,8 +13,8 @@ import org.youscope.addon.component.ComponentAddonUI;
 public interface DropletControllerConfigurationAddon<C extends DropletControllerConfiguration> extends ComponentAddonUI<C>
 {
     /**
-     * Sets the number of flow units available.
-     * @param numFlowUnits Number of flow units.
+     * Sets the IDs (zero based) of the syringes which are connected to the chip controlled by this controller.
+     * @param connectedSyringes IDs of connected syringes.
      */
-    public void setNumFlowUnits(int numFlowUnits);
+    public void setConnectedSyringes(int[] connectedSyringes);
 }

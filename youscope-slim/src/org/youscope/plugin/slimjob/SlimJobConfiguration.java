@@ -68,6 +68,24 @@ public class SlimJobConfiguration extends JobConfiguration implements ImageProdu
 	@XStreamAlias("mask-file-name")
 	private String maskFileName = null;
 	
+	@XStreamAlias("attenuation-factor")
+	private double attenuationFactor = 1;
+	
+	/**
+	 * Returns the attenuation factor with which the SLIM image is calculated.
+	 * @return Attenuation factor.
+	 */
+	public double getAttenuationFactor() {
+		return attenuationFactor;
+	}
+
+	/**
+	 * Sets the attenuation factor with which the SLIM image is calculated.
+	 * @param attenuationFactor Attenuation factor.
+	 */
+	public void setAttenuationFactor(double attenuationFactor) {
+		this.attenuationFactor = attenuationFactor;
+	}
 	/**
 	 * The channel where the images should be made. Set to an empty string if
 	 * the current channel should be taken.

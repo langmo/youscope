@@ -81,4 +81,40 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * @throws MeasurementRunningException 
 	 */
 	public void setObserver(DropletObserverResource observer) throws RemoteException, MeasurementRunningException;
+	
+	/**
+	 * Returns the ID of the droplet microfluidic chip/part of the chip which is controlled by this job.
+	 * The controllers and observers of different chips are independent.
+	 * All jobs having the same chip ID have to be called sequentially and equally often, since they considered to observe and control the height of droplets on the same chip.
+	 * Thus, it is possible to control the droplet heights of several chips by having different IDs.
+	 * @return microfluidic chip id.
+	 * @throws RemoteException 
+	 */
+	public int getMicrofluidicChipID() throws RemoteException;
+
+	/**
+	 * Sets the ID of the droplet microfluidic chip/part of the chip which is controlled by this job.
+	 * The controllers and observers of different chips are independent.
+	 * All jobs having the same chip ID have to be called sequentially and equally often, since they considered to observe and control the height of droplets on the same chip.
+	 * Thus, it is possible to control the droplet heights of several chips by having different IDs.
+	 * @param microfluidicChipID  chip id.
+	 * @throws RemoteException 
+	 * @throws MeasurementRunningException 
+	 */
+	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, MeasurementRunningException;
+	
+	/**
+	 * Sets the IDs of the syringes of the nemesys device connected to the chip/part of the chip.
+	 * @param connectedSyringes IDs (zero based) of nemesys syringes, or null if not yet configured.
+	 * @throws RemoteException 
+	 * @throws MeasurementRunningException 
+	 */
+	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, MeasurementRunningException;
+	
+	/**
+	 * Returns the IDs of the syringes of the nemesys device connected to the chip/part of the chip.
+	 * @return Ds (zero based) of nemesys syringes, or null if not yet configured.
+	 * @throws RemoteException 
+	 */
+	public int[]  getConnectedSyringes() throws RemoteException;
 }

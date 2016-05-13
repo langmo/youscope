@@ -33,6 +33,7 @@ public class SlimJobAddonFactory extends ComponentAddonFactoryAdapter
 				SlimJobImpl job = new SlimJobImpl(positionInformation);
 		
 				job.setReflectorDevice(configuration.getReflectorDevice());
+				job.setAttenuationFactor(configuration.getAttenuationFactor());
 				job.setMaskX(configuration.getMaskX());
 				job.setMaskY(configuration.getMaskY());
 				job.setInnerRadius(configuration.getInnerRadius());

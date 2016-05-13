@@ -41,6 +41,7 @@ import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DescriptionPanel;
+import org.youscope.uielements.DoubleTextField;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImagePanel;
 import org.youscope.uielements.IntegerTextField;
@@ -88,6 +89,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 	private final IntegerTextField phaseShiftBackgroundField = new IntegerTextField();
 	private final IntegerTextField[] phaseShiftMaskFields = new IntegerTextField[SlimJobConfiguration.NUM_PHASE_SHIFT_MASK];
 	private final IntegerTextField reflectorDelayField = new IntegerTextField();
+	private final DoubleTextField attenuationFactorField = new DoubleTextField();
 	
 	private final static String LAST_SLIM_PATH_PROPERTY = "YouScope.SLIM.lastPath";
 
@@ -365,6 +367,8 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		}
 		phasePanel.add(new JLabel("Slim Delay (ms):"));
 		phasePanel.add(reflectorDelayField);
+		phasePanel.add(new JLabel("Attenuation Factor:"));
+		phasePanel.add(attenuationFactorField);
 		JButton loadButton = new JButton("Load");
 		loadButton.addActionListener(new ActionListener()
         {
@@ -593,6 +597,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 			phaseShiftMaskFields[i].setValue(configuration.getPhaseShiftMask(i));
 		}
 		
+		attenuationFactorField.setMinimalValue(0);
+		attenuationFactorField.setValue(configuration.getAttenuationFactor());
+		
 		phasePanel.setBorder(new TitledBorder("Phase Shift"));
 		reflectorSettings.setBorder(new TitledBorder("Mask Type"));
 		elementsPanel.setBorder(new TitledBorder("Camera Settings"));
@@ -680,7 +687,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 					{
 						throw new Exception("Could not take SLIM images.", e);
 					}
-					ImageEvent<short[]> slimImage = SlimHelper.calculateSlimImage(images);
+					ImageEvent<short[]> slimImage = SlimHelper.calculateSlimImage(images, config.getAttenuationFactor());
 					// Show image
 					childFrame.endLoading();
 					imagePanel.setImage(slimImage);
@@ -778,6 +785,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		{
 			configuration.setPhaseShiftMask(i, phaseShiftMaskFields[i].getValue());
 		}
+		
+		attenuationFactorField.setMinimalValue(0);
+		configuration.setAttenuationFactor(attenuationFactorField.getValue());
 		if(modeField.getSelectedIndex() == 0)
 		{
 			configuration.setMaskFileName(null);
@@ -791,6 +801,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 
 	@Override
 	protected void initializeDefaultConfiguration(SlimJobConfiguration configuration) throws AddonException {
-		// do nothing.
+		// set identified properties.
+		configuration.setAttenuationFactor(new SlimProperties(getClient()).getAttenuationFactor());
 	}
 }

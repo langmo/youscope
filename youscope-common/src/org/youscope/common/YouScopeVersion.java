@@ -52,7 +52,7 @@ public class YouScopeVersion
 	{
 		this.applicationName = applicationName;
 		String extractedMajorVersion = "2.0";
-		String extractedVersion = "R2016-01";
+		String extractedVersion = "R2016-03";
 		String extractedRevision = UNKNOWN;
 		boolean extractedCleanFlag = false;
 		final InputStream stream = YouScopeVersion.class.getResourceAsStream("/BUILD-" + applicationName + ".INFO");

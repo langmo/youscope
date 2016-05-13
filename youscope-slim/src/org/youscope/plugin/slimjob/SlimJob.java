@@ -41,6 +41,21 @@ public interface SlimJob extends Job, ImageProducer, JobContainer
 	public void setMaskY(int maskY) throws RemoteException, MeasurementRunningException;
 
 	/**
+	 * Returns the attenuation factor with which the SLIM image is calculated.
+	 * @return Attenuation factor.
+	 * @throws RemoteException 
+	 */
+	public double getAttenuationFactor()  throws RemoteException;
+
+	/**
+	 * Sets the attenuation factor with which the SLIM image is calculated.
+	 * @param attenuationFactor Attenuation factor.
+	 * @throws RemoteException 
+	 * @throws MeasurementRunningException 
+	 */
+	public void setAttenuationFactor(double attenuationFactor) throws RemoteException, MeasurementRunningException;
+	
+	/**
 	 * Returns the Y position of the center of the inner and outer circle (the "donut").
 	 * @return Y-position.
 	 * @throws RemoteException 

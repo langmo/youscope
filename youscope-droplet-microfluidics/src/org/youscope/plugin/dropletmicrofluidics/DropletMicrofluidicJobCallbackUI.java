@@ -35,12 +35,16 @@ class DropletMicrofluidicJobCallbackUI
     private final AllDropletsPanel alldropletsPanel;
     private final DeltaFlowPanel deltaFlowPanel;
     private final AllFlowsPanel allFlowsPanel;
-
-    private volatile boolean receivedData = false;
+    private final int chipID;
     
-    DropletMicrofluidicJobCallbackUI(final YouScopeClient client)
+    private volatile boolean receivedData = false;
+    private final int[] connectedSyringes;
+    
+    DropletMicrofluidicJobCallbackUI(final YouScopeClient client, int chipID, int[] connectedSyringes)
     {
         this.client = client;
+        this.chipID = chipID;
+        this.connectedSyringes = connectedSyringes;
         currentObservationPanel = new CurrentObservationPanel();
         alldropletsPanel = new AllDropletsPanel();
         deltaFlowPanel = new DeltaFlowPanel();
@@ -173,7 +177,10 @@ class DropletMicrofluidicJobCallbackUI
     			flowsPlots = new XYSeries[flowRates.length];
     			for(int i=0; i<flowRates.length; i++)
     			{
-    				flowsPlots[i] = new XYSeries("Flow Unit " + Integer.toString(i+1));
+    				if(connectedSyringes == null || i>=connectedSyringes.length)
+    					flowsPlots[i] = new XYSeries("Flow Unit " + Integer.toString(i+1));
+    				else
+    					flowsPlots[i] = new XYSeries("Flow Unit " + Integer.toString(connectedSyringes[i]+1));
     				plotsCollection.addSeries(flowsPlots[i]);
     				renderer.setSeriesShapesVisible(i, false);
     			}
@@ -252,7 +259,7 @@ class DropletMicrofluidicJobCallbackUI
         }
         frame = client.createFrame();
     	
-        frame.setTitle("Droplet microfluidics");
+        frame.setTitle("Droplet microfluidics, Chip " + Integer.toString(chipID));
         frame.setClosable(false);
 
         JPanel mainPanel = new JPanel(new GridLayout(2, 2, 5, 5));

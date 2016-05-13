@@ -26,7 +26,7 @@ class FlexibleControllerUI extends ComponentAddonUIAdapter<FlexibleControllerCon
 	private final DoubleTextField ratioHeightToVolumeField = new DoubleTextField();
 	private final PeriodField timeConstantProportionalField = new PeriodField();
 	private final PeriodField timeConstantIntegralField = new PeriodField();
-	private int numFlowUnits = 0;
+	private int[] connectedSyringes = new int[0];
 	
 	private FlexibleSyringeTable syringeTableField = null;
     /**
@@ -72,7 +72,7 @@ class FlexibleControllerUI extends ComponentAddonUIAdapter<FlexibleControllerCon
 		contentPane.add(new JLabel("Time constant of controller's integral part:"));
 		contentPane.add(timeConstantIntegralField);
 		
-		syringeTableField = new FlexibleSyringeTable(getClient(), numFlowUnits);
+		syringeTableField = new FlexibleSyringeTable(getClient(), connectedSyringes);
 		syringeTableField.setRows(configuration.getSyringeTableRows()); 
 		contentPane.add(new JLabel("Syringe table:"));
 		contentPane.addFill(syringeTableField);
@@ -91,14 +91,16 @@ class FlexibleControllerUI extends ComponentAddonUIAdapter<FlexibleControllerCon
     }
 
 	@Override
-	public void setNumFlowUnits(int numFlowUnits) {
-		this.numFlowUnits = numFlowUnits > 0 ? numFlowUnits : 0;
-		if(isInitialized())
-			syringeTableField.setNumSyringes(this.numFlowUnits);
+	protected void initializeDefaultConfiguration(FlexibleControllerConfiguration configuration) throws AddonException {
+		// do nothing.
 	}
 
 	@Override
-	protected void initializeDefaultConfiguration(FlexibleControllerConfiguration configuration) throws AddonException {
-		// do nothing.
+	public void setConnectedSyringes(int[] connectedSyringes) {
+		if(connectedSyringes == null)
+			connectedSyringes = new int[0];
+		this.connectedSyringes = connectedSyringes;
+		if(isInitialized())
+			syringeTableField.setConnectedSyringes(this.connectedSyringes);
 	}
 }

@@ -57,6 +57,10 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	private ArrayList<TableListener> tableListeners = new ArrayList<TableListener>();
 	
     private DropletMicrofluidicJobCallback callback = null;
+    
+    private int microfluidicChipID = 1;
+    
+    private int[] connectedSyringes = new int[0];
 	
 	private final TableListener inputListener = new TableListener()
 	{
@@ -162,7 +166,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		// call the observer...
 		DropletObserverResult observerResult;
 		try {
-			observerResult = observer.runObserver(executionInformation, measurementContext, dropletOffset);
+			observerResult = observer.runObserver(executionInformation, measurementContext, dropletOffset, microfluidicChipID);
 		} catch (ResourceException e) {
 			throw new JobException("Could not run observer for droplet-based microfluidics.", e);
 		}
@@ -170,9 +174,13 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		// call the controller...
 		DropletControllerResult controllerResult;
 		try {
-			controllerResult = controller.runController(executionInformation, measurementContext, observerResult.getMeanOffset());
+			controllerResult = controller.runController(executionInformation, measurementContext, observerResult.getMeanOffset(), microfluidicChipID);
 		} catch (ResourceException e) {
 			throw new JobException("Could not run controller for droplet-based microfluidics.", e);
+		}
+		if(controllerResult.getNumFlowUnits() > connectedSyringes.length)
+		{
+			throw new JobException("Only "+Integer.toString(connectedSyringes.length) + " syringes connected to chip "+Integer.toString(microfluidicChipID)+", but controller wants to set flow of "+controllerResult.getNumFlowUnits()+" syringes.");
 		}
 
 		// Execute the output.
@@ -182,7 +190,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 			for(int i=0; i<controllerResult.getNumFlowUnits(); i++)
 			{
 				TemporaryRow row = nemesysTable.createTemporaryRow();
-				row.get(NemesysControlTable.COLUMN_FLOW_UNIT).setValue(new Integer(i));
+				row.get(NemesysControlTable.COLUMN_FLOW_UNIT).setValue(new Integer(connectedSyringes[i]));
 				row.get(NemesysControlTable.COLUMN_FLOW_RATE).setValue(new Double(controllerResult.getFlowRate(i)));
 				nemesysTable.addRow(row);
 			}
@@ -273,6 +281,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 			throw new JobException("No observer defined.");
 		try {
 			observer.initialize(measurementContext);
+			observer.registerDroplet(measurementContext, microfluidicChipID);
 		} catch (ResourceException e) {
 			throw new JobException("Could not initialize observer", e);
 		}
@@ -287,7 +296,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		if(callback != null)
 		{
 			try {
-				callback.initializeCallback(getPositionInformation());
+				callback.initializeCallback(microfluidicChipID, getConnectedSyringes());
 			} catch (Exception e) {
 				callback = null;
 				sendErrorMessage("Exception occurred in initializing visual callback. Not sending any state updates anymore, but continuing normally.", e);
@@ -310,6 +319,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		if(observer != null)
 		{
 			try {
+				observer.unregisterDroplet(measurementContext, microfluidicChipID);
 				observer.uninitialize(measurementContext);
 			} catch (ResourceException e) {
 				throw new JobException("Could not uninitialize observer", e);
@@ -411,5 +421,34 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	{
 		assertRunning();
 		this.callback = callback;
+	}
+
+	@Override
+	public int getMicrofluidicChipID() throws RemoteException {
+		return microfluidicChipID;
+	}
+
+	@Override
+	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, MeasurementRunningException {
+		assertRunning();
+		this.microfluidicChipID = microfluidicChipID;
+		
+	}
+
+	@Override
+	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, MeasurementRunningException {
+		assertRunning();
+		if(connectedSyringes == null)
+			connectedSyringes = new int[0];
+		this.connectedSyringes = connectedSyringes;
+	}
+
+	@Override
+	public int[] getConnectedSyringes() 
+	{
+		int[] copy = new int[connectedSyringes.length];
+		for(int i=0; i<connectedSyringes.length; i++)
+			copy[i] = connectedSyringes[i];
+		return copy;
 	}
 }

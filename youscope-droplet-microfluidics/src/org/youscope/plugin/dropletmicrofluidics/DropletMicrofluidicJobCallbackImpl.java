@@ -2,6 +2,7 @@ package org.youscope.plugin.dropletmicrofluidics;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.ExecutionInformation;
@@ -9,8 +10,9 @@ import org.youscope.common.callback.CallbackException;
 import org.youscope.common.table.Table;
 class DropletMicrofluidicJobCallbackImpl implements DropletMicrofluidicJobCallback
 {
-    private static DropletMicrofluidicJobCallbackUI ui = null;
     private final YouScopeClient client;
+    private int chipID = 1;
+    private static final HashMap<Integer, DropletMicrofluidicJobCallbackUI> userInterfaces = new HashMap<>();
     
     DropletMicrofluidicJobCallbackImpl(final YouScopeClient client)
     {
@@ -20,6 +22,7 @@ class DropletMicrofluidicJobCallbackImpl implements DropletMicrofluidicJobCallba
     @Override
 	public void dropletMeasured(ExecutionInformation executionInformation, Table table) throws CallbackException
 	{
+    	DropletMicrofluidicJobCallbackUI ui = userInterfaces.get(chipID);
     	if(ui == null)
     		throw new CallbackException("Callback not initialized");
     	ui.dropletMeasured(executionInformation, table);
@@ -33,15 +36,34 @@ class DropletMicrofluidicJobCallbackImpl implements DropletMicrofluidicJobCallba
 	@Override
 	public synchronized void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException 
 	{
-		if(ui == null || ui.isReceivedData())
+		if(arguments != null && arguments.length > 0 && arguments[0] instanceof Integer)
 		{
-			ui = new DropletMicrofluidicJobCallbackUI(client);
+			chipID = (Integer)arguments[0];
+		}
+		
+		DropletMicrofluidicJobCallbackUI ui;
+		synchronized(userInterfaces)
+		{
+			ui = userInterfaces.get(chipID);
+			if(ui == null || ui.isReceivedData())
+			{
+				int[] connectedSyringes = null;
+				if(arguments != null && arguments.length > 1 && arguments[1] instanceof int[])
+				{
+					connectedSyringes = (int[])arguments[1];
+				}
+				
+				ui = new DropletMicrofluidicJobCallbackUI(client, chipID, connectedSyringes);
+				userInterfaces.put(chipID, ui);
+			}
 		}
 		ui.initializeCallback(arguments);
 	}
 
 	@Override
-	public synchronized void uninitializeCallback() throws RemoteException, CallbackException {
+	public synchronized void uninitializeCallback() throws RemoteException, CallbackException 
+	{
+		DropletMicrofluidicJobCallbackUI ui = userInterfaces.get(chipID);
 		if(ui != null)
 			ui.uninitializeCallback();
 	}

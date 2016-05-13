@@ -59,7 +59,7 @@ final class YouScopeFrameImpl extends JInternalFrame
     /**
      * URL of the icon of this frame.
      */
-    private static final String                 TRAY_ICON_URL       = "org/youscope/client/images/csb-logo-icon16.png";
+    private static final String                 TRAY_ICON_URL       = "org/youscope/client/images/icon-16.png";
 
     
     /**

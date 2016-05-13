@@ -132,13 +132,6 @@ public class YouScopeClientImpl extends JFrame
 	
 	private JMenu							scriptsMenu;
 
-	/**
-	 * The tray icons.
-	 */
-	private static final String				TRAY_ICON_URL16						= "org/youscope/client/images/csb-logo-icon16.png";
-	private static final String				TRAY_ICON_URL32						= "org/youscope/client/images/csb-logo-icon32.png";
-	private static final String				TRAY_ICON_URL64						= "org/youscope/client/images/csb-logo-icon64.png";
-
 	private class LastMeasurementListElement
     {
         private final MeasurementConfiguration configuration;
@@ -803,7 +796,11 @@ public class YouScopeClientImpl extends JFrame
 		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
 		
-		// Set tray icon
+		// Set tray icon image.
+		final String TRAY_ICON_URL16 = "org/youscope/client/images/icon-16.png";
+		final String TRAY_ICON_URL32 = "org/youscope/client/images/icon-32.png";
+		final String TRAY_ICON_URL96 = "org/youscope/client/images/icon-96.png";
+		final String TRAY_ICON_URL194 = "org/youscope/client/images/icon-194.png";
 		Vector<Image> trayIcons = new Vector<Image>();
 		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "tray icon");
 		if(trayIcon16 != null)
@@ -811,9 +808,12 @@ public class YouScopeClientImpl extends JFrame
 		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "tray icon");
 		if(trayIcon32 != null)
 			trayIcons.addElement(trayIcon32.getImage());
-		ImageIcon trayIcon64 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL64, "tray icon");
-		if(trayIcon64 != null)
-			trayIcons.addElement(trayIcon64.getImage());
+		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "tray icon");
+		if(trayIcon96 != null)
+			trayIcons.addElement(trayIcon96.getImage());
+		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "tray icon");
+		if(trayIcon194 != null)
+			trayIcons.addElement(trayIcon194.getImage());
 		if(trayIcons.size()>0)
 			this.setIconImages(trayIcons);
 

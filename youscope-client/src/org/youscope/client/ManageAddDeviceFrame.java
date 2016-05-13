@@ -747,6 +747,7 @@ class ManageAddDeviceFrame
 			return;
 		}
 		
+		sortTypeField.setSelectedIndex(1);
 		updateDeviceTypes();
 		sortTypeField.addActionListener(new ActionListener()
 		{

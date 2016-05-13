@@ -22,9 +22,10 @@ public interface DropletControllerResource  extends Resource
 	 * @param executionInformation Current execution information.
 	 * @param meanDropletOffset Mean height offset of the droplet (as obtained by observer).
 	 * @param measurementContext The Measurement context.
+	 * @param microfluidicChipID The id of the microfluidic chip whose droplets are controlled by this controller. Controllers for different chips have to have independent states, i.e. not influence one another.
 	 * @return Flow rate of the flow units.
 	 * @throws ResourceException
 	 * @throws RemoteException
 	 */
-	public DropletControllerResult runController(ExecutionInformation executionInformation, MeasurementContext measurementContext, double meanDropletOffset) throws ResourceException, RemoteException;	
+	public DropletControllerResult runController(ExecutionInformation executionInformation, MeasurementContext measurementContext, double meanDropletOffset, int microfluidicChipID) throws ResourceException, RemoteException;	
 }

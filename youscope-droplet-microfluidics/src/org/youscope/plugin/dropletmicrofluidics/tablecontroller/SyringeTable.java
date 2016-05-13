@@ -48,14 +48,14 @@ class SyringeTable extends JPanel
 	private static final long	serialVersionUID	= -847210452248761222L;
 	private final JTable syringeTable;
 	private final SyringeTableModel syringeTableModel;
-	private int numSyringes;
+	private int[] connectedSyringes = new int[0];
 	private ArrayList<SyringeTableRow> rows = new ArrayList<SyringeTableRow>();
 	private final YouScopeClient client;
-	public SyringeTable(YouScopeClient client, final int numSyringes)
+	public SyringeTable(YouScopeClient client, final int[] connectedSyringes)
 	{
 		super(new BorderLayout(0, 0));
 		this.client = client;
-		this.numSyringes = numSyringes;
+		this.connectedSyringes = connectedSyringes;
 		this.syringeTableModel = new SyringeTableModel();
 		this.syringeTable = new JTable(syringeTableModel);
 		syringeTable.setAutoCreateColumnsFromModel(true);
@@ -129,7 +129,7 @@ class SyringeTable extends JPanel
         }
         else
         {
-        	SyringeState[] syringeStates = new SyringeState[numSyringes];
+        	SyringeState[] syringeStates = new SyringeState[connectedSyringes.length];
         	for(int i=0; i<syringeStates.length; i++)
         	{
         		syringeStates[i] = i==0 ? SyringeState.INFLOW : SyringeState.INACTIVE;
@@ -142,18 +142,18 @@ class SyringeTable extends JPanel
         syringeTableModel.fireTableDataChanged();
 	}
 	
-	public void setNumSyringes(int numSyringes)
+	public void setConnectedSyringes(int[] connectedSyringes)
 	{
-		if(numSyringes == this.numSyringes)
+		if(connectedSyringes.length == this.connectedSyringes.length)
 			return;
 		ArrayList<SyringeTableRow> newRows = new ArrayList<SyringeTableRow>();
-		this.numSyringes = numSyringes;
+		this.connectedSyringes = connectedSyringes;
 		for(SyringeTableRow row : rows)
 		{
-			if(row.getNumSyringes() != numSyringes)
+			if(row.getNumSyringes() != connectedSyringes.length)
 			{
 				SyringeState[] oldStates = row.getSyringeStates();
-				SyringeState[] newStates = new SyringeState[numSyringes];
+				SyringeState[] newStates = new SyringeState[connectedSyringes.length];
 				int i=0;
 				for(; i< newStates.length && i<oldStates.length; i++)
 				{
@@ -193,16 +193,16 @@ class SyringeTable extends JPanel
 		boolean firstError = true;
 		for(SyringeTableRow row : syringeTableRows)
 		{
-			if(row.getNumSyringes() != numSyringes)
+			if(row.getNumSyringes() != connectedSyringes.length)
 			{
 				if(firstError)
 				{
 					client.sendError("Configuration has " + Integer.toString(row.getNumSyringes()) + " syringes defined, while currently only "+
-								Integer.toString(numSyringes) + " syringes are defined. Trying to take over as much information about which syringe should be on when as possible, however, syringe table needs manual check.");
+								Integer.toString(connectedSyringes.length) + " syringes are defined. Trying to take over as much information about which syringe should be on when as possible, however, syringe table needs manual check.");
 					firstError = false;
 				}
 				SyringeState[] oldStates = row.getSyringeStates();
-				SyringeState[] newStates = new SyringeState[numSyringes];
+				SyringeState[] newStates = new SyringeState[connectedSyringes.length];
 				int i=0;
 				for(; i< newStates.length && i<oldStates.length; i++)
 				{
@@ -243,7 +243,9 @@ class SyringeTable extends JPanel
         {
         	if(col == 0)
         		return "Time";
-			return "Syringe " + Integer.toString(col);
+        	if(col>=getColumnCount())
+        		return "[INVALID COLUMN]";
+			return "Syringe " + Integer.toString(connectedSyringes[col-1]+1);
         }
 
         @Override
@@ -255,7 +257,7 @@ class SyringeTable extends JPanel
         @Override
         public int getColumnCount()
         {
-            return numSyringes+1;
+            return connectedSyringes.length+1;
         }
 
         @Override

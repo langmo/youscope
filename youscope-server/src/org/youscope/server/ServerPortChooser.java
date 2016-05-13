@@ -18,11 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -31,10 +28,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+
+import org.youscope.uielements.ImageLoadingTools;
 
 /**
  * @author langmo
@@ -80,41 +78,27 @@ class ServerPortChooser extends JFrame
         GridBagConstraints newLineConstrDense = (GridBagConstraints) newLineConstr.clone();
         newLineConstrDense.insets = new Insets(0, 0, 0, 0);
         JPanel contentPanel = new JPanel(layout);
-
-        try
-        {
-            URL topImageURL =
-                    getClass().getClassLoader().getResource(
-                            "org/youscope/server/images/csb-logo-long.gif");
-            if (topImageURL != null)
-            {
-                BufferedImage topImage = ImageIO.read(topImageURL);
-                JLabel imageLabel = new JLabel(new ImageIcon(topImage));
-                imageLabel.setHorizontalAlignment(SwingConstants.LEFT);
-                imageLabel.setBackground(Color.WHITE);
-                imageLabel.setOpaque(true);
-                getContentPane().add(imageLabel, BorderLayout.NORTH);
-            }
-        } catch (@SuppressWarnings("unused") Exception e)
-        {
-            // Do nothing.
-        }
+        
         // Set tray icon image.
-        final String TRAY_ICON_URL16 = "org/youscope/server/images/csb-logo-icon16.png";
-        final String TRAY_ICON_URL32 = "org/youscope/server/images/csb-logo-icon32.png";
-        final String TRAY_ICON_URL64 = "org/youscope/server/images/csb-logo-icon64.png";
-        URL trayIconURL16 = getClass().getClassLoader().getResource(TRAY_ICON_URL16);
-        URL trayIconURL32 = getClass().getClassLoader().getResource(TRAY_ICON_URL32);
-        URL trayIconURL64 = getClass().getClassLoader().getResource(TRAY_ICON_URL64);
-        Vector<Image> trayIcons = new Vector<Image>();
-        if (trayIconURL16 != null)
-            trayIcons.addElement((new ImageIcon(trayIconURL16, "tray icon")).getImage());
-        if (trayIconURL32 != null)
-            trayIcons.addElement((new ImageIcon(trayIconURL32, "tray icon")).getImage());
-        if (trayIconURL64 != null)
-            trayIcons.addElement((new ImageIcon(trayIconURL64, "tray icon")).getImage());
-        if (trayIcons.size() > 0)
-            this.setIconImages(trayIcons);
+ 		final String TRAY_ICON_URL16 = "org/youscope/server/images/icon-16.png";
+ 		final String TRAY_ICON_URL32 = "org/youscope/server/images/icon-32.png";
+ 		final String TRAY_ICON_URL96 = "org/youscope/server/images/icon-96.png";
+ 		final String TRAY_ICON_URL194 = "org/youscope/server/images/icon-194.png";
+ 		Vector<Image> trayIcons = new Vector<Image>();
+ 		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "tray icon");
+ 		if(trayIcon16 != null)
+ 			trayIcons.addElement(trayIcon16.getImage());
+ 		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "tray icon");
+ 		if(trayIcon32 != null)
+ 			trayIcons.addElement(trayIcon32.getImage());
+ 		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "tray icon");
+ 		if(trayIcon96 != null)
+ 			trayIcons.addElement(trayIcon96.getImage());
+ 		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "tray icon");
+ 		if(trayIcon194 != null)
+ 			trayIcons.addElement(trayIcon194.getImage());
+ 		if(trayIcons.size()>0)
+ 			this.setIconImages(trayIcons);
 
         if (lastErrorMessage != null)
         {

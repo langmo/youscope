@@ -35,34 +35,10 @@ public class DefaultObserverConfiguration extends DropletObserverConfiguration
 	@XStreamAlias("observer-mean")
 	private double observerMean = 1.5;
 	
-	@YSConfigAlias("Microfluidic chip number")
-	@XStreamAlias("microfluidic-chip-id")
-	private int microfluidicChipID = 1;
-	
 	@Override
 	public String getTypeIdentifier() 
 	{
 		return TYPE_IDENTIFIER;
-	}
-
-	/**
-	 * Returns the ID of the chip for which this observer observes the droplet height.
-	 * All observers having the same chip ID have to be called sequentially and equally often, since they considered to observe the height of droplets on the same chip.
-	 * Thus, it is possible to observe the droplet heights of several chips by having different IDs.
-	 * @return microfluidic chip id.
-	 */
-	public int getMicrofluidicChipID() {
-		return microfluidicChipID;
-	}
-
-	/**
-	 * Sets the ID of the chip for which this observer observes the droplet height.
-	 * All observers having the same chip ID have to be called sequentially and equally often, since they considered to observe the height of droplets on the same chip.
-	 * Thus, it is possible to observe the droplet heights of several chips by having different IDs.
-	 * @param microfluidicChipID The id of the chip.
-	 */
-	public void setMicrofluidicChipID(int microfluidicChipID) {
-		this.microfluidicChipID = microfluidicChipID;
 	}
 	
 	/**
