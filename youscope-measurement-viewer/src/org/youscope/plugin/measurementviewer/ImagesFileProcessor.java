@@ -80,7 +80,21 @@ class ImagesFileProcessor
 		            }
 		            
 		            // Add image
-		            imageFolder.add(tokens[6], Integer.parseInt(tokens[0]));
+		            String[] evalStrings = tokens[0].split(".");
+		            int[] evals = new int[evalStrings.length];
+		            for(int k=0; k<evals.length; k++)
+		            {
+		            	try
+		            	{
+		            		evals[k] = Integer.parseInt(evalStrings[k]);
+		            	}
+		            	catch(NumberFormatException e)
+		            	{
+		            		throw new Exception("String identifying evaluation number ("+tokens[0]+") must contain integers separated by a dot.", e);
+		            	}
+		            }
+		            
+		            imageFolder.add(tokens[6], evals);
 		        }
 			}
 			catch(Exception e)

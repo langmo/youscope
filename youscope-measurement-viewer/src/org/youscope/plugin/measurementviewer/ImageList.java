@@ -14,9 +14,9 @@ class ImageList
 {
 	private final LinkedList<ImageEntry> images = new LinkedList<ImageEntry>();
 	private boolean sorted = false;
-	public void add(String imagePath, int imageNumber)
+	public void add(String imagePath, int[] imageNumber)
 	{
-		images.add(new ImageEntry(imageNumber, imagePath));
+		images.add(new ImageEntry(imageNumber, imagePath)); 
 	}
 	public String get(int index)
 	{
@@ -34,9 +34,9 @@ class ImageList
 	
 	class ImageEntry implements Comparable<ImageEntry>
 	{
-		public final int position;
+		public final int position[];
 		public final String path;
-		ImageEntry(int position, String path)
+		ImageEntry(int position[], String path)
 		{
 			this.position = position;
 			this.path = path;
@@ -44,7 +44,19 @@ class ImageList
 		@Override
 		public int compareTo(ImageEntry o)
 		{
-			return position-o.position;
+			for(int i=0; i<position.length && i < o.position.length; i++)
+			{
+				if(position[i]<o.position[i])
+					return -1;
+				else if(position[i]>o.position[i])
+					return 1;
+			}
+			if(position.length < o.position.length)
+				return -1;
+			else if(position.length < o.position.length)
+				return 1;
+			else
+				return 0;
 		}
 	}
 }

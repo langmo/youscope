@@ -60,6 +60,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	private volatile boolean imageChanging = false;
 	private ImageFolderNode imageFolder = null;
 	private final static String FRAME_TITLE = "Measurement Viewer";
+	private String currentFrameTitle = FRAME_TITLE;
 	private volatile int currentImageIndex = 0;
 	
 	/**
@@ -116,7 +117,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	{
 		setMaximizable(true);
 		setResizable(true);
-		setTitle(FRAME_TITLE);
+		setTitle(currentFrameTitle);
 		setPreferredSize(new Dimension(900, 500));
 		
 		KeyListener keyListener = new KeyListener() {
@@ -236,7 +237,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 				@Override
 				public void activePixelChanged(PixelInfo pixel) {
 					if(pixel == null)
-						getContainingFrame().setTitle(FRAME_TITLE);
+						getContainingFrame().setTitle(currentFrameTitle);
 					else
 					{
 						String text = FRAME_TITLE + " - ";
@@ -393,7 +394,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		imageSelectSlider.setValue(index+1);
 		imageChanging = false;
 		
-		String imageURL = imageFolder.getImageList().get(index);
+		String imageURL = imageFolder.getImageList().get(index); 
 		File imageFile = new File(measurementFolder, imageURL);
 		if(!imageFile.exists() || !imageFile.isFile())
 		{
@@ -423,5 +424,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 			return;
 		}
 		imagePanel.setImage(image);
+		currentFrameTitle = FRAME_TITLE + " - " + imageFile.getName();
+		getContainingFrame().setTitle(currentFrameTitle);
 	}
 }
