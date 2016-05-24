@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     23. May. 2016 17:36:00                                                        
+
+     ys.autocompile    
+     Automatically builds YouScope Measurement viewer stand-alone.
+                   
+     Moritz Lang                                                                
+     ====================================================================== -->
+<project name="ys.measurementviewer_standalone" default="autocompile">
+    <description>
+    	Automatically builds YouScope Measurement viewer stand-alone.
+    </description>
+	
+	<property environment="env"/>
+	<property name="ys.shared" value="common" />
+	<property name="ys.viewerfolder" value="measurement_viewer" />
+	<property name="ys.build" value="build"/>
+	<property name="ys.bin" value="bin"/>
+	<property name="ys.plugins" value="plugins" />
+	<property name="ys.meta_inf" value="META-INF" />
+	<property name="ys.manifest" value="${ys.meta_inf}/MANIFEST.MF" />
+	<property name="ys.dist" value="${env.YOUSCOPE_DIST_DIR}"/>
+	
+	<script language="javascript">
+		s = project.getProperty('basedir');
+		lastIdx1 = s.lastIndexOf('/');
+		lastIdx2 = s.lastIndexOf('\\');
+		if(lastIdx1 > lastIdx2)
+			lastIdx = lastIdx1;
+		else
+			lastIdx = lastIdx2;
+		project.setProperty('project', s.substring(lastIdx+1));
+	</script>
+
+    <target name="autocompile" depends="-buildAll">
+    	<echo>Project name is ${project}...</echo>  
+    </target>
+		
+	
+	<target name="-buildJar" description="Build jar file.">
+		<echo>Creating ${ys.dist}/${folder}/${project}.jar...</echo>
+        <jar jarfile="${ys.dist}/${folder}/${project}.jar" manifest="${basedir}/${ys.manifest}" >
+        	<fileset dir="${basedir}/${ys.bin}"></fileset>
+        	<zipfileset dir="${basedir}/${ys.meta_inf}" prefix="META-INF" />
+        </jar> 
+    </target>
+	
+	<target name="-buildAll"> 
+		<echo>Compiling ${project} to ${ys.viewerfolder} directory...</echo>
+		<antcall target="-buildJar">
+			<param name="folder" value="${ys.viewerfolder}" />
+			<param name="project" value="${project}" />	
+		</antcall>		
+		<copy file="${ys.dist}/${ys.plugins}/youscope-measurement-viewer.jar" tofile="${ys.dist}/${ys.viewerfolder}/youscope-measurement-viewer.jar"/>
+		<copy file="${ys.dist}/${ys.plugins}/jai_imageio.jar" tofile="${ys.dist}/${ys.viewerfolder}/jai_imageio.jar"/>
+		<copy file="${ys.dist}/${ys.shared}/youscope-addon.jar" tofile="${ys.dist}/${ys.viewerfolder}/youscope-addon.jar"/>
+		<copy file="${ys.dist}/${ys.shared}/youscope-common.jar" tofile="${ys.dist}/${ys.viewerfolder}/youscope-common.jar"/>
+	</target>
+</project>

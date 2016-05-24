@@ -586,7 +586,7 @@ class FileSystem extends JPanel
 		MeasurementNode(File file, FileSystemElement parentNode)
 		{
 			super(file, parentNode);
-		}
+		} 
 		
 		
 		@Override

@@ -77,7 +77,7 @@ class ImagesFileProcessor
 		            {
 		            	imageFolder = new ImageList();
 		            	imageFolders.put(imageFolderID, imageFolder);
-		            }
+		            } 
 		            
 		            // Add image
 		            String[] evalStrings = tokens[0].split(".");

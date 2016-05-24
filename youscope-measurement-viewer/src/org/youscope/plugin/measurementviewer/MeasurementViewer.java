@@ -297,7 +297,8 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		int returnVal = fileChooser.showDialog(null, "View Measurement");
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			loadMeasurement(fileChooser.getSelectedFile().getParentFile());			
+			loadMeasurement(fileChooser.getSelectedFile().getParentFile());		
+			getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, fileChooser.getSelectedFile().getParentFile());
 		}
 		else
 		{

@@ -13,7 +13,7 @@ public class MeasurementViewerFactory extends ToolAddonFactoryAdapter
 {
 	/**
 	 * Constructor.
-	 */
+	 */ 
 	public MeasurementViewerFactory()
 	{
 		super(MeasurementViewer.class, MeasurementViewer.getMetadata());
