@@ -15,10 +15,10 @@ class MinimalClientImpl implements YouScopeClient {
 	{
 		properties.saveProperties();
 	}
-	
+ 
 	@Override
 	public YouScopeProperties getProperties() {
-		return properties; 
+		return properties;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ class MinimalClientImpl implements YouScopeClient {
 	public void sendError(String message) {
 		sendError(message, null);
 	}
-
+ 
 	@Override
 	public void sendMessage(String message) {
 		System.err.println(message);

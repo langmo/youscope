@@ -56,5 +56,21 @@
 		<copy file="${ys.dist}/${ys.plugins}/jai_imageio.jar" tofile="${ys.dist}/${ys.viewerfolder}/jai_imageio.jar"/>
 		<copy file="${ys.dist}/${ys.shared}/youscope-addon.jar" tofile="${ys.dist}/${ys.viewerfolder}/youscope-addon.jar"/>
 		<copy file="${ys.dist}/${ys.shared}/youscope-common.jar" tofile="${ys.dist}/${ys.viewerfolder}/youscope-common.jar"/>
+		
+		<tar destfile="${ys.dist}/measurement-viewer.tar">
+		  <tarfileset dir="${ys.dist}/${ys.viewerfolder}" prefix="measurement-viewer">
+		    <include name="*.jar"/>
+		  	<include name="README.txt"/>
+		  	<include name="COPYING.txt"/> 
+		  </tarfileset>
+		</tar>
+		<gzip destfile="${ys.dist}/measurement-viewer.tar.gz" src="${ys.dist}/measurement-viewer.tar"/>
+		
+		<zip destfile="${ys.dist}/measurement-viewer.zip">
+			<zipfileset dir="${ys.dist}/${ys.viewerfolder}" includes="*.jar" prefix="measurement-viewer"/>
+			<zipfileset dir="${ys.dist}/${ys.viewerfolder}" includes="README.txt" prefix="measurement-viewer"/>
+			<zipfileset dir="${ys.dist}/${ys.viewerfolder}" includes="COPYING.txt" prefix="measurement-viewer"/>
+			<zipfileset dir="${ys.dist}/${ys.viewerfolder}" includes="MeasurementViewer.exe" prefix="measurement-viewer"/>
+		</zip>
 	</target>
 </project>

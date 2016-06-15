@@ -1,486 +1,846 @@
-; YouScope.nsi
-;
+;NSIS Installer for YouScope
+;Written by Moritz Lang
+;---------------------
+;--- Configuration ---
+;---------------------
+
+; Comment out to not export win64
+!define WIN64
+; Comment out to not expoirt win32
+;!define WIN32
+
+
+
+
+
+
 ;--------------------------------
-
-SetCompressor lzma
-
-!define MULTIUSER_EXECUTIONLEVEL Highest
-!define MULTIUSER_MUI
-!define MULTIUSER_INSTALLMODE_COMMANDLINE
-!include MultiUser.nsh
+;Set to moder design/UI
 !include "MUI2.nsh"
-!include "InstallOptions.nsh"
 
-; include for some of the windows messages defines
-!include "winmessages.nsh"
-
-; MUI Settings
-!define MUI_ABORTWARNING
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
-!define PRODUCT_NAME "YouScope"
-!define PRODUCT_VERSION "1.0"
-
-/**
- *  EnvVarUpdate.nsh
- *    : Environmental Variables: append, prepend, and remove entries
- *
- *     WARNING: If you use StrFunc.nsh header then include it before this file
- *              with all required definitions. This is to avoid conflicts
- *
- *  Usage:
- *    ${EnvVarUpdate} "ResultVar" "EnvVarName" "Action" "RegLoc" "PathString"
- *
- *  Credits:
- *  Version 1.0 
- *  * Cal Turney (turnec2)
- *  * Amir Szekely (KiCHiK) and e-circ for developing the forerunners of this
- *    function: AddToPath, un.RemoveFromPath, AddToEnvVar, un.RemoveFromEnvVar,
- *    WriteEnvStr, and un.DeleteEnvStr
- *  * Diego Pedroso (deguix) for StrTok
- *  * Kevin English (kenglish_hi) for StrContains
- *  * Hendri Adriaens (Smile2Me), Diego Pedroso (deguix), and Dan Fuhry  
- *    (dandaman32) for StrReplace
- *
- *  Version 1.1 (compatibility with StrFunc.nsh)
- *  * techtonik
- *
- *  http://nsis.sourceforge.net/Environmental_Variables:_append%2C_prepend%2C_and_remove_entries
- *
- */
- 
-!ifndef ENVVARUPDATE_FUNCTION
-!define ENVVARUPDATE_FUNCTION
-!verbose push
-!verbose 3
-!include "LogicLib.nsh"
-!include "WinMessages.NSH"
-!include "StrFunc.nsh"
-
-; ---- Fix for conflict if StrFunc.nsh is already includes in main file -----------------------
-!macro _IncludeStrFunction StrFuncName
-  !ifndef ${StrFuncName}_INCLUDED
-    ${${StrFuncName}}
-  !endif
-  !ifndef Un${StrFuncName}_INCLUDED
-    ${Un${StrFuncName}}
-  !endif
-  !define un.${StrFuncName} "${Un${StrFuncName}}"
-!macroend
- 
-!insertmacro _IncludeStrFunction StrTok
-!insertmacro _IncludeStrFunction StrStr
-!insertmacro _IncludeStrFunction StrRep
- 
-; ---------------------------------- Macro Definitions ----------------------------------------
-!macro _EnvVarUpdateConstructor ResultVar EnvVarName Action Regloc PathString
-  Push "${EnvVarName}"
-  Push "${Action}"
-  Push "${RegLoc}"
-  Push "${PathString}"
-    Call EnvVarUpdate
-  Pop "${ResultVar}"
-!macroend
-!define EnvVarUpdate '!insertmacro "_EnvVarUpdateConstructor"'
- 
-!macro _unEnvVarUpdateConstructor ResultVar EnvVarName Action Regloc PathString
-  Push "${EnvVarName}"
-  Push "${Action}"
-  Push "${RegLoc}"
-  Push "${PathString}"
-    Call un.EnvVarUpdate
-  Pop "${ResultVar}"
-!macroend
-!define un.EnvVarUpdate '!insertmacro "_unEnvVarUpdateConstructor"'
-; ---------------------------------- Macro Definitions end-------------------------------------
- 
-;----------------------------------- EnvVarUpdate start----------------------------------------
-!define hklm_all_users     'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
-!define hkcu_current_user  'HKCU "Environment"'
- 
-!macro EnvVarUpdate UN
- 
-Function ${UN}EnvVarUpdate
- 
-  Push $0
-  Exch 4
-  Exch $1
-  Exch 3
-  Exch $2
-  Exch 2
-  Exch $3
-  Exch
-  Exch $4
-  Push $5
-  Push $6
-  Push $7
-  Push $8
-  Push $9
-  Push $R0
- 
-  /* After this point:
-  -------------------------
-     $0 = ResultVar     (returned)
-     $1 = EnvVarName    (input)
-     $2 = Action        (input)
-     $3 = RegLoc        (input)
-     $4 = PathString    (input)
-     $5 = Orig EnvVar   (read from registry)
-     $6 = Len of $0     (temp)
-     $7 = tempstr1      (temp)
-     $8 = Entry counter (temp)
-     $9 = tempstr2      (temp)
-     $R0 = tempChar     (temp)  */
- 
-  ; Step 1:  Read contents of EnvVarName from RegLoc
-  ;
-  ; Check for empty EnvVarName
-  ${If} $1 == ""
-    SetErrors
-    DetailPrint "ERROR: EnvVarName is blank"
-    Goto EnvVarUpdate_Restore_Vars
-  ${EndIf}
- 
-  ; Check for valid Action
-  ${If}    $2 != "A"
-  ${AndIf} $2 != "P"
-  ${AndIf} $2 != "R"
-    SetErrors
-    DetailPrint "ERROR: Invalid Action - must be A, P, or R"
-    Goto EnvVarUpdate_Restore_Vars
-  ${EndIf}
- 
-  ${If} $3 == HKLM
-    ReadRegStr $5 ${hklm_all_users} $1     ; Get EnvVarName from all users into $5
-  ${ElseIf} $3 == HKCU
-    ReadRegStr $5 ${hkcu_current_user} $1  ; Read EnvVarName from current user into $5
-  ${Else}
-    SetErrors
-    DetailPrint 'ERROR: Action is [$3] but must be "HKLM" or HKCU"'
-    Goto EnvVarUpdate_Restore_Vars
-  ${EndIf}
- 
-  ; Check for empty PathString
-  ${If} $4 == ""
-    SetErrors
-    DetailPrint "ERROR: PathString is blank"
-    Goto EnvVarUpdate_Restore_Vars
-  ${EndIf}
- 
-  ; Make sure we've got some work to do
-  ${If} $5 == ""
-  ${AndIf} $2 == "R"
-    SetErrors
-    DetailPrint "$1 is empty - Nothing to remove"
-    Goto EnvVarUpdate_Restore_Vars
-  ${EndIf}
- 
-  ; Step 2: Scrub EnvVar
-  ;
-  StrCpy $0 $5                             ; Copy the contents to $0
-  ; Remove spaces around semicolons (NOTE: spaces before the 1st entry or
-  ; after the last one are not removed here but instead in Step 3)
-  ${If} $0 != ""                           ; If EnvVar is not empty ...
-    ${Do}
-      ${${UN}StrStr} $7 $0 " ;"
-      ${If} $7 == ""
-        ${ExitDo}
-      ${EndIf}
-      ${${UN}StrRep} $0  $0 " ;" ";"         ; Remove '<space>;'
-    ${Loop}
-    ${Do}
-      ${${UN}StrStr} $7 $0 "; "
-      ${If} $7 == ""
-        ${ExitDo}
-      ${EndIf}
-      ${${UN}StrRep} $0  $0 "; " ";"         ; Remove ';<space>'
-    ${Loop}
-    ${Do}
-      ${${UN}StrStr} $7 $0 ";;" 
-      ${If} $7 == ""
-        ${ExitDo}
-      ${EndIf}
-      ${${UN}StrRep} $0  $0 ";;" ";"
-    ${Loop}
- 
-    ; Remove a leading or trailing semicolon from EnvVar
-    StrCpy  $7  $0 1 0
-    ${If} $7 == ";"
-      StrCpy $0  $0 "" 1                   ; Change ';<EnvVar>' to '<EnvVar>'
-    ${EndIf}
-    StrLen $6 $0
-    IntOp $6 $6 - 1
-    StrCpy $7  $0 1 $6
-    ${If} $7 == ";"
-     StrCpy $0  $0 $6                      ; Change ';<EnvVar>' to '<EnvVar>'
-    ${EndIf}
-    ; DetailPrint "Scrubbed $1: [$0]"      ; Uncomment to debug
-  ${EndIf}
- 
-  /* Step 3. Remove all instances of the target path/string (even if "A" or "P")
-     $6 = bool flag (1 = found and removed PathString)
-     $7 = a string (e.g. path) delimited by semicolon(s)
-     $8 = entry counter starting at 0
-     $9 = copy of $0
-     $R0 = tempChar      */
- 
-  ${If} $5 != ""                           ; If EnvVar is not empty ...
-    StrCpy $9 $0
-    StrCpy $0 ""
-    StrCpy $8 0
-    StrCpy $6 0
- 
-    ${Do}
-      ${${UN}StrTok} $7 $9 ";" $8 "0"      ; $7 = next entry, $8 = entry counter
- 
-      ${If} $7 == ""                       ; If we've run out of entries,
-        ${ExitDo}                          ;    were done
-      ${EndIf}                             ;
- 
-      ; Remove leading and trailing spaces from this entry (critical step for Action=Remove)
-      ${Do}
-        StrCpy $R0  $7 1
-        ${If} $R0 != " "
-          ${ExitDo}
-        ${EndIf}
-        StrCpy $7   $7 "" 1                ;  Remove leading space
-      ${Loop}
-      ${Do}
-        StrCpy $R0  $7 1 -1
-        ${If} $R0 != " "
-          ${ExitDo}
-        ${EndIf}
-        StrCpy $7   $7 -1                  ;  Remove trailing space
-      ${Loop}
-      ${If} $7 == $4                       ; If string matches, remove it by not appending it
-        StrCpy $6 1                        ; Set 'found' flag
-      ${ElseIf} $7 != $4                   ; If string does NOT match
-      ${AndIf}  $0 == ""                   ;    and the 1st string being added to $0,
-        StrCpy $0 $7                       ;    copy it to $0 without a prepended semicolon
-      ${ElseIf} $7 != $4                   ; If string does NOT match
-      ${AndIf}  $0 != ""                   ;    and this is NOT the 1st string to be added to $0,
-        StrCpy $0 $0;$7                    ;    append path to $0 with a prepended semicolon
-      ${EndIf}                             ;
- 
-      IntOp $8 $8 + 1                      ; Bump counter
-    ${Loop}                                ; Check for duplicates until we run out of paths
-  ${EndIf}
- 
-  ; Step 4:  Perform the requested Action
-  ;
-  ${If} $2 != "R"                          ; If Append or Prepend
-    ${If} $6 == 1                          ; And if we found the target
-      DetailPrint "Target is already present in $1. It will be removed and"
-    ${EndIf}
-    ${If} $0 == ""                         ; If EnvVar is (now) empty
-      StrCpy $0 $4                         ;   just copy PathString to EnvVar
-      ${If} $6 == 0                        ; If found flag is either 0
-      ${OrIf} $6 == ""                     ; or blank (if EnvVarName is empty)
-        DetailPrint "$1 was empty and has been updated with the target"
-      ${EndIf}
-    ${ElseIf} $2 == "A"                    ;  If Append (and EnvVar is not empty),
-      StrCpy $0 $0;$4                      ;     append PathString
-      ${If} $6 == 1
-        DetailPrint "appended to $1"
-      ${Else}
-        DetailPrint "Target was appended to $1"
-      ${EndIf}
-    ${Else}                                ;  If Prepend (and EnvVar is not empty),
-      StrCpy $0 $4;$0                      ;     prepend PathString
-      ${If} $6 == 1
-        DetailPrint "prepended to $1"
-      ${Else}
-        DetailPrint "Target was prepended to $1"
-      ${EndIf}
-    ${EndIf}
-  ${Else}                                  ; If Action = Remove
-    ${If} $6 == 1                          ;   and we found the target
-      DetailPrint "Target was found and removed from $1"
-    ${Else}
-      DetailPrint "Target was NOT found in $1 (nothing to remove)"
-    ${EndIf}
-    ${If} $0 == ""
-      DetailPrint "$1 is now empty"
-    ${EndIf}
-  ${EndIf}
- 
-  ; Step 5:  Update the registry at RegLoc with the updated EnvVar and announce the change
-  ;
-  ClearErrors
-  ${If} $3  == HKLM
-    WriteRegExpandStr ${hklm_all_users} $1 $0     ; Write it in all users section
-  ${ElseIf} $3 == HKCU
-    WriteRegExpandStr ${hkcu_current_user} $1 $0  ; Write it to current user section
-  ${EndIf}
- 
-  IfErrors 0 +4
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Could not write updated $1 to $3"
-    DetailPrint "Could not write updated $1 to $3"
-    Goto EnvVarUpdate_Restore_Vars
- 
-  ; "Export" our change
-  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
- 
-  EnvVarUpdate_Restore_Vars:
-  ;
-  ; Restore the user's variables and return ResultVar
-  Pop $R0
-  Pop $9
-  Pop $8
-  Pop $7
-  Pop $6
-  Pop $5
-  Pop $4
-  Pop $3
-  Pop $2
-  Pop $1
-  Push $0  ; Push my $0 (ResultVar)
-  Exch
-  Pop $0   ; Restore his $0
- 
-FunctionEnd
- 
-!macroend   ; EnvVarUpdate UN
-!insertmacro EnvVarUpdate ""
-!insertmacro EnvVarUpdate "un."
-;----------------------------------- EnvVarUpdate end----------------------------------------
- 
-!verbose pop
+;--------------------------------
+;General
+;Name and file
+Name "YouScope"
+!ifndef WIN64
+	OutFile "YouScope_32bit_Installer.exe"
+!else ifndef WIN32
+	OutFile "YouScope_64bit_Installer.exe"
+!else
+	OutFile "YouScope_3264bit_Installer.exe"
 !endif
 
+;Default installation folder
+!ifndef WIN64
+	InstallDir "$PROGRAMFILES32\YouScope2"
+!else
+	InstallDir "$PROGRAMFILES64\YouScope2"
+!endif
+  
+;Get installation folder from registry if available
+!ifndef WIN64
+	InstallDirRegKey HKCU "Software\YouScope32" ""
+!else
+	InstallDirRegKey HKCU "Software\YouScope64" ""
+!endif
 
-;----------------------------------- The installer itself -----------------------------------
+;Request application privileges for Windows Vista/7
+RequestExecutionLevel admin
 
+;--------------------------------
+;Variables
+Var StartMenuFolder
+
+;--------
+; Config
+BrandingText "YouScope - The Microscope Control Software" 
+
+
+;--------------------------------
+;Interface Settings
+!define MUI_ABORTWARNING
+!define MUI_ICON "YouScope.ico"
+!define MUI_UNICON "YouScope.ico"
+
+;--------------------------------
+;Pages
 !insertmacro MUI_PAGE_WELCOME
-!define MUI_PAGE_CUSTOMFUNCTION_PRE CheckPrivileges
-!insertmacro MULTIUSER_PAGE_INSTALLMODE
-!insertmacro MUI_PAGE_DIRECTORY
+
+!define MUI_LICENSEPAGE_RADIOBUTTONS
+!insertmacro MUI_PAGE_LICENSE "COPYING.txt"
+
 !insertmacro MUI_PAGE_COMPONENTS
+
+!insertmacro MUI_PAGE_DIRECTORY
+  
+;Start Menu Folder Page Configuration
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\YouScope2" 
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "StartMenuFolder"
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+  
 !insertmacro MUI_PAGE_INSTFILES
-Page custom SetCustom ValidateCustom ": Setting environmental variables"
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW afterCustom
+
+!define MUI_FINISHPAGE_NOREBOOTSUPPORT
 !insertmacro MUI_PAGE_FINISH
 
-; Language files
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+;--------------------------------
+;Languages
 !insertmacro MUI_LANGUAGE "English"
- 
-; The name of the installer
-Name "YouScope"
 
-ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
-ReserveFile "YouScope.ini"
 
+;--------------------------------
+; Install types
+InstType "Full"
+InstType "Minimal"
+InstType "Server"
+InstType "Client"
+
+; Splash screen
 Function .onInit
-  !insertmacro MULTIUSER_INIT
+  SetOutPath $TEMP
+  File /oname=spltmp.bmp "splash.bmp"
+
+  advsplash::show 1000 600 400 -1 $TEMP\spltmp
+
+  Pop $0 ; $0 has '1' if the user closed the splash screen early,
+         ; '0' if everything closed normally, and '-1' if some error occurred.
+
+  Delete $TEMP\spltmp.bmp
 FunctionEnd
 
-Function CheckPrivileges
-  StrCmp $MultiUser.Privileges "User" +2
-  Abort
-  StrCmp $MultiUser.Privileges "Guest" +2
-  Abort
-FunctionEnd
 
-; Update the PATH variable
-Function afterCustom
-  !insertmacro INSTALLOPTIONS_READ $1 "YouScope.ini" "Field 2" "State"
+;--------------------------------
+;Main Program
+Section "-Main Program" SecMain
+	SectionIn 1 2 3 4
+  
+	SetOutPath "$INSTDIR"
+	FILE COPYING.txt
+	!ifdef WIN64
+		FILE YouScope64.exe
+	!endif
+	!ifdef WIN32
+		FILE YouScope32.exe
+	!endif
+	FILE YouScope.ico
+	FILE youscope-starter.jar
 
-  StrCpy $2 "HKLM"
-  StrCmp $MultiUser.Privileges "User" +2
-    StrCpy $2 "HKCU"
-  StrCmp $MultiUser.Privileges "Guest" +2
-    StrCpy $2 "HKCU"
+	AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
+	;"GenericRead + GenericWrite"
+	Pop $0
 
-  ${EnvVarUpdate} $0 "PATH" "A" $2 $1
+	SetOutPath "$INSTDIR\common"
+	FILE "common\youscope-common.jar"
+	FILE "common\youscope-addon.jar"
+  
+	SetOutPath "$INSTDIR\lib"
+	FILE "lib\*"
 
-  GetDlgItem $0 $HWNDPARENT 3
-  EnableWindow $0 0
-FunctionEnd
+	;Store installation folder
+	!ifndef WIN64
+		WriteRegStr HKCU "Software\YouScope32" "" $INSTDIR
+	!else
+		WriteRegStr HKCU "Software\YouScope64" "" $INSTDIR
+	!endif
+  	 
+	; Add start menu entry
+	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+		;Create shortcuts
+		SetShellVarContext all
+		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+		!ifdef WIN64
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\YouScope64.lnk" "$INSTDIR\YouScope64.exe"
+		!endif
+		!ifdef WIN32
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\YouScope32.lnk" "$INSTDIR\YouScope32.exe"
+		!endif
+	!insertmacro MUI_STARTMENU_WRITE_END
 
-Function SetCustom
-  ;Extract InstallOptions INI files
-  !insertmacro INSTALLOPTIONS_EXTRACT "YouScope.ini"
+SectionEnd
+
+;--------------------------------
+;Client
+Section "!Client" SecClient
+	SetOutPath "$INSTDIR\client"
+	SectionIn 1 2 4
+  
+	;Files:
+	FILE "client\youscope-client.jar"
+	FILE "client\youscope-client-uielements.jar"
+SectionEnd
+
+;--------------------------------
+; Server
+Section "!Server" SecServer
+	SectionIn 1 2 3
+  
+	;Files:
+	SetOutPath "$INSTDIR"
+	FILE "YSConfig_demo.cfg"
+	SetOutPath "$INSTDIR\server"
+	FILE "server\youscope-server.jar"
+	SetOutPath "$INSTDIR\plugins"
+	File "plugins\youscope-microscopeaccess.jar"
+SectionEnd
+
+;--------------------------------
+;Client
+Section "!Device Drivers" SecDeviceDrivers
+	SectionIn 1 2 3
+  
+	!ifdef WIN64
+		SetOutPath "$INSTDIR\drivers64"
+		FILE "drivers64\*"
+	!endif
+	!ifdef WIN32
+		SetOutPath "$INSTDIR\drivers32"
+		FILE "drivers32\*"
+	!endif
+SectionEnd
+
+;--------------------------------
+;Microplate Types
+SectionGroup "Microplate Types" SecMicroplateTypes
+	Section "ANSI/SBS microplates" SecAnsiSbsMicroplates
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-ansi-sbs-microplates.jar"  
+	SectionEnd
+	
+	Section "Custom microplates" SecCustomMicroplates
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-custom-microplates.jar"  
+	SectionEnd
+	
+	Section "Multiwell TC microplates" SecMultiwellTC
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-bd-bioscience-multiwell-tc-microplates.jar"  
+	SectionEnd
+SectionGroupEnd
+
+;--------------------------------
+;Measurement Types
+SectionGroup "Measurement Types" SecMeasurementTypes
+
+	Section "Simple Measurement" SecSimpleMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-simple-measurement.jar"  
+	SectionEnd
+
+
+	Section "Microplate Measurement" SecMicroplateMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-microplate-measurement.jar"  
+	SectionEnd
+
+	Section "Continous Measurement" SecContinousMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-continous-imaging.jar"  
+	SectionEnd
+
+	Section "Composed Imaging Measurement" SecComposedImagingMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-composed-imaging.jar"  
+	SectionEnd
+
+	Section "Task Measurement" SecTaskMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-task-measurement.jar"  
+	SectionEnd
+
+	Section "User-Control Measurement" SecUserControlMeasurement
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-user-control-measurement.jar"  
+	SectionEnd
+
+SectionGroupEnd
+
+SectionGroup "Measurement Result Consumers" SecResultConsumers
+	;Section "OpenBIS Uploader" SecOpenBIS
+  	;	SectionIn 1 3 4
+  	;
+  	;	;Files:
+	;	SetOutPath "$INSTDIR\plugins"
+  	;	FILE "plugins\youscope-openbis.jar"  
+	;	SetOutPath "$INSTDIR\openbis"
+	;	FILE "openbis\*"  
+	;	SetOutPath "$INSTDIR\openbis\.ssh"
+	;	FILE "openbis\.ssh\DROP_HERE_PRIVATE_OPENSSH_KEY"  
+	;SectionEnd
+	Section "Folder Opener" SecOpenFolder
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+		SetOutPath "$INSTDIR\plugins"
+  		FILE "plugins\youscope-open-measurement-folder.jar"  
+	SectionEnd
+SectionGroupEnd
+
+;--------------------------------
+;Job Types
+SectionGroup "Job Types" SecJobTypes
+	Section "Imaging Job" SecImagingJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-imaging-job.jar"  
+	SectionEnd
+
+	Section "Out-Of-Focus Job" SecOutOfFocusJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-out-of-focus-job.jar"  
+	SectionEnd
+
+	Section "Z-Slides Job" SecZSlidesJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-z-slides.jar"  
+	SectionEnd	
+
+	Section "Scripting Job" SecScriptingJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-scripting-job.jar"  
+	SectionEnd	
+	
+	Section "Stage-Position Job" SecStagePositionJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-change-position-job.jar"  
+	SectionEnd
+	
+	Section "Focusing Job" SecFocusingJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-focusing-job.jar"  
+	SectionEnd
+
+	Section "Wait Job" SecWaitJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-wait-job.jar"  
+	SectionEnd
+
+	Section "Wait-For-Input Job" SecWaitForUser
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-wait-for-user.jar"  
+	SectionEnd
+
+	Section "Device-Settings Job" SecDeviceSettingsJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-device-job.jar"  
+	SectionEnd	
+
+	Section "Statistics Job" SecStatisticsJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-statistics-job.jar"  
+	SectionEnd	
+	
+	Section "Device-Slides Job" SecDeviceSlidesJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-multi-position.jar"  
+	SectionEnd	
+
+	Section "Job Container" SecJobContainerJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-composite-job.jar"  
+	SectionEnd	
+	
+	Section "Oscillating Device Job" SecOscillatingDeviceJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-oscillating-device-job.jar"  
+	SectionEnd
+
+	Section "Autofocus Job" SecAutofocusJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-autofocus.jar"  
+	SectionEnd
+	Section "Life cell-detection" SecCellDetection
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-cell-detection.jar"  
+	SectionEnd
+	/*Section "CellX cell detection" SecCellX
+  		SectionIn 1 3 4
+  
+  		;Files:
+		SetOutPath "$INSTDIR\plugins"
+  		FILE "plugins\youscope-cellx.jar"  
+		SetOutPath "$INSTDIR\cellx"
+		FILE /r "cellx\*"  
+	SectionEnd*/
+	Section "Controller" SecController
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-controller.jar"  
+	SectionEnd
+	Section "Custom Job" SecCustomJob
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-custom-job.jar"  
+	SectionEnd
+	Section "Droplet Microfluidics" SecDropletMicrofluidics
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-droplet-microfluidics.jar"  
+	SectionEnd
+	Section "Fluigent" SecFluigent
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-fluigent.jar"  
+	SectionEnd
+	Section "Nemesys" SecNemesys
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-nemesys.jar"  
+	SectionEnd
+	Section "Live Measurement" SecLiveMeasurement
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-live-modifiable-job.jar"  
+	SectionEnd
+	Section "Repeat Job" SecRepeatJob
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-repeat-job.jar"  
+	SectionEnd
+	Section "SLIM" SecSLIM
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-slim.jar"  
+	SectionEnd
+SectionGroupEnd
+
+;--------------------------------
+; Tools
+SectionGroup "Tools" SecTools
+	Section "YouScope LiveStream" SecLiveStream
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-livestream.jar"  
+	SectionEnd
+
+	Section "YouScope Multi-Color Stream" SecMultiStream
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 4
+  
+  		;Files:
+  		FILE "plugins\youscope-multi-color-stream.jar"  
+	SectionEnd
+
+	Section "Device Setting Manager" SecDeviceSettingManager
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-device-setting-manager.jar"  
+	SectionEnd
+
+
+	Section "Stage and Focus Position" SecPositionControl
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-position-control.jar"  
+	SectionEnd
+
+	Section "Measurement Viewer" SecMeasurementViewer
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-measurement-viewer.jar"  
+	SectionEnd
+
+	Section "YouScope Scripting" SecScripting
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-scripting.jar"  
+	SectionEnd
+
+	Section "YouPong" SecYouPong
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 4
+  
+  		;Files:
+  		FILE "plugins\youscope-youpong.jar"  
+	SectionEnd
+SectionGroupEnd
+
+;----------------------------
+; Misc Functionality
+SectionGroup "Misc" SecOptional
+	;--------------------------------
+	;Installer Matlab
+	Section "Matlab" SecMatlab
+	  	SetOutPath "$INSTDIR\plugins"
+	  	SectionIn 1 3 4
+
+	  	;Files:
+  		FILE "plugins\matlab-scripting.jar"
+	SectionEnd
+
+	;--------------------------------
+	;Installer Image formats
+	Section "Image Formats" SecImageFormats
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\jai_imageio.jar"  
+	SectionEnd
+
+	Section "Standard Save Settings" SecStandardSaveSettings
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-standard-save-settings.jar"  
+	SectionEnd
+
+	Section "Custom Save Settings" SecCustomSaveSettings
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-custom-save-settings.jar"  
+	SectionEnd
+
+	Section "Default Skin (System)" SecSystemSkin
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-system-skin.jar"  
+	SectionEnd
+	Section "Dark Skin " SecDarkSkin
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 4
+  
+  		;Files:
+  		FILE "plugins\youscope-dark-skin.jar"  
+	SectionEnd
+	Section "Red Skin " SecRedSkin
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 4
+  
+  		;Files:
+  		FILE "plugins\youscope-red-skin.jar"  
+	SectionEnd
+
+SectionGroupEnd
+
+;--------------------------------
+;Documentation
+Section "Documentation" SecDocumentation
+	SectionIn 1 4
+  
+	;Files:
+	SetOutPath "$INSTDIR\documentation"
+	FILE "documentation\documentation.pdf"  
+SectionEnd
+
+;--------------------------------
+;Multi Camera
+SectionGroup "Multi-Camera" SecMultiCam
+	Section "Multi-Camera Job" SecParallelImagingJob
+		SetOutPath "$INSTDIR\plugins"
+		SectionIn 1 3 4
+
+	  	;Files:
+  		FILE "plugins\youscope-parallel-imaging-job.jar"  
+	SectionEnd
+
+	Section "Multi-Camera Stream" SecMultiCameraStream
+		SetOutPath "$INSTDIR\plugins"
+		SectionIn 1 4
+
+	  	;Files:
+  		FILE "plugins\youscope-multi-camera-stream.jar"  
+	SectionEnd
+
+	Section "Multi-Camera and Color Stream" SecMultiCameraAndColorStream
+		SetOutPath "$INSTDIR\plugins"
+		SectionIn 1 4
+
+	  	;Files:
+  		FILE "plugins\youscope-multi-camera-and-color-stream.jar"  
+	SectionEnd
+
+	Section "Multi-Camera Measurement" SecMultiCameraMeasurement
+		SetOutPath "$INSTDIR\plugins"
+		SectionIn 1 3 4
+
+	  	;Files:
+  		FILE "plugins\youscope-multi-camera-continous-imaging.jar"  
+	SectionEnd
+
+
+SectionGroupEnd
+
+;--------------------------------
+;Example Scripts
+Section "Example Scripts" SecExampleScripts
+	SectionIn 1 4
+  
+	;Files:
+	SetOutPath "$INSTDIR\scripts"
+	FILE /r "scripts\"  
+SectionEnd
+
+;--------------------------------
+;Descriptions
+	;Language strings
+	LangString DESC_SecMain ${LANG_ENGLISH} "The main program. Must be installed."
+	LangString DESC_SecClient ${LANG_ENGLISH} "The graphical user interface (GUI)."
+	LangString DESC_SecServer ${LANG_ENGLISH} "The microscope control software."
+	LangString DESC_SecDeviceDrivers ${LANG_ENGLISH} "The drivers for the microscope devices. Should always be installed with the server, except if the drivers of an installed MicroManager, version 1.4 or higher, should be used."
+
+	LangString DESC_SecMicroplateTypes ${LANG_ENGLISH} "Types of microplate which can be screened."
+	LangString DESC_SecAnsiSbsMicroplates ${LANG_ENGLISH} "96, 384, and 1536 well microplates (ANSI/SBS 1-2004 through ANSI/SBS 4-2004)."
+	LangString DESC_SecCustomMicroplates ${LANG_ENGLISH} "Possibility to define own microplate types."
+	LangString DESC_SecMultiwellTC ${LANG_ENGLISH} "6, 12, and 24 well microplates (BD Bioscience - Multiwell TC Plate)."
+
+	LangString DESC_SecMeasurementTypes ${LANG_ENGLISH} "Types of measurements which can be performed by YouScope."
+	LangString DESC_SecMicroplateMeasurement ${LANG_ENGLISH} "A microplate measurement screens through all wells of a microplate."
+	LangString DESC_SecContinousMeasurement ${LANG_ENGLISH} "Continuously imaging one channel at one position. Including burst mode."
+	LangString DESC_SecComposedImagingMeasurement ${LANG_ENGLISH} "Imaging of overlapping positions, such that the single images can later on be composed to a large one."
+	LangString DESC_SecTaskMeasurement ${LANG_ENGLISH} "Running of one or more imaging protocols in parallel, e.g. to image several channels with the same or different period lengths."
+
+	LangString DESC_SecResultConsumers ${LANG_ENGLISH} "Elements which can process or display the results of a measurement."
+	LangString DESC_SecOpenBIS ${LANG_ENGLISH} "Uploading of measurement images and meta-data to the OpenBIS screening database."
+	LangString DESC_SecOpenFolder ${LANG_ENGLISH} "Simple tool to open the folder in which the measurement was saved."
+
+	LangString DESC_SecJobTypes ${LANG_ENGLISH} "Jobs are small bricks of actions which compose an imaging protocol, and can be added to several different measurement protocols."
+	LangString DESC_SecImagingJob ${LANG_ENGLISH} "Taking an image in a channel."
+	LangString DESC_SecOutOfFocusJob ${LANG_ENGLISH} "Taking an out-of-focus image."
+	LangString DESC_SecZSlidesJob ${LANG_ENGLISH} "Taking several images at different focus positions."
+	LangString DESC_SecScriptingJob ${LANG_ENGLISH} "Possibility to control the microscope using scripts."
+	LangString DESC_SecStagePositionJob ${LANG_ENGLISH} "Changing the relative or absolute position of the stage."
+	LangString DESC_SecDeviceSettingsJob ${LANG_ENGLISH} "Changing a setting of a device."
+	LangString DESC_SecDeviceSlidesJob ${LANG_ENGLISH} "Setting a device property to several values and performing the same jobs (e.g. imaging) for every value. Generalized version of z-slides."
+	LangString DESC_SecJobContainerJob ${LANG_ENGLISH} "A job which simply consists of other jobs. Used to arrange jobs similar to the file system."
+	LangString DESC_SecOscillatingDeviceJob ${LANG_ENGLISH} "Sending of an oscillatory signal (e.g. light) to the cells."
+
+	LangString DESC_SecTools ${LANG_ENGLISH} "Tools to manipulate the microscope or prepare a measurement."
+	LangString DESC_SecLiveStream ${LANG_ENGLISH} "The LiveStream continuously displays the current microscope image in a given channel."
+	LangString DESC_SecMultiStream ${LANG_ENGLISH} "Similar to the LiveStream. Overlays the images of several channels (up to 4) in a color image."
+	LangString DESC_SecPositionControl ${LANG_ENGLISH} "Possibility to display and change the position of the stage and the focus."
+	LangString DESC_SecMeasurementViewer ${LANG_ENGLISH} "Displays the results of a measurement."
+	LangString DESC_SecScripting ${LANG_ENGLISH} "Environment to display, manipulate, run and debug scripts in various languages."
+	LangString DESC_SecYouPong ${LANG_ENGLISH} "Small game to be played by changing the stage position and focus. Experimental."
+	
+	LangString DESC_SecOptional ${LANG_ENGLISH} "Optional functionality."
+	LangString DESC_SecMatlab ${LANG_ENGLISH} "Enabling Matlab(TM) scripting. An installation of Matlab is needed for this plugin."
+	LangString DESC_SecImageFormats ${LANG_ENGLISH} "Possibility to save images in various image formats like tiff."
+
+	LangString DESC_SecDocumentation ${LANG_ENGLISH} "In program documentation of the YouScope tools and measurement types."
+	LangString DESC_SecExampleScripts ${LANG_ENGLISH} "Script snipplets which exemplify how jobs can be programmed by using different script engines."
+
+	LangString DESC_SecStatisticsJob ${LANG_ENGLISH} "Collects statistics of the run-time of imaging tasks and saves it as CSV."
+	LangString DESC_SecMultiCameraMeasurement ${LANG_ENGLISH} "Measurement which continuously takes images with multiple cameras, either in burst mode or with fixed period. Experimental!"
+	LangString DESC_SecMultiCameraAndColorStream ${LANG_ENGLISH} "Displays the current images of multiple cameras as an overlay image, in which each camera has a separate color. Experimental!"
+	LangString DESC_SecDeviceSettingManager ${LANG_ENGLISH} "Allows to directly set the state of the single devices."
+	LangString DESC_SecWaitJob ${LANG_ENGLISH} "Job which pauses execution either for a fixed time period, or executes sub-jobs and guarantees a minimal overall execution time. Experimental!"
+	LangString DESC_SecParallelImagingJob ${LANG_ENGLISH} "Job to take images whith multiple cameras in parallel. Experimental!"
+	LangString DESC_SecFocusingJob ${LANG_ENGLISH} "Job to change the focus position."
+	LangString DESC_SecMultiCameraStream ${LANG_ENGLISH} "Displays the current image of multiple cameras in a grid like fashion. Experimental!"
+	LangString DESC_SecSimpleMeasurement ${LANG_ENGLISH} "Measurement to execute a given protocol at a given position. Protocol can be executed more than once, with different period settings."
+	LangString DESC_SecCellDetection ${LANG_ENGLISH} "Provides several life cell-detection utilities: a job to detect cells, which allows to process or save the cell-positions; measurement to monitor cells at a given position; life stream to detect cells at the current position and display them. Experimental!"
+	LangString DESC_SecAutofocusJob ${LANG_ENGLISH} "Job to automatically find the focus plane. Based on an optimization algorithm, which iteratively takes images, measures their focus, and adjusts the current focus position (similar to Newton method). Experimental!"
+	LangString DESC_SecWaitForUser ${LANG_ENGLISH} "Job to display a message to the user. The execution of the protocol gets paused until user acknowledges/confirms message."
+	LangString DESC_SecUserControlMeasurement ${LANG_ENGLISH} "Measurement which displays the current microscope image similar to the life-stream. When user hits a button, the currently displayed image gets saved."
+
+
+
+
+	LangString DESC_SecAutofocusJob ${LANG_ENGLISH} "Job to find the focal plane by different software based autofocus algorithms." 
+	LangString DESC_SecCellDetection ${LANG_ENGLISH} "Job to detect and track cells during a measurement." 
+	LangString DESC_SecCellX ${LANG_ENGLISH} "Advanced cell detection algorithm. Requires cell detection job." 
+	LangString DESC_SecController ${LANG_ENGLISH} "Allows to implement feedback control algorithms." 
+	LangString DESC_SecCustomJob ${LANG_ENGLISH} "Allows to define custom reusable job types." 
+	LangString DESC_SecDropletMicrofluidics ${LANG_ENGLISH} "Droplet based microfluidic control algorithm." 
+	LangString DESC_SecFluigent ${LANG_ENGLISH} "User interface and job to control Fluigent microfluidic pumps." 
+	LangString DESC_SecNemesys ${LANG_ENGLISH} "User interface and job to control Nemesys syringe systems." 
+	LangString DESC_SecLiveMeasurement ${LANG_ENGLISH} "Job allowing to modify its sub-jobs during a measurement." 
+	LangString DESC_SecRepeatJob ${LANG_ENGLISH} "Job repeating its child jobs several times."
+	LangString DESC_SecSLIM ${LANG_ENGLISH} "Support for SLIM microscopy."
+
+	LangString DESC_SecCustomSaveSettings ${LANG_ENGLISH} "Possibility to customize how measurement is saved to disk." 
+	LangString DESC_SecStandardSaveSettings ${LANG_ENGLISH} "Standard settings how measurement is saved to disk." 
+	LangString DESC_SecSystemSkin ${LANG_ENGLISH} "Default skin, in agreement to operating system look-and-feel." 
+	LangString DESC_SecDarkSkin ${LANG_ENGLISH} "A dark skin for dark rooms." 
+	LangString DESC_SecRedSkin ${LANG_ENGLISH} "A red skin, good for the eyes in dark rooms." 
  
-  !insertmacro MUI_HEADER_TEXT "Choose Micro-Manager Installation Folder" "Choose the folder in which Micro-Manager was installed."
-  !insertmacro INSTALLOPTIONS_INITDIALOG "YouScope.ini"
-  !insertmacro INSTALLOPTIONS_SHOW
-FunctionEnd
 
-Function ValidateCustom
-  ; Empty
-FunctionEnd
+	;Assign language strings to sections
+	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecClient} $(DESC_SecClient)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecServer} $(DESC_SecServer)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDeviceDrivers} $(DESC_SecDeviceDrivers)
 
-Section -SETTINGS
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-SectionEnd
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMicroplateTypes} $(DESC_SecMicroplateTypes)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecAnsiSbsMicroplates} $(DESC_SecAnsiSbsMicroplates) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomMicroplates} $(DESC_SecCustomMicroplates) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiwellTC} $(DESC_SecMultiwellTC) 
 
-; The file to write
-OutFile "YouScopeSetup.exe"
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMeasurementTypes} $(DESC_SecMeasurementTypes) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMicroplateMeasurement} $(DESC_SecMicroplateMeasurement) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecContinousMeasurement} $(DESC_SecContinousMeasurement) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecComposedImagingMeasurement} $(DESC_SecComposedImagingMeasurement) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecTaskMeasurement} $(DESC_SecTaskMeasurement) 
 
-; The default installation directory
-InstallDir $PROGRAMFILES\YouScope
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecResultConsumers} $(DESC_SecResultConsumers) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenBIS} $(DESC_SecOpenBIS)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenFolder} $(DESC_SecOpenFolder) 
 
-; Request application privileges for Windows Vista
-RequestExecutionLevel user
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecJobTypes} $(DESC_SecJobTypes) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecImagingJob} $(DESC_SecImagingJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecOutOfFocusJob} $(DESC_SecOutOfFocusJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecZSlidesJob} $(DESC_SecZSlidesJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecScriptingJob} $(DESC_SecScriptingJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecStagePositionJob} $(DESC_SecStagePositionJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDeviceSettingsJob} $(DESC_SecDeviceSettingsJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDeviceSlidesJob} $(DESC_SecDeviceSlidesJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecJobContainerJob} $(DESC_SecJobContainerJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecOscillatingDeviceJob} $(DESC_SecOscillatingDeviceJob) 
 
-; Micro-Manager 1.3.48
-Section "Micro-Manager 1.3.48"
-  File "server/MMSetup_1.3.48.exe"
-  ExecWait "$INSTDIR\MMSetup_1.3.48.exe"
-  Delete "$INSTDIR\MMSetup_1.3.48.exe"
-SectionEnd
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecTools} $(DESC_SecTools) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecLiveStream} $(DESC_SecLiveStream) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiStream} $(DESC_SecMultiStream) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecPositionControl} $(DESC_SecPositionControl) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMeasurementViewer} $(DESC_SecMeasurementViewer) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecScripting} $(DESC_SecScripting) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecYouPong} $(DESC_SecYouPong) 
+
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecOptional} $(DESC_SecOptional) 	
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMatlab} $(DESC_SecMatlab)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecImageFormats} $(DESC_SecImageFormats)
+
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDocumentation} $(DESC_SecDocumentation) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecExampleScripts} $(DESC_SecExampleScripts)
 
 
-; Common stuff to install
-Section "-YouScope Starter"
-  ; Put file there
-  File /r "YouScope.exe"
-  File /r "youscope-starter.jar"
-  CreateDirectory "$INSTDIR\plugins"
-  File "/oname=plugins\jai_imageio.jar" plugins/jai_imageio.jar
-  CreateDirectory "$SMPROGRAMS\YouScope"
-  CreateShortCut "$SMPROGRAMS\YouScope\YouScope.lnk" "$INSTDIR\YouScope.exe"
-SectionEnd
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecStatisticsJob} $(DESC_SecStatisticsJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiCameraMeasurement} $(DESC_SecMultiCameraMeasurement)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiCameraAndColorStream} $(DESC_SecMultiCameraAndColorStream)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDeviceSettingManager} $(DESC_SecDeviceSettingManager)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecWaitJob} $(DESC_SecWaitJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecParallelImagingJob} $(DESC_SecParallelImagingJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecFocusingJob} $(DESC_SecFocusingJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiCameraStream} $(DESC_SecMultiCameraStream)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecSimpleMeasurement} $(DESC_SecSimpleMeasurement)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCellDetection} $(DESC_SecCellDetection)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecAutofocusJob} $(DESC_SecAutofocusJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecUserControlMeasurement} $(DESC_SecUserControlMeasurement)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecWaitForUser} $(DESC_SecWaitForUser)
 
-; Server stuff to install
-Section "YouScope Server"
-  ; Put file there
-  File /r /x "MMSetup*" server
-SectionEnd
+		
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecAutofocusJob} $(DESC_SecAutofocusJob)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCellDetection} $(DESC_SecCellDetection) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCellX} $(DESC_SecCellX) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecController} $(DESC_SecController) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomJob} $(DESC_SecCustomJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDropletMicrofluidics} $(DESC_SecDropletMicrofluidics) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecFluigent} $(DESC_SecFluigent) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecNemesys} $(DESC_SecNemesys) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecLiveMeasurement} $(DESC_SecLiveMeasurement) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecRepeatJob} $(DESC_SecRepeatJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecSLIM} $(DESC_SecSLIM)
 
-; Client stuff to install
-Section "YouScope Client"
-  ; Put file there
-  File /r client
-SectionEnd
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomSaveSettings} $(DESC_SecCustomSaveSettings)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecStandardSaveSettings} $(DESC_SecStandardSaveSettings)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecSystemSkin} $(DESC_SecSystemSkin)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecDarkSkin} $(DESC_SecDarkSkin)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecRedSkin} $(DESC_SecRedSkin)
 
-Section "plugin: Matlab Scripting"
-  ; Put file there
-  File "/oname=plugins\matlab-scripting.jar" plugins/matlab-scripting.jar
-SectionEnd
-
-Section "plugin: Out Of Focus Job"
-  ; Put file there
-  File "/oname=youscope-out-of-focus-job.jar" plugins/youscope-out-of-focus-job.jar
-SectionEnd
-
-Section "plugin: Oscillating Device Job"
-  ; Put file there
-  File "/oname=plugins\youscope-oscillating-device-job.jar" plugins/youscope-oscillating-device-job.jar
-SectionEnd
-
-Section "plugin: Configurable Measurement"
-  File "/oname=plugins\youscope-configurable-measurement.jar" plugins/youscope-configurable-measurement.jar
-SectionEnd
-
-Section "plugin: Microplate Measurement"
-  File "/oname=plugins\youscope-microplate-measurement.jar" plugins/youscope-microplate-measurement.jar
-SectionEnd
-
-Section "plugin: Multi Stream"
-  File "/oname=plugins\youscope-multi-stream.jar" plugins/youscope-multi-stream.jar
-SectionEnd
-
-Section "plugin: YouScope Console"
-  File "/oname=plugins\youscope-console.jar" plugins/youscope-console.jar
-SectionEnd
+	!insertmacro MUI_FUNCTION_DESCRIPTION_END

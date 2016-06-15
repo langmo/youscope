@@ -34,7 +34,7 @@ class MinimalPropertiesImpl implements YouScopeProperties
 
     public static final String SETTINGS_CONFIG_FILE_LAST_3 = "YouScope.configFileLast3";
 
-    private Properties properties = new Properties();
+    private Properties properties = new Properties();  
 
     private Object ioLock = new Object();
 

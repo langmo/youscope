@@ -3,31 +3,19 @@
  */
 package org.youscope.plugin.openmeasurementfolder;
 
-import java.awt.BorderLayout;
 import java.awt.Desktop;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.youscope.addon.AddonException;
-import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.StandardFormats;
 
 /**
  * @author Moritz Lang
@@ -37,12 +25,6 @@ class OpenMeasurementFolder extends ToolAddonUIAdapter
 {
 	public static final String TYPE_IDENTIFIER = "YouScope.OpenMeasurementFolder";
 	
-	private final JTextField measurementFolderField = new JTextField();
-	
-	private JButton openMeasurementButton = new JButton("Open Folder");
-	
-	private final static GridBagConstraints newLineCnstr = StandardFormats.getNewLineConstraint();
-
 	private final String measurementFolder;
 	
 	static ToolMetadata getMetadata()

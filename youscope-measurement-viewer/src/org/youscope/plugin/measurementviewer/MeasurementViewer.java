@@ -60,7 +60,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	private volatile boolean imageChanging = false;
 	private ImageFolderNode imageFolder = null;
 	private final static String FRAME_TITLE = "Measurement Viewer";
-	private String currentFrameTitle = FRAME_TITLE;
+	private String currentFrameTitle = FRAME_TITLE; 
 	private volatile int currentImageIndex = 0;
 	
 	/**

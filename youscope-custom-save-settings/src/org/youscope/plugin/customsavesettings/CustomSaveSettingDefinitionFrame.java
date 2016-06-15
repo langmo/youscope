@@ -123,7 +123,7 @@ class CustomSaveSettingDefinitionFrame
 	{
 		ArrayList<ComboBoxExampleItem> items = new ArrayList<>();
 		items.add(new ComboBoxExampleItem("%N_position%4w%2p_time%4n.tif", "RFP_position010203_time0005.tif"));
-		items.add(new ComboBoxExampleItem("%N_%C_position%4w%2p_time%4n", "RFP_Camera1_position010203_time0005.tif"));
+		items.add(new ComboBoxExampleItem("%N_%C_position%4w%2p_time%4n.tif", "RFP_Camera1_position010203_time0005.tif"));
 		items.add(new ComboBoxExampleItem("%N_channel_%c_well_%W(pos_%4p)_time_%4y.%2m.%2d-%2H.%2M.%2s-%3S_(number_%4n).tif", "RFP_well_B3(pos_0003)_time_2011.01.01-14.30.05-365_number_0005.tif"));
 		items.add(new ComboBoxExampleItem("%N_%c_%W(%2p)_%4y.%2m.%2d-%2H.%2M.%2s-%3S_(%4n).tif", "RFP_B3(0003)_2011.01.01-14.30.05-365_0005.tif"));
 		
@@ -276,6 +276,7 @@ class CustomSaveSettingDefinitionFrame
 		baseFolderExtension.setRenderer(new ComboBoxExampleItemRenderer());
 		baseFolderExtension.setEditable(true);
 		baseFolderExtension.setSelectedItem(customSaveSettingType.getBaseFolderExtension());
+		baseFolderExtension.setPreferredSize(tableFilePath.getPreferredSize());
 		baseFolderExtension.setToolTipText(generalToolTip);
 		elementsPanel.add(baseFolderExtension);
 		
@@ -283,6 +284,7 @@ class CustomSaveSettingDefinitionFrame
 		imageFilePath.setRenderer(new ComboBoxExampleItemRenderer());
 		imageFilePath.setEditable(true);
 		imageFilePath.setSelectedItem(customSaveSettingType.getImageFilePath());
+		imageFilePath.setPreferredSize(tableFilePath.getPreferredSize());
 		imageFilePath.setToolTipText(imageToolTip);
 		elementsPanel.add(imageFilePath);
 		
