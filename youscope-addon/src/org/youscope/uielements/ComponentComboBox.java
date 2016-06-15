@@ -70,7 +70,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 
 		@Override 
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			g.setColor(Color.BLACK);
+			g.setColor(c.getForeground());
 			g.fillPolygon(new int[]{x,x+getIconWidth(),x+getIconWidth()/2}, new int[]{y,y,y+getIconHeight()}, 3);
 		}
 
@@ -170,6 +170,15 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		if(selectedElement != null)
 			return selectedElement.getTypeIdentifier();
 		return null;
+	}
+	
+	/**
+	 * Returns the type identifiers of the all components which can be selected.
+	 * @return Type identifiers of all components.
+	 */
+	public String[] getAllTypeIdentifiers()
+	{
+		return elements.keySet().toArray(new String[0]);
 	}
 	
 	@Override

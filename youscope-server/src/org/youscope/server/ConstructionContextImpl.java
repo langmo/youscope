@@ -14,6 +14,7 @@ import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.common.saving.MeasurementSaver;
 import org.youscope.common.saving.SaveSettings;
 import org.youscope.common.table.Table;
@@ -87,12 +88,6 @@ class ConstructionContextImpl implements ConstructionContext
 			}
 
 			@Override
-			public String getLastMeasurementFolder() throws RemoteException
-			{
-				return null;
-			}
-
-			@Override
 			public MeasurementConfiguration getConfiguration() throws RemoteException
 			{
 				return null;
@@ -102,6 +97,11 @@ class ConstructionContextImpl implements ConstructionContext
 			public void setConfiguration(MeasurementConfiguration configuration)
 			{
 				// Do nothing (dummy)
+			}
+
+			@Override
+			public MeasurementFileLocations getLastMeasurementFileLocations() throws RemoteException {
+				return null;
 			}
 		};
 	}

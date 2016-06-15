@@ -40,6 +40,7 @@ import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementState;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.uielements.LinkLabel;
 import org.youscope.uielements.StandardFormats;
 
@@ -719,10 +720,10 @@ class MeasurementControl
 			if(measurement == null)
 				return;
 			
-			String measurementFolder;
+			MeasurementFileLocations measurementFileLocations;
 			try
 			{
-				measurementFolder = measurement.getSaver().getLastMeasurementFolder();
+				measurementFileLocations = measurement.getSaver().getLastMeasurementFileLocations();
 			}
 			catch(RemoteException e)
 			{
@@ -731,7 +732,7 @@ class MeasurementControl
 			}
 			try
 			{
-				AddonUI<?> addon = ClientAddonProviderImpl.getProvider().createPostProcessorUI(addonMetadata, measurementFolder);
+				AddonUI<?> addon = ClientAddonProviderImpl.getProvider().createPostProcessorUI(addonMetadata, measurementFileLocations);
 				YouScopeFrame frame = addon.toFrame();
 				frame.setVisible(true);
 			}

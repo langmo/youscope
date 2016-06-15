@@ -6,7 +6,7 @@ package org.youscope.plugin.standardsavesettings;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * List of the different possibilities for standard folder structure types.
+ * Enumeration of the different possibilities for standard folder structure types.
  * 
  * @author Moritz Lang
  * 

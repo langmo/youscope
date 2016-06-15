@@ -35,8 +35,6 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 	private JComboBox<String> imageTypeField;
 
 	private JComboBox<FolderStructureType> imageFolderTypeField = new JComboBox<FolderStructureType>(FolderStructureType.values());
-
-	private FileNameComboBox imageFileField = new FileNameComboBox(FileNameComboBox.Type.FILE_NAME);
 	
     /**
 	 * Constructor.
@@ -78,7 +76,6 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 		
 		folderField.setText(configuration.getBaseFolder());
 		imageFolderTypeField.setSelectedItem(configuration.getFolderStructureType());
-		imageFileField.setSelectedItem(configuration.getImageFileName());
 		imageTypeField.setSelectedItem(configuration.getImageFileType());
 		
 		DynamicPanel contentPane = new DynamicPanel();
@@ -110,9 +107,6 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 		contentPane.add(new JLabel("Folder structure:"));
 		contentPane.add(imageFolderTypeField);
 
-		contentPane.add(new JLabel("Image filenames:"));
-		contentPane.add(imageFileField);
-
 		// Panel to choose image file type
 		contentPane.add(new JLabel("Image File Type:"));
 		contentPane.add(imageTypeField);
@@ -127,7 +121,6 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
     	configuration.setBaseFolder(folderField.getText());
     	configuration.setImageFileType((String) imageTypeField.getSelectedItem());
     	configuration.setFolderStructureType((FolderStructureType) imageFolderTypeField.getSelectedItem());
-    	configuration.setImageFileName(imageFileField.getSelectedItem().toString());
     	
     	getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, configuration.getBaseFolder());
     }
@@ -136,11 +129,7 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 	protected void initializeDefaultConfiguration(StandardSaveSettingsConfiguration configuration) throws AddonException 
 	{
 		String lastFolder = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
-		configuration.setBaseFolder(lastFolder == null ? "" : lastFolder);
-		
-		String imageName = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_NAME);
-		configuration.setImageFileName(imageName != null ? imageName : FileNameComboBox.PRE_DEFINED_FILE_NAMES[0][0]);
-		
+		configuration.setBaseFolder(lastFolder == null ? "" : lastFolder);		
 		configuration.setFolderStructureType(FolderStructureType.ALL_IN_ONE_FOLDER);
 		
 		String imageType = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE);

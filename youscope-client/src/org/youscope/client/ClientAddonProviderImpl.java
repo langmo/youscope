@@ -26,6 +26,7 @@ import org.youscope.clientinterfaces.ClientAddonProvider;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.microplate.Microplate;
+import org.youscope.common.saving.MeasurementFileLocations;
 
 class ClientAddonProviderImpl implements ClientAddonProvider
 {
@@ -409,19 +410,19 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 		throw new AddonException("Microplate type with type identifier " + typeIdentifier+" is unknown.");
 	}
 	@Override
-	public AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, String measurementFolder) throws AddonException {
+	public AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, MeasurementFileLocations measurementFileLocations) throws AddonException {
 		for(PostProcessorAddonFactory addonFactory : postProcessorAddonFactories) 
 		{
 			if(addonFactory.isSupportingTypeIdentifier(typeIdentifier))
-				return addonFactory.createPostProcessorUI(typeIdentifier, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFolder);
+				return addonFactory.createPostProcessorUI(typeIdentifier, new YouScopeClientConnectionImpl(), YouScopeClientImpl.getServer(), measurementFileLocations);
 		}
 		throw new AddonException("Microplate type with type identifier " + typeIdentifier+" is unknown.");
 	}
 	@Override
-	public <T extends AddonMetadata> AddonUI<T> createPostProcessorUI(T metadata, String measurementFolder) throws AddonException {
+	public <T extends AddonMetadata> AddonUI<T> createPostProcessorUI(T metadata, MeasurementFileLocations measurementFileLocations) throws AddonException {
 		
 		@SuppressWarnings("unchecked")
-		AddonUI<T> temp = (AddonUI<T>) createPostProcessorUI(metadata.getTypeIdentifier(), measurementFolder);
+		AddonUI<T> temp = (AddonUI<T>) createPostProcessorUI(metadata.getTypeIdentifier(), measurementFileLocations);
 		return temp;
 	}
 	@Override

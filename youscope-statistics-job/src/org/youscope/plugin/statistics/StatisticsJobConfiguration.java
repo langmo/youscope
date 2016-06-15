@@ -66,7 +66,7 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 
 	@XStreamAlias("file-name")
 	@XStreamAsAttribute
-	private String fileName = "statistics";
+	private String fileName = null;
 	
 	@Override
 	public String getDescription()
@@ -87,7 +87,7 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 	
 
 	/**
-	 * Returns the file name where statistical data is saved.
+	 * Returns the file name where statistical data is saved. Returns null if not saved.
 	 * @return File name for statistical data.
 	 */
 	public String getFileName()
@@ -96,7 +96,7 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 	}
 
 	/**
-	 * Sets the file name where statistical data should be saved.
+	 * Sets the file name where statistical data should be saved. Set to null to not save.
 	 * @param fileName File name for statistical data.
 	 */
 	public void setFileName(String fileName)

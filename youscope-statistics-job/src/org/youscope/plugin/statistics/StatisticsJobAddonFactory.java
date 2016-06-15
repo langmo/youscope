@@ -37,15 +37,14 @@ public class StatisticsJobAddonFactory extends ComponentAddonFactoryAdapter
 		public StatisticsJob createCustom(PositionInformation positionInformation, StatisticsJobConfiguration configuration,
 				ConstructionContext constructionContext) throws ConfigurationException, AddonException 
 		{
-			if(configuration.getFileName() == null)
-				throw new ConfigurationException("Name of statistics file must not be null.");
 			StatisticsJob statisticsJob;
 			
 			// Add all child jobs
 			try
 			{
 				statisticsJob = new StatisticsJobImpl(positionInformation);
-				statisticsJob.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getFileName()));
+				if(configuration.getFileName() != null)
+					statisticsJob.addTableListener(constructionContext.getMeasurementSaver().getSaveTableListener(configuration.getFileName()));
 				for(JobConfiguration childJobConfig : configuration.getJobs())
 				{
 					Job childJob;

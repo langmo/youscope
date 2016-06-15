@@ -53,14 +53,13 @@ public interface MeasurementSaver extends Remote
 	SaveSettings getSaveSettings() throws RemoteException;
 
 	/**
-	 * Returns the path to the last run of this measurement. This path is composed of the path in
-	 * the MeasurementSaveSettings, with an additional subfolder added which indicates the time of the
-	 * last execution of this measurement. Be aware that when running the server and the client on different
-	 * computers, this path is relative to the server's file system.
-	 * @return The path of the measurement on the server side. 
+	 * Returns an object containing the paths to the meta files of the last run of this measurement. 
+	 * Be aware that when running the server and the client on different
+	 * computers, these paths are relative to the server's file system.
+	 * @return The paths of the measurement meta data on the server side. 
 	 * @throws RemoteException
 	 */
-	String getLastMeasurementFolder() throws RemoteException;
+	MeasurementFileLocations getLastMeasurementFileLocations() throws RemoteException;
 
 	/**
 	 * Returns the configuration of the measurement, or null if the configuration is unknown.

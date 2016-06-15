@@ -6,10 +6,11 @@ import java.rmi.RemoteException;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.StandardProperty;
+import org.youscope.common.saving.SaveSettingsConfiguration;
+import org.youscope.uielements.ComponentComboBox;
 import org.youscope.uielements.DynamicPanel;
 
 class CustomizationTabMeasurement extends ManageTabElement
@@ -21,13 +22,16 @@ class CustomizationTabMeasurement extends ManageTabElement
     private static final long serialVersionUID = 1706695732109422879L;
 
     private JCheckBox cameraStartupField = new JCheckBox("Add current camera settings to measurement start setting.", true);
-    private JTextField imageNameField = new JTextField();
     private JComboBox<String> imageTypeField;
+    private final ComponentComboBox<SaveSettingsConfiguration> saveSettingsBox;
     CustomizationTabMeasurement()
     {
         setLayout(new BorderLayout());
         setBorder(new TitledBorder("Measurement"));
         setOpaque(false);
+        
+        // Get save settings types
+        saveSettingsBox = new ComponentComboBox<SaveSettingsConfiguration>(new YouScopeClientConnectionImpl(), SaveSettingsConfiguration.class);
         
         // Get supported image types
  		String[] imageTypes;
@@ -44,8 +48,9 @@ class CustomizationTabMeasurement extends ManageTabElement
         
         DynamicPanel content = new DynamicPanel();
         
-        content.add(new JLabel("Standard Image File Name"));
-        content.add(imageNameField);
+        content.add(new JLabel("Standard Save Settings"));
+        content.add(saveSettingsBox);
+        
         content.add(new JLabel("Standard Image File Type"));
         content.add(imageTypeField);
         
@@ -63,17 +68,17 @@ class CustomizationTabMeasurement extends ManageTabElement
     {
         cameraStartupField.setSelected((Boolean) ConfigurationSettings.getProperty(
         		StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS));
-        imageNameField.setText((String) ConfigurationSettings.getProperty(
-        		StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_NAME));
         imageTypeField.setSelectedItem(ConfigurationSettings.getProperty(
         		StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE));
+        saveSettingsBox.setSelectedElement(ConfigurationSettings.getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
+        
     }
 
     @Override
     public boolean storeContent()
     {
         ConfigurationSettings.setProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, cameraStartupField.isSelected());
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_NAME, imageNameField.getText());
+        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE, saveSettingsBox.getSelectedTypeIdentifier());
         Object selectedItem = imageTypeField.getSelectedItem();
         if(selectedItem != null)
         	ConfigurationSettings.setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE, selectedItem.toString());

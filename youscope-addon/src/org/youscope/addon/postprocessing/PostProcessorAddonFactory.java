@@ -7,6 +7,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.AddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -20,12 +21,12 @@ public interface PostProcessorAddonFactory
      * @param typeIdentifier The type identifier for which a post-processor should be created.
      * @param client YouScope client.
      * @param server YouScope server.
-	 * @param measurementFolder The folder where the measurement is saved which should be post-processed.
+	 * @param measurementFileLocations Informations on the folders where the measurement is saved which should be post-processed.
      * 
      * @return The created addon UI.
 	 * @throws AddonException  Thrown if type identifier is not supported by this factory, or if an error in the UI construction occured.
      */
-	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException;
+	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, YouScopeClient client, YouScopeServer server, MeasurementFileLocations measurementFileLocations) throws AddonException;
 
     /**
 	 * Returns all measurement post-processor type identifiers supported by this addon.

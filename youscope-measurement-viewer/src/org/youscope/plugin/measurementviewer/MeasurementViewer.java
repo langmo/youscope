@@ -49,7 +49,7 @@ import org.youscope.uielements.ImagePanel.PixelListener;
 class MeasurementViewer extends ToolAddonUIAdapter
 {
 	private final MeasurementTree measurementTree;
-	private File measurementFolder;
+	private File imagesTableFile;
 	private final ImagePanel imagePanel;
 	private final JSlider	imageSelectSlider;
 	private final IntegerTextField	imageSelectField	= new IntegerTextField();
@@ -67,25 +67,18 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
 	 * @param server Interface to the YouScope server.
-	 * @param openFolder The folder which should be opened at startup. If null, the default folder is opened.
+	 * @param imagesTableLocation Location of the image table file. Set to null to choose manually.
 	 * @throws AddonException 
 	 */
-	public MeasurementViewer(YouScopeClient client, YouScopeServer server, String openFolder) throws AddonException
+	public MeasurementViewer(YouScopeClient client, YouScopeServer server, String imagesTableLocation) throws AddonException
 	{
 		super(getMetadata(), client, server);
-		measurementFolder = null;
-		if(openFolder != null)
+		if(imagesTableLocation != null)
 		{
-			measurementFolder = new File(openFolder);
-			if(measurementFolder.exists() && measurementFolder.isDirectory())
+			imagesTableFile = new File(imagesTableLocation);
+			if(!imagesTableFile.exists() || !imagesTableFile.isFile())
 			{
-				File imagesFile = new File(measurementFolder, "images.csv");
-				if(!imagesFile.exists() || !imagesFile.isFile())
-					measurementFolder = null;
-			}
-			else
-			{
-				measurementFolder = null;
+				imagesTableFile = null;
 			}
 		}
 		
@@ -163,7 +156,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		{
 			@Override
 			public void showFolder(ImageFolderNode imageFolder) {
-				showImageSeries(measurementFolder, imageFolder);
+				showImageSeries(imagesTableFile, imageFolder);
 			}
 	
 		});
@@ -258,9 +251,9 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		waitPanel.addCenter(waitText);
 		waitPanel.addFillEmpty();
 		
-		if(measurementFolder != null)
+		if(imagesTableFile != null)
 		{
-			loadMeasurement(measurementFolder);
+			loadMeasurement(imagesTableFile);
 		}
 		else
 		{
@@ -293,12 +286,12 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	{
 		JFileChooser fileChooser = new JFileChooser((String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Measurement Configuration Files (.csb)", "csb"));
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image Table Files (.csv)", "csv"));
+		fileChooser.addChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
 		int returnVal = fileChooser.showDialog(null, "View Measurement");
 		if(returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			loadMeasurement(fileChooser.getSelectedFile().getParentFile());		
-			getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, fileChooser.getSelectedFile().getParentFile());
+			loadMeasurement(fileChooser.getSelectedFile());		
 		}
 		else
 		{
@@ -324,10 +317,10 @@ class MeasurementViewer extends ToolAddonUIAdapter
 			SwingUtilities.invokeLater(runner);
 	}
 	
-	private void loadMeasurement(final File measurementFolder)
+	private void loadMeasurement(final File imagesTableFile)
 	{
 		showPanel(waitPanel);
-		this.measurementFolder = measurementFolder;
+		this.imagesTableFile = imagesTableFile;
 		new Thread(new Runnable()
 		{
 			@Override
@@ -337,7 +330,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 				ImageFolderNode rootNode;
 				try
 				{
-					rootNode = ImagesFileProcessor.processImagesFile(new File(measurementFolder, "images.csv"));
+					rootNode = ImagesFileProcessor.processImagesFile(imagesTableFile);
 				}
 				catch(Exception e)
 				{
@@ -350,10 +343,10 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		}).start();
 	}
 	
-	public void showImageSeries(File measurementFolder, ImageFolderNode imageFolder)
+	public void showImageSeries(File imagesTableFile, ImageFolderNode imageFolder)
 	{
 		this.imageFolder = imageFolder;
-		this.measurementFolder = measurementFolder;
+		this.imagesTableFile = imagesTableFile;
 		int numImages = imageFolder.getImageList().size();
 		imageSelectSlider.setMaximum(numImages);
 		imageSelectSlider.setValue(1);
@@ -396,7 +389,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 		imageChanging = false;
 		
 		String imageURL = imageFolder.getImageList().get(index); 
-		File imageFile = new File(measurementFolder, imageURL);
+		File imageFile = new File(imagesTableFile.getParent(), imageURL);
 		if(!imageFile.exists() || !imageFile.isFile())
 		{
 			sendErrorMessage("Cannot load image file " + imageFile.getAbsolutePath() + " because it does not exist.", null);

@@ -3,7 +3,7 @@
  */
 package org.youscope.server;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -12,7 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -175,12 +174,15 @@ class XMLMeasurementDescription
 		return document;
 	}
 
-	public static void writeDocumentToFile(Document document, String file) throws TransformerException, FileNotFoundException
+	public static void writeDocumentToFile(Document document, String file) throws Exception
 	{
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
 		FileOutputStream outputStream = null;
+		File folder = new File(file).getParentFile();
+		if(!folder.exists())
+			folder.mkdirs();
 		try
 		{
 			outputStream = new FileOutputStream(file);

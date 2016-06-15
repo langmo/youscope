@@ -10,6 +10,7 @@ import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -20,11 +21,11 @@ public class OpenCellXFactory implements PostProcessorAddonFactory
 {
 
 	@Override
-	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
+	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, MeasurementFileLocations measurementFileLocations) throws AddonException
 	{
 		if(OpenCellX.TYPE_IDENTIFIER.equals(ID))
 		{
-			return new OpenCellX(client, server, measurementFolder);
+			return new OpenCellX(client, server, measurementFileLocations.getMeasurementBaseFolder());
 		}
 		throw new AddonException("Type identifer "+ID+" not supported by this factory.");
 	}

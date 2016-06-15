@@ -2,7 +2,6 @@ package org.youscope.server;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
+import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.ColumnDefinition;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
@@ -89,9 +89,18 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 		}
 
 		// Save image
-		String relativePath = supervisor.getImagePath(event, imageSaveName);
-		String filePath = supervisor.getFullImagePath(event, imageSaveName);
-		String fileType = supervisor.getImageFileType(event, imageSaveName);
+		String relativePath;
+		String filePath;
+		String fileType;
+		try {
+			relativePath = supervisor.getRelativeImagePath(event, imageSaveName);
+			filePath = supervisor.getFullImagePath(event, imageSaveName);
+			fileType = supervisor.getImageFileType(event, imageSaveName);
+		} catch (ResourceException e1) {
+			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved since it could not be determined where or how to save the image.", e1);
+			reusableImages.offer(image);
+			return;
+		}
 		if(filePath == null || fileType == null || relativePath == null)
 		{
 			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved since image file name was not defined.", null);
@@ -99,9 +108,11 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 			return;
 		}
 		File file = new File(filePath);
+		File folder = file.getParentFile();
 		try
 		{
-			file.getParentFile().mkdirs();
+			if(!folder.exists())
+				folder.mkdirs();
 			if(ImageIO.write(image, fileType, file))
 			{
 				ServerSystem.out.println("Image of type " + imageSaveName + " saved to " + filePath + ".");
@@ -109,7 +120,7 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 			else
 				ServerSystem.err.println("Image of type " + imageSaveName + " could not be saved. Format \"" + fileType + "\" not supported!", null);
 		}
-		catch(IOException e)
+		catch(Exception e)
 		{
 			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved.", e);
 		}

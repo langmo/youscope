@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.measurement.MeasurementConfiguration;
@@ -139,8 +140,10 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 			runtimeField.setDuration(configuration.getMeasurementRuntime());
 		else
 			runtimeField.setDuration(60*60*1000);
-		
-		saveSettingPanel.setConfiguration(configuration.getSaveSettings());
+		if(configuration.getSaveSettings() == null)
+			saveSettingPanel.setConfiguration(client.getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
+		else
+			saveSettingPanel.setConfiguration(configuration.getSaveSettings());
 		PeriodConfiguration period;
 		if(isPeriod())
 		{

@@ -4,13 +4,14 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.measurement.microplate.Well;
 import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.saving.FileNameMacroConverter;
+import org.youscope.common.saving.SaveInformation;
 import org.youscope.common.saving.SaveSettings;
 
 /**
@@ -21,6 +22,8 @@ import org.youscope.common.saving.SaveSettings;
 public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsConfiguration> implements SaveSettings
 {
 
+	private static final String FILE_NAME_MACRO = "%N_position%4w%2p_time%4n";
+	
 	/**
 	 * Constructor.
 	 * @param positionInformation Position information.
@@ -33,57 +36,53 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	}
 
 	@Override
-	public String getScopeSettingsFilePath() {
+	public String getScopeSettingsFilePath(SaveInformation saveInformation) {
 		return "scope_settings.xml";
 	}
 
 	@Override
-	public String getMeasurementConfigurationFilePath() {
+	public String getMeasurementConfigurationFilePath(SaveInformation saveInformation) {
 		return "configuration.csb";
 	}
 
 	@Override
-	public String getMicroscopeConfigurationFilePath() {
+	public String getMicroscopeConfigurationFilePath(SaveInformation saveInformation) {
 		return "YSConfig_Microscope.cfg";
 	}
 
 	@Override
-	public String getLogErrFilePath() {
+	public String getLogErrFilePath(SaveInformation saveInformation) {
 		return "measurement_err.txt";
 	}
 
 	@Override
-	public String getLogOutFilePath() {
+	public String getLogOutFilePath(SaveInformation saveInformation) {
 		return "measurement_log.txt";
 	}
 
 	@Override
-	public String getMeasurementBasePath(String measurementName, long timeMs) {
+	public String getMeasurementBasePath(SaveInformation saveInformation) {
 		DateFormat dateToFileName = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		return getConfiguration().getBaseFolder() + File.separator + measurementName + File.separator + dateToFileName.format(new Date(timeMs));
+		return getConfiguration().getBaseFolder() + File.separator + saveInformation.getMeasurementName() + File.separator + dateToFileName.format(new Date(saveInformation.getMeasurementStartTime()));
 	}
 
 	@Override
-	public String getTableFilePath(String tableName) {
+	public String getTableFilePath(SaveInformation saveInformation, String tableName) {
 		return tableName+".csv";
 	}
 
 	@Override
-	public String getImageMetadataTableFilePath() {
+	public String getImageMetadataTableFilePath(SaveInformation saveInformation) {
 		return "images.csv";
 	}
 
 	@Override
-	public String getImageFilePath(ImageEvent<?> event, String imageName) 
+	public String getImageFilePath(SaveInformation saveInformation, ImageEvent<?> event, String imageName) 
 	{
 		// Construct file name of image.
-		String channel = event.getChannel();
-		String camera = event.getCamera();
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date(event.getCreationTime()));
 		Well well = event.getPositionInformation().getWell();
-		int[] positionInformation = event.getPositionInformation().getPositions();
-		String imageFile = NamingMacros.convertFileName(getConfiguration().getImageFileName(), imageName, channel, well, positionInformation, event.getExecutionInformation(), calendar, camera, null);
+		int[] positions=event.getPositionInformation().getPositions();
+		String imageFile = FileNameMacroConverter.convertImagePath(FILE_NAME_MACRO, imageName, event, saveInformation);
 		String imageFileType = getConfiguration().getImageFileType();
 		String imageFolderName = "";
 		FolderStructureType type = getConfiguration().getFolderStructureType();
@@ -100,11 +99,11 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 		{
 			// Add position information if necessary (only for
 			// multi-position jobs
-			for(int i = 0; i < positionInformation.length; i++)
+			for(int i = 0; i < positions.length; i++)
 			{
 				if(imageFolderName.length() > 0)
 					imageFolderName += File.separator;
-				imageFolderName += "position_" + Integer.toString(positionInformation[i]+1);
+				imageFolderName += "position_" + Integer.toString(positions[i]+1);
 			}
 		}
 		if(type == FolderStructureType.SEPARATE_WELL_AND_CHANNEL || type == FolderStructureType.SEPARATE_WELL_POSITION_AND_CHANNEL)
@@ -125,7 +124,7 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	}
 
 	@Override
-	public String getImageExtension(ImageEvent<?> event, String imageName) {
+	public String getImageExtension(SaveInformation saveInformation, ImageEvent<?> event, String imageName) {
 		return getConfiguration().getImageFileType();
 	}
 	

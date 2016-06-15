@@ -50,18 +50,16 @@ class CustomJobManager
 		    }
 
 		});
-		String[] returnVal = new String[xmlFiles.length];
+		customJobIdentifiers = new String[xmlFiles.length];
 		for(int i=0; i<xmlFiles.length; i++)
 		{
-			returnVal[i] = xmlFiles[i].getName();
-			returnVal[i] = getCustomJobTypeIdentifier(returnVal[i].substring(0, returnVal[i].length()-CUSTOM_JOBS_FILE_ENDING.length()));
+			customJobIdentifiers[i] = xmlFiles[i].getName(); 
+			customJobIdentifiers[i] = getCustomJobTypeIdentifier(customJobIdentifiers[i].substring(0, customJobIdentifiers[i].length()-CUSTOM_JOBS_FILE_ENDING.length()));
 		}
-		return returnVal;
+		return customJobIdentifiers;
 	}
 	static synchronized boolean deleteCustomJob(String typeIdentifier)
 	{
-		customJobIdentifiers = null; // enforce reloading.
-		
 		File folder = new File(CUSTOM_JOBS_FOLDER_NAME);
 		if(!folder.exists() || !folder.isDirectory())
 		{
@@ -72,7 +70,9 @@ class CustomJobManager
 		{
 			return true;
 		}		
-		return file.delete();
+		boolean success =  file.delete();
+		customJobIdentifiers = null; // enforce reloading.
+		return success;
 	}
 	
 	static boolean deleteCustomJob(CustomJobConfiguration customJob)
@@ -81,8 +81,6 @@ class CustomJobManager
 	}
 	static synchronized boolean saveCustomJob(CustomJobConfiguration customJob) throws CustomJobException
 	{
-		customJobIdentifiers = null; // enforce reloading.
-		
 		File folder = new File(CUSTOM_JOBS_FOLDER_NAME);
 		if(!folder.exists() || !folder.isDirectory())
 		{
@@ -99,7 +97,7 @@ class CustomJobManager
 		{
 			throw new CustomJobException("Could not save custom job file.", e);
 		}
-		
+		customJobIdentifiers = null; // enforce reloading.
 		return true;
 	}
 	

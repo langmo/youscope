@@ -78,6 +78,6 @@ class StatisticsJobConfigurationAddon extends ComponentAddonUIAdapter<Statistics
 	}
 	@Override
 	protected void initializeDefaultConfiguration(StatisticsJobConfiguration configuration) throws AddonException {
-		// do nothing.
+		configuration.setFileName("statistics");
 	}
 }

@@ -146,9 +146,9 @@ public abstract class ResourceAdapter<C extends ResourceConfiguration> implement
 		return configuration;
 	}
 	
-	protected void assertInitialized() throws ResourceException, RemoteException
+	protected void assertInitialized() throws ResourceException
 	{
-		if(!isInitialized())
+		if(!initialized)
 			throw new ResourceException("Resource is not initialized, yet.");
 	}
 	@Override

@@ -34,6 +34,7 @@ class MeasurementStateField extends JLabel implements ActionListener
 	MeasurementStateField()
 	{
 		setBorder(new LineBorder(Color.BLACK, 1));
+		setForeground(Color.BLACK);
 		this.setOpaque(false);
 	}
 

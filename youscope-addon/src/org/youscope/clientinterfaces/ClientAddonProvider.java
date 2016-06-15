@@ -14,6 +14,7 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.microplate.Microplate;
+import org.youscope.common.saving.MeasurementFileLocations;
 
 /**
  * Provider with which YouScop client addons can be constructed.
@@ -120,20 +121,20 @@ public interface ClientAddonProvider
 	/**
 	 * Creates a post processor user interface for the given type identifier.
 	 * @param typeIdentifier type identifier of the post processor.
-	 * @param measurementFolder The folder where the measurement which should be processed is located.
+	 * @param measurementFileLocations Information on the folders where the measurement which should be processed is located.
 	 * @return The created post processor UI with the given type identifier.
 	 * @throws AddonException Thrown if no factory for the given post processor addon exists, or if the creation of the post processor failed.
 	 */
-	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, String measurementFolder) throws AddonException;
+	AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier,  MeasurementFileLocations measurementFileLocations) throws AddonException;
 	
 	/**
 	 * Creates an post processor user interface compatible with the metadata.
 	 * @param metadata The metadata for which a post processor addon UI should be constructed.
-	 * @param measurementFolder The folder where the measurement which should be processed is located.
+	 * @param measurementFileLocations Information on the folders where the measurement which should be processed is located.
 	 * @return The created post processor addon UI.
 	 * @throws AddonException Thrown if no factory for the given post processor metadata exists.
 	 */
-	<T extends AddonMetadata>AddonUI<T> createPostProcessorUI(T metadata, String measurementFolder) throws AddonException;
+	<T extends AddonMetadata>AddonUI<T> createPostProcessorUI(T metadata,  MeasurementFileLocations measurementFileLocations) throws AddonException;
 	
 	/**
 	 * Returns the type identifiers of all post processors. 

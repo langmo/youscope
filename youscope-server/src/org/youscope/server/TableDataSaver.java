@@ -1,4 +1,5 @@
 package org.youscope.server;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -173,10 +174,18 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 	private boolean restartWriting()
 	{
 		String filePath;
-		if(isImageTable)
-			filePath = supervisor.getFullImageTablePath();
-		else
-			filePath = supervisor.getFullTablePath(tableSaveName);
+		try
+		{
+			if(isImageTable)
+				filePath = supervisor.getFullImageTablePath();
+			else
+				filePath = supervisor.getFullTablePath(tableSaveName);
+		}
+		catch(Exception e)
+		{
+			ServerSystem.err.println("Could not determine where to save table data \"" + getTableSaveName() + ".", e);
+			return false;
+		}
 		if(filePath == null)
 		{
 			ServerSystem.err.println("Could not create file to save table data \"" + getTableSaveName() + " since table path is null.", null);
@@ -187,6 +196,9 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 		{
 			try
 			{
+				File folder = new File(filePath).getParentFile();
+				if(!folder.exists())
+					folder.mkdirs();
 				tableWriter = new FileWriter(filePath, true);
 				return true;
 			}
@@ -207,10 +219,18 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 	public void startWriting()
 	{
 		String filePath;
-		if(isImageTable)
-			filePath = supervisor.getFullImageTablePath();
-		else
-			filePath = supervisor.getFullTablePath(tableSaveName);
+		try
+		{
+			if(isImageTable)
+				filePath = supervisor.getFullImageTablePath();
+			else
+				filePath = supervisor.getFullTablePath(tableSaveName);
+		}
+		catch(Exception e)
+		{
+			ServerSystem.err.println("Could not determine where to save table data \"" + getTableSaveName() + ".", e);
+			return;
+		}
 		if(filePath == null)
 		{
 			ServerSystem.err.println("Could not create file to save table data \"" + getTableSaveName() + " since table path is null.", null);
@@ -222,6 +242,9 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 			dataReceived = false;
 			try
 			{
+				File folder = new File(filePath).getParentFile();
+				if(!folder.exists())
+					folder.mkdirs();
 				if(tableWriter != null)
 					tableWriter.close();
 				tableWriter = new FileWriter(filePath, false);

@@ -9,6 +9,7 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.common.saving.MeasurementSaver;
 import org.youscope.common.saving.SaveSettings;
 import org.youscope.common.table.Table;
@@ -59,12 +60,6 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	}
 
 	@Override
-	public String getLastMeasurementFolder()
-	{
-		return null;
-	}
-
-	@Override
 	public TableListener getSaveTableListener(String tableSaveName)
 	{
 		return this;
@@ -74,5 +69,10 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	public void newTableProduced(Table table) throws RemoteException {
 		// do nothing.
 		
+	}
+
+	@Override
+	public MeasurementFileLocations getLastMeasurementFileLocations() throws RemoteException {
+		return null;
 	}
 }

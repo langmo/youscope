@@ -7,9 +7,10 @@ import java.awt.Desktop;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
+import org.youscope.addon.AddonUI;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
-import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.clientinterfaces.YouScopeClient;
+import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 /**
@@ -20,13 +21,13 @@ public class OpenMeasurementFolderFactory implements PostProcessorAddonFactory
 {
 
 	@Override
-	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException
-	{
-		if(OpenMeasurementFolder.TYPE_IDENTIFIER.equals(ID))
+	public AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, YouScopeClient client,
+			YouScopeServer server, MeasurementFileLocations measurementFileLocations) throws AddonException {
+		if(OpenMeasurementFolder.TYPE_IDENTIFIER.equals(typeIdentifier))
 		{
-			return new OpenMeasurementFolder(client, server, measurementFolder);
+			return new OpenMeasurementFolder(client, server, measurementFileLocations.getMeasurementBaseFolder());
 		}
-		throw new AddonException("Type identifer "+ID+" not supported by this factory.");
+		throw new AddonException("Type identifer "+typeIdentifier+" not supported by this factory.");
 	}
 
 	@Override
@@ -51,5 +52,4 @@ public class OpenMeasurementFolderFactory implements PostProcessorAddonFactory
 			return OpenMeasurementFolder.getMetadata();
 		throw new AddonException("Type identifer "+typeIdentifier+" not supported by this factory.");
 	}
-
 }

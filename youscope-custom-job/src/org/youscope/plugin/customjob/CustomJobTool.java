@@ -73,7 +73,7 @@ class CustomJobTool extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Job Configuration", null, "icons/block-share.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Jobs", null, "icons/block-share.png");
 	}
 	@Override
 	public java.awt.Component createUI() throws AddonException

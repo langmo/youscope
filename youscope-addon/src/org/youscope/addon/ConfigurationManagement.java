@@ -82,6 +82,10 @@ public class ConfigurationManagement
 	{
 		XStream xstream = getSerializerInstance();
 
+		File folder = new File(fileName).getParentFile();
+		if(!folder.exists())
+			folder.mkdirs();
+		
 		FileOutputStream fos = null;
 		OutputStreamWriter writer = null;
 		try

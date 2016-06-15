@@ -109,8 +109,32 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	{
 		if(configuration == null)
 			return;
-		lastConfiguration = configuration;
-		displayAddonConfiguration(configuration.getTypeIdentifier());
+		for(String id : componentBox.getAllTypeIdentifiers())
+		{
+			if(id.equals(configuration.getTypeIdentifier()))
+			{
+				lastConfiguration = configuration;
+				displayAddonConfiguration(configuration.getTypeIdentifier());
+			}
+		}
+	}
+	
+	/**
+	 * Sets the current configuration. That means, it tries to change the selected addon UI such that the configuration types matches the type identifier, and
+	 * then initializes the addon UI with a fresh configuration.
+	 * @param typeIdentifier Type identifier of configuration type to set.
+	 */
+	public void setConfiguration(String typeIdentifier)
+	{
+		if(typeIdentifier == null)
+			return;
+		for(String id : componentBox.getAllTypeIdentifiers())
+		{
+			if(id.equals(typeIdentifier))
+			{
+				displayAddonConfiguration(typeIdentifier);
+			}
+		}
 	}
 	
 	/**
@@ -168,6 +192,7 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 		}
 		
 		add(addonConfigurationPanel, pos);
+		componentBox.setSelectedElement(typeIdentifier);
 		revalidate();
 		if(frame.isVisible())
 			frame.pack();
