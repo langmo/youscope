@@ -5,10 +5,10 @@ package org.youscope.plugin.travelingsalesman.blossom;
  * @author Moritz Lang
  *
  */
-public class Edge 
+public class Edge implements Comparable<Edge>
 {
-	private final Vertex<?> v1;
-	private final Vertex<?> v2;
+	private final Vertex v1;
+	private final Vertex v2;
 	private final double weight;
 	// True if edge belongs to matching.
 	private boolean match = false;
@@ -18,7 +18,7 @@ public class Edge
 	 * @param v2 Second vertex.
 	 * @param weight Weight/cost of this edge.
 	 */
-	public Edge(Vertex<?> v1, Vertex<?> v2, double weight)
+	public Edge(Vertex v1, Vertex v2, double weight)
 	{
 		this.v1 = v1;
 		this.v2 =v2;
@@ -28,7 +28,7 @@ public class Edge
 	 * Returns true if this edge belongs to the perfect matching.
 	 * @return True if edge belongs to the matching.
 	 */
-	public boolean isMatch()
+	boolean isMatch()
 	{
 		return match;
 	}
@@ -48,24 +48,34 @@ public class Edge
 	/**
 	 * Returns the first node this edge is connecting. If this node belongs to a blossom, returns the blossom.
 	 * @return First node this edge is connecting, or containing blossom.
+	 * @throws InterruptedException 
 	 */
-	Node getV1Node()
+	PseudoNode getV1VirtualNode() throws InterruptedException
 	{
 		return v1.getOuterNode();
 	}
-	Vertex<?> getOriginalV1()
+	/**
+	 * Gets the first vertex this edge is connecting.
+	 * @return first vertex of edge.
+	 */
+	public Vertex getV1()
 	{
 		return v1;
 	}
-	Vertex<?> getOriginalV2()
+	/**
+	 * Gets the second vertex this edge is connecting.
+	 * @return second vertex of edge.
+	 */
+	public Vertex getV2()
 	{
 		return v2;
 	}
 	/**
 	 * Returns the second node this edge is connecting. If this node belongs to a blossom, returns the blossom.
 	 * @return Second node this edge is connecting, or containing blossom.
+	 * @throws InterruptedException 
 	 */
-	Node getV2Node()
+	PseudoNode getV2VirtualNode() throws InterruptedException
 	{
 		return v2.getOuterNode();
 	}
@@ -75,8 +85,10 @@ public class Edge
 	 * Returns the other (external) node this edge is connecting, that is, v1 if from is (or contains) v2, and otherwise v1. 
 	 * @param from The node connected by the edge which should not be returned.
 	 * @return
+	 * @throws BlossomException 
+	 * @throws InterruptedException 
 	 */
-	Node to(Node from)
+	PseudoNode to(PseudoNode from) throws BlossomException, InterruptedException
 	{
 		if(from.contains(v1))
 			return v2.getOuterNode();
@@ -97,6 +109,25 @@ public class Edge
 	@Override
 	public String toString()
 	{
-		return getOriginalV1().toString() + " <-> " + getOriginalV2().toString();
+		StringBuilder builder = new StringBuilder(getV1().toString());
+		if(match)
+			builder.append("<=");
+		else
+			builder.append("<-");
+		builder.append(Double.toString(weight));
+		if(match)
+			builder.append("=>");
+		else
+			builder.append("->");
+		builder.append(getV2().toString());
+		return builder.toString();
+	}
+	@Override
+	public int compareTo(Edge other) {
+		if(getWeight() < other.getWeight())
+			return -1;
+		else if(getWeight() > other.getWeight())
+			return 1;
+		return 0;
 	}
 }

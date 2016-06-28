@@ -8,11 +8,10 @@ import java.util.Collection;
  * Each vertex can contain some content which might be used to identify or label the vertex, or to store anything one wants.
  * @author Moritz Lang
  *
- * @param <T> Type of content stored in this node.
  */
-public class Vertex<T extends Object> extends Node
+public class Vertex extends PseudoNode
 {
-	private final T content;
+	private final Object content;
 	private final ArrayList<Edge> edgesToChilds = new ArrayList<Edge>();
 	private Edge edgeToParent = null;
 	
@@ -20,20 +19,20 @@ public class Vertex<T extends Object> extends Node
 	 * Contstructor.
 	 * @param content Content stored in this vertex.
 	 */
-	public Vertex(T content)
+	public Vertex(Object content)
 	{
 		this.content = content;
 	}
 	@Override
 	boolean isBoundary(Edge edge) 
 	{
-		if(edge.getV1Node().contains(this) || edge.getV2Node().contains(this))
+		if(edge.getV1().equals(this) || edge.getV2().equals(this))
 			return true;
 		return false;
 	}
 	
 	@Override
-	boolean contains(Node node) 
+	boolean contains(PseudoNode node) 
 	{
 		return equals(node);
 	}
@@ -42,7 +41,7 @@ public class Vertex<T extends Object> extends Node
 	 * Returns the content stored in this vertex.
 	 * @return Content of vertex.
 	 */
-	public T getContent()
+	public Object getContent()
 	{
 		return content;
 	}
@@ -50,12 +49,10 @@ public class Vertex<T extends Object> extends Node
 	@Override
 	public String toString()
 	{
-		return content.toString()+"["+label.toString()+","+Double.toString(dual)+"]";
-	}
-	@Override
-	public String toShortString()
-	{
-		return content.toString();
+		String contentString = content == null ? "UNDEFINED" : content.toString();
+		if(containedIn == null)
+			return contentString+"["+getLabel().toString()+","+Double.toString(dual)+"]";
+		return contentString+"["+Double.toString(dual)+"]";
 	}
 	@Override
 	Edge getEdgeToParent() {
@@ -66,16 +63,16 @@ public class Vertex<T extends Object> extends Node
 		return edgesToChilds;
 	}
 	@Override
-	void setEdgeToParent(Edge edge) {
-		if(edge!=null &&edge.getOriginalV1() != this && edge.getOriginalV2() != this)
-			throw new RuntimeException("Edge does not link to this vertex.");
+	void setEdgeToParent(Edge edge) throws BlossomException {
+		if(edge!=null &&edge.getV1() != this && edge.getV2() != this)
+			throw new BlossomException("Edge does not link to this vertex.");
 		edgeToParent = edge;
 	}
 	@Override
-	void addEdgeToChild(Edge edge) 
+	void addEdgeToChild(Edge edge) throws BlossomException 
 	{
-		if(edge.getOriginalV1() != this && edge.getOriginalV2() != this)
-			throw new RuntimeException("Edge does not link to this vertex.");
+		if(edge.getV1() != this && edge.getV2() != this)
+			throw new BlossomException("Edge does not link to this vertex.");
 		edgesToChilds.add(edge);
 	}
 	@Override

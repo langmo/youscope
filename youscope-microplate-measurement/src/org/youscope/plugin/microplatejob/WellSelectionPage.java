@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.microplatejob;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,6 +11,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.ServiceLoader;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -23,6 +27,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import org.youscope.addon.AddonException;
+import org.youscope.addon.pathoptimizer.PathOptimizer;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
@@ -30,7 +36,9 @@ import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.MicroscopeException;
+import org.youscope.plugin.microplatemeasurement.MicroplateMeasurementInitializer;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
+import org.youscope.plugin.microplatemeasurement.PathDisplayUI;
 import org.youscope.plugin.microplatemeasurement.PositionFineConfigurationFrame;
 import org.youscope.plugin.microplatemeasurement.WellPositionsTable;
 import org.youscope.plugin.microplatemeasurement.WellTable;
@@ -78,6 +86,42 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 	private final YouScopeClient	client;
 	private final YouScopeServer			server;
 	private YouScopeFrame frame;
+	
+	private final JButton showOptimizedPathButton = new JButton("Show"); 
+	
+	private final JComboBox<ComparableOptimizer>						pathOptimizerField	= new JComboBox<ComparableOptimizer>();
+	
+	private final static String DEFAULT_PATH_OPTIMIZER = "YouScope.ZigZagPathOptimizer";
+	
+	private class ComparableOptimizer implements Comparable<ComparableOptimizer>
+	{
+		private final PathOptimizer optimizer;
+		private final MicroplatePositionConfiguration positionConfiguration;
+		ComparableOptimizer(PathOptimizer optimizer, MicroplatePositionConfiguration positionConfiguration)
+		{
+			this.optimizer = optimizer;
+			this.positionConfiguration = positionConfiguration;
+		}
+		
+		@Override
+		public int compareTo(ComparableOptimizer arg0)
+		{
+			if(arg0 == null)
+				return -1;
+			return arg0.optimizer.getSpecificity(positionConfiguration) - optimizer.getSpecificity(positionConfiguration) > 0 ? 1 : -1; 
+		}
+		
+		@Override
+		public String toString()
+		{
+			return optimizer.getName();
+		}
+		
+		public String getOptimizerID()
+		{
+			return optimizer.getOptimizerID();
+		}
+	}
 	
 	WellSelectionPage(YouScopeClient client, YouScopeServer server)
 	{
@@ -165,6 +209,72 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 				positionSelectionLabel.setVisible(false);
 			}	
 		}
+		
+		loadPathOptimizers(configuration);
+	}
+	
+	private static Iterable<PathOptimizer> getPathOptimizers()
+    {
+        ServiceLoader<PathOptimizer> pathOptimizers =
+                ServiceLoader.load(PathOptimizer.class,
+                		MicroplateMeasurementInitializer.class.getClassLoader());
+        return pathOptimizers;
+    }
+	private void loadPathOptimizers(MicroplateJobConfiguration configuration)
+	{
+		ComparableOptimizer lastOptimizer = (ComparableOptimizer) pathOptimizerField.getSelectedItem();
+		pathOptimizerField.removeAllItems();
+		Vector<ComparableOptimizer> optimizers = new Vector<ComparableOptimizer>();
+		for(PathOptimizer optimizer : getPathOptimizers())
+		{
+			if(!optimizer.isApplicable(positionConfiguration))
+				continue;
+			
+			optimizers.addElement(new ComparableOptimizer(optimizer, positionConfiguration));
+		}
+		Collections.sort(optimizers);
+		
+		for(ComparableOptimizer optimizer : optimizers)
+		{
+			pathOptimizerField.addItem(optimizer);
+		}
+		
+		if(configuration != null && configuration.getPathOptimizerID() != null)
+		{
+			for(ComparableOptimizer optimizer : optimizers)
+			{
+				if(optimizer.getOptimizerID().equals(configuration.getPathOptimizerID()))
+				{
+					pathOptimizerField.setSelectedItem(optimizer);
+					break;
+				}
+			}
+		}
+		else if(lastOptimizer != null)
+		{
+			for(ComparableOptimizer optimizer : optimizers)
+			{
+				if(optimizer.getOptimizerID().equals(lastOptimizer.getOptimizerID()))
+				{
+					pathOptimizerField.setSelectedItem(optimizer);
+					break;
+				}
+			}
+		}
+		else
+		{
+			for(ComparableOptimizer optimizer : optimizers)
+			{
+				if(optimizer.getOptimizerID().equals(DEFAULT_PATH_OPTIMIZER))
+				{
+					pathOptimizerField.setSelectedItem(optimizer);
+					break;
+				}
+			}
+		}
+		
+		if(pathOptimizerField.getItemCount() == 0)
+			client.sendError("No path optimizer found. Check installation.");
 	}
 	
 	private void selectionChanged()
@@ -181,6 +291,17 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 				editFineConfiguration.setEnabled(true);
 			else
 				editFineConfiguration.setEnabled(false);
+		}
+		
+		if(positionConfiguration==null || positionConfiguration.isInitialized() == false || positionConfiguration.isNoneSelected())
+		{
+			loadPathOptimizers(null);
+			showOptimizedPathButton.setEnabled(false);
+		}
+		else
+		{
+			loadPathOptimizers(null);
+			showOptimizedPathButton.setEnabled(true);
 		}
 	}
 	
@@ -240,6 +361,8 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 			return false;
 		}
 		
+		configuration.setPathOptimizerID(((ComparableOptimizer)pathOptimizerField.getSelectedItem()).getOptimizerID());
+		
 		return true;
 	}
 
@@ -266,7 +389,7 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 	}
 
 	@Override
-	public void createUI(YouScopeFrame frame)
+	public void createUI(final YouScopeFrame frame)
 	{
 		this.frame = frame;
 		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
@@ -381,6 +504,38 @@ class WellSelectionPage extends JobConfigurationPage<MicroplateJobConfiguration>
 		StandardFormats.addGridBagElement(focusAdjustmentLabel, elementsLayout, newLineConstr, this);
 		StandardFormats.addGridBagElement(focusAdjustmentField, elementsLayout, newLineConstr, this);
 
+		// Path optimizer
+		StandardFormats.addGridBagElement(new JLabel("Path through microplate"), elementsLayout, newLineConstr, this);
+		JPanel pathPanel = new JPanel(new BorderLayout());
+		pathPanel.setOpaque(false);
+		pathPanel.add(pathOptimizerField, BorderLayout.CENTER);
+		pathPanel.add(showOptimizedPathButton, BorderLayout.EAST);
+		StandardFormats.addGridBagElement(pathPanel, elementsLayout, newLineConstr, this);		
+		showOptimizedPathButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PathOptimizer optimizer = ((ComparableOptimizer)pathOptimizerField.getSelectedItem()).optimizer;
+				if(positionConfiguration==null || positionConfiguration.isInitialized() == false || positionConfiguration.isNoneSelected())
+				{
+					return;
+				}
+				
+				try
+				{
+					PathDisplayUI content = new PathDisplayUI(client, server);
+					YouScopeFrame childFrame = content.toFrame();
+					frame.addChildFrame(childFrame);
+					childFrame.setVisible(true);
+					content.calculatePath(optimizer, positionConfiguration);
+				}
+				catch(AddonException e1)
+				{
+					client.sendError("Could not display path.", e1);
+				}
+			}
+		});
+		
 		StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, this);
 
 		JTextArea remarkLabel = new JTextArea("Remark: The fine configuration must be rerun every time the measurement type, the selected wells or positions have been changed.");

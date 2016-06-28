@@ -312,6 +312,10 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	 */
 	protected synchronized void setTitle(String title) {
 		this.title = title;
+		if(isInitialized() && isSeparateFrame() && containingFrame != null)
+		{
+			containingFrame.setTitle(title);
+		}
 	}
 	
 	/**

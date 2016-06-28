@@ -3,6 +3,7 @@
  */
 package org.youscope.addon.pathoptimizer;
 
+import org.youscope.common.resource.ResourceException;
 import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
 
 /**
@@ -17,8 +18,9 @@ public interface PathOptimizer
 	 * Returns the optimized path for a given position configuration, or zero if not applicable.
 	 * @param posConf Configuration of which positions should be in the path.
 	 * @return optimized path, or null.
+	 * @throws ResourceException 
 	 */
-	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfiguration posConf);
+	public Iterable<PathOptimizerPosition> getPath(MicroplatePositionConfiguration posConf) throws ResourceException;
 	
 	/**
 	 * Returns true if this optimizer can be used to optimize the path for the positions in the respective configuration.

@@ -24,6 +24,7 @@ import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.microplate.Well;
 import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.resource.ResourceException;
 import org.youscope.common.task.MeasurementTask;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.common.task.VaryingPeriodConfiguration;
@@ -103,7 +104,12 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 			throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" not known.");
 		if(!pathOptimizer.isApplicable(posConf))
 			throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" is not applicable for given position configuration.");
-		Iterable<PathOptimizerPosition> path = pathOptimizer.getPath(posConf);
+		Iterable<PathOptimizerPosition> path;
+		try {
+			path = pathOptimizer.getPath(posConf);
+		} catch (ResourceException e1) {
+			throw new AddonException("Could not optimize path through microplate.", e1);
+		}
 		if(path == null)
 			throw new ConfigurationException("Path created by path optimizer \"" + pathOptimizerID + "\" is null. Try another optimizer.");
 		
