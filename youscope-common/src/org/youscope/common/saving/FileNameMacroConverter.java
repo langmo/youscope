@@ -388,10 +388,10 @@ public class FileNameMacroConverter
 		int[] positions = positionInformation.getPositions();
 		for(int i = 0; i < positions.length; i++)
 		{
-			if(positions[i] < 10)
-				string += "0" + Integer.toString(positions[i]);
+			if(positions[i] < 9)
+				string += "0" + Integer.toString(positions[i]+1);
 			else
-				string += Integer.toString(positions[i]);
+				string += Integer.toString(positions[i]+1);
 		}
 		info.add(new ReplaceInformation(PATTERN_IMAGE_POSITION, string, string.length()));
 		
