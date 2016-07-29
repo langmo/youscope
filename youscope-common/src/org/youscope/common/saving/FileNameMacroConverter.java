@@ -410,11 +410,11 @@ public class FileNameMacroConverter
 				string = Integer.toString(well.getWellY() + 1);
 			
 			if(well.getWellX() < 0)
-				string = "00";
+				string += "00";
 			else if(well.getWellX() < 9)
-				string = "0" + Integer.toString(well.getWellX() + 1);
+				string += "0" + Integer.toString(well.getWellX() + 1);
 			else
-				string = Integer.toString(well.getWellX() + 1);	
+				string += Integer.toString(well.getWellX() + 1);	
 		}
 		info.add(new ReplaceInformation(PATTERN_IMAGE_WELL_NUM, string, string.length()));
 		

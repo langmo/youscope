@@ -50,7 +50,7 @@ class RepeatJobConfigurationAddon extends ComponentAddonUIAdapter<RepeatJobConfi
 	@Override
 	protected Component createUI(RepeatJobConfiguration configuration) throws AddonException
 	{
-		setTitle("Job Container");
+		setTitle("Repeat Job");
 		setResizable(true);
 		setMaximizable(false);
  
