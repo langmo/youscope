@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.PositionInformation;
+import org.youscope.common.Well;
 import org.youscope.common.image.ImageEvent;
-import org.youscope.common.measurement.microplate.Well;
 
 /**
  * Helper class to convert file names templates containing macros (e.g. %N for the image name) to real file names.

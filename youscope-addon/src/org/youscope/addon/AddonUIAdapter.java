@@ -37,6 +37,7 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	private boolean maximize = false;
 	private Dimension preferredSize = null;
 	private boolean resizable = true;
+	private boolean closable = true;
 	private boolean maximizable = false;
 	private boolean showCloseButton = true;
 	private ArrayList<YouScopeFrameListener> frameListeners = new ArrayList<YouScopeFrameListener>();
@@ -54,9 +55,8 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	 * @param metadata The metadata of the addon.
 	 * @param client The YouScope client.
 	 * @param server The YouScope server.
-	 * @throws AddonException
 	 */
-	public AddonUIAdapter(final T metadata,  final YouScopeClient client, final YouScopeServer server) throws AddonException 
+	public AddonUIAdapter(final T metadata,  final YouScopeClient client, final YouScopeServer server) 
 	{
 		this.client = client;
 		this.server = server;
@@ -141,6 +141,7 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 		else
 			containingFrame.pack();
 		containingFrame.setMaximizable(maximizable);
+		containingFrame.setClosable(closable);
 		if(maximize)
 			containingFrame.setMaximum(maximize);
 		containingFrame.setResizable(resizable);
@@ -280,6 +281,24 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	 */
 	protected synchronized void setResizable(boolean resizable) {
 		this.resizable = resizable;
+	}
+	
+	/**
+	 * Returns if this element should be closable. If initialized as a frame, the close option of the frame will be displayed.
+	 * If initialized as a panel, this option has no effect.
+	 * @return true if closable.
+	 */
+	protected boolean isClosable() {
+		return closable;
+	}
+
+	/**
+	 * Sets if this element should be closable. If initialized as a frame, the close option of the frame will be displayed.
+	 * If initialized as a panel, this option has no effect.
+	 * @param closable true if closable.
+	 */
+	protected synchronized void setClosable(boolean closable) {
+		this.closable = closable;
 	}
 	
 	/**

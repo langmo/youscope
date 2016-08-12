@@ -13,7 +13,6 @@ import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.common.saving.MeasurementFileLocations;
 
 /**
@@ -97,26 +96,6 @@ public interface ClientAddonProvider
 	 * @throws AddonException Thrown if no factory for the given component exists, if the creation of the metadata failed, or if component cannot consume/produce given configuration class.
 	 */
 	public <T extends Configuration> ComponentMetadata<? extends T> getComponentMetadata(String typeIdentifier, Class<T> configurationClass) throws AddonException;
-
-	/**
-	 * Returns all known microplate types.
-	 * @return List of all known microplate types.
-	 */
-	List<Microplate> getMicroplateTypes();
-	
-	/**
-	 * Returns the type identifiers of all known microplate types.
-	 * @return List of all known microplate type identifier.
-	 */
-	List<String> getMicroplateTypeIdentifiers();
-	
-	/**
-	 * Returns the microplate type with the given type identifer.
-	 * @param typeIdentifier Type identifier of the microplate.
-	 * @return Microplate type with given type identifer.
-	 * @throws AddonException Thrown if microplate type identifier is unknown.
-	 */
-	Microplate getMicroplateType(String typeIdentifier) throws AddonException;
 	
 	/**
 	 * Creates a post processor user interface for the given type identifier.

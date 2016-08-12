@@ -47,6 +47,17 @@ public abstract class MeasurementAddonUIPage<T extends MeasurementConfiguration>
 			sizeChangeListeners.remove(listener);
 		}
 	}
+	
+	/**
+	 * Returns if the page should be jumpable to, or false, if it will not appear.
+	 * @param configuration Current configuration.
+	 * @return True if visible, false if page does not appear.
+	 */
+	protected boolean isAppear(T configuration)
+	{
+		return true;
+	}
+	
 	/**
 	 * Notifies all listeners that the size of this page changed.
 	 */

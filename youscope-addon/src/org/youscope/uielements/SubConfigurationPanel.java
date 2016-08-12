@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,8 +38,26 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	private C lastConfiguration;
 	private final ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	private final ComponentComboBox<C> componentBox;
+	private final ComponentList<C> componentList;
 	/**
-	 * Constructor.
+	 * The type of visual representation of the choice between the elements.
+	 * @author Moritz Lang
+	 *
+	 */
+	public enum Type
+	{
+		/**
+		 * Different choices represented as dropdown list.
+		 */
+		DROPDOWN,
+		/**
+		 * Different choices represented as list.
+		 */
+		LIST;
+	}
+	
+	/**
+	 * Constructor. Loads automatically all components which conform to the given configuration class and required interfaces. Sets the type to dropdown.
 	 * @param choiceString If there is one then more choice of configurations the user can select, this string is shown directly above the configuration type chooser. Can be null.
 	 * @param lastConfiguration Last configuration which settings should be loaded. Can be null.
 	 * @param configurationClass The base class of all configurations which should be choosable.
@@ -48,34 +67,109 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	 */
 	public SubConfigurationPanel(String choiceString, C lastConfiguration, Class<C> configurationClass, YouScopeClient client, YouScopeFrame frame, Class<?>... requiredInterface)
 	{
+		this(choiceString, lastConfiguration, configurationClass, Type.DROPDOWN, client, frame, getComponentMetadata(client, configurationClass, requiredInterface));
+	}
+	/**
+	 * Constructor. Loads automatically all components which conform to the given configuration class and required interfaces.
+	 * @param choiceString If there is one then more choice of configurations the user can select, this string is shown directly above the configuration type chooser. Can be null.
+	 * @param lastConfiguration Last configuration which settings should be loaded. Can be null.
+	 * @param configurationClass The base class of all configurations which should be choosable.
+	 * @param type Type of visual representation of this sub-configuration menu.
+	 * @param client YouScope client.
+	 * @param frame Containing frame.
+	 * @param requiredInterface Additional interfaces which are required, e.g. TableProducerConfiguration.class.
+	 */
+	public SubConfigurationPanel(String choiceString, C lastConfiguration, Class<C> configurationClass, Type type, YouScopeClient client, YouScopeFrame frame, Class<?>... requiredInterface)
+	{
+		this(choiceString, lastConfiguration, configurationClass, type, client, frame, getComponentMetadata(client, configurationClass, requiredInterface));
+	}
+	/**
+	 * Constructor. Provides manually the list of components which should be displayed. Sets the type to dropdown.
+	 * @param choiceString If there is one then more choice of configurations the user can select, this string is shown directly above the configuration type chooser. Can be null.
+	 * @param lastConfiguration Last configuration which settings should be loaded. Can be null.
+	 * @param configurationClass The base class of all configurations which should be choosable.
+	 * @param client YouScope client.
+	 * @param frame Containing frame.
+	 * @param componentMetadata Metadata of the components which should be displayed.
+	 */
+	public SubConfigurationPanel(String choiceString, C lastConfiguration, Class<C> configurationClass, YouScopeClient client, YouScopeFrame frame, List<ComponentMetadata<? extends C>> componentMetadata)
+	{
+		this(choiceString, lastConfiguration, configurationClass, Type.DROPDOWN, client, frame, componentMetadata);
+	}
+	/**
+	 * Constructor. Provides manually the list of components which should be displayed.
+	 * @param choiceString If there is one then more choice of configurations the user can select, this string is shown directly above the configuration type chooser. Can be null.
+	 * @param lastConfiguration Last configuration which settings should be loaded. Can be null.
+	 * @param configurationClass The base class of all configurations which should be choosable.
+	 * @param type Type of visual representation of this sub-configuration menu.
+	 * @param client YouScope client.
+	 * @param frame Containing frame.
+	 * @param componentMetadata Metadata of the components which should be displayed.
+	 */
+	public SubConfigurationPanel(String choiceString, C lastConfiguration, Class<C> configurationClass, Type type, YouScopeClient client, YouScopeFrame frame, List<ComponentMetadata<? extends C>> componentMetadata)
+	{
 		this.client = client;
 		this.frame = frame;
 		this.lastConfiguration = lastConfiguration;
 		this.configurationClass = configurationClass;
-		componentBox = new ComponentComboBox<C>(client, configurationClass, requiredInterface);
-		if(lastConfiguration != null)
-			componentBox.setSelectedElement(lastConfiguration.getTypeIdentifier());
-		if(componentBox.getNumChoices()>1)
+		
+		ComponentMetadata<?> metadata;
+		if(type == Type.DROPDOWN)
 		{
-			if(choiceString != null)
-				add(new JLabel(choiceString));
-			add(componentBox);
-		}
-		componentBox.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ComponentMetadata<?> metadata = componentBox.getSelectedElement(); 
-				if(currentAddon != null)
-				{
-					ComponentMetadata<? extends C> oldMetadata = currentAddon.getAddonMetadata();
-					if(oldMetadata!= null && metadata!=null && oldMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
-						return;
-				}
-				displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
+			componentBox = new ComponentComboBox<C>(configurationClass, componentMetadata);
+			componentList = null;
+			if(lastConfiguration != null)
+				componentBox.setSelectedElement(lastConfiguration.getTypeIdentifier());
+			if(componentBox.getNumChoices()>1)
+			{
+				if(choiceString != null)
+					add(new JLabel(choiceString));
+				add(componentBox);
 			}
-		});
-		ComponentMetadata<?> metadata = componentBox.getSelectedElement(); 
+			componentBox.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ComponentMetadata<?> metadata = componentBox.getSelectedElement(); 
+					if(currentAddon != null)
+					{
+						ComponentMetadata<? extends C> oldMetadata = currentAddon.getAddonMetadata();
+						if(oldMetadata!= null && metadata!=null && oldMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
+							return;
+					}
+					displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
+				}
+			});
+			metadata = componentBox.getSelectedElement(); 
+		}
+		else
+		{
+			componentBox = null;
+			componentList = new ComponentList<C>(configurationClass, componentMetadata);
+			if(lastConfiguration != null)
+				componentList.setSelectedElement(lastConfiguration.getTypeIdentifier());
+			if(componentList.getNumChoices()>1)
+			{
+				if(choiceString != null)
+					add(new JLabel(choiceString));
+				add(new JScrollPane(componentList));
+			}
+			componentList.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ComponentMetadata<?> metadata = componentList.getSelectedElement(); 
+					if(currentAddon != null)
+					{
+						ComponentMetadata<? extends C> oldMetadata = currentAddon.getAddonMetadata();
+						if(oldMetadata!= null && metadata!=null && oldMetadata.getTypeIdentifier().equals(metadata.getTypeIdentifier()))
+							return;
+					}
+					displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
+				}
+			});
+			metadata = componentList.getSelectedElement(); 
+		}
 		addFillEmpty();
 		displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
 	}
@@ -109,7 +203,12 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	{
 		if(configuration == null)
 			return;
-		for(String id : componentBox.getAllTypeIdentifiers())
+		String[] typeIdentifiers;
+		if(componentBox != null)
+			typeIdentifiers = componentBox.getAllTypeIdentifiers();
+		else
+			typeIdentifiers = componentList.getAllTypeIdentifiers();
+		for(String id : typeIdentifiers)
 		{
 			if(id.equals(configuration.getTypeIdentifier()))
 			{
@@ -128,13 +227,33 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 	{
 		if(typeIdentifier == null)
 			return;
-		for(String id : componentBox.getAllTypeIdentifiers())
+		String[] typeIdentifiers;
+		if(componentBox != null)
+			typeIdentifiers = componentBox.getAllTypeIdentifiers();
+		else
+			typeIdentifiers = componentList.getAllTypeIdentifiers();
+		for(String id : typeIdentifiers)
 		{
 			if(id.equals(typeIdentifier))
 			{
 				displayAddonConfiguration(typeIdentifier);
 			}
 		}
+	}
+	
+	private static <C extends Configuration> List<ComponentMetadata<? extends C>> getComponentMetadata(YouScopeClient client, Class<C> configurationClass, Class<?>... requiredInterface)
+	{
+		ArrayList<ComponentMetadata<? extends C>> components = new ArrayList<ComponentMetadata<? extends C>>();
+		outerIter:for(ComponentMetadata<? extends C> metadata : client.getAddonProvider().getComponentMetadata(configurationClass))
+		{
+			for(Class<?> anInterface : requiredInterface)
+			{
+				if(anInterface != null && !anInterface.isAssignableFrom(metadata.getConfigurationClass()))
+					continue outerIter;
+			}
+			components.add(metadata);
+		}
+		return components;
 	}
 	
 	/**
@@ -192,7 +311,10 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 		}
 		
 		add(addonConfigurationPanel, pos);
-		componentBox.setSelectedElement(typeIdentifier);
+		if(componentBox != null)
+			componentBox.setSelectedElement(typeIdentifier);
+		else
+			componentList.setSelectedElement(typeIdentifier);
 		revalidate();
 		if(frame.isVisible())
 			frame.pack();

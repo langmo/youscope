@@ -11,13 +11,16 @@ import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 
 class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> implements DropletObserverResource
 {
-	public DefaultObserver(PositionInformation positionInformation, ResourceConfiguration configuration)
-					throws ConfigurationException {
+	/**
+	 * Serial Version UID.
+	 */
+	private static final long serialVersionUID = -9044352984010930940L;
+	public DefaultObserver(PositionInformation positionInformation, DefaultObserverConfiguration configuration)
+					throws ConfigurationException, RemoteException {
 		super(positionInformation, configuration, DefaultObserverConfiguration.TYPE_IDENTIFIER, DefaultObserverConfiguration.class, "Droplet-based microfluidics observer");
 	}
 	@Override

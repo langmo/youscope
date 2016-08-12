@@ -28,7 +28,6 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageAdapter;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDataAdapter;
@@ -42,11 +41,15 @@ import org.youscope.common.table.TableListener;
  */
 class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDetectionAddon
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -7479289653519664098L;
 	private ScriptEngine scriptEngine;
 	private final StringWriter outputListener = new StringWriter();
 	private volatile CellXLastResult lastResult = null;
 	private final ArrayList<TableListener> tableListeners = new ArrayList<TableListener>();
-	CellXAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	CellXAddon(PositionInformation positionInformation, CellXConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, CellXConfiguration.TYPE_IDENTIFIER,CellXConfiguration.class, "CellX cell detection.");
 	}

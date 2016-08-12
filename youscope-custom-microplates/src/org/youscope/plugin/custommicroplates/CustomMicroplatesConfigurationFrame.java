@@ -3,79 +3,85 @@
  */
 package org.youscope.plugin.custommicroplates;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.youscope.addon.AddonException;
+import org.youscope.addon.microplate.MicroplateWellSelectionUI;
+import org.youscope.addon.microplate.MicroplateWellSelectionUI.SelectionMode;
+import org.youscope.addon.microplate.RectangularMicroplateLayout;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.measurement.microplate.Microplate;
-import org.youscope.uielements.StandardFormats;
+import org.youscope.serverinterfaces.YouScopeServer;
+import org.youscope.uielements.DoubleTextField;
+import org.youscope.uielements.DynamicPanel;
+import org.youscope.uielements.IntegerTextField;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
-class CustomMicroplatesConfigurationFrame
+class CustomMicroplatesConfigurationPanel extends DynamicPanel
 {
-	private YouScopeFrame									frame;
 	
-	private JFormattedTextField					widthField					= new JFormattedTextField(StandardFormats.getDoubleFormat());
+	/**
+	 * Serial Version UID.
+	 */
+	private static final long serialVersionUID = 6284710357242774082L;
 
-	private JFormattedTextField					heightField					= new JFormattedTextField(StandardFormats.getDoubleFormat());
+	private DoubleTextField					widthField					= new DoubleTextField();
 
-	private JFormattedTextField					numXField					= new JFormattedTextField(StandardFormats.getIntegerFormat());
+	private DoubleTextField					heightField					= new DoubleTextField();
 
-	private JFormattedTextField					numYField					= new JFormattedTextField(StandardFormats.getIntegerFormat());
+	private IntegerTextField					numXField					= new IntegerTextField();
+
+	private IntegerTextField					numYField					= new IntegerTextField();
 
 	private JTextField microplateNameField 									= new JTextField();
 		
-	private Microplate microplateType;
-	private Vector<ActionListener> listeners = new Vector<ActionListener>();
-	private YouScopeClient client;
-	
-	CustomMicroplatesConfigurationFrame(YouScopeClient client, YouScopeFrame frame)
+	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>(1);
+	private CustomMicroplateDefinition microplateDefinition;
+	private final MicroplateWellSelectionUI microplateUI;
+	CustomMicroplatesConfigurationPanel(YouScopeClient client, final YouScopeServer server, YouScopeFrame frame)
 	{
-		this(client, frame, null);
+		this(client, server, frame, null);
 	}
-	CustomMicroplatesConfigurationFrame(YouScopeClient client, YouScopeFrame frame, Microplate microplateType)
+	CustomMicroplatesConfigurationPanel(final YouScopeClient client, final YouScopeServer server, final YouScopeFrame frame, CustomMicroplateDefinition microplateDefinition)
 	{
-		this.frame = frame;
-		this.microplateType = microplateType;
-		this.client = client;
-		
-		frame.setTitle("Custom Microplate Configuration");
-		frame.setResizable(false);
-		frame.setClosable(true);
-		frame.setMaximizable(false);
-		
-		GridBagLayout elementsLayout = new GridBagLayout();
-        GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-        JPanel elementsPanel = new JPanel(elementsLayout);
-        StandardFormats.addGridBagElement(new JLabel("Short Description of microplate:"), elementsLayout, newLineConstr, elementsPanel);
-        StandardFormats.addGridBagElement(microplateNameField, elementsLayout, newLineConstr, elementsPanel);
-        StandardFormats.addGridBagElement(new JLabel("Number of wells horizontal/vertical:"), elementsLayout, newLineConstr, elementsPanel);
+		if(microplateDefinition == null)
+			microplateDefinition = new CustomMicroplateDefinition();
+		this.microplateDefinition = microplateDefinition;
+		microplateUI = new MicroplateWellSelectionUI(client, server);
+		microplateUI.setSelectionMode(SelectionMode.NONE);
+		try {
+			addFill(microplateUI.toPanel(frame));
+		} catch (AddonException e2) {
+			client.sendError("Could not add visualization of microplate.", e2);
+		}
+		add(new JLabel("Name of microplate type:"));
+		add(microplateNameField);
+		add(new JLabel("Number of wells horizontal/vertical:"));
         JPanel numberPanel = new JPanel(new GridLayout(1, 2, 0, 3));
+        numXField.setMinimalValue(1);
         numberPanel.add(numXField);
+        numYField.setMinimalValue(1);
         numberPanel.add(numYField);
-        StandardFormats.addGridBagElement(numberPanel, elementsLayout, newLineConstr, elementsPanel);
-        StandardFormats.addGridBagElement(new JLabel("Distance wells horizontal/vertical (in um):"), elementsLayout, newLineConstr, elementsPanel);
+        add(numberPanel);
+        add(new JLabel("Distance wells horizontal/vertical (in um):"));
         JPanel distancePanel = new JPanel(new GridLayout(1, 2, 0, 3));
+        widthField.setMinimalValue(Double.MIN_NORMAL*10);
         distancePanel.add(widthField);
+        heightField.setMinimalValue(Double.MIN_NORMAL*10);
         distancePanel.add(heightField);
-        StandardFormats.addGridBagElement(distancePanel, elementsLayout, newLineConstr, elementsPanel);
+        add(distancePanel);
         
 		JButton closeButton = new JButton("Save");
 		closeButton.addActionListener(new ActionListener()
@@ -89,65 +95,63 @@ class CustomMicroplatesConfigurationFrame
                 		JOptionPane.showMessageDialog(null, "Microplate Description must be longer than three characters.", "Could not initialize microplate type", JOptionPane.INFORMATION_MESSAGE);
                 		return;
                 	}
-                	int numWellsX = ((Number)numXField.getValue()).intValue();
-                	int numWellsY = ((Number)numYField.getValue()).intValue();
-                	double wellWidth  = ((Number)widthField.getValue()).doubleValue();
-                	double wellHeight = ((Number)heightField.getValue()).doubleValue();
-
-                	String microplateID;
-                	if(CustomMicroplatesConfigurationFrame.this.microplateType != null)
+                	CustomMicroplateDefinition newDefinition = new CustomMicroplateDefinition();
+                	newDefinition.setNumWellsX(numXField.getValue());
+                	newDefinition.setNumWellsY(numYField.getValue());
+                	newDefinition.setWellWidth(widthField.getValue());
+                	newDefinition.setWellHeight(heightField.getValue());
+                	newDefinition.setCustomMicroplateName(microplateName);
+                	if(CustomMicroplatesConfigurationPanel.this.microplateDefinition != null)
                 	{
-                		microplateID = CustomMicroplatesConfigurationFrame.this.microplateType.getMicroplateID();
-                		try
-                		{
-                			CustomMicroplatesManager.deleteMicroplateTypeDefinition(CustomMicroplatesConfigurationFrame.this.microplateType);
-                		}
-                		catch(Exception e1)
-                		{
-                			CustomMicroplatesConfigurationFrame.this.client.sendError("Could not delete old microplate type definition.", e1);
-                		}
+                		String typeIdentifier = CustomMicroplateManager.getCustomMicroplateTypeIdentifier(CustomMicroplatesConfigurationPanel.this.microplateDefinition.getCustomMicroplateName());
+                		if(!CustomMicroplateManager.deleteCustomMicroplate(typeIdentifier))
+                			client.sendError("Could not delete old microplate type definition.", null);
                 	}
-                	else
-                	{
-                		microplateID = "custommicroplate_" + microplateName + ".xml";
-                	}
-                	CustomMicroplatesConfigurationFrame.this.microplateType = new CustomMicroplateType(numWellsX, numWellsY, wellWidth, wellHeight, microplateID, microplateName);
-                	
+                	CustomMicroplatesConfigurationPanel.this.microplateDefinition = newDefinition;
+               	
                 	try
 					{
-						CustomMicroplatesManager.saveMicroplateTypeDefinition(CustomMicroplatesConfigurationFrame.this.microplateType);
+						CustomMicroplateManager.saveCustomMicroplate(newDefinition);
 					}
-					catch(IOException e1)
+					catch(CustomMicroplateException e1)
 					{
-						CustomMicroplatesConfigurationFrame.this.client.sendError("Could not save microplate type definition.", e1);
+						client.sendError("Could not save microplate type definition.", e1);
 						return;
 					}
                 	
-                    CustomMicroplatesConfigurationFrame.this.frame.setVisible(false); 
+                    frame.setVisible(false); 
                     for(ActionListener listener : listeners)
                     {
                     	listener.actionPerformed(new ActionEvent(this, 155, "Microplate type created or edited."));
                     }
                 }
             });
+		add(closeButton);
 		
 		// Load data
-        if(microplateType != null)
-        {
-        	microplateNameField.setText(microplateType.getMicroplateName());
-        	widthField.setValue(microplateType.getWellWidth());
-        	heightField.setValue(microplateType.getWellHeight());
-        	numXField.setValue(microplateType.getNumWellsX());
-        	numYField.setValue(microplateType.getNumWellsY());
-        }
+        microplateNameField.setText(microplateDefinition.getCustomMicroplateName());
+        widthField.setValue(microplateDefinition.getWellWidth());
+        heightField.setValue(microplateDefinition.getWellHeight());
+        numXField.setValue(microplateDefinition.getNumWellsX());
+        numYField.setValue(microplateDefinition.getNumWellsY());
+        updateMicroplateUI();
         
-        JPanel contentPane = new JPanel(new BorderLayout());
-        contentPane.add(elementsPanel, BorderLayout.CENTER);
-        contentPane.add(closeButton, BorderLayout.SOUTH);
-        frame.setContentPane(contentPane);
-        frame.pack();
+        ActionListener dynamicChangeListener = new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateMicroplateUI();
+			}
+		};
+		widthField.addActionListener(dynamicChangeListener);
+        heightField.addActionListener(dynamicChangeListener);
+        numXField.addActionListener(dynamicChangeListener);
+        numYField.addActionListener(dynamicChangeListener);
 	}
-	
+	private void updateMicroplateUI()
+	{
+		microplateUI.setMicroplateLayout(new RectangularMicroplateLayout(numXField.getValue(), numYField.getValue(), widthField.getValue(), heightField.getValue()));
+	}
 	public void addActionListener(ActionListener listener)
 	{
 		listeners.add(listener);

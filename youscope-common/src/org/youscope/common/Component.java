@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.util.UUID;
 
 /**
- * Represents the base interface of all components of a measurement, that is, the mesurement itself, its tasks, the jobs and any
+ * Represents the base interface of all components of a measurement, that is, the measurement itself, its tasks, the jobs and any
  * eventually used resources.
  * @author Moritz Lang
  *

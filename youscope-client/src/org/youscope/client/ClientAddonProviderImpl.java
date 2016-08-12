@@ -15,7 +15,6 @@ import org.youscope.addon.component.ComponentAddonFactory;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentMetadata;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
-import org.youscope.addon.microplate.MicroplateAddonFactory;
 import org.youscope.addon.postprocessing.PostProcessorAddonFactory;
 import org.youscope.addon.skin.Skin;
 import org.youscope.addon.skin.SkinFactory;
@@ -25,7 +24,6 @@ import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.ClientAddonProvider;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.common.saving.MeasurementFileLocations;
 
 class ClientAddonProviderImpl implements ClientAddonProvider
@@ -35,7 +33,6 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 	private final List<ToolAddonFactory> toolAddonFactories = new ArrayList<ToolAddonFactory>(30);
 	private final List<SkinFactory> skinFactories = new ArrayList<SkinFactory>(5);
 	private final List<PostProcessorAddonFactory> postProcessorAddonFactories = new ArrayList<PostProcessorAddonFactory>(30);
-	private final List<MicroplateAddonFactory> microplateAddonFactories = new ArrayList<MicroplateAddonFactory>(30);
 	private final List<ScriptEngineFactory> scriptEngineFactories = new ArrayList<ScriptEngineFactory>(5); 
 	private static ClientAddonProviderImpl singleton = null;
 	/**
@@ -90,14 +87,6 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 		for(SkinFactory factory : skinFactories)
 		{
 			singleton.skinFactories.add(factory);
-		}
-		
-		// microplates
-		Iterable<MicroplateAddonFactory> microplateAddonFactories = ServiceLoader.load(MicroplateAddonFactory.class,
-				ClientAddonProviderImpl.class.getClassLoader());
-		for(MicroplateAddonFactory factory : microplateAddonFactories)
-		{
-			singleton.microplateAddonFactories.add(factory);
 		}
 		
 		// script engines
@@ -371,43 +360,6 @@ class ClientAddonProviderImpl implements ClientAddonProvider
 			}
 		}
 		return returnVal;
-	}
-	@Override
-	public List<Microplate> getMicroplateTypes() {
-		ArrayList<Microplate> returnVal = new ArrayList<Microplate>();
-		for(MicroplateAddonFactory addonFactory : microplateAddonFactories) 
-		{
-			for(String algorithmID : addonFactory.getSupportedTypeIdentifiers())
-			{
-				try {
-					returnVal.add(addonFactory.createMicroplateType(algorithmID));
-				} catch (AddonException e) {
-					ClientSystem.err.println("Microplate with type identifier "+algorithmID+" cannot be constructed. Skipping this microplate type.", e);
-				}
-			}
-		}
-		return returnVal;
-	}
-	@Override
-	public List<String> getMicroplateTypeIdentifiers() {
-		ArrayList<String> returnVal = new ArrayList<String>();
-		for(MicroplateAddonFactory addonFactory : microplateAddonFactories) 
-		{
-			for(String algorithmID : addonFactory.getSupportedTypeIdentifiers())
-			{
-				returnVal.add(algorithmID);
-			}
-		}
-		return returnVal;
-	}
-	@Override
-	public Microplate getMicroplateType(String typeIdentifier) throws AddonException {
-		for(MicroplateAddonFactory addonFactory : microplateAddonFactories) 
-		{
-			if(addonFactory.isSupportingTypeIdentifier(typeIdentifier))
-				return addonFactory.createMicroplateType(typeIdentifier);
-		}
-		throw new AddonException("Microplate type with type identifier " + typeIdentifier+" is unknown.");
 	}
 	@Override
 	public AddonUI<? extends AddonMetadata> createPostProcessorUI(String typeIdentifier, MeasurementFileLocations measurementFileLocations) throws AddonException {

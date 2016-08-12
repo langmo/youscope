@@ -194,7 +194,7 @@ class StageDeviceImpl extends DeviceImpl implements StageDeviceInternal
 			}
 			catch(Exception e)
 			{
-				throw new MicroscopeException("Cannot set stage position to " + Double.toString(x) + "/" + Double.toString(y) + ".", e);
+				throw new MicroscopeException("Cannot set stage position to " + Double.toString(xOrg) + "/" + Double.toString(yOrg) + ".", e);
 			}
 			Formatter formatter = new Formatter();
 			if(absolute)

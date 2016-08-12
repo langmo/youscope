@@ -26,7 +26,7 @@ import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobContainer;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.Well;
 import org.youscope.common.table.TableProducer;
 import org.youscope.common.task.MeasurementTask;
 import org.youscope.common.util.TextTools;

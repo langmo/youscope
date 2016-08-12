@@ -9,13 +9,16 @@ import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 
 
 class TableController  extends ResourceAdapter<TableControllerConfiguration> implements DropletControllerResource
 {
-	public TableController(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	/**
+	 * Serial Version UID.
+	 */
+	private static final long serialVersionUID = -6644190588089271841L;
+	public TableController(PositionInformation positionInformation, TableControllerConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, TableControllerConfiguration.TYPE_IDENTIFIER,TableControllerConfiguration.class, "Droplet-based microfluidics controller based on syringe table");
 	}

@@ -15,13 +15,18 @@ import org.youscope.addon.focussearch.FocusSearchResource;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 
 class BrentFocusSearchAddon extends ResourceAdapter<BrentFocusSearchConfiguration> implements FocusSearchResource
 {
 
-	BrentFocusSearchAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 7144091958406916252L;
+
+
+	BrentFocusSearchAddon(PositionInformation positionInformation, BrentFocusSearchConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, BrentFocusSearchConfiguration.CONFIGURATION_ID,BrentFocusSearchConfiguration.class, "Brent focus search");
 	}

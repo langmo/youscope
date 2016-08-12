@@ -33,7 +33,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
- * @author langmo
+ * Component to select or deselect rectangularly organized cells, e.g. wells are tiles.
+ * @author Moritz Lang
  */
 public class CellSelectionTable extends JScrollPane
 {
@@ -43,23 +44,23 @@ public class CellSelectionTable extends JScrollPane
 	 */
 	private static final long					serialVersionUID	= -3132224040673230873L;
 
-	protected int								numX;
+	private int								numX;
 
-	protected int								numY;
+	private int								numY;
 
-	protected CellSelectionTableModel			model				= new CellSelectionTableModel();
+	private CellSelectionTableModel			model				= new CellSelectionTableModel();
 
-	protected CellSelectionTableTable				table;
+	private CellSelectionTableTable				table;
 
-	protected boolean[][]						cellSelected;
+	private boolean[][]						cellSelected;
 
-	protected int								cellSize			= 25;
+	private int								cellSize			= 25;
 
-	protected Vector<CellSelectionListener>		changeListeners		= new Vector<CellSelectionListener>();
+	private Vector<CellSelectionListener>		changeListeners		= new Vector<CellSelectionListener>();
 
-	protected JList<String>								rowHeader;
+	private JList<String>								rowHeader;
 
-	protected CellSelectionTableConfiguration	configuration;
+	private CellSelectionTableConfiguration	configuration;
 
 	/**
 	 * Constructor.
@@ -135,7 +136,7 @@ public class CellSelectionTable extends JScrollPane
 	 * Returns the number of columns and rows of the table.
 	 * @return Number of columns and rows.
 	 */
-	public Dimension getDimension()
+	public Dimension getNumCells()
 	{
 		return new Dimension(numX, numY);
 	}
@@ -145,7 +146,7 @@ public class CellSelectionTable extends JScrollPane
 	 * @param numY Number of rows.
 	 * @param numX Number of columns.
 	 */
-	public void setDimension(int numY, int numX)
+	public void setNumCells(int numY, int numX)
 	{
 		if(numY <= 0 || numX <= 0)
 			return;

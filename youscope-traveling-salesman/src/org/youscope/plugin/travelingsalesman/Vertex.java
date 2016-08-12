@@ -3,31 +3,39 @@ package org.youscope.plugin.travelingsalesman;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.PositionInformation;
+import org.youscope.common.Well;
 
-class Vertex  extends Point2D.Double
+class Vertex extends Point2D.Double implements Comparable<Vertex>
 {
 	/**
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 8412311532339449645L;
-		final int wellX;
-		final int wellY;
-		final int posX;
-		final int posY;
+		final PositionInformation positionInformation;
 		final ArrayList<Vertex> edgesTo = new ArrayList<>(2);
-		public Vertex(double x, double y, int wellY, int wellX, int posY, int posX)
+		public Vertex(Point2D.Double position, PositionInformation positionInformation)
 		{
-			super(x,y);
-			this.wellX = wellX;
-			this.wellY = wellY;
-			this.posX = posX;
-			this.posY = posY;
+			super(position.getX(), position.getY());
+			this.positionInformation = positionInformation;
+		}
+		
+		Vertex(double x, double y, int wellY, int wellX, int tileY, int tileX)
+		{
+			super(x, y);
+			PositionInformation wellInfo = new PositionInformation(new Well(wellY, wellX));
+			PositionInformation tileInfo = new PositionInformation(wellInfo, PositionInformation.POSITION_TYPE_YTILE, tileY);
+			this.positionInformation = new PositionInformation(tileInfo, PositionInformation.POSITION_TYPE_XTILE, tileX);
 		}
 		
 		@Override
 		public String toString()
 		{
-			return new Well(wellY, wellX).toString()+"-"+Integer.toString(posY)+"-"+Integer.toString(posX);
+			return positionInformation.toString();
+		}
+
+		@Override
+		public int compareTo(Vertex o) {
+			return o==null ? -1 : positionInformation.compareTo(o.positionInformation);
 		}
 }

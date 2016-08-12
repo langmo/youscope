@@ -23,7 +23,6 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 
 /**
@@ -32,9 +31,13 @@ import org.youscope.common.resource.ResourceException;
  */
 class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> implements FocusScoreResource
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -6024785303326979225L;
 	private ScriptEngine scriptEngine = null;
 	private static final StringWriter ENGINE_WRITER = new StringWriter();
-	MatlabScoresAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	MatlabScoresAddon(PositionInformation positionInformation, MatlabScoresConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, MatlabScoresConfiguration.CONFIGURATION_ID, MatlabScoresConfiguration.class, "Matlab focus score");
 	}

@@ -25,7 +25,7 @@ class WaitSinceLastActionJobConfigurationAddon extends ComponentAddonUIAdapter<W
 	private final PeriodField waitTimeField = new PeriodField();
 	private final PeriodField initialWaitTimeField = new PeriodField();
 	private final IntegerTextField actionIDField = new IntegerTextField();
-	private final JCheckBox resetAfterIterationField = new JCheckBox("Reset timer after each iteration.");
+	private final JCheckBox resetAfterIterationField = new JCheckBox("Reset timer after each iteration."); 
 	
 	/**
 	 * Constructor.

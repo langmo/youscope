@@ -22,7 +22,6 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageAdapter;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException; 
 
 /**
@@ -31,13 +30,17 @@ import org.youscope.common.resource.ResourceException;
  */
 class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> implements CellVisualizationAddon
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 783142044778589073L;
 	private ScriptEngine scriptEngine;
 	private final StringWriter outputListener = new StringWriter();
 	private MatlabFunctionCreator functionCreator = null;
 	private final static String[] MATLAB_INVOKER_ARGUMENTS = {"imageEvent", "detectionResult", "glowStrength", "imageSink"};
 	
 	 
-	GlowVisualizerAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	GlowVisualizerAddon(PositionInformation positionInformation, GlowVisualizerConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, GlowVisualizerConfiguration.CONFIGURATION_ID,GlowVisualizerConfiguration.class, "Glow Visualizer");
 	}

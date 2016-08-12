@@ -6,17 +6,14 @@ package org.youscope.common;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.youscope.common.measurement.microplate.Well;
-
 /**
  * Every job has a certain logical position where it gets evaluated, e.g. in a certain well, at a certain tile, in a certain focus position, being part of a focus stack.
  * This class provides information about this position.
- * <br>
  * The class is immutable.
  * @author Moritz Lang
  * 
  */
-public final class PositionInformation implements Serializable, Cloneable
+public final class PositionInformation implements Serializable, Comparable<PositionInformation>
 {
 	/**
 	 * Serial version UID.
@@ -102,6 +99,21 @@ public final class PositionInformation implements Serializable, Cloneable
 		positionTypes = new String[parentInformation.getNumPositions() + 1];
 		System.arraycopy(parentInformation.getPositionTypes(), 0, positionTypes, 0, parentInformation.getNumPositions());
 		positionTypes[positions.length - 1] = positionType;
+	}
+	
+	/**
+	 * Creates a new position information with well set to null and the given position as only configured position.
+	 * @param positionType The type of the position. Use constants defined in this class when possible, and otherwise strings with a length of at least 3 characters.
+	 * @param position The position in the position type, starting at 0.
+	 */
+	public PositionInformation(String positionType, int position)
+	{
+		if(positionType == null || positionType.length() < 3)
+			throw new IllegalArgumentException("Position type must be not null and have a length of at least 3 characters.");
+		well = null;
+
+		positions = new int[]{position};
+		positionTypes = new String[]{positionType};
 	}
 
 	/**
@@ -209,20 +221,6 @@ public final class PositionInformation implements Serializable, Cloneable
 	}
 
 	@Override
-	public PositionInformation clone()
-	{
-		try
-		{
-			PositionInformation clone = (PositionInformation) super.clone();
-			return clone;
-		}
-		catch(CloneNotSupportedException e)
-		{
-			throw new RuntimeException("Clone not supported", e); // won't happen.
-		}
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -251,5 +249,31 @@ public final class PositionInformation implements Serializable, Cloneable
 		} else if (!well.equals(other.well))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public int compareTo(PositionInformation o) {
+		if(o==null)
+			return -1;
+		if(well == null && o.well != null)
+			return -1;
+		else if (well != null && o.well == null)
+			return 1;
+		else if(well != null && o.well != null)
+		{
+			int compare = well.compareTo(o.well);
+			if(compare != 0)
+				return compare;
+		}
+		for(int i=0; i<positions.length && i < o.positions.length; i++)
+		{
+			if(positions[i]!=o.positions[i])
+				return positions[i] < o.positions[i] ? -1 : 1;
+		}
+		if(positions.length < o.positions.length)
+			return -1;
+		else if(positions.length > o.positions.length)
+			return 1;
+		return 0;
 	}
 }

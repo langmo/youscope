@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/youscope-common"/>
 	<classpathentry kind="src" path="/youscope-addon"/>
+	<classpathentry kind="lib" path="/youscope-all/lib/xstream-1.4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

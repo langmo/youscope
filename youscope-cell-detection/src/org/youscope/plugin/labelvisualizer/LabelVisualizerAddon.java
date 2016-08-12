@@ -18,7 +18,6 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.table.ColumnView;
 import org.youscope.common.table.TableEntry;
 import org.youscope.common.table.TableException;
@@ -32,6 +31,10 @@ import org.youscope.common.util.ImageTools;
  */
 class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration> implements CellVisualizationAddon
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2086877835027192450L;
 	private static final int TEXT_PIXEL_DIST_HORIZONTAL = 12;
 	private static final int TEXT_PIXEL_DIST_VERTICAL = 0;
 	private static final float FONT_SIZE = 11f;
@@ -48,7 +51,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 			{0, 255, 255},
 			{255, 255, 255}
 	};
-	LabelVisualizerAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	LabelVisualizerAddon(PositionInformation positionInformation, LabelVisualizerConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, LabelVisualizerConfiguration.CONFIGURATION_ID,LabelVisualizerConfiguration.class, "Label Visualizer");
 	}

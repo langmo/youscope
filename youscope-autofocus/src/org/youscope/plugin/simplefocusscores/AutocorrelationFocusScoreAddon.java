@@ -10,7 +10,6 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 
 /**
@@ -19,7 +18,12 @@ import org.youscope.common.resource.ResourceException;
  */
 class AutocorrelationFocusScoreAddon extends ResourceAdapter<AutocorrelationFocusScoreConfiguration> implements FocusScoreResource
 {
-	AutocorrelationFocusScoreAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 7299358519034460185L;
+
+	AutocorrelationFocusScoreAddon(PositionInformation positionInformation, AutocorrelationFocusScoreConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, AutocorrelationFocusScoreConfiguration.CONFIGURATION_ID, AutocorrelationFocusScoreConfiguration.class, "Autocorrelation score");
 	}

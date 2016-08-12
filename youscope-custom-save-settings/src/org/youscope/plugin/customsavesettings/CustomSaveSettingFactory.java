@@ -80,8 +80,9 @@ public class CustomSaveSettingFactory extends ComponentAddonFactoryAdapter
 		else if(!(configuration instanceof CustomSaveSettingConfiguration))
 			throw new AddonException("Configuration with type identifier " + configuration.getTypeIdentifier() + " has class " + configuration.getClass().getName()+", which is not of class " + CustomSaveSettingConfiguration.class.getName() + " which is expected.");
 		CustomSaveSettingType type = getType(configuration.getTypeIdentifier());
-		CustomSaveSetting saveSetting = new CustomSaveSetting(positionInformation, (CustomSaveSettingConfiguration)configuration);
+		CustomSaveSetting saveSetting;
 		try {
+			saveSetting = new CustomSaveSetting(positionInformation, (CustomSaveSettingConfiguration)configuration);
 			saveSetting.setSaveSettingType(type);
 		} catch (Exception e) {
 			throw new AddonException("Could not set custom save setting type.", e);

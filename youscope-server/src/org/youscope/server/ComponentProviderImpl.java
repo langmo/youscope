@@ -28,10 +28,11 @@ class ComponentProviderImpl extends UnicastRemoteObject implements ComponentProv
 	private static final HashMap<String, ComponentAddonFactory> supportedFactories = new HashMap<String, ComponentAddonFactory>(50);
 	private static volatile boolean initialized = false;
 	
-	private static synchronized void initialize()
+	private static synchronized void initialize(boolean force)
 	{
-		if(initialized)
+		if(initialized && !force)
 			return;
+		supportedFactories.clear();
 		ServiceLoader<ComponentAddonFactory> nativeFactories =
                 ServiceLoader.load(ComponentAddonFactory.class,
                 		ComponentProviderImpl.class.getClassLoader());
@@ -64,10 +65,16 @@ class ComponentProviderImpl extends UnicastRemoteObject implements ComponentProv
 		if(positionInformation == null)
 			throw new ComponentCreationException("Position information is null.");
 
-		initialize();
+		initialize(false);
 		ComponentAddonFactory factory = supportedFactories.get(configuration.getTypeIdentifier());
 		if(factory == null)
-			throw new ComponentCreationException("Configuration type identifier " + configuration.getTypeIdentifier() + " unknown.");
+		{
+			// try to reload all factories...
+			initialize(true);
+			factory = supportedFactories.get(configuration.getTypeIdentifier());
+			if(factory == null)
+				throw new ComponentCreationException("Configuration type identifier " + configuration.getTypeIdentifier() + " unknown.");
+		}
 		try {
 			return factory.createComponent(positionInformation, configuration, constructionContext);
 		} 
@@ -120,10 +127,16 @@ class ComponentProviderImpl extends UnicastRemoteObject implements ComponentProv
 			throw new ComponentCreationException("Position information is null.");
 		if(typeIdentifier == null)
 			throw new ComponentCreationException("Type identifier is null.");
-		initialize();
+		initialize(false);
 		ComponentAddonFactory factory = supportedFactories.get(typeIdentifier);
 		if(factory == null)
-			throw new ComponentCreationException("No factory/addon for the creation of components with type identifier " + typeIdentifier + " available.");
+		{
+			// try to reload all factories...
+			initialize(true);
+			factory = supportedFactories.get(typeIdentifier);
+			if(factory == null)
+				throw new ComponentCreationException("Configuration type identifier " + typeIdentifier + " unknown.");
+		}
 		ComponentMetadata<?> metadata;
 		try
 		{

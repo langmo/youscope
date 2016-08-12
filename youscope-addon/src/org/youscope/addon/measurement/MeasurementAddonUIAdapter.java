@@ -116,17 +116,53 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				if(currentPage < 1)
-					return;
 				if(!pages.get(currentPage).saveData(configuration))
 					return;
-				
+				if(currentPage <= 0)
+					return;
 				currentPage--;
-				pages.get(currentPage).loadData(configuration);
-				pagesLayout.previous(pagesPanel);
-				if(currentPage < 1)
+				while(currentPage >= 0 && !pages.get(currentPage).isAppear(configuration))
+				{
+					currentPage--;
+				}
+				if(currentPage < 0)
+				{
+					for(currentPage = 0; currentPage < pages.size(); currentPage++)
+					{
+						if(pages.get(currentPage).isAppear(configuration))
+							break;
+					}
+				}
+				MeasurementAddonUIPage<? super T> page = pages.get(currentPage);
+				page.loadData(configuration);
+				pagesLayout.show(pagesPanel, page.getPageName());
+				boolean firstPage = true;
+				for(int pageID = 0; pageID<currentPage; pageID++)
+				{
+					if(pages.get(pageID).isAppear(configuration))
+					{
+						firstPage = false;
+						break;
+					}
+				}
+				if(firstPage)
 					previousButton.setEnabled(false);
-				nextButton.setText("Next");
+				else
+					previousButton.setEnabled(true);
+				
+				boolean lastPage = true;
+				for(int pageID = pages.size()-1; pageID>currentPage; pageID--)
+				{
+					if(pages.get(pageID).isAppear(configuration))
+					{
+						lastPage = false;
+						break;
+					}
+				}
+				if(lastPage)
+					nextButton.setText("Finish");
+				else
+					nextButton.setText("Next");
 				getContainingFrame().pack();
 			}
 		});
@@ -138,18 +174,47 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 			{
 				if(!pages.get(currentPage).saveData(configuration))
 					return;
-				if(currentPage >= pages.size() - 1)
+				currentPage++;
+				while(currentPage < pages.size() && !pages.get(currentPage).isAppear(configuration))
+				{
+					currentPage++;
+				}
+				if(currentPage >= pages.size())
 				{
 					closeAddon();
 					return;
 				}
+				MeasurementAddonUIPage<? super T> page = pages.get(currentPage);
+				page.loadData(configuration);
+				pagesLayout.show(pagesPanel, page.getPageName());
+				boolean firstPage = true;
+				for(int pageID = 0; pageID<currentPage; pageID++)
+				{
+					if(pages.get(pageID).isAppear(configuration))
+					{
+						firstPage = false;
+						break;
+					}
+				}
+				if(firstPage)
+					previousButton.setEnabled(false);
+				else
+					previousButton.setEnabled(true);
+				nextButton.setText("Next");
 				
-				currentPage++;
-				pages.get(currentPage).loadData(configuration);
-				pagesLayout.next(pagesPanel);
-				if(currentPage >= pages.size() - 1)
+				boolean lastPage = true;
+				for(int pageID = pages.size()-1; pageID>currentPage; pageID--)
+				{
+					if(pages.get(pageID).isAppear(configuration))
+					{
+						lastPage = false;
+						break;
+					}
+				}
+				if(lastPage)
 					nextButton.setText("Finish");
-				previousButton.setEnabled(true);
+				else
+					nextButton.setText("Next");
 				getContainingFrame().pack();
 			}
 		});

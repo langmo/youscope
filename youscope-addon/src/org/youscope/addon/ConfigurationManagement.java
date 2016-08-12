@@ -28,8 +28,7 @@ import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.MeasurementConfiguration;
-import org.youscope.common.measurement.microplate.MicroplateConfiguration;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.Well;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.saving.SaveSettingsConfiguration;
 import org.youscope.common.task.PeriodConfiguration;
@@ -113,7 +112,7 @@ public class ConfigurationManagement
 		xstream.aliasSystemAttribute("type", "class");
 
 		// First, process the annotations of the classes in this package.
-		xstream.processAnnotations(new Class<?>[] {SaveSettingsConfiguration.class, Well.class, MicroplateConfiguration.class, FocusConfiguration.class, JobConfiguration.class, MeasurementConfiguration.class, PeriodConfiguration.class, RegularPeriodConfiguration.class, TaskConfiguration.class, VaryingPeriodConfiguration.class, DeviceSetting.class});
+		xstream.processAnnotations(new Class<?>[] {SaveSettingsConfiguration.class, Well.class, FocusConfiguration.class, JobConfiguration.class, MeasurementConfiguration.class, PeriodConfiguration.class, RegularPeriodConfiguration.class, TaskConfiguration.class, VaryingPeriodConfiguration.class, DeviceSetting.class});
 
 		// Now, process all classes provided by the service providers
 		ServiceLoader<ComponentAddonFactory> componentAddonFactories = ServiceLoader.load(ComponentAddonFactory.class, ConfigurationManagement.class.getClassLoader());

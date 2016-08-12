@@ -1,0 +1,3 @@
+org.youscope.plugin.nonoptimizedpath.NonOptimizedPathFactory
+org.youscope.plugin.zigzagpath.ZigZagPathFactory
+org.youscope.plugin.screeningpath.ScreeningPathFactory

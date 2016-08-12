@@ -1,6 +1,7 @@
 package org.youscope.plugin.standardsavesettings;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Date;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.Well;
 import org.youscope.common.resource.ResourceAdapter;
 import org.youscope.common.saving.FileNameMacroConverter;
 import org.youscope.common.saving.SaveInformation;
@@ -22,6 +23,10 @@ import org.youscope.common.saving.SaveSettings;
 public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsConfiguration> implements SaveSettings
 {
 
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -3600016559165429159L;
 	private static final String FILE_NAME_MACRO = "%N_position%4w%2p_time%4n";
 	
 	/**
@@ -29,9 +34,10 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	 * @param positionInformation Position information.
 	 * @param configuration configuration of the save settings.
 	 * @throws ConfigurationException
+	 * @throws RemoteException 
 	 */
 	public StandardSaveSettings(PositionInformation positionInformation, StandardSaveSettingsConfiguration configuration)
-					throws ConfigurationException {
+					throws ConfigurationException, RemoteException {
 		super(positionInformation, configuration, StandardSaveSettingsConfiguration.TYPE_IDENTIFIER, StandardSaveSettingsConfiguration.class, "standard save settings");
 	}
 

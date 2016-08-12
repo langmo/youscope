@@ -10,7 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,12 +24,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.tool.ToolAddonUIAdapter;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.measurement.microplate.Microplate;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.StandardFormats;
@@ -40,7 +40,7 @@ import org.youscope.uielements.StandardFormats;
  */
 class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 {	
-	private JList<Microplate> microplateTypesList;
+	private JList<ComponentMetadataAdapter<CustomMicroplateConfiguration>> microplateTypesList;
 	/**
 	 * Constructor.
 	 * @param client Interface to the YouScope client.
@@ -81,8 +81,11 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 public void actionPerformed(ActionEvent e)
                 {
                 	YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
-                	CustomMicroplatesConfigurationFrame configFrame = new CustomMicroplatesConfigurationFrame(getClient(), newFrame);
-                	configFrame.addActionListener(CustomMicroplatesTool.this);
+                	CustomMicroplatesConfigurationPanel configPanel = new CustomMicroplatesConfigurationPanel(getClient(), getServer(), newFrame);
+                	configPanel.addActionListener(CustomMicroplatesTool.this);
+                	newFrame.setTitle("New Custom Microplate");
+                	newFrame.setContentPane(configPanel);
+                	newFrame.pack();
                 	newFrame.setVisible(true);
                 }
             });
@@ -94,19 +97,15 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	Microplate microplateType = microplateTypesList.getSelectedValue();
+                	ComponentMetadataAdapter<CustomMicroplateConfiguration> microplateType = microplateTypesList.getSelectedValue();
                     if (microplateType == null)
                         return;
-                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the microplate type \"" + microplateType.getMicroplateName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
+                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the microplate type \"" + microplateType.getTypeName() + "\" really be deleted?", "Delete Microplate", JOptionPane.YES_NO_OPTION);
 					if(shouldDelete != JOptionPane.YES_OPTION)
 						return;
-					try
+					if(!CustomMicroplateManager.deleteCustomMicroplate(microplateType.getTypeIdentifier()))
 					{
-						CustomMicroplatesManager.deleteMicroplateTypeDefinition(microplateType);
-					}
-					catch(FileNotFoundException e1)
-					{
-						sendErrorMessage("Could not delete microplate type definition.", e1);
+						sendErrorMessage("Could not delete microplate type definition.", null);
 						return;
 					}
 					CustomMicroplatesTool.this.actionPerformed(e);
@@ -120,14 +119,23 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                	Microplate microplateType = microplateTypesList.getSelectedValue();
+                	ComponentMetadataAdapter<CustomMicroplateConfiguration> microplateType = microplateTypesList.getSelectedValue();
                     if (microplateType == null)
                         return;
-               
+                    CustomMicroplateDefinition microplateDefinition;
+					try {
+						microplateDefinition = CustomMicroplateManager.getCustomMicroplate(microplateType.getTypeIdentifier());
+					} catch (CustomMicroplateException e1) {
+						sendErrorMessage("Could not load custom microplate definition.", e1);
+						return;
+					}
                     YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
-                    CustomMicroplatesConfigurationFrame configFrame = new CustomMicroplatesConfigurationFrame(getClient(), newFrame, microplateType);
-                	configFrame.addActionListener(CustomMicroplatesTool.this);
-                    newFrame.setVisible(true);
+                	CustomMicroplatesConfigurationPanel configPanel = new CustomMicroplatesConfigurationPanel(getClient(), getServer(), newFrame, microplateDefinition);
+                	configPanel.addActionListener(CustomMicroplatesTool.this);
+                	newFrame.setTitle("New Custom Microplate");
+                	newFrame.setContentPane(configPanel);
+                	newFrame.pack();
+                	newFrame.setVisible(true);
                 }
             });
 
@@ -139,9 +147,9 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
         StandardFormats.addGridBagElement(deleteMicroplateTypeButton, elementsLayout, newLineConstr, buttonPanel);
         StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, buttonPanel);
 
-        microplateTypesList = new JList<Microplate>();
+        microplateTypesList = new JList<ComponentMetadataAdapter<CustomMicroplateConfiguration>>();
         microplateTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        class MicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<Microplate> 
+        class MicroplateTypesCellRenderer extends JLabel implements ListCellRenderer<ComponentMetadataAdapter<CustomMicroplateConfiguration>> 
 		{
 			/**
 			 * Serial Version UID
@@ -149,9 +157,9 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 			private static final long	serialVersionUID	= 239461111656492466L;
 
 			@Override
-			public Component getListCellRendererComponent(JList<? extends Microplate> list, Microplate value, int index, boolean isSelected, boolean cellHasFocus)
+			public Component getListCellRendererComponent(JList<? extends ComponentMetadataAdapter<CustomMicroplateConfiguration>> list, ComponentMetadataAdapter<CustomMicroplateConfiguration> value, int index, boolean isSelected, boolean cellHasFocus)
 		    {
-				String text = value.getMicroplateName();
+				String text = value.getTypeName();
 		        setText(text);
 		        if (isSelected) 
 		        {
@@ -187,7 +195,13 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 	
 	private void refreshMicroplateTypesList()
 	{
-		 microplateTypesList.setListData(CustomMicroplatesManager.getMicroplateTypes());
+		String identifiers[] = CustomMicroplateManager.getCustomMicroplateTypeIdentifiers();
+		Vector<ComponentMetadataAdapter<CustomMicroplateConfiguration>> metadata = new Vector<>(identifiers.length);
+		for(String identifier : identifiers)
+		{
+			metadata.addElement(CustomMicroplateManager.getMetadata(identifier));
+		}
+		microplateTypesList.setListData(metadata);
 	}
 
 	@Override

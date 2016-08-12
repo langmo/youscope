@@ -68,9 +68,7 @@ public class TestCases
 		System.out.println("=================");
 		for(Vertex vertex:testCase)
 		{
-			String wellY = ""+(char) ('A'+vertex.wellY);
-			String wellX = Integer.toString(vertex.wellX+1);
-			System.out.println(wellY+wellX+": x/y="+Double.toString(vertex.x)+"/"+Double.toString(vertex.y));
+			System.out.println(vertex.positionInformation.getWell().toString()+": x/y="+Double.toString(vertex.x)+"/"+Double.toString(vertex.y));
 		}
 		Vertex[] path;
 		if(algo == 1)
@@ -118,9 +116,7 @@ public class TestCases
 		{
 			if(i>0)
 				System.out.print(" -> ");
-			String wellY = ""+(char) ('A'+path[i].wellY);
-			String wellX = Integer.toString(path[i].wellX+1);
-			System.out.print(wellY+wellX);
+			System.out.print(path[i].positionInformation.getWell().toString());
 		}
 		System.out.println();
 	}

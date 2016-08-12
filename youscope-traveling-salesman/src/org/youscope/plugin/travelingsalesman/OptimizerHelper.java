@@ -1,15 +1,16 @@
 package org.youscope.plugin.travelingsalesman;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.PositionInformation;
 import org.youscope.common.resource.ResourceException;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
-import org.youscope.plugin.microplatemeasurement.XYAndFocusPosition;
 import org.youscope.plugin.travelingsalesman.blossom.BlossomAlgorithm;
 import org.youscope.plugin.travelingsalesman.blossom.BlossomException;
 import org.youscope.plugin.travelingsalesman.blossom.BlossomListener;
@@ -97,7 +98,7 @@ class OptimizerHelper
 		{
 			minFrom = -1;
 			minTo = -1;
-			minDist = Double.MAX_VALUE;
+			minDist = java.lang.Double.MAX_VALUE;
 			// Prefer leaf vertices to be connected to new vertices.
 			for(int i=numTreeVertices-1; i>=0; i--)
 			{
@@ -137,31 +138,26 @@ class OptimizerHelper
 		return hamiltonianCycle.toArray(new Vertex[hamiltonianCycle.size()]);
 	}
 	
-	public static Collection<Vertex> toVertices(MicroplatePositionConfiguration posConf) throws InterruptedException
+	public static Collection<Vertex> toVertices(Map<PositionInformation, ? extends Point2D.Double> positions) throws InterruptedException
 	{
 		// Represent all positions in the microplate as a Vertex.
-		ArrayList<Vertex> vertices = new ArrayList<>(posConf.getNumMeasuredWells()*posConf.getNumMeasuredPos());
-		for(int wellY = 0; wellY < posConf.getNumWellsY(); wellY++)
+		ArrayList<Vertex> vertices = new ArrayList<>(positions.size());
+		for(Entry<PositionInformation, ? extends Point2D.Double> position : positions.entrySet())
 		{
-			for(int wellX = 0; wellX < posConf.getNumWellsX(); wellX++)
-			{
-				if(!posConf.isMeasureWell(new Well(wellY, wellX)))
-					continue;
-				for(int posY = 0; posY < posConf.getWellNumPositionsY(); posY++)
-				{
-					for(int posX =0; posX < posConf.getWellNumPositionsX(); posX++)
-					{
-						if(Thread.interrupted())
-							throw new InterruptedException();
-						if(!posConf.isMeasurePosition(posY, posX))
-							continue;
-						XYAndFocusPosition pos = posConf.getPosition(new Well(wellY, wellX), posY, posX);
-						vertices.add(new Vertex(pos.getX(), pos.getY(), wellY, wellX, posY, posX));
-					}
-				}
-			}
+			vertices.add(new Vertex(position.getValue(), position.getKey()));
 		}
+		Collections.sort(vertices);
 		return vertices;
+	}
+	public static List<PositionInformation> toOutput(Vertex[] path)
+	{
+		// Convert to output format
+		ArrayList<PositionInformation> result = new ArrayList<>(path.length);
+		for(final Vertex vertex:path)
+		{
+			result.add(vertex.positionInformation);
+		}
+		return result;
 	}
 	
 	/**
@@ -217,7 +213,7 @@ class OptimizerHelper
 			@Override
 			public void dualUpdate(double dualChange) {
 				System.out.println("/* Dual update:");
-				System.out.println("delta="+ Double.toString(dualChange));
+				System.out.println("delta="+ java.lang.Double.toString(dualChange));
 				System.console().readLine("Press button to continue!");
 			}
 		});
@@ -234,7 +230,7 @@ class OptimizerHelper
 			for(org.youscope.plugin.travelingsalesman.blossom.Vertex blossomVertex : blossomVertices)
 			{
 				Vertex vertex = (Vertex) blossomVertex.getContent();
-				initialState.append(vertex.toString()+"(x="+Double.toString(vertex.x)+", y="+Double.toString(vertex.y)+")\n");
+				initialState.append(vertex.toString()+"(x="+java.lang.Double.toString(vertex.x)+", y="+java.lang.Double.toString(vertex.y)+")\n");
 			}
 			
 			throw new ResourceException("Could not calculate perfect matching with Blossom algorithm.\nInitial state:\n"+initialState.toString()+"\n\nCurrent state:\n"+state, e);
@@ -307,7 +303,7 @@ class OptimizerHelper
 			for(org.youscope.plugin.travelingsalesman.blossom.Vertex blossomVertex : blossomVertices)
 			{
 				Vertex vertex = (Vertex) blossomVertex.getContent();
-				initialState.append(vertex.toString()+"(x="+Double.toString(vertex.x)+", y="+Double.toString(vertex.y)+")\n");
+				initialState.append(vertex.toString()+"(x="+java.lang.Double.toString(vertex.x)+", y="+java.lang.Double.toString(vertex.y)+")\n");
 			}
 			
 			throw new ResourceException("Could not calculate perfect matching with Blossom algorithm.\nInitial state:\n"+initialState.toString()+"\n\nCurrent state:\n"+state, e);
@@ -424,8 +420,8 @@ class OptimizerHelper
 		}
 		else
 		{
-			tours[0] = Double.MAX_VALUE;
-			tours[1] = Double.MAX_VALUE;
+			tours[0] = java.lang.Double.MAX_VALUE;
+			tours[1] = java.lang.Double.MAX_VALUE;
 		}
 		
 		if(v3 != null)
@@ -435,11 +431,11 @@ class OptimizerHelper
 		}
 		else
 		{
-			tours[2] = Double.MAX_VALUE;
-			tours[3] = Double.MAX_VALUE;
+			tours[2] = java.lang.Double.MAX_VALUE;
+			tours[3] = java.lang.Double.MAX_VALUE;
 		}
 		int bestTour = -1;
-		double minCost = Double.MAX_VALUE;
+		double minCost = java.lang.Double.MAX_VALUE;
 		for(int i=0; i<4; i++)
 		{
 			if(tours[i]<minCost)

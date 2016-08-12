@@ -16,7 +16,12 @@ import org.youscope.common.resource.ResourceException;
  */
 class ExhaustiveFocusSearchAddon extends ResourceAdapter<ExhaustiveFocusSearchConfiguration> implements FocusSearchResource
 {
-	ExhaustiveFocusSearchAddon(PositionInformation positionInformation, ExhaustiveFocusSearchConfiguration configuration) throws ConfigurationException
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -1378968222326190628L;
+
+	ExhaustiveFocusSearchAddon(PositionInformation positionInformation, ExhaustiveFocusSearchConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, ExhaustiveFocusSearchConfiguration.CONFIGURATION_ID, ExhaustiveFocusSearchConfiguration.class, "Exhaustive focus search");
 	}

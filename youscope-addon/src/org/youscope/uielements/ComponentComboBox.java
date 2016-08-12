@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -223,7 +224,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	 * @param configurationClass Configuration class of components, e.g. JobConfiguration.class.
 	 * @param componentMetadata Metadata of the components which can be selected.
 	 */
-	public ComponentComboBox(Class<C> configurationClass, ComponentMetadata<? extends C>[] componentMetadata)
+	public ComponentComboBox(Class<C> configurationClass, List<ComponentMetadata<? extends C>> componentMetadata)
 	{
 		setHorizontalAlignment(SwingConstants.LEFT);
 		componentChooser = new JPopupMenu();
@@ -238,7 +239,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
                 		componentChooser.show(ComponentComboBox.this, getWidth(), 0);
                 }
             }); 
-		numChoices = componentMetadata.length;
+		numChoices = componentMetadata.size();
 		createHierachy(componentMetadata);
 		setSelectedElement((String)null);
 	}
@@ -328,7 +329,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		}
 	}
 	
-	private void createHierachy(ComponentMetadata<? extends C>[] componentMetadata)
+	private void createHierachy(List<ComponentMetadata<? extends C>> componentMetadata)
 	{
 		ImageIcon folderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Folder");
 		JMenu rootMenu = new JMenu();
@@ -398,7 +399,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		}
 	}
 	
-	private static <C extends Configuration> ComponentMetadata<? extends C>[] getComponentMetadata(YouScopeClient client, Class<C> configurationClass, Class<?>... requiredInterface)
+	private static <C extends Configuration> List<ComponentMetadata<? extends C>> getComponentMetadata(YouScopeClient client, Class<C> configurationClass, Class<?>... requiredInterface)
 	{
 		ArrayList<ComponentMetadata<? extends C>> components = new ArrayList<ComponentMetadata<? extends C>>();
 		outerIter:for(ComponentMetadata<? extends C> metadata : client.getAddonProvider().getComponentMetadata(configurationClass))
@@ -410,8 +411,6 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 			}
 			components.add(metadata);
 		}
-		@SuppressWarnings("unchecked")
-		ComponentMetadata<? extends C>[] returnVal = (ComponentMetadata<? extends C>[]) components.toArray(new ComponentMetadata<?>[components.size()]);
-		return returnVal;
+		return components;
 	}
 }

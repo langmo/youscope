@@ -20,15 +20,20 @@ import org.youscope.common.saving.SaveSettings;
  */
 public class CustomSaveSetting extends ResourceAdapter<CustomSaveSettingConfiguration> implements SaveSettings
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 3381618438101487879L;
 	private CustomSaveSettingType saveSettingType = null;
 	/**
 	 * Constructor.
 	 * @param positionInformation Position information.
 	 * @param configuration configuration of the save settings.
 	 * @throws ConfigurationException
+	 * @throws RemoteException 
 	 */
 	public CustomSaveSetting(PositionInformation positionInformation, CustomSaveSettingConfiguration configuration)
-					throws ConfigurationException {
+					throws ConfigurationException, RemoteException {
 		super(positionInformation, configuration, configuration.getTypeIdentifier(), CustomSaveSettingConfiguration.class, "custom save settings");
 	}
 	

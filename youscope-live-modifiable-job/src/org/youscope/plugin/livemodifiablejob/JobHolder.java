@@ -3,7 +3,7 @@ package org.youscope.plugin.livemodifiablejob;
 import java.rmi.RemoteException;
 
 import org.youscope.common.PositionInformation;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.Well;
 
 class JobHolder
 {

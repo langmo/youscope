@@ -142,10 +142,10 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 			numPositionsSelection.setVisible(false);
 		}
 		
-		widthField.setValue(configuration.getMicroplatePositions().getWellWidth());
-		heightField.setValue(configuration.getMicroplatePositions().getWellHeight());
+		widthField.setValue(configuration.getMicroplatePositions().getTileWidth());
+		heightField.setValue(configuration.getMicroplatePositions().getTileHeight());
 		numXField.setValue(configuration.getMicroplatePositions().getNumWellsX());
-		numYField.setValue(configuration.getMicroplatePositions().getNumWellsY());
+		numYField.setValue(configuration.getMicroplatePositions().getNumTilesY());
 		numPositionsSelection.setValue(configuration.getMicroplatePositions().getNumWellsX());
 	}
 
@@ -163,9 +163,9 @@ private JRadioButton 							microplatePredefined 		= new JRadioButton("Common mi
 		else if(microplateCustom.isSelected())
 		{
 			configuration.getMicroplatePositions().setNumWellsX(((Number)numXField.getValue()).intValue());
-			configuration.getMicroplatePositions().setNumWellsY(((Number)numYField.getValue()).intValue());
-			configuration.getMicroplatePositions().setWellHeight(((Number)heightField.getValue()).doubleValue());
-			configuration.getMicroplatePositions().setWellWidth(((Number)widthField.getValue()).doubleValue());
+			configuration.getMicroplatePositions().setNumTilesY(((Number)numYField.getValue()).intValue());
+			configuration.getMicroplatePositions().setTileHeight(((Number)heightField.getValue()).doubleValue());
+			configuration.getMicroplatePositions().setTileWidth(((Number)widthField.getValue()).doubleValue());
 		}
 		else if(arbitraryPositions.isSelected())
 		{

@@ -24,7 +24,6 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageAdapter;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
-import org.youscope.common.resource.ResourceConfiguration;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
@@ -40,12 +39,16 @@ import org.youscope.common.table.TableListener;
  */
 class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> implements CellDetectionAddon
 {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -527721856301731020L;
 	private ScriptEngine scriptEngine;
 	private final StringWriter outputListener = new StringWriter();
 	private final ArrayList<TableListener> tableListeners = new ArrayList<TableListener>();
 	private MatlabFunctionCreator functionCreator = null;
 	private final static String[] MATLAB_INVOKER_ARGUMENTS = {"imageEvent", "quantImages", "threshold", "internalBinning", "maxCellDiameter", "minCellDiameter", "imageSink", "tableSink"};
-	QuickDetectAddon(PositionInformation positionInformation, ResourceConfiguration configuration) throws ConfigurationException
+	QuickDetectAddon(PositionInformation positionInformation, QuickDetectConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, QuickDetectConfiguration.TYPE_IDENTIFIER,QuickDetectConfiguration.class, "Quick-Detect cell detection.");
 	}

@@ -15,6 +15,6 @@ interface Metric
 	 * @param point2 Second point.
 	 * @return distance between points.
 	 */
-	public double distance(Point2D.Double point1, Point2D.Double point2);
+	public double distance(Point2D.Double point1, Point2D.Double point2); 
 
 }

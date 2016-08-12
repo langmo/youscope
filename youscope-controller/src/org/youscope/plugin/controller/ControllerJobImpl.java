@@ -24,7 +24,7 @@ import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.Well;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.table.ColumnDefinition;
 import org.youscope.common.table.Table;

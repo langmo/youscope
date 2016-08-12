@@ -1,6 +1,7 @@
 package org.youscope.common.resource;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -15,8 +16,12 @@ import org.youscope.common.configuration.ConfigurationException;
  *
  * @param <C>
  */
-public abstract class ResourceAdapter<C extends ResourceConfiguration> implements Resource
+public abstract class ResourceAdapter<C extends ResourceConfiguration> extends UnicastRemoteObject implements Resource
 {
+	/**
+	 * Serial Version UID.
+	 */
+	private static final long serialVersionUID = 5664301234426356788L;
 	private final C configuration;
 	private final String typeIdentifier;
 	private final ArrayList<MessageListener> messageWriters = new ArrayList<MessageListener>();
@@ -32,9 +37,10 @@ public abstract class ResourceAdapter<C extends ResourceConfiguration> implement
 	 * @param typeIdentifier type identifier of resource.
 	 * @param configurationClass
 	 * @param defaultName
+	 * @throws RemoteException 
 	 * @throws ConfigurationException
 	 */
-	public ResourceAdapter(PositionInformation positionInformation, ResourceConfiguration configuration, String typeIdentifier, Class<C> configurationClass, String defaultName) throws ConfigurationException
+	public ResourceAdapter(PositionInformation positionInformation, C configuration, String typeIdentifier, Class<C> configurationClass, String defaultName) throws RemoteException, ConfigurationException
 	{
 		if(defaultName == null || defaultName.length() < 3)
 			throw new ConfigurationException("The default name must be at least three characters long.");
@@ -113,7 +119,7 @@ public abstract class ResourceAdapter<C extends ResourceConfiguration> implement
 	}
 
 	@Override
-	public String getTypeIdentifier() throws RemoteException
+	public String getTypeIdentifier()
 	{
 		return typeIdentifier;
 	}

@@ -18,7 +18,12 @@ import org.youscope.common.resource.ResourceException;
  */
 class VarianceFocusScoreAddon extends ResourceAdapter<VarianceFocusScoreConfiguration> implements FocusScoreResource
 {
-	VarianceFocusScoreAddon(PositionInformation positionInformation, VarianceFocusScoreConfiguration configuration) throws ConfigurationException
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2816849195635541669L;
+
+	VarianceFocusScoreAddon(PositionInformation positionInformation, VarianceFocusScoreConfiguration configuration) throws ConfigurationException, RemoteException
 	{
 		super(positionInformation, configuration, VarianceFocusScoreConfiguration.CONFIGURATION_ID, VarianceFocusScoreConfiguration.class,  "Variance focus score");
 	}
