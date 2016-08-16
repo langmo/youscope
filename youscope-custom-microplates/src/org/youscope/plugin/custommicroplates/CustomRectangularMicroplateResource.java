@@ -13,7 +13,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.resource.ResourceException;
 
-class CustomMicroplateResource extends UnicastRemoteObject implements MicroplateResource
+class CustomRectangularMicroplateResource extends UnicastRemoteObject implements MicroplateResource
 {
 	/**
 	 * Serial Version UID.
@@ -24,7 +24,7 @@ class CustomMicroplateResource extends UnicastRemoteObject implements Microplate
 	private final String typeIdentifier;
 	private String name = "custom microplate";
 	private final UUID uuid = UUID.randomUUID();
-	public CustomMicroplateResource(PositionInformation positionInformation, String typeIdentifier)
+	public CustomRectangularMicroplateResource(PositionInformation positionInformation, String typeIdentifier)
 					throws ConfigurationException, RemoteException {
 		this.typeIdentifier = typeIdentifier;
 		this.positionInformation= positionInformation;
@@ -35,8 +35,14 @@ class CustomMicroplateResource extends UnicastRemoteObject implements Microplate
 	{
 		if(microplateDefinition == null)
 			throw new ResourceException("Using custom microplate resource without initializing it.");
-		
-		return new RectangularMicroplateLayout(microplateDefinition.getNumWellsX(), microplateDefinition.getNumWellsY(), microplateDefinition.getWellWidth(), microplateDefinition.getWellHeight());
+		if(microplateDefinition instanceof CustomRectangularMicroplateDefinition)
+		{
+			CustomRectangularMicroplateDefinition def = (CustomRectangularMicroplateDefinition) microplateDefinition;
+			return new RectangularMicroplateLayout(def.getNumWellsX(), def.getNumWellsY(), def.getWellWidth(), def.getWellHeight());
+		}
+		else if(microplateDefinition instanceof MicroplateLayout)
+			return (MicroplateLayout) microplateDefinition;
+		throw new ResourceException("Custom microplate resource is of unknown type "+microplateDefinition.getClass().getName()+".");
 	}
 
 	@Override
@@ -45,7 +51,8 @@ class CustomMicroplateResource extends UnicastRemoteObject implements Microplate
 	}
 
 	@Override
-	public void initialize(MeasurementContext measurementContext) throws ResourceException, RemoteException {
+	public void initialize(MeasurementContext measurementContext) throws ResourceException, RemoteException 
+	{
 		try {
 			microplateDefinition = CustomMicroplateManager.getCustomMicroplate(typeIdentifier);
 		} catch (CustomMicroplateException e) {

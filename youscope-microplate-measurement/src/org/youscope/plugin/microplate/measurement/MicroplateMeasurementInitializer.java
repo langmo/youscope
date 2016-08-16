@@ -6,6 +6,7 @@ package org.youscope.plugin.microplate.measurement;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -96,8 +97,6 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 
 		// Iterate over all wells and positions
 		Map<PositionInformation, XYAndFocusPosition> positions = configuration.getPositions();
-		//boolean isMultiPos = posConf.getWellNumPositionsX() > 1 || posConf.getWellNumPositionsY() > 1;
-		//boolean isWellMeasurement = !posConf.isAliasMicroplate();
 		
 		PathOptimizerConfiguration pathOptimizerConfiguration = configuration.getPathOptimizerConfiguration();
 		List<PositionInformation> path;
@@ -126,20 +125,51 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 		
 		// Iterate over all positions
 		int elementNum = -1;
-		
-		for(PositionInformation positionInformation : path)
+		Iterator<PositionInformation> iterator = path.iterator();
+		while(iterator.hasNext())
 		{
+				PositionInformation positionInformation = iterator.next();
 				XYAndFocusPosition position = positions.get(positionInformation);
 				elementNum++;
-				if(elementNum == 0 && stageDeviceID != null)
+				if(elementNum == 0)
 				{
-					// Add zero position to startup and shutdown settings
 					try
 					{
-						measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
-						measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
-						measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
-						measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
+						if(configuration.getZeroPositionType() == MicroplateMeasurementConfiguration.ZeroPositionType.FIRST_WELL_TILE)
+						{
+							if(stageDeviceID != null)
+							{
+								// Add zero position to startup and shutdown settings			
+								measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
+								measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)position.getX()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)position.getY()));
+							
+							}
+							if(configuration.getFocusConfiguration() != null && !Double.isNaN(position.getFocus()))
+							{
+								measurement.addStartupDeviceSetting(new DeviceSetting(configuration.getFocusConfiguration().getFocusDevice(), "Position", (float)position.getFocus()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(configuration.getFocusConfiguration().getFocusDevice(), "Position", (float)position.getFocus()));
+							}
+						}
+						else if(configuration.getZeroPositionType() == MicroplateMeasurementConfiguration.ZeroPositionType.CUSTOM && configuration.getZeroPosition() != null)
+						{
+							XYAndFocusPosition zeroPosition = configuration.getZeroPosition();
+							if(stageDeviceID != null)
+							{
+								// Add zero position to startup and shutdown settings			
+								measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)zeroPosition.getX()));
+								measurement.addStartupDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)zeroPosition.getY()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionX", (float)zeroPosition.getX()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(stageDeviceID, "PositionY", (float)zeroPosition.getY()));
+							
+							}
+							if(configuration.getFocusConfiguration() != null && !Double.isNaN(zeroPosition.getFocus()))
+							{
+								measurement.addStartupDeviceSetting(new DeviceSetting(configuration.getFocusConfiguration().getFocusDevice(), "Position", (float)zeroPosition.getFocus()));
+								measurement.addFinishDeviceSetting(new DeviceSetting(configuration.getFocusConfiguration().getFocusDevice(), "Position", (float)zeroPosition.getFocus()));
+							}
+						}
 					}
 					catch(MeasurementRunningException e)
 					{
@@ -289,7 +319,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					
 					// Set Focus
 					FocusingJobConfiguration focusingJobConfiguration = null;
-					if(configuration.getFocusConfiguration() != null)
+					if(configuration.getFocusConfiguration() != null && !Double.isNaN(position.getFocus()))
 					{
 						focusingJobConfiguration = new FocusingJobConfiguration();
 						focusingJobConfiguration.setFocusConfiguration(configuration.getFocusConfiguration());
@@ -326,6 +356,63 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						catch (RemoteException e)
 						{
 							throw new AddonException("Could not create measurement due to remote exception.", e);
+						}
+					}
+					
+					// add go to zero position job to last job
+					if(!iterator.hasNext())
+					{
+						
+						MicroplateMeasurementConfiguration.ZeroPositionType zeroPositionType = configuration.getZeroPositionType();
+						XYAndFocusPosition zeroPosition;
+						if(zeroPositionType == MicroplateMeasurementConfiguration.ZeroPositionType.FIRST_WELL_TILE)
+							zeroPosition = positions.get(path.get(0));
+						else if(zeroPositionType == MicroplateMeasurementConfiguration.ZeroPositionType.CUSTOM)
+							zeroPosition = configuration.getZeroPosition();
+						else
+							zeroPosition = null;
+						if(zeroPosition != null)
+						{
+							ChangePositionJobConfiguration zeroPositionJobConfiguration = new ChangePositionJobConfiguration();
+							zeroPositionJobConfiguration.setAbsolute(true);
+							zeroPositionJobConfiguration.setX(zeroPosition.getX());
+							zeroPositionJobConfiguration.setY(zeroPosition.getY());
+							zeroPositionJobConfiguration.setStageDevice(stageDeviceID);
+							ChangePositionJob zeroPositionJob;
+							try {
+								zeroPositionJob = jobInitializer.getComponentProvider().createJob(positionInformation, zeroPositionJobConfiguration, ChangePositionJob.class);
+								zeroPositionJob.setName("Moving stage to zero position.");
+								jobContainer.addJob(zeroPositionJob);
+	
+							} catch (ComponentCreationException e) {
+								throw new AddonException("Microplate measurements need the change position job plugin.", e);
+							}
+							catch (RemoteException e)
+							{
+								throw new AddonException("Could not create measurement due to remote exception.", e);
+							}
+						}
+						if(zeroPosition != null && configuration.getFocusConfiguration() != null && !Double.isNaN(zeroPosition.getFocus()))
+						{
+							FocusingJobConfiguration zeroFocusingJobConfiguration = new FocusingJobConfiguration();
+							zeroFocusingJobConfiguration.setFocusConfiguration(configuration.getFocusConfiguration());
+							zeroFocusingJobConfiguration.setPosition(zeroPosition.getFocus());
+							zeroFocusingJobConfiguration.setRelative(false);
+							FocusingJob zeroFocusingJob;
+							try 
+							{
+								zeroFocusingJob = jobInitializer.getComponentProvider().createJob(positionInformation, zeroFocusingJobConfiguration, FocusingJob.class);
+								zeroFocusingJob.setName("Setting focus for zero position.");
+								jobContainer.addJob(zeroFocusingJob);
+							} 
+							catch (ComponentCreationException e) {
+								throw new AddonException("Microplate measurements need the focusing job plugin.", e);
+							}
+							catch (RemoteException e)
+							{
+								throw new AddonException("Could not create measurement due to remote exception.", e);
+							}
+							
 						}
 					}
 					

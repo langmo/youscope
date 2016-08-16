@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Moritz Lang
  * 
  */
-class XYAndFocusPosition extends java.awt.geom.Point2D.Double implements Cloneable, Serializable, Comparable<XYAndFocusPosition>
+public class XYAndFocusPosition extends java.awt.geom.Point2D.Double implements Cloneable, Serializable, Comparable<XYAndFocusPosition>
 {
 	/**
 	 * Serial Version UID.

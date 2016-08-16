@@ -29,7 +29,7 @@ import org.youscope.uielements.IntegerTextField;
  * @author Moritz Lang
  *
  */
-class CustomMicroplatesConfigurationPanel extends DynamicPanel
+class CustomRectangularMicroplatesConfigurationPanel extends DynamicPanel
 {
 	
 	/**
@@ -48,16 +48,16 @@ class CustomMicroplatesConfigurationPanel extends DynamicPanel
 	private JTextField microplateNameField 									= new JTextField();
 		
 	private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>(1);
-	private CustomMicroplateDefinition microplateDefinition;
+	private CustomRectangularMicroplateDefinition microplateDefinition;
 	private final MicroplateWellSelectionUI microplateUI;
-	CustomMicroplatesConfigurationPanel(YouScopeClient client, final YouScopeServer server, YouScopeFrame frame)
+	CustomRectangularMicroplatesConfigurationPanel(YouScopeClient client, final YouScopeServer server, YouScopeFrame frame)
 	{
 		this(client, server, frame, null);
 	}
-	CustomMicroplatesConfigurationPanel(final YouScopeClient client, final YouScopeServer server, final YouScopeFrame frame, CustomMicroplateDefinition microplateDefinition)
+	CustomRectangularMicroplatesConfigurationPanel(final YouScopeClient client, final YouScopeServer server, final YouScopeFrame frame, CustomRectangularMicroplateDefinition microplateDefinition)
 	{
 		if(microplateDefinition == null)
-			microplateDefinition = new CustomMicroplateDefinition();
+			microplateDefinition = new CustomRectangularMicroplateDefinition();
 		this.microplateDefinition = microplateDefinition;
 		microplateUI = new MicroplateWellSelectionUI(client, server);
 		microplateUI.setSelectionMode(SelectionMode.NONE);
@@ -95,19 +95,19 @@ class CustomMicroplatesConfigurationPanel extends DynamicPanel
                 		JOptionPane.showMessageDialog(null, "Microplate Description must be longer than three characters.", "Could not initialize microplate type", JOptionPane.INFORMATION_MESSAGE);
                 		return;
                 	}
-                	CustomMicroplateDefinition newDefinition = new CustomMicroplateDefinition();
+                	CustomRectangularMicroplateDefinition newDefinition = new CustomRectangularMicroplateDefinition();
                 	newDefinition.setNumWellsX(numXField.getValue());
                 	newDefinition.setNumWellsY(numYField.getValue());
                 	newDefinition.setWellWidth(widthField.getValue());
                 	newDefinition.setWellHeight(heightField.getValue());
                 	newDefinition.setCustomMicroplateName(microplateName);
-                	if(CustomMicroplatesConfigurationPanel.this.microplateDefinition != null)
+                	if(CustomRectangularMicroplatesConfigurationPanel.this.microplateDefinition != null)
                 	{
-                		String typeIdentifier = CustomMicroplateManager.getCustomMicroplateTypeIdentifier(CustomMicroplatesConfigurationPanel.this.microplateDefinition.getCustomMicroplateName());
+                		String typeIdentifier = CustomMicroplateManager.getCustomMicroplateTypeIdentifier(CustomRectangularMicroplatesConfigurationPanel.this.microplateDefinition.getCustomMicroplateName());
                 		if(!CustomMicroplateManager.deleteCustomMicroplate(typeIdentifier))
                 			client.sendError("Could not delete old microplate type definition.", null);
                 	}
-                	CustomMicroplatesConfigurationPanel.this.microplateDefinition = newDefinition;
+                	CustomRectangularMicroplatesConfigurationPanel.this.microplateDefinition = newDefinition;
                	
                 	try
 					{

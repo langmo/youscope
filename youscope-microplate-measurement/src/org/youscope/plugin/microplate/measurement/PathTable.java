@@ -46,7 +46,7 @@ import org.youscope.uielements.ImageLoadingTools;
  * @author Moritz Lang
  *
  */
-class PathTable extends JPanel
+public class PathTable extends JPanel
 {
 	/**
 	 * Serial Version UID.
@@ -59,13 +59,36 @@ class PathTable extends JPanel
 	private final ArrayList<ActionListener> layoutChangedListeners = new ArrayList<>(1);
 	private final YouScopeFrame frame;
 	private final Column[] columns;
+	/**
+	 * Columns in the path table.
+	 * @author Moritz Lang
+	 *
+	 */
 	public enum Column
 	{
+		/**
+		 * Position of a custom positions.
+		 */
 		MAIN_POSITION("Position", String.class, false),
+		/**
+		 * Well
+		 */
 		WELL("Well", String.class, false),
+		/**
+		 * Tile
+		 */
 		TILE("Tile", String.class, false),
+		/**
+		 * X-position in um
+		 */
 		X("X-Position (um)", Double.class, true),
+		/**
+		 * y-position in um.
+		 */
 		Y("Y-Position (um)", Double.class, true),
+		/**
+		 * focus in um.
+		 */
 		FOCUS("Focus (um)", Double.class, true);
 		private final String name;
 		private final Class<?> type;
@@ -82,18 +105,29 @@ class PathTable extends JPanel
 		{
 			return name;
 		}
-		
+		/**
+		 * Returns true if the column can be edited.
+		 * @return true if editable
+		 */
 		public boolean isEdiable()
 		{
 			return editable;
 		}
-		
+		/**
+		 * Returns the class of content stored in this column.
+		 * @return content type.
+		 */
 		public Class<?> getType()
 		{
 			return type;
 		}
 	}
-	
+	/**
+	 * Constructor.
+	 * @param configuredPositions Hash map of already configured positions. Can be empty.
+	 * @param frame The containing frame.
+	 * @param columns The columns which should show up in the table.
+	 */
 	public PathTable(HashMap<PositionInformation, XYAndFocusPosition> configuredPositions, YouScopeFrame frame, Column... columns)
 	{
 		super(new BorderLayout(0, 0));
@@ -370,10 +404,19 @@ class PathTable extends JPanel
 		pathTableModel.fireTableRowsDeleted(row, row);
 		notifyLayoutChanged();
 	}
+	/**
+	 * Adds a listener which gets notified if wells/tiles were added or deleted. Does not get notified if
+	 * positions of wells/tiles changed.
+	 * @param listener Listener to add.
+	 */
 	public void addLayoutChangedListener(ActionListener listener)
 	{
 		layoutChangedListeners.add(listener);
 	}
+	/**
+	 * Removes a previously added listener.
+	 * @param listener listener to remove.
+	 */
 	public void removeLayoutChangedListener(ActionListener listener)
 	{
 		layoutChangedListeners.remove(listener);

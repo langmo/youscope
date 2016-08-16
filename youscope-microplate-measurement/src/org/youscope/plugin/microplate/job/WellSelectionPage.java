@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.microplate.measurement;
+package org.youscope.plugin.microplate.job;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.AddonException;
-import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.addon.microplate.MicroplateResource;
 import org.youscope.addon.microplate.MicroplateWellSelectionUI;
 import org.youscope.clientinterfaces.YouScopeClient;
@@ -25,7 +24,6 @@ import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.Well;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.microplate.WellLayout;
-import org.youscope.plugin.microplate.measurement.MicroplateMeasurementConfiguration;
 import org.youscope.plugin.microplate.measurement.TileConfiguration;
 import org.youscope.plugin.microplate.measurement.TileDefinitionUI;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -36,7 +34,7 @@ import org.youscope.uielements.DynamicPanel;
  * @author Moritz Lang
  *
  */
-class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
+class WellSelectionPage extends JobAddonUIPage<MicroplateJobConfiguration>
 {
 
 	/**
@@ -65,7 +63,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 	
 	@Override
-	public void loadData(MicroplateMeasurementConfiguration configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		try
 		{
@@ -153,7 +151,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfiguration configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		if(microplateLayout != null)
 		{
@@ -183,7 +181,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfiguration configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		try
 		{	
@@ -205,7 +203,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	}
 
 	@Override
-	protected boolean isAppear(MicroplateMeasurementConfiguration configuration) {
+	protected boolean isAppear(MicroplateJobConfiguration configuration) {
 		return configuration.getMicroplateConfiguration() != null;
 	}
 

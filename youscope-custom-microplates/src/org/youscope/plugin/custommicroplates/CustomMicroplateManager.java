@@ -5,6 +5,7 @@ package org.youscope.plugin.custommicroplates;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -16,7 +17,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.youscope.addon.ConfigurationManagement;
 import org.youscope.addon.component.ComponentMetadataAdapter;
+
 
 /**
  * @author Moritz Lang
@@ -26,7 +29,8 @@ class CustomMicroplateManager
 {
 	private static final String CUSTOM_MICROPLATE_FOLDER_NAME = "configuration/microplates";
 	private static final String CUSTOM_MICROPLATE_TYPE_IDENTIFIER_PREFIX = "YouScope.CustomMicroplate.";
-	private static final String CUSTOM_MICROPLATE_FILE_ENDING = ".xml";
+	private static final String CUSTOM_RECTANGULAR_MICROPLATE_FILE_ENDING = ".xml";
+	private static final String CUSTOM_ARBITRARY_MICROPLATE_FILE_ENDING = ".csb";
 	
 	private static String[] customMicroplateIdentifiers = null;
 	
@@ -45,20 +49,22 @@ class CustomMicroplateManager
 	{
 		return typeIdentifier.substring(CUSTOM_MICROPLATE_TYPE_IDENTIFIER_PREFIX.length());
 	}
-	static String getCustomMicroplateFileName(String typeIdentifier)
+	static String getCustomMicroplateFileName(String typeIdentifier, boolean rectangular)
 	{
-		return typeIdentifier.substring(CUSTOM_MICROPLATE_TYPE_IDENTIFIER_PREFIX.length())+CUSTOM_MICROPLATE_FILE_ENDING;
+		return getCustomMicroplateFileNameFromName(typeIdentifier.substring(CUSTOM_MICROPLATE_TYPE_IDENTIFIER_PREFIX.length()), rectangular);
 	}
-	static String getCustomMicroplateFileNameFromName(String customMicroplateName)
+	static String getCustomMicroplateFileNameFromName(String customMicroplateName, boolean rectangular)
 	{
-		return customMicroplateName+CUSTOM_MICROPLATE_FILE_ENDING;
+		if(rectangular)
+			return customMicroplateName+CUSTOM_RECTANGULAR_MICROPLATE_FILE_ENDING;
+		return customMicroplateName+CUSTOM_ARBITRARY_MICROPLATE_FILE_ENDING;
 	}
 	
 	static ComponentMetadataAdapter<CustomMicroplateConfiguration> getMetadata(String typeIdentifier)
 	{
 		return new ComponentMetadataAdapter<CustomMicroplateConfiguration>(typeIdentifier, 
 				CustomMicroplateConfiguration.class, 
-				CustomMicroplateResource.class, 
+				CustomRectangularMicroplateResource.class, 
 				getCustomMicroplateName(typeIdentifier), 
 				new String[0],
 				"icons/block-share.png");
@@ -77,7 +83,7 @@ class CustomMicroplateManager
 		{
 			@Override
 			public boolean accept(File dir, String name) {
-		        return (name.endsWith(CUSTOM_MICROPLATE_FILE_ENDING));
+		        return (name.endsWith(CUSTOM_RECTANGULAR_MICROPLATE_FILE_ENDING) || name.endsWith(CUSTOM_ARBITRARY_MICROPLATE_FILE_ENDING));
 		    }
 
 		});
@@ -85,7 +91,7 @@ class CustomMicroplateManager
 		for(int i=0; i<xmlFiles.length; i++)
 		{
 			customMicroplateIdentifiers[i] = xmlFiles[i].getName(); 
-			customMicroplateIdentifiers[i] = getCustomMicroplateTypeIdentifier(customMicroplateIdentifiers[i].substring(0, customMicroplateIdentifiers[i].length()-CUSTOM_MICROPLATE_FILE_ENDING.length()));
+			customMicroplateIdentifiers[i] = getCustomMicroplateTypeIdentifier(customMicroplateIdentifiers[i].substring(0, customMicroplateIdentifiers[i].length()-CUSTOM_RECTANGULAR_MICROPLATE_FILE_ENDING.length()));
 		}
 		return customMicroplateIdentifiers;
 	}
@@ -96,7 +102,9 @@ class CustomMicroplateManager
 		{
 			return true;
 		}
-		File file = new File(folder, getCustomMicroplateFileName(typeIdentifier));
+		File file = new File(folder, getCustomMicroplateFileName(typeIdentifier, true));
+		if(!file.exists())
+			file = new File(folder, getCustomMicroplateFileName(typeIdentifier, false));
 		if(!file.exists())
 		{
 			return true;
@@ -106,7 +114,36 @@ class CustomMicroplateManager
 		return success;
 	}
 	
+	private static synchronized boolean saveCustomMicroplateInternal(CustomArbitraryMicroplateDefinition customMicroplate) throws CustomMicroplateException
+	{
+		File folder = new File(CUSTOM_MICROPLATE_FOLDER_NAME);
+		if(!folder.exists() || !folder.isDirectory())
+		{
+			boolean result = folder.mkdirs();
+			if(!result)
+			{
+				throw new CustomMicroplateException("Custom microplate folder could not be created. Check if YouScope has sufficients rights to create sub-folders in the YouScope directory.");
+			}
+		}
+		try {
+			ConfigurationManagement.saveConfiguration(new File(folder, getCustomMicroplateFileNameFromName(customMicroplate.getCustomMicroplateName(), false)).toString(), customMicroplate);
+		} catch(IOException e)
+		{
+			throw new CustomMicroplateException("Could not save custom microplate file.", e);
+		}
+		customMicroplateIdentifiers = null; // enforce reloading.
+		return true;
+	}
 	static synchronized boolean saveCustomMicroplate(CustomMicroplateDefinition customMicroplate) throws CustomMicroplateException
+	{
+		if(customMicroplate instanceof CustomRectangularMicroplateDefinition)
+			return saveCustomMicroplateInternal((CustomRectangularMicroplateDefinition)customMicroplate);
+		else if(customMicroplate instanceof CustomArbitraryMicroplateDefinition)
+			return saveCustomMicroplateInternal((CustomArbitraryMicroplateDefinition)customMicroplate);
+		else
+			throw new CustomMicroplateException("Custom microplate type " + customMicroplate.getClass().getName() + " unknown.");
+	}
+	private static synchronized boolean saveCustomMicroplateInternal(CustomRectangularMicroplateDefinition customMicroplate) throws CustomMicroplateException
 	{
 		File folder = new File(CUSTOM_MICROPLATE_FOLDER_NAME);
 		if(!folder.exists() || !folder.isDirectory())
@@ -155,7 +192,7 @@ class CustomMicroplateManager
 		{
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(document);
-			StreamResult result =  new StreamResult(new File(folder, getCustomMicroplateFileNameFromName(customMicroplate.getCustomMicroplateName())).toString());
+			StreamResult result =  new StreamResult(new File(folder, getCustomMicroplateFileNameFromName(customMicroplate.getCustomMicroplateName(), true)).toString());
 		 
 			transformer.transform(source, result);
 		}
@@ -175,16 +212,38 @@ class CustomMicroplateManager
 		{
 			throw new CustomMicroplateException("Custom microplate folder does not exist, thus, custom microplate could not be localized.");
 		}
-		File xmlFile = new File(folder, getCustomMicroplateFileName(typeIdentifier));
-
+		String microplateName = getCustomMicroplateName(typeIdentifier);
+		File file = new File(folder, getCustomMicroplateFileName(typeIdentifier, true)); 
+		if(file.exists())
+			return getCustomRectangularMicroplate(file, microplateName);
+		file = new File(folder, getCustomMicroplateFileName(typeIdentifier, false)); 
+		if(file.exists())
+			return getCustomArbitraryMicroplate(file, microplateName);
+		throw new CustomMicroplateException("Custom microplate with ID " + typeIdentifier + " does not exist.");
+	}
+	private static synchronized CustomArbitraryMicroplateDefinition getCustomArbitraryMicroplate(File file, String microplateName) throws CustomMicroplateException
+	{
+		try
+		{
+			CustomArbitraryMicroplateDefinition config = (CustomArbitraryMicroplateDefinition) ConfigurationManagement.loadConfiguration(file.toString());
+			config.setCustomMicroplateName(microplateName);
+			return config;
+		}
+		catch(Throwable e)
+		{
+			throw new CustomMicroplateException("Could not load custom microplate.", e);
+		}
+	}
+	private static synchronized CustomRectangularMicroplateDefinition getCustomRectangularMicroplate(File file, String microplateName) throws CustomMicroplateException
+	{
 		Document document;
 		try
 		{
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
 		}
 		catch(Exception e)
 		{
-			throw new CustomMicroplateException("Could not open or parse script file \"" + xmlFile.getAbsolutePath() + "\".", e);
+			throw new CustomMicroplateException("Could not open or parse script file \"" + file.getAbsolutePath() + "\".", e);
 		}
 		Element rootNode = document.getDocumentElement();
 		
@@ -194,15 +253,14 @@ class CustomMicroplateManager
 		String numWellsY = getAttributeOfNode(rootNode, NUM_WELLS_Y_NODE, VALUE_ATTRIBUTE);
 		String wellWidth = getAttributeOfNode(rootNode, WELL_WIDTH_NODE, VALUE_ATTRIBUTE);
 		String wellHeight = getAttributeOfNode(rootNode, WELL_HEIGHT_NODE, VALUE_ATTRIBUTE);
-		String microplateName = getCustomMicroplateName(typeIdentifier);
 		
 		if(numWellsX == null || numWellsY == null || wellWidth == null || wellHeight == null || microplateName == null)
 		{
-			throw new CustomMicroplateException("Microplate definition file \"" + xmlFile.getAbsolutePath() + "\" is not valid since at least one node or its value attribute is missing.");
+			throw new CustomMicroplateException("Microplate definition file \"" + file.getAbsolutePath() + "\" is not valid since at least one node or its value attribute is missing.");
 			
 		}
 		
-		CustomMicroplateDefinition customMicroplate = new CustomMicroplateDefinition();
+		CustomRectangularMicroplateDefinition customMicroplate = new CustomRectangularMicroplateDefinition();
 		try
 		{
 			customMicroplate.setNumWellsX(Integer.parseInt(numWellsX));

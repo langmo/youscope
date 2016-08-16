@@ -1,17 +1,21 @@
 /**
  * 
  */
-package org.youscope.plugin.microplatejob;
+package org.youscope.plugin.microplate.job;
 
 import java.rmi.RemoteException;
-import java.util.ServiceLoader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
-import org.youscope.addon.pathoptimizer.PathOptimizer;
-import org.youscope.addon.pathoptimizer.PathOptimizerPosition;
+import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
+import org.youscope.addon.pathoptimizer.PathOptimizerResource;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
@@ -20,9 +24,9 @@ import org.youscope.common.job.basicjobs.ChangePositionJob;
 import org.youscope.common.job.basicjobs.CompositeJob;
 import org.youscope.common.job.basicjobs.FocusingJob;
 import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.measurement.microplate.Well;
+import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.resource.ResourceException;
-import org.youscope.plugin.microplatemeasurement.MicroplatePositionConfiguration;
+import org.youscope.plugin.microplate.measurement.XYAndFocusPosition;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -51,65 +55,39 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 				
 
 				// Iterate over all wells and positions
-				MicroplatePositionConfiguration posConf = configuration.getMicroplatePositions();
-				boolean isMultiPos = posConf.getWellNumPositionsX() > 1 || posConf.getWellNumPositionsY() > 1;
-				boolean isWellMeasurement = !posConf.isAliasMicroplate();
+				Map<PositionInformation, XYAndFocusPosition> positions = configuration.getPositions();
 				
-				String pathOptimizerID = configuration.getPathOptimizerID();
-				if(pathOptimizerID == null)
-					pathOptimizerID = "YouScope.NonOptimizedOptimizer";
-				PathOptimizer pathOptimizer = getPathOptimizer(pathOptimizerID);
-				if(pathOptimizer == null)
-					throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" not known.");
-				if(!pathOptimizer.isApplicable(posConf))
-					throw new ConfigurationException("Path optimizer with ID \"" + pathOptimizerID + "\" is not applicable for given position configuration.");
-				Iterable<PathOptimizerPosition> path;
-				try {
-					path = pathOptimizer.getPath(posConf);
-				} catch (ResourceException e3) {
-					throw new AddonException("Could not optimize path through microplate.", e3);
-				}
-				if(path == null)
-					throw new ConfigurationException("Path created by path optimizer \"" + pathOptimizerID + "\" is null. Try another optimizer.");
-				
-				for(PathOptimizerPosition position : path)
+				PathOptimizerConfiguration pathOptimizerConfiguration = configuration.getPathOptimizerConfiguration();
+				List<PositionInformation> path;
+				if(pathOptimizerConfiguration != null)
 				{
+					PathOptimizerResource pathOptimizer;
+					try {
+						pathOptimizer = constructionContext.getComponentProvider().createComponent(new PositionInformation(), pathOptimizerConfiguration, PathOptimizerResource.class);
+					} catch (ComponentCreationException | RemoteException e) {
+						throw new AddonException("Could not create path optimizer with ID "+pathOptimizerConfiguration.getTypeIdentifier()+".", e);
+					}
+					try {
+						SimpleMeasurementContext measurementContext = new SimpleMeasurementContext();
+						pathOptimizer.initialize(measurementContext);
+						path = pathOptimizer.getPath(positions);
+						pathOptimizer.uninitialize(measurementContext);
+					} catch (ResourceException | RemoteException e) {
+						throw new AddonException("Could not calculate optimimal path using optimizer with ID "+pathOptimizerConfiguration.getTypeIdentifier()+".", e);
+					}
+				}
+				else
+				{
+					path = new ArrayList<PositionInformation>(positions.keySet());
+					Collections.sort(path);
+				}
+				Iterator<PositionInformation> iterator = path.iterator();
+				while(iterator.hasNext())
+				{
+						PositionInformation positionInformation = iterator.next();
+						XYAndFocusPosition position = positions.get(positionInformation);
 				
-						PositionInformation positionInformation;
-						String locationString;
-						if(isWellMeasurement && isMultiPos)
-						{
-							Well well = new Well(position.getWellY(), position.getWellX());
-							positionInformation = new PositionInformation(well);
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_YTILE, position.getPositionY());
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_XTILE, position.getPositionX());
-							
-							locationString = "well " + well.getWellName() + ", tile [" + Integer.toString(position.getPositionY() + 1) + ", " + Integer.toString(position.getPositionX() + 1) + "]";
-						}
-						else if(isWellMeasurement)
-						{
-							Well well = new Well(position.getWellY(), position.getWellX());
-							positionInformation = new PositionInformation(well);
-							
-							locationString = "well " + well.getWellName();
-						}
-						else if(isMultiPos)
-						{
-							positionInformation = mainPositionInformation;
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_MAIN_POSITION, position.getWellX());
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_YTILE, position.getPositionY());
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_XTILE, position.getPositionX());
-							
-							locationString = "position " + Integer.toString(position.getWellX()+1) + ", tile [" + Integer.toString(position.getPositionY() + 1) + ", " + Integer.toString(position.getPositionX() + 1) + "]";
-						}
-						else
-						{
-							positionInformation = mainPositionInformation;
-							positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_MAIN_POSITION, position.getWellX());
-							
-							locationString = "position " + Integer.toString(position.getWellX()+1);
-						}
-
+						String locationString = positionInformation.toString();
 						
 						// Create a job container in which all jobs at the given position are put into.
 						CompositeJob jobContainer;
@@ -188,24 +166,6 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 	 */
 	public MicroplateJobAddonFactory()
 	{
-		super(MicroplateJobConfigurationAddon.class, CREATOR, MicroplateJobConfigurationAddon.getMetadata());
-	}
-	
-	private static Iterable<PathOptimizer> getPathOptimizers()
-    {
-        ServiceLoader<PathOptimizer> pathOptimizers =
-                ServiceLoader.load(PathOptimizer.class,
-                		MicroplateJobAddonFactory.class.getClassLoader());
-        return pathOptimizers;
-    }
-	
-	private static PathOptimizer getPathOptimizer(String pathOptimizerID)
-	{
-		for (PathOptimizer addon : getPathOptimizers())
-        {
-        	if(addon.getOptimizerID().equals(pathOptimizerID))
-                return addon;
-        }
-        return null;
+		super(MicroplateJobAddonUI.class, CREATOR, MicroplateJobAddonUI.getMetadata());
 	}
 }

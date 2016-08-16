@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.microplate.measurement;
+package org.youscope.plugin.microplate.job;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -26,7 +26,6 @@ import javax.swing.border.TitledBorder;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.addon.microplate.MicroplateResource;
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerResource;
@@ -41,7 +40,6 @@ import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.plugin.microplate.measurement.MicroplateMeasurementConfiguration;
 import org.youscope.plugin.microplate.measurement.PathDisplayUI;
 import org.youscope.plugin.microplate.measurement.PathTable;
 import org.youscope.plugin.microplate.measurement.PositionFineConfigurationAddon;
@@ -57,7 +55,7 @@ import org.youscope.uielements.SubConfigurationPanel;
  * @author Moritz Lang
  *
  */
-class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
+class PathPage extends JobAddonUIPage<MicroplateJobConfiguration>
 {
 
 	/**
@@ -344,7 +342,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public void loadData(MicroplateMeasurementConfiguration configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		pathOptimizerConfiguration = configuration.getPathOptimizerConfiguration();
 		focusConfiguration = configuration.getFocusConfiguration();
@@ -377,7 +375,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfiguration configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		if(lastSubPage != null)
 			lastSubPage.close();
@@ -390,7 +388,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfiguration configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		try 
 		{

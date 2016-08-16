@@ -11,7 +11,7 @@ import org.youscope.common.Well;
  * @author Moritz Lang
  *
  */
-public final class WellLayout implements Serializable
+public final class WellLayout implements Serializable, Comparable<WellLayout>
 {
 	/**
 	 * Serial Version UID.
@@ -135,5 +135,9 @@ public final class WellLayout implements Serializable
 	public boolean isLayoutOfWell(Well well)
 	{
 		return this.well.equals(well);
+	}
+	@Override
+	public int compareTo(WellLayout o) {
+		return well.compareTo(o.getWell());
 	}
 }

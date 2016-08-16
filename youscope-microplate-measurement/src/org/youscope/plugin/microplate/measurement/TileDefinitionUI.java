@@ -42,7 +42,7 @@ import org.youscope.uielements.IntegerTextField;
  * @author Moritz Lang
  * 
  */
-class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
+public class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
 {
 	protected static final String TITLE = "Tile Definition:";
 	private final static String TYPE_IDENTIFIER = "YouScope.TileDefinitionUI";
@@ -65,6 +65,8 @@ class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
 	{
 		super(getMetadata(), client, server);
 		tileSelectionUI = new MicroplateWellSelectionUI(getClient(), getServer());
+		tileSelectionUI.setShowXWellLabels(false);
+		tileSelectionUI.setShowYWellLabels(false);
 	}
 	private static AddonMetadata getMetadata()
 	{

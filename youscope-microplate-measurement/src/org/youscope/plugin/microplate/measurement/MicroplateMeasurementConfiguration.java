@@ -48,11 +48,11 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	@XStreamAlias("allow-edits-while-running")
 	private boolean allowEditsWhileRunning = false;
 
-	@XStreamAlias("path-optimizer")
-	private PathOptimizerConfiguration pathOptimizerConfiguration = null;
-	
 	@XStreamAlias("stage")
 	private String stageDevice = null;
+	
+	@XStreamAlias("path-optimizer")
+	private PathOptimizerConfiguration pathOptimizerConfiguration = null;
 	
 	@XStreamAlias("microplate-configuration")
 	private MicroplateConfiguration microplateConfiguration = null;
@@ -68,6 +68,43 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	private HashSet<Well> selectedWells = new HashSet<>(200);
 	@XStreamAlias("selected-tiles")
 	private HashSet<Well> selectedTiles = new HashSet<>(200);
+	
+	@XStreamAlias("zero-position-type")
+	private ZeroPositionType zeroPositionType = ZeroPositionType.FIRST_WELL_TILE;
+	
+	@XStreamAlias("zero-position")
+	private XYAndFocusPosition zeroPosition = null;
+	/**
+	 * Type of position to return to after each iteration.
+	 * @author Moritz
+	 *
+	 */
+	public enum ZeroPositionType
+	{
+		/**
+		 * Do not automatically return to any position
+		 */
+		NONE("Do not set stage/focus position"),
+		/**
+		 * Go to first well or tile.
+		 */
+		FIRST_WELL_TILE("Set stage/focus position to first well/tile"),
+		/**
+		 * Go to custom position.
+		 */
+		CUSTOM("Set stage/focus position to custom position");
+		
+		private final String description;
+		ZeroPositionType(String description)
+		{
+			this.description = description;
+		}
+		@Override
+		public String toString()
+		{
+			return description;
+		}
+	}
 	
 	/**
 	 * Sets the configured imaging positions to the positions in the provided map.
@@ -253,6 +290,8 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 		clone.configuredPositions = new HashMap<>(configuredPositions);
 		clone.selectedTiles = new HashSet<>(selectedTiles);
 		clone.selectedWells = new HashSet<>(selectedWells);
+		if(zeroPosition != null)
+			clone.zeroPosition = new XYAndFocusPosition(zeroPosition.getX(), zeroPosition.getY(), zeroPosition.getFocus());
 		return clone;
 	}
 
@@ -391,5 +430,37 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	public String getStageDevice()
 	{
 		return stageDevice;
+	}
+
+	/**
+	 * Returns the type of position where the stage/focus goes before the first iteration, and after each iteration.
+	 * @return zero position type.
+	 */
+	public ZeroPositionType getZeroPositionType() {
+		return zeroPositionType;
+	}
+	/**
+	 * Sets the type of position where the stage/focus goes before the first iteration, and after each iteration.
+	 * @param zeroPositionType zero position type.
+	 */
+	public void setZeroPositionType(ZeroPositionType zeroPositionType) {
+		this.zeroPositionType = zeroPositionType;
+	}
+
+	/**
+	 * Returns the zero position where the stage/focus goes before the first iteration, and after each iteration.
+	 * Only has an effect if {@link #getZeroPosition()} returns {@link ZeroPositionType#CUSTOM}.
+	 * @return Zero position of stage/focus.
+	 */
+	public XYAndFocusPosition getZeroPosition() {
+		return zeroPosition;
+	}
+	/**
+	 * Sets the zero position where the stage/focus goes before the first iteration, and after each iteration.
+	 * Only has an effect if {@link #getZeroPosition()} returns {@link ZeroPositionType#CUSTOM}.
+	 * @param zeroPosition Zero position of stage/focus.
+	 */
+	public void setZeroPosition(XYAndFocusPosition zeroPosition) {
+		this.zeroPosition = zeroPosition;
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.microplatejob;
+package org.youscope.plugin.microplate.job;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,18 +9,19 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import org.youscope.addon.AddonException;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.job.JobConfiguration;
 
 /**
- * Abstract page class for the standard YouScope job configuration layout.
+ * Abstract page class for the standard YouScope measurement configuration layout.
  * The layout is typically in a frame/panel, in which one can switch with "previous"/"next" between single configuration steps, here called pages.
  * When using the standard layout, one only has to define the pages, which have to be subclasses of this class.
  * @author Moritz Lang
- * @param <T> The job configuration type file which should be edited by this page.
+ * @param <T> The measurement configuration type file which should be edited by this page.
  *
  */
-public abstract class JobConfigurationPage<T extends JobConfiguration> extends JPanel
+abstract class JobAddonUIPage<T extends JobConfiguration> extends JPanel
 {
 	private final ArrayList<ActionListener> sizeChangeListeners = new ArrayList<ActionListener>();
 	
@@ -46,6 +47,17 @@ public abstract class JobConfigurationPage<T extends JobConfiguration> extends J
 			sizeChangeListeners.remove(listener);
 		}
 	}
+	
+	/**
+	 * Returns if the page should be jumpable to, or false, if it will not appear.
+	 * @param configuration Current configuration.
+	 * @return True if visible, false if page does not appear.
+	 */
+	protected boolean isAppear(T configuration)
+	{
+		return true;
+	}
+	
 	/**
 	 * Notifies all listeners that the size of this page changed.
 	 */
@@ -62,9 +74,9 @@ public abstract class JobConfigurationPage<T extends JobConfiguration> extends J
 	/**
 	 * Serial Version UID.
 	 */
-	private static final long	serialVersionUID	= -3439300870691181358L;
+	private static final long	serialVersionUID	= -3439343870691181358L;
 	/**
-	 * Loads the configuration dataO.
+	 * Loads the configuration data.
 	 * @param configuration
 	 */
 	public abstract void loadData(T configuration);
@@ -78,9 +90,10 @@ public abstract class JobConfigurationPage<T extends JobConfiguration> extends J
 	
 	/**
 	 * Sets the values corresponding to this page to their default values.
-	 * @param configuration
+	 * @param configuration The configuration to set to default values.
+	 * @throws AddonException Thrown if error occurs while setting configuration to default values.
 	 */
-	public abstract void setToDefault(T configuration);
+	public abstract void setToDefault(T configuration) throws AddonException;
 	
 	/**
 	 * Returns a short name/description what the page does.

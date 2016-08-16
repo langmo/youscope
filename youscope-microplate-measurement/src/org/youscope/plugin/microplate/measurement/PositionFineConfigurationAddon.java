@@ -46,10 +46,11 @@ import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.LiveStreamPanel;
 
 /**
+ * Addon to fine configure the positions of wells/tiles.
  * @author Moritz Lang
  * 
  */
-class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
+public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 {
 	private int currentPositionIndex = 0;
 	
@@ -64,8 +65,6 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 
 	private final JButton wellChooserButton = new JButton();
 	private final JButton tileChooserButton = new JButton();
-	
-	private final static double POSITION_DELTA = 0.000000001;
 	
 	private MicroplateLayout microplateLayout = null;
 	private TileConfiguration tileConfiguration = null;
@@ -106,10 +105,18 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 		return configuredPositions;
 	}
 	
+	/**
+	 * Adds a listener which gets notified if the positions should be saved.
+	 * @param listener listener to add.
+	 */
 	public void addSaveListener(ActionListener listener)
 	{
 		saveListeners.add(listener);
 	}
+	/**
+	 * Removes a previously added listener.
+	 * @param listener Listener to remove.
+	 */
 	public void removeSaveListener(ActionListener listener)
 	{
 		saveListeners.remove(listener);
@@ -265,23 +272,6 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 			
 			createNewPath(zeroX, zeroY, currentPosition.getFocus());
 			
-			// Safety check
-			XYAndFocusPosition referencePosition = configuredPositions.get(zeroPositionInformation);
-			if(Math.abs(referencePosition.getX() - currentPosition.getX()) > POSITION_DELTA
-					|| Math.abs(referencePosition.getY() - currentPosition.getY()) > POSITION_DELTA
-					|| referencePosition.getFocus() != currentPosition.getFocus())
-			{
-				configuredPositions.clear();
-				StringBuffer errorMessage = new StringBuffer("Bug in path calculation detected. Hard interrupt to prevent microscope error due to invalid stage movements. Expected: ");
-				errorMessage.append(Double.toString(currentPosition.getX()));
-				errorMessage.append("/");
-				errorMessage.append(Double.toString(currentPosition.getY()));
-				errorMessage.append(". Found: ");
-				errorMessage.append(Double.toString(referencePosition.getX()));
-				errorMessage.append("/");
-				errorMessage.append(Double.toString(referencePosition.getY()));
-				throw new RuntimeException(errorMessage.toString());
-			}
 			if(microplateLayout != null && !selectedWells.isEmpty())
 				wellChooserButton.setEnabled(true);
 			if(tileConfiguration != null && !selectedTiles.isEmpty())
@@ -438,16 +428,6 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 		}
 	}
 	
-	private void checkValidState() throws AddonException
-	{
-		if(stageDevice == null)
-			throw new AddonException("No stage device set.");
-		if(microplateLayout != null)
-		{
-			//TODO
-		}
-	}
-	
 	private List<PositionInformation> getSelectedPositions()
 	{
 		ArrayList<PositionInformation> selectedPositions = new ArrayList<>(selectedWells.size() * selectedTiles.size());
@@ -478,7 +458,8 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 	}
 	@Override
 	protected Component createUI() throws AddonException {
-		checkValidState();
+		if(stageDevice == null)
+			throw new AddonException("No stage device set.");
 		setMaximizable(true);
 		setResizable(true);
 		setClosable(false);
@@ -740,6 +721,10 @@ class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadata>
 		
 		return contentPane;
 	}
+	/**
+	 * Function to manually deactivate the live stream used for fine-configuration. Is automatically deactivated if
+	 * containing frame is closed.
+	 */
 	public void close() 
 	{
 		if(liveStreamPanel != null)

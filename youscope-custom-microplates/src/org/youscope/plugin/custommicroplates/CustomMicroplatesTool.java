@@ -6,8 +6,6 @@ package org.youscope.plugin.custommicroplates;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -31,8 +29,8 @@ import org.youscope.addon.tool.ToolMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.serverinterfaces.YouScopeServer;
+import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImageLoadingTools;
-import org.youscope.uielements.StandardFormats;
 
 /**
  * @author langmo
@@ -65,15 +63,11 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 		setTitle("Custom Microplates Configuration");
 		setShowCloseButton(true);
 		
-		// Grid Bag Layouts
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
-		
         ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add");
         ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete");
         ImageIcon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit");
         
-        JButton newMicroplateTypeButton = new JButton("New Microplate Type", addButtonIcon);
+        JButton newMicroplateTypeButton = new JButton("New Rectangular Microplate", addButtonIcon);
         newMicroplateTypeButton.setHorizontalAlignment(SwingConstants.LEFT);
         newMicroplateTypeButton.addActionListener(new ActionListener()
             {
@@ -81,7 +75,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 public void actionPerformed(ActionEvent e)
                 {
                 	YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
-                	CustomMicroplatesConfigurationPanel configPanel = new CustomMicroplatesConfigurationPanel(getClient(), getServer(), newFrame);
+                	CustomRectangularMicroplatesConfigurationPanel configPanel = new CustomRectangularMicroplatesConfigurationPanel(getClient(), getServer(), newFrame);
                 	configPanel.addActionListener(CustomMicroplatesTool.this);
                 	newFrame.setTitle("New Custom Microplate");
                 	newFrame.setContentPane(configPanel);
@@ -89,8 +83,23 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 	newFrame.setVisible(true);
                 }
             });
-
-        JButton deleteMicroplateTypeButton = new JButton("Delete Microplate Type", deleteButtonIcon);
+        JButton newArbitraryTypeButton = new JButton("New Arbitrary Microplate", addButtonIcon);
+        newArbitraryTypeButton.setHorizontalAlignment(SwingConstants.LEFT);
+        newArbitraryTypeButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                	YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
+                	CustomArbitraryMicroplatesConfigurationPanel configPanel = new CustomArbitraryMicroplatesConfigurationPanel(getClient(), getServer(), newFrame);
+                	configPanel.addActionListener(CustomMicroplatesTool.this);
+                	newFrame.setTitle("New Arbitrary Microplate");
+                	newFrame.setContentPane(configPanel);
+                	newFrame.pack();
+                	newFrame.setVisible(true);
+                }
+            });
+        JButton deleteMicroplateTypeButton = new JButton("Delete Microplate", deleteButtonIcon);
         deleteMicroplateTypeButton.setHorizontalAlignment(SwingConstants.LEFT);
         deleteMicroplateTypeButton.addActionListener(new ActionListener()
             {
@@ -112,7 +121,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 }
             });
 
-        JButton editMicroplateTypeButton = new JButton("Edit Microplate Type", editButtonIcon);
+        JButton editMicroplateTypeButton = new JButton("Edit Microplate", editButtonIcon);
         editMicroplateTypeButton.setHorizontalAlignment(SwingConstants.LEFT);
         editMicroplateTypeButton.addActionListener(new ActionListener()
             {
@@ -130,22 +139,32 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 						return;
 					}
                     YouScopeFrame newFrame = getContainingFrame().createModalChildFrame();
-                	CustomMicroplatesConfigurationPanel configPanel = new CustomMicroplatesConfigurationPanel(getClient(), getServer(), newFrame, microplateDefinition);
-                	configPanel.addActionListener(CustomMicroplatesTool.this);
-                	newFrame.setTitle("New Custom Microplate");
-                	newFrame.setContentPane(configPanel);
+                    if(microplateDefinition instanceof CustomRectangularMicroplateDefinition)
+                    {
+	                	CustomRectangularMicroplatesConfigurationPanel configPanel = new CustomRectangularMicroplatesConfigurationPanel(getClient(), getServer(), newFrame, (CustomRectangularMicroplateDefinition) microplateDefinition);
+	                	configPanel.addActionListener(CustomMicroplatesTool.this);
+	                	newFrame.setContentPane(configPanel);
+                    }
+                    else
+                    {
+                    	CustomArbitraryMicroplatesConfigurationPanel configPanel = new CustomArbitraryMicroplatesConfigurationPanel(getClient(), getServer(), newFrame, (CustomArbitraryMicroplateDefinition) microplateDefinition);
+	                	configPanel.addActionListener(CustomMicroplatesTool.this);
+	                	newFrame.setContentPane(configPanel);
+                    }
+                	newFrame.setTitle("Edit Custom Microplate");
+                	
                 	newFrame.pack();
                 	newFrame.setVisible(true);
                 }
             });
 
         // add Button Panel
-        GridBagLayout elementsLayout = new GridBagLayout();
-        JPanel buttonPanel = new JPanel(elementsLayout);
-        StandardFormats.addGridBagElement(newMicroplateTypeButton, elementsLayout, newLineConstr, buttonPanel);
-        StandardFormats.addGridBagElement(editMicroplateTypeButton, elementsLayout, newLineConstr, buttonPanel);
-        StandardFormats.addGridBagElement(deleteMicroplateTypeButton, elementsLayout, newLineConstr, buttonPanel);
-        StandardFormats.addGridBagElement(new JPanel(), elementsLayout, bottomConstr, buttonPanel);
+        DynamicPanel buttonPanel = new DynamicPanel();
+        buttonPanel.add(newMicroplateTypeButton);
+        buttonPanel.add(newArbitraryTypeButton);
+        buttonPanel.add(editMicroplateTypeButton);
+        buttonPanel.add(deleteMicroplateTypeButton);
+        buttonPanel.addFillEmpty();
 
         microplateTypesList = new JList<ComponentMetadataAdapter<CustomMicroplateConfiguration>>();
         microplateTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

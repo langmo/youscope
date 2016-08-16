@@ -85,7 +85,7 @@ public class CustomMicroplateAddonFactory implements ComponentAddonFactory
 			throw new AddonException("Configuration with type identifier " + configuration.getTypeIdentifier() + " has class " + configuration.getClass().getName()+", which is not of class " + CustomMicroplateConfiguration.class.getName() + " which is expected.");
 		
 		try {
-			return new CustomMicroplateResource(positionInformation, configuration.getTypeIdentifier());
+			return new CustomRectangularMicroplateResource(positionInformation, configuration.getTypeIdentifier());
 		} catch (RemoteException e) {
 			throw new AddonException("Remote Exception while creating resource.", e);
 		}

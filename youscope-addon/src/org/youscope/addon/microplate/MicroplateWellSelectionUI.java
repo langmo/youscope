@@ -3,6 +3,8 @@ package org.youscope.addon.microplate;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -58,7 +61,13 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	private final HashMap<Well,WellDisplay> wellDisplays = new HashMap<>(200);
 	private SelectionMode selectionMode = SelectionMode.MULTIPLE;
 	private Well lastSelectedWell = null;
+	private HashMap<Integer, Point2D.Double> xWellLabelPositions = null;
+	private HashMap<Integer, Point2D.Double> yWellLabelPositions = null;
+	private boolean showXWellLabels = true;
+	private boolean showYWellLabels = true;
 	
+	private static final Font WELL_LABEL_FONT = new Font(Font.DIALOG, Font.BOLD, 12);
+	private static final double WELL_LABEL_FONT_MARGIN = 3;
 	private boolean center = false;
 	
 	/**
@@ -102,6 +111,39 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "Microplate Well Selection", new String[0]);
 	}
 	
+	/**
+	 * Returns true if the horizontal cell numbers should be shown above the microplate. A true value only has an effect if the microplate
+	 * layout is regular enough such that these labels make sense.
+	 * @return True if labels are shown.
+	 */
+	public boolean isShowXWellLabels() {
+		return showXWellLabels;
+	}
+	/**
+	 * Set to true if the horizontal cell numbers should be shown above the microplate. A true value only has an effect if the microplate
+	 * layout is regular enough such that these labels make sense.
+	 * @param showXWellLabels True if labels are shown.
+	 */
+	public void setShowXWellLabels(boolean showXWellLabels) {
+		this.showXWellLabels = showXWellLabels;
+	}
+	/**
+	 * Returns true if the vertical cell numbers should be shown left to the microplate. A true value only has an effect if the microplate
+	 * layout is regular enough such that these labels make sense.
+	 * @return True if labels are shown.
+	 */
+	public boolean isShowYWellLabels() {
+		return showYWellLabels;
+	}
+	/**
+	 * Set to true if the vertical cell numbers should be shown left to the microplate. A true value only has an effect if the microplate
+	 * layout is regular enough such that these labels make sense.
+	 * @param showYWellLabels True if labels are shown.
+	 */
+	public void setShowYWellLabels(boolean showYWellLabels) {
+		this.showYWellLabels = showYWellLabels;
+	}
+
 	/**
 	 * Returns the active selection mode, i.e. if no, one or multiple wells can be selected.
 	 * @return Current selection mode.
@@ -379,6 +421,8 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		maxWellX = -Double.MAX_VALUE;
 		minWellY = Double.MAX_VALUE;
 		maxWellY = -Double.MAX_VALUE;
+		xWellLabelPositions = new HashMap<>();
+		yWellLabelPositions = new HashMap<>();
 		if(microplateLayout != null)
 		{
 			for(WellLayout wellLayout : microplateLayout)
@@ -399,6 +443,30 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 					minWellY = y;
 				if(y+height > maxWellY)
 					maxWellY = y+height;
+				if(xWellLabelPositions != null)
+				{
+					int xpos = wellLayout.getWell().getWellX();
+					Point2D.Double oldPoint = xWellLabelPositions.get(xpos);
+					if(oldPoint == null)
+						xWellLabelPositions.put(xpos, new Point2D.Double(x, width));
+					else
+					{
+						if(x != oldPoint.getX() || width != oldPoint.getY())
+							xWellLabelPositions = null;
+					}
+				}
+				if(yWellLabelPositions != null)
+				{
+					int ypos = wellLayout.getWell().getWellY();
+					Point2D.Double oldPoint = yWellLabelPositions.get(ypos);
+					if(oldPoint == null)
+						yWellLabelPositions.put(ypos, new Point2D.Double(y, height));
+					else
+					{
+						if(y != oldPoint.getX() || height != oldPoint.getY())
+							yWellLabelPositions = null;
+					}
+				}
 			}
 		}
 		if(lastSelectedWell == null && selectionMode == SelectionMode.EXACTLY_ONE)
@@ -562,14 +630,17 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			{
 				return new Dimension(REFERENCE_WIDTH, REFERENCE_HEIGHT);
 			}
+			FontMetrics fontMetrics = getFontMetrics(WELL_LABEL_FONT);
+			double fontHeight = xWellLabelPositions == null || !showXWellLabels ? 0 : 2*WELL_LABEL_FONT_MARGIN + fontMetrics.getAscent();
+			double fontWidth = yWellLabelPositions == null || !showYWellLabels ? 0 : 2*WELL_LABEL_FONT_MARGIN+fontMetrics.stringWidth("WW");
 			double plateWidth = maxWellX-minWellX;
 			double plateHeight = maxWellY-minWellY;
-			if(REFERENCE_WIDTH/plateWidth == REFERENCE_HEIGHT / plateHeight)
+			if((REFERENCE_WIDTH-fontWidth)/plateWidth == (REFERENCE_HEIGHT-fontHeight) / plateHeight)
 				return new Dimension(REFERENCE_WIDTH, REFERENCE_HEIGHT);
-			else if(REFERENCE_WIDTH/plateWidth < REFERENCE_HEIGHT / plateHeight)
-				return new Dimension(REFERENCE_WIDTH, (int) Math.ceil(REFERENCE_WIDTH/plateWidth*plateHeight));
+			else if((REFERENCE_WIDTH-fontWidth)/plateWidth < (REFERENCE_HEIGHT-fontHeight) / plateHeight)
+				return new Dimension(REFERENCE_WIDTH, (int) Math.ceil((REFERENCE_WIDTH-fontWidth)/plateWidth*plateHeight + fontHeight));
 			else
-				return new Dimension((int) Math.ceil(REFERENCE_HEIGHT/plateHeight*plateWidth), REFERENCE_HEIGHT);
+				return new Dimension((int) Math.ceil((REFERENCE_HEIGHT-fontHeight)/plateHeight*plateWidth+fontWidth), REFERENCE_HEIGHT);
 		}
 		
 		
@@ -596,6 +667,24 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 				{
 					well.paint(g);
 				}
+				g.setColor(Color.BLACK);
+				g.setFont(WELL_LABEL_FONT.deriveFont((float)(WELL_LABEL_FONT.getSize() / transform.getScaleY())));
+				if(showXWellLabels && xWellLabelPositions != null)
+				{
+					for(Entry<Integer, Point2D.Double> entry : xWellLabelPositions.entrySet())
+					{
+						String message = Integer.toString(entry.getKey()+1);
+						g.drawString(message, (float)entry.getValue().x + ((float)entry.getValue().y-g.getFontMetrics().stringWidth(message))/2, (float)(minWellY-WELL_LABEL_FONT_MARGIN/ transform.getScaleY()));
+					}
+				}
+				if(showYWellLabels && yWellLabelPositions != null)
+				{
+					for(Entry<Integer, Point2D.Double> entry : yWellLabelPositions.entrySet())
+					{
+						String message = Well.getYWellName(entry.getKey());
+						g.drawString(message, (float)(minWellX-g.getFontMetrics().stringWidth(message)-WELL_LABEL_FONT_MARGIN/ transform.getScaleY()), (float)entry.getValue().x +g.getFontMetrics().getAscent()+ ((float)entry.getValue().y-g.getFontMetrics().getAscent())/2);
+					}
+				}
 				g.setTransform(oldTransform);
 			}
 	    }
@@ -606,10 +695,12 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			{
 				return new AffineTransform();
 			}
-			
-			double width = getWidth()-1;
-			double height = getHeight()-1;
-			double defaultScale = Math.min(width/(maxWellX-minWellX), height/(maxWellY-minWellY));
+			FontMetrics fontMetrics = getFontMetrics(WELL_LABEL_FONT);
+			double fontHeight = xWellLabelPositions == null || !showXWellLabels ? 0 : 2*WELL_LABEL_FONT_MARGIN + fontMetrics.getAscent();
+			double fontWidth = yWellLabelPositions == null || !showYWellLabels ? 0 : 2*WELL_LABEL_FONT_MARGIN+fontMetrics.stringWidth("WW");
+			double width = getWidth()-1-fontWidth;
+			double height = getHeight()-1-fontHeight;
+			double defaultScale = Math.min((width)/(maxWellX-minWellX), (height)/(maxWellY-minWellY));
 			
 			double imageWidth = defaultScale*(maxWellX-minWellX);
 			double imageHeight = defaultScale*(maxWellY-minWellY);
@@ -650,7 +741,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 				else if(deltaY < height-scaledImageHeight)
 					deltaY = height-scaledImageHeight;
 			}
-			transform = AffineTransform.getTranslateInstance(deltaX, deltaY);
+			transform = AffineTransform.getTranslateInstance(deltaX+fontWidth, deltaY+fontHeight);
 			transform.concatenate(AffineTransform.getScaleInstance(defaultScale*zoom, defaultScale*zoom));
 			transform.concatenate(AffineTransform.getTranslateInstance(-minWellX, -minWellY));
 			return transform;

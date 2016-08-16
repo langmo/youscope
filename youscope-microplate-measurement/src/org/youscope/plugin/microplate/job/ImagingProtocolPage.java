@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.microplatejob;
+package org.youscope.plugin.microplate.job;
 
 import java.awt.BorderLayout;
 
@@ -18,7 +18,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
  * @author Moritz Lang
  *
  */
-class ImagingProtocolPage extends JobConfigurationPage<MicroplateJobConfiguration>
+class ImagingProtocolPage extends JobAddonUIPage<MicroplateJobConfiguration>
 {
 	/**
 	 * Serial Version UID.

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.microplate.measurement;
+package org.youscope.plugin.microplate.job;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -12,18 +12,16 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.component.ComponentMetadata;
-import org.youscope.addon.measurement.MeasurementAddonUIPage;
 import org.youscope.addon.microplate.MicroplateConfiguration;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.plugin.microplate.measurement.MicroplateMeasurementConfiguration;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.SubConfigurationPanel;
 /**
  * @author Moritz Lang
  *
  */
-class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration>
+class MicroplatePage extends JobAddonUIPage<MicroplateJobConfiguration>
 {
 
 	/**
@@ -46,7 +44,7 @@ class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfigu
 	}
 
 	@Override
-	public void loadData(MicroplateMeasurementConfiguration configuration)
+	public void loadData(MicroplateJobConfiguration configuration)
 	{
 		if(configuration.getMicroplateConfiguration() != null)
 		{
@@ -62,7 +60,7 @@ class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfigu
 	}
 
 	@Override
-	public boolean saveData(MicroplateMeasurementConfiguration configuration)
+	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		if(customPositionsField.isSelected())
 		{
@@ -77,7 +75,7 @@ class MicroplatePage extends MeasurementAddonUIPage<MicroplateMeasurementConfigu
 	}
 
 	@Override
-	public void setToDefault(MicroplateMeasurementConfiguration configuration)
+	public void setToDefault(MicroplateJobConfiguration configuration)
 	{
 		try 
 		{
