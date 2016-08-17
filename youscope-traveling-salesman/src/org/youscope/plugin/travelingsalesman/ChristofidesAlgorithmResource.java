@@ -52,10 +52,11 @@ public class ChristofidesAlgorithmResource  extends ResourceAdapter<Christofides
 				}
 				if(vertices.size() <= 0)
 					return new ArrayList<PositionInformation>(0);
+				
 				// Calculate shortest path approximation
 				Vertex[] hamiltonianCycle;
 				try {
-					hamiltonianCycle = OptimizerHelper.salesmanChristofides(vertices, OptimizerHelper.getManhattenMetric());
+					hamiltonianCycle = OptimizerHelper.salesmanChristofides(vertices, OptimizerHelper.getMetric(getConfiguration().getMetric()));
 				} catch (Exception e) {
 					throw new ResourceException("Could not calculate shortest path.", e);
 				}

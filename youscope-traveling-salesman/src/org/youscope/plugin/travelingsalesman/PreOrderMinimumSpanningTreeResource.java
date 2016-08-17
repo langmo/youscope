@@ -54,7 +54,7 @@ public class PreOrderMinimumSpanningTreeResource extends ResourceAdapter<PreOrde
 				// Calculate shortest path approximation
 				Vertex[] hamiltonianCycle;
 				try {
-					hamiltonianCycle = OptimizerHelper.salesmanPreorderMSP(vertices, OptimizerHelper.getManhattenMetric());
+					hamiltonianCycle = OptimizerHelper.salesmanPreorderMSP(vertices, OptimizerHelper.getMetric(getConfiguration().getMetric()));
 				} catch (InterruptedException e) {
 					throw new ResourceException("Computation interrupted by user.", e);
 				}

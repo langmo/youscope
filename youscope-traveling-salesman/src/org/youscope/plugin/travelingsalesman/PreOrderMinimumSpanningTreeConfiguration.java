@@ -23,6 +23,25 @@ public class PreOrderMinimumSpanningTreeConfiguration extends PathOptimizerConfi
 	 */
 	public static final String TYPE_IDENTIFIER = "YouScope.path.PreOrderMinimumSpanningTree";
 
+	@XStreamAlias("metric")
+	private MetricType metric = MetricType.MANHATTEN;
+
+	/**
+	 * Sets the metric to use to calculate distances.
+	 * @param metric metric to use.
+	 */
+	public void setMetric(MetricType metric) {
+		this.metric = metric;
+	}
+
+	/**
+	 * Returns the metric used to calculate distances.
+	 * @return used metric.
+	 */
+	public MetricType getMetric() {
+		return metric;
+	}
+	
 	@Override
 	public String getTypeIdentifier() {
 		return TYPE_IDENTIFIER;

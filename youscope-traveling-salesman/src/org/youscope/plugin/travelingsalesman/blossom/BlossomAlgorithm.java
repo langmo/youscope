@@ -22,6 +22,7 @@ public class BlossomAlgorithm
 	private final ArrayList<PseudoNode> allNodes  = new ArrayList<>();
 	private PseudoNode currentRoot = null;
 	private final ArrayList<BlossomListener> listeners = new ArrayList<>();
+	private static final double DELTA = 1e-10;
 	/**
 	 * Constructor.
 	 * @param vertices Vertices which should be matched.
@@ -84,7 +85,7 @@ public class BlossomAlgorithm
 	
 	private boolean isTight(Edge edge) throws BlossomException, InterruptedException
 	{
-		return Math.abs(getSlack(edge)) < 100*Double.MIN_VALUE;
+		return Math.abs(getSlack(edge)) < DELTA;
 	}
 	private double getSlack(Edge edge) throws BlossomException, InterruptedException
 	{
@@ -140,7 +141,7 @@ public class BlossomAlgorithm
 			if(!v1Contained && !v2Contained)
 				continue;
 			double slack = getSlack(edge);
-			if(slack<0)
+			if(slack<-DELTA)
 			{
 				throw new BlossomException("Edge "+edge.toString()+" has slack "+Double.toString(slack));
 			}
@@ -179,7 +180,7 @@ public class BlossomAlgorithm
 				continue;
 			}
 		}
-		if(delta < 100*Double.MIN_VALUE)
+		if(delta < DELTA) 
 			return 0;
 		updateDualSubTree(currentRoot, delta);
 		return delta;

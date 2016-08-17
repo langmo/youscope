@@ -1,4 +1,4 @@
-package org.youscope.plugin.zigzagpath;
+package org.youscope.plugin.sawpath;
 
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.common.configuration.YSConfigAlias;
@@ -6,30 +6,25 @@ import org.youscope.common.configuration.YSConfigAlias;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Zig-Zag path through microplate
+ * Non-optimized path through microplate
  * @author Moritz Lang
  *
  */
-@YSConfigAlias("Zig-Zag Path")
-@XStreamAlias("zig-zag-path")
-public class ZigZagPathConfiguration extends PathOptimizerConfiguration
+@YSConfigAlias("Saw Path")
+@XStreamAlias("saw-path")
+public class SawPathConfiguration extends PathOptimizerConfiguration 
 {
 	/**
 	 * Serial Version UID.
 	 */
-	private static final long serialVersionUID = 3051118882205729335L;
+	private static final long serialVersionUID = 3041118882205729335L;
 	/**
 	 * Type identifier.
 	 */
-	public static final String TYPE_IDENTIFIER = "YouScope.path.ZigZagPath";
-
-	@Override
-	public String getTypeIdentifier() {
-		return TYPE_IDENTIFIER;
-	}
-
+	public static final String TYPE_IDENTIFIER = "YouScope.path.SawPath";
+	
 	/**
-	 * Direction of the zig-zag path
+	 * Direction of the saw path
 	 * @author Moritz Lang
 	 *
 	 */
@@ -60,20 +55,26 @@ public class ZigZagPathConfiguration extends PathOptimizerConfiguration
 	private Direction direction = Direction.HORIZONTALLY;
 
 	/**
-	 * Returns if the zig-zag is done vertically or horizontally.
-	 * @return direction of zig-zag.
+	 * Returns if the saw is done vertically or horizontally.
+	 * @return direction of saw.
 	 */
 	public Direction getDirection() {
 		return direction;
 	}
 
 	/**
-	 * Sets if the zig-zag is done vertically or horizontally.
-	 * @param direction direction of zig-zag.
+	 * Sets if the saw is done vertically or horizontally.
+	 * @param direction direction of saw.
 	 */
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
 
+	@Override
+	public String getTypeIdentifier() {
+		return TYPE_IDENTIFIER;
+	}
+
+	
 
 }

@@ -53,111 +53,223 @@ public class ZigZagPathResource  extends ResourceAdapter<ZigZagPathConfiguration
 			throws ResourceException, RemoteException {
 		
 		ArrayList<PositionInformation> path = new ArrayList<>(positions.keySet());
-		// Get all used rows
-		final HashSet<Integer> wellRows = new HashSet<>();
-		final HashSet<Integer> tileRows = new HashSet<>();
-		for(PositionInformation positionInformation : path)
-		{
-			if(positionInformation.getWell() != null)
-				wellRows.add(positionInformation.getWell().getWellY());
-			if(positionInformation.getNumPositions() > 0)
-				tileRows.add(positionInformation.getPosition(0));
-		}
 		
-		// Get indices of even rows
-		ArrayList<Integer> evenWellRows = new ArrayList<>(wellRows);
-		Collections.sort(evenWellRows);
-		ArrayList<Integer> evenTileRows = new ArrayList<>(tileRows);
-		Collections.sort(evenTileRows);
-		boolean even = false;
-		Iterator<Integer> iterator = evenWellRows.iterator();
-		while(iterator.hasNext())
+		if(getConfiguration().getDirection() == ZigZagPathConfiguration.Direction.HORIZONTALLY)
 		{
-			iterator.next();
-			if(!even)
-				iterator.remove();
-			even = !even;
-				
-		}
-		even = false;
-		iterator = evenTileRows.iterator();
-		while(iterator.hasNext())
-		{
-			iterator.next();
-			if(!even)
-				iterator.remove();
-			even = !even;
-		}
-		
-		// put back in hash set for quicker sorting
-		wellRows.clear();
-		wellRows.addAll(evenWellRows);
-		tileRows.clear();
-		tileRows.addAll(evenTileRows);
-		
-		Collections.sort(path, new Comparator<PositionInformation>()
-				{
-					@Override
-					public int compare(PositionInformation positionInformation1, PositionInformation positionInformation2) 
-					{
-						Well well1 = positionInformation1.getWell();
-						Well well2 = positionInformation2.getWell();
-						if(well1 == null && well2 != null)
-							return -1;
-						else if (well1 != null && well2 == null)
-							return 1;
-						else if(well1 != null && well2 != null && !well1.equals(well2))
-						{
-							if(well1.getWellY() < well2.getWellY())
-								return -1;
-							else if(well1.getWellY() > well2.getWellY())
-								return 1;
-							if(wellRows.contains(well1.getWellY()))
-							{
-								return well1.getWellX() > well2.getWellX() ? -1 : 1;
-							}
-							return well1.getWellX() < well2.getWellX() ? -1 : 1;
-								
-						}
-						int[] pos1 = positionInformation1.getPositions();
-						int[] pos2 = positionInformation2.getPositions();
-						
-						if(pos1.length == 0 && pos2.length == 0)
-							return 0;
-						else if(pos1.length == 0 && pos2.length != 0)
-							return -1;
-						else if (pos1.length != 0 && pos2.length == 0)
-							return 1;
-						else if(pos1[0] != pos2[0])
-							return pos1[0] < pos2[0] ? -1 : 1;
-						else if(pos1.length == 1 && pos2.length == 1)
-							return 0;
-						else if(pos1.length == 1 && pos2.length != 1)
-							return -1;
-						else if (pos1.length != 1 && pos2.length == 1)
-							return 1;	
-						else if(pos1[1] != pos2[1])
-						{
-							if((well1 != null && wellRows.contains(well1.getWellY())) != tileRows.contains(pos1[0]))
-							{
-								return pos1[1] > pos2[1] ? -1 : 1;
-							}
-							return pos1[1] < pos2[1] ? -1 : 1;
-						}
-						// Now we know that the wells, and the first two positions are equal. Check all other positions normally.
-						for(int i=0; i<pos1.length && i < pos2.length; i++)
-						{
-							if(pos1[i]!=pos2[i])
-								return pos1[i] < pos2[i] ? -1 : 1;
-						}
-						if(pos1.length < pos2.length)
-							return -1;
-						else if(pos1.length > pos2.length)
-							return 1;
-						return 0;
-					}
+			// Get all used rows
+			final HashSet<Integer> wellRows = new HashSet<>();
+			final HashSet<Integer> tileRows = new HashSet<>();
+			for(PositionInformation positionInformation : path)
+			{
+				if(positionInformation.getWell() != null)
+					wellRows.add(positionInformation.getWell().getWellY());
+				if(positionInformation.getNumPositions() > 0)
+					tileRows.add(positionInformation.getPosition(0));
+			}
 			
-				});
+			// Get indices of even rows
+			ArrayList<Integer> evenWellRows = new ArrayList<>(wellRows);
+			Collections.sort(evenWellRows);
+			ArrayList<Integer> evenTileRows = new ArrayList<>(tileRows);
+			Collections.sort(evenTileRows);
+			boolean even = false;
+			Iterator<Integer> iterator = evenWellRows.iterator();
+			while(iterator.hasNext())
+			{
+				iterator.next();
+				if(!even)
+					iterator.remove();
+				even = !even;
+					
+			}
+			even = false;
+			iterator = evenTileRows.iterator();
+			while(iterator.hasNext())
+			{
+				iterator.next();
+				if(!even)
+					iterator.remove();
+				even = !even;
+			}
+			
+			// put back in hash set for quicker sorting
+			wellRows.clear();
+			wellRows.addAll(evenWellRows);
+			tileRows.clear();
+			tileRows.addAll(evenTileRows);
+			
+			Collections.sort(path, new Comparator<PositionInformation>()
+					{
+						@Override
+						public int compare(PositionInformation positionInformation1, PositionInformation positionInformation2) 
+						{
+							Well well1 = positionInformation1.getWell();
+							Well well2 = positionInformation2.getWell();
+							if(well1 == null && well2 != null)
+								return -1;
+							else if (well1 != null && well2 == null)
+								return 1;
+							else if(well1 != null && well2 != null && !well1.equals(well2))
+							{
+								if(well1.getWellY() < well2.getWellY())
+									return -1;
+								else if(well1.getWellY() > well2.getWellY())
+									return 1;
+								if(wellRows.contains(well1.getWellY()))
+								{
+									return well1.getWellX() > well2.getWellX() ? -1 : 1;
+								}
+								return well1.getWellX() < well2.getWellX() ? -1 : 1;
+									
+							}
+							int[] pos1 = positionInformation1.getPositions();
+							int[] pos2 = positionInformation2.getPositions();
+							
+							if(pos1.length == 0 && pos2.length == 0)
+								return 0;
+							else if(pos1.length == 0 && pos2.length != 0)
+								return -1;
+							else if (pos1.length != 0 && pos2.length == 0)
+								return 1;
+							else if(pos1[0] != pos2[0])
+								return pos1[0] < pos2[0] ? -1 : 1;
+							else if(pos1.length == 1 && pos2.length == 1)
+								return 0;
+							else if(pos1.length == 1 && pos2.length != 1)
+								return -1;
+							else if (pos1.length != 1 && pos2.length == 1)
+								return 1;	
+							else if(pos1[1] != pos2[1])
+							{
+								if((well1 != null && wellRows.contains(well1.getWellY())) != tileRows.contains(pos1[0]))
+								{
+									return pos1[1] > pos2[1] ? -1 : 1;
+								}
+								return pos1[1] < pos2[1] ? -1 : 1;
+							}
+							// Now we know that the wells, and the first two positions are equal. Check all other positions normally.
+							for(int i=0; i<pos1.length && i < pos2.length; i++)
+							{
+								if(pos1[i]!=pos2[i])
+									return pos1[i] < pos2[i] ? -1 : 1;
+							}
+							if(pos1.length < pos2.length)
+								return -1;
+							else if(pos1.length > pos2.length)
+								return 1;
+							return 0;
+						}
+				
+					});
+			
+		}
+		else
+		{
+			// Get all used columns
+			final HashSet<Integer> wellColumns = new HashSet<>();
+			final HashSet<Integer> tileColumns = new HashSet<>();
+			for(PositionInformation positionInformation : path)
+			{
+				if(positionInformation.getWell() != null)
+					wellColumns.add(positionInformation.getWell().getWellX());
+				if(positionInformation.getNumPositions() > 1)
+					tileColumns.add(positionInformation.getPosition(1));
+			}
+			
+			// Get indices of even columns
+			ArrayList<Integer> evenWellColumns = new ArrayList<>(wellColumns);
+			Collections.sort(evenWellColumns);
+			ArrayList<Integer> evenTileColumns = new ArrayList<>(tileColumns);
+			Collections.sort(evenTileColumns);
+			boolean even = false;
+			Iterator<Integer> iterator = evenWellColumns.iterator();
+			while(iterator.hasNext())
+			{
+				iterator.next();
+				if(!even)
+					iterator.remove();
+				even = !even;
+					
+			}
+			even = false;
+			iterator = evenTileColumns.iterator();
+			while(iterator.hasNext())
+			{
+				iterator.next();
+				if(!even)
+					iterator.remove();
+				even = !even;
+			}
+			
+			// put back in hash set for quicker sorting
+			wellColumns.clear();
+			wellColumns.addAll(evenWellColumns);
+			tileColumns.clear();
+			tileColumns.addAll(evenTileColumns);
+			
+			Collections.sort(path, new Comparator<PositionInformation>()
+					{
+						@Override
+						public int compare(PositionInformation positionInformation1, PositionInformation positionInformation2) 
+						{
+							Well well1 = positionInformation1.getWell();
+							Well well2 = positionInformation2.getWell();
+							if(well1 == null && well2 != null)
+								return -1;
+							else if (well1 != null && well2 == null)
+								return 1;
+							else if(well1 != null && well2 != null && !well1.equals(well2))
+							{
+								if(well1.getWellX() < well2.getWellX())
+									return -1;
+								else if(well1.getWellX() > well2.getWellX())
+									return 1;
+								if(wellColumns.contains(well1.getWellX()))
+								{
+									return well1.getWellY() > well2.getWellY() ? -1 : 1;
+								}
+								return well1.getWellY() < well2.getWellY() ? -1 : 1;
+									
+							}
+							int[] pos1 = positionInformation1.getPositions();
+							int[] pos2 = positionInformation2.getPositions();
+							
+							if(pos1.length < 2 || pos2.length < 2)
+							{
+								for(int i=0; i<pos1.length && i<pos2.length; i++)
+								{
+									if(pos1[i] != pos2[i])
+										return pos1[i] < pos2[i] ? -1 : 1;
+								}
+								if(pos1.length != pos2.length)
+									return pos1.length < pos2.length ? -1 : 1;
+								return 0;
+							}
+							else if(pos1[1] != pos2[1])
+								return pos1[1] < pos2[1] ? -1 : 1;
+							else if(pos1[0] != pos2[0])
+							{
+								if((well1 != null && wellColumns.contains(well1.getWellX())) != tileColumns.contains(pos1[1]))
+								{
+									return pos1[0] > pos2[0] ? -1 : 1;
+								}
+								return pos1[0] < pos2[0] ? -1 : 1;
+							}
+							// Now we know that the wells, and the first two positions are equal. Check all other positions normally.
+							for(int i=2; i<pos1.length && i < pos2.length; i++)
+							{
+								if(pos1[i]!=pos2[i])
+									return pos1[i] < pos2[i] ? -1 : 1;
+							}
+							if(pos1.length < pos2.length)
+								return -1;
+							else if(pos1.length > pos2.length)
+								return 1;
+							return 0;
+						}
+				
+					});
+		}
 		return path;
 	}
 }

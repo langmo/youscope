@@ -24,6 +24,21 @@ import org.youscope.plugin.travelingsalesman.blossom.PrimalUpdateType;
  */
 class OptimizerHelper  
 {
+	
+	public static Metric getMetric(MetricType metricType)
+	{
+		switch(metricType)
+		{
+		case MANHATTEN:
+			return getManhattenMetric();
+		case EUCLIDEAN:
+			return getEuclideanMetric();
+		case MAXIMUM:
+			return getMaximumMetric();
+		default:
+			return getManhattenMetric();	
+		}
+	}
 	/**
 	 * Returns the Manhattan metric.
 	 * @return Manhattan metric.
@@ -35,6 +50,36 @@ class OptimizerHelper
 			@Override
 			public double distance(java.awt.geom.Point2D.Double point1, java.awt.geom.Point2D.Double point2) {
 				return Math.abs(point1.x-point2.x) + Math.abs(point1.y-point2.y);
+			}
+		};
+	}
+	
+	/**
+	 * Returns the Euclidean metric.
+	 * @return Euclidean metric.
+	 */
+	public static Metric getEuclideanMetric()
+	{
+		return new Metric()
+		{
+			@Override
+			public double distance(java.awt.geom.Point2D.Double point1, java.awt.geom.Point2D.Double point2) {
+				return Math.sqrt(Math.pow(point1.x-point2.x, 2.) + Math.pow(point1.y-point2.y, 2.));
+			}
+		};
+	}
+	
+	/**
+	 * Returns the Maximum metric.
+	 * @return Maximum metric.
+	 */
+	public static Metric getMaximumMetric()
+	{
+		return new Metric()
+		{
+			@Override
+			public double distance(java.awt.geom.Point2D.Double point1, java.awt.geom.Point2D.Double point2) {
+				return Math.max(Math.abs(point1.x-point2.x), Math.abs(point1.y-point2.y));
 			}
 		};
 	}
