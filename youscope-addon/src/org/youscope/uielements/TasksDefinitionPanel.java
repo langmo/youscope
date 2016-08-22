@@ -109,7 +109,7 @@ public class TasksDefinitionPanel extends JPanel
                 {
                 	YouScopeFrame newFrame = TasksDefinitionPanel.this.frame.createModalChildFrame();
                 	TaskConfigurationPanel configFrame = new TaskConfigurationPanel(TasksDefinitionPanel.this.client, TasksDefinitionPanel.this.server, TasksDefinitionPanel.this.frame);
-                	configFrame.showInFrame(newFrame, "Measurement Task", new TaskConfigurationListenerImpl(-1));
+                	configFrame.showInFrame(newFrame, "Add Task", new TaskConfigurationListenerImpl(-1));
                     newFrame.setVisible(true);
                 }
             });
@@ -144,7 +144,7 @@ public class TasksDefinitionPanel extends JPanel
                     YouScopeFrame newFrame = TasksDefinitionPanel.this.frame.createModalChildFrame();
                 	TaskConfigurationPanel configFrame = new TaskConfigurationPanel(TasksDefinitionPanel.this.client, TasksDefinitionPanel.this.server, TasksDefinitionPanel.this.frame);
                 	configFrame.setConfigurationData(task);
-                	configFrame.showInFrame(newFrame, "Measurement Task", new TaskConfigurationListenerImpl(idx));
+                	configFrame.showInFrame(newFrame, "Edit Task", new TaskConfigurationListenerImpl(idx));
                     newFrame.setVisible(true);
                 }
             });

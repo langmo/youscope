@@ -125,9 +125,9 @@ class WellTable extends JPanel
         
         JButton addRangeButton;
         if (addButtonIcon == null)
-        	addRangeButton = new JButton("Add Range");
+        	addRangeButton = new JButton("Add Multiple Wells");
         else
-        	addRangeButton = new JButton("Add Range", addButtonIcon);
+        	addRangeButton = new JButton("Add Multiple Wells", addButtonIcon);
         addRangeButton.setHorizontalAlignment(SwingConstants.LEFT);
         addRangeButton.addActionListener(new ActionListener()
             {
@@ -189,7 +189,7 @@ class WellTable extends JPanel
 		YouScopeFrame childFrame = frame.createModalChildFrame();
 		childFrame.setContentPane(new AddRangeComponent(childFrame));
 		childFrame.pack();
-		childFrame.setTitle("Add Range");
+		childFrame.setTitle("Add Multiple Wells");
 		childFrame.setVisible(true);
 	}
 	private class AddWellComponent extends DynamicPanel
@@ -435,13 +435,12 @@ class WellTable extends JPanel
 						client.sendError("Could not obtain current postion of microscope.", e);
 						return;
 					}
-					double width = currentPosition.x - leftTextField.getValue();
-					double height = currentPosition.y - topTextField.getValue();
-					if(width <= 0 || height <= 0)
-					{
-						client.sendError("Current position smaller or equal to top-left of well.");
-						return;
-					}
+					double width = Math.abs(currentPosition.x - leftTextField.getValue());
+					double height = Math.abs(currentPosition.y - topTextField.getValue());
+					if(width < Double.MIN_NORMAL*10)
+						width = Double.MIN_NORMAL*10;
+					if(height < Double.MIN_NORMAL*10)
+						height = Double.MIN_NORMAL*10;
 					widthTextField.setValue(width);
 					heightTextField.setValue(height);
 				}
@@ -486,13 +485,12 @@ class WellTable extends JPanel
 						client.sendError("Could not obtain current postion of microscope.", e);
 						return;
 					}
-					double width = currentPosition.x - leftTextField.getValue();
-					double height = currentPosition.y - topTextField.getValue();
-					if(width <= 0 || height <= 0)
-					{
-						client.sendError("Current position smaller or equal to top-left of top-left well.");
-						return;
-					}
+					double width = Math.abs(currentPosition.x - leftTextField.getValue());
+					double height = Math.abs(currentPosition.y - topTextField.getValue());
+					if(width < Double.MIN_NORMAL*10)
+						width = Double.MIN_NORMAL*10;
+					if(height < Double.MIN_NORMAL*10)
+						height = Double.MIN_NORMAL*10;
 					horizontalDistanceTextField.setValue(width);
 					verticalDistanceTextField.setValue(height);
 				}

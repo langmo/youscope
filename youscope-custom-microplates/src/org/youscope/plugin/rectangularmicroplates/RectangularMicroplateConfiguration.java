@@ -21,22 +21,22 @@ public class RectangularMicroplateConfiguration extends MicroplateConfiguration 
 	 */
 	private static final long serialVersionUID = 1375820755467997821L;
 
-	@YSConfigAlias("Number of wells horizontally:")
+	@YSConfigAlias("Number of wells horizontally")
 	@YSConfigIntegerRange(minValue=1)
 	@XStreamAlias("num-wells-x")
 	private int numWellsX = 12;
 	
-	@YSConfigAlias("Number of wells vertically:")
+	@YSConfigAlias("Number of wells vertically")
 	@YSConfigIntegerRange(minValue=1)
 	@XStreamAlias("num-wells-y")
 	private int numWellsY = 8;
 	
-	@YSConfigAlias("Width of wells (um):")
+	@YSConfigAlias("Width of/horizontal distance between wells (um)")
 	@YSConfigDoubleRange(minValue=Double.MIN_NORMAL*10)
 	@XStreamAlias("well-width")
 	private double wellWidth = 9000.;
 	
-	@YSConfigAlias("Height of wells (um):")
+	@YSConfigAlias("Height of/vertical distance between wells (um)")
 	@YSConfigDoubleRange(minValue=Double.MIN_NORMAL*10)
 	@XStreamAlias("well-height")
 	private double wellHeight = 9000.;

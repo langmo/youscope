@@ -4,8 +4,6 @@
 package org.youscope.uielements;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,19 +38,19 @@ public class TaskConfigurationPanel extends JPanel
 
 	private final JobsDefinitionPanel jobPanel;
 	
-	private final JLabel periodLabel = new JLabel("Period:");
+	private final JLabel periodLabel = new JLabel("Period between successive executions:");
 	private final PeriodField			periodField				= new PeriodField();
 
 	private final PeriodField			firstEvaluationField	= new PeriodField();
 
 	private final JRadioButton					stopByUserRadio				= new JRadioButton("When measurement finishes.", false);
-	private final JRadioButton					stopByExecutionsRadio		= new JRadioButton("After a given number of executions.", false);
+	private final JRadioButton					stopByExecutionsRadio		= new JRadioButton("After a given number of executions of the task's jobs.", false);
 	private final JLabel							numExecutionsFieldLabel	= new JLabel("Number of Executions:");
 	private final JFormattedTextField				numExecutionsField		= new JFormattedTextField(StandardFormats.getIntegerFormat());
 	
 	private final JRadioButton					burstRadio				= new JRadioButton("As fast as possible / burst.", false);
-	private final JRadioButton					dynamicPeriodRadio				= new JRadioButton("Dynamic period (End evaluation i -> Start evaluation i+1).", false);
-	private final JRadioButton					fixedPeriodRadio				= new JRadioButton("Fixed period (Start evaluation i -> Start evaluation i+1).", false);
+	private final JRadioButton					dynamicPeriodRadio				= new JRadioButton("Dynamic period (End execution i -> Start execution i+1).", false);
+	private final JRadioButton					fixedPeriodRadio				= new JRadioButton("Fixed period (Start execution i -> Start execution i+1).", false);
 	private final JRadioButton					varyingPeriodRadio				= new JRadioButton("Varying period.", false);
 	private final PeriodVaryingPanel				periodVaryingDataPanel	= new PeriodVaryingPanel();
 	
@@ -71,12 +69,9 @@ public class TaskConfigurationPanel extends JPanel
 		this.client = client;
 		this.parentFrame = parentFrame;
 		
-		GridBagLayout leftLayout = new GridBagLayout();
-		JPanel leftPanel = new JPanel(leftLayout);
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
+		DynamicPanel leftPanel = new DynamicPanel();
 				
-		StandardFormats.addGridBagElement(new JLabel("Task finishes:"), leftLayout, newLineConstr, leftPanel);
+		leftPanel.add(new JLabel("Task finishes:"));
 		ButtonGroup stopConditionGroup = new ButtonGroup();
 		stopConditionGroup.add(stopByUserRadio);
 		stopConditionGroup.add(stopByExecutionsRadio);
@@ -102,19 +97,19 @@ public class TaskConfigurationPanel extends JPanel
 		stopByUserRadio.addActionListener(new StopTypeChangedListener());
 		stopByExecutionsRadio.addActionListener(new StopTypeChangedListener());
 
-		StandardFormats.addGridBagElement(stopByUserRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(stopByExecutionsRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(numExecutionsFieldLabel, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(numExecutionsField, leftLayout, newLineConstr, leftPanel);
+		leftPanel.add(stopByUserRadio);
+		leftPanel.add(stopByExecutionsRadio);
+		leftPanel.add(numExecutionsFieldLabel);
+		leftPanel.add(numExecutionsField);
 		
-		StandardFormats.addGridBagElement(new JLabel("Task evaluation:"), leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(burstRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(fixedPeriodRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(dynamicPeriodRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(varyingPeriodRadio, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(periodLabel, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(periodField, leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(periodVaryingDataPanel, leftLayout, newLineConstr, leftPanel);
+		leftPanel.add(new JLabel("Period between successive executions of the task's jobs:"));
+		leftPanel.add(burstRadio);
+		leftPanel.add(fixedPeriodRadio);
+		leftPanel.add(dynamicPeriodRadio);
+		leftPanel.add(varyingPeriodRadio);
+		leftPanel.add(periodLabel);
+		leftPanel.add(periodField);
+		leftPanel.add(periodVaryingDataPanel);
 
 		ButtonGroup periodGroup = new ButtonGroup();
 		periodGroup.add(burstRadio);
@@ -153,17 +148,16 @@ public class TaskConfigurationPanel extends JPanel
 		dynamicPeriodRadio.addActionListener(new PeriodTypeChangedListener());
 		varyingPeriodRadio.addActionListener(new PeriodTypeChangedListener());
 		
-		StandardFormats.addGridBagElement(new JLabel("First evaluation:"),	leftLayout, newLineConstr, leftPanel);
-		StandardFormats.addGridBagElement(firstEvaluationField, leftLayout, newLineConstr, leftPanel);
-		
-		StandardFormats.addGridBagElement(new JPanel(), leftLayout, bottomConstr, leftPanel);
-		leftPanel.setBorder(new TitledBorder("Task Timing"));
+		leftPanel.add(new JLabel("Delay until first execution of the task's jobs:"));
+		leftPanel.add(firstEvaluationField);
+		leftPanel.addFillEmpty();
+		leftPanel.setBorder(new TitledBorder("Task Execution Settings"));
 		
 		JPanel rightPanel = new JPanel(new BorderLayout(5,5));
 		rightPanel.add(new JLabel("Imaging protocol:"), BorderLayout.NORTH);		
 		jobPanel = new JobsDefinitionPanel(client, server, parentFrame);
 		rightPanel.add(jobPanel, BorderLayout.CENTER);
-		rightPanel.setBorder(new TitledBorder("Task content"));
+		rightPanel.setBorder(new TitledBorder("Definition of the Task's jobs"));
 		
 		// Initialize look and feel
 		setConfigurationData(new TaskConfiguration());
