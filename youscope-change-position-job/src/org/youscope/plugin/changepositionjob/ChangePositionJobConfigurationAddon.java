@@ -47,6 +47,7 @@ class ChangePositionJobConfigurationAddon extends ComponentAddonUIAdapter<Change
 				ChangePositionJob.class, 
 				"Stage Position", 
 				new String[]{"Elementary"},
+				"Sets the position of the stage.",
 				"icons/map.png");
 	}
 	

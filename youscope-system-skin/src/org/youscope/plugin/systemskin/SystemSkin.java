@@ -11,10 +11,10 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.AddonMetadataAdapter;
 import org.youscope.addon.skin.Skin;
-import org.youscope.client.uielements.QuickLogger;
-import org.youscope.client.uielements.plaf.BasicQuickLoggerUI;
-import org.youscope.client.uielements.plaf.ImageDesktopPaneUI;
 import org.youscope.uielements.ImageLoadingTools;
+import org.youscope.uielements.QuickLogger;
+import org.youscope.uielements.plaf.BasicQuickLoggerUI;
+import org.youscope.uielements.plaf.ImageDesktopPaneUI;
 
 class SystemSkin implements Skin {
 
@@ -29,7 +29,9 @@ class SystemSkin implements Skin {
 	{
 		return new AddonMetadataAdapter(TYPE_IDENTIFIER, 
 				"System skin", 
-				new String[]{"Skins"}, "icons/application-blog.png");
+				new String[]{"Skins"}, 
+				"Skin resembling the appearance of the operating system.",
+				"icons/application-blog.png");
 	}
 
 	@Override

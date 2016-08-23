@@ -1,4 +1,4 @@
-package org.youscope.client.uielements;
+package org.youscope.uielements;
 
 import java.awt.event.ActionListener;
 

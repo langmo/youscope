@@ -38,6 +38,7 @@ class CustomJobConfigurationAddon extends ComponentAddonUIAdapter<CustomJobConfi
 				CustomJob.class, 
 				name, 
 				new String[]{"custom"},
+				"A custom type of job defined by the user. Thereby, the user defined a list of jobs. This job contains these jobs as child-jobs which are automatically executed whenever this job is executed. The user-defined child jobs can be changed without changing the definition of the custom job.", 
 				"icons/block-share.png");
 	}
     

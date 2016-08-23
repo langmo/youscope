@@ -85,6 +85,7 @@ class NemesysJobConfigurationAddon extends ComponentAddonUIAdapter<NemesysJobCon
 				NemesysJob.class, 
 				"nemesys control", 
 				new String[]{"microfluidics"},
+				"Sets the flow rates of a Nemesys syringe pump system.",
 				"icons/beaker.png");
 	}
     

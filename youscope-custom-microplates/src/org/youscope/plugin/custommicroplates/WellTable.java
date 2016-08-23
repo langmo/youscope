@@ -497,7 +497,7 @@ class WellTable extends JPanel
 			});
 			add(currentDistanceButton);
 			
-			JButton addButton = new JButton("Add Range of Wells");
+			JButton addButton = new JButton("Add Wells");
 			addButton.addActionListener(new ActionListener() {
 				
 				@Override

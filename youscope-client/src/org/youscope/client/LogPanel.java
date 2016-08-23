@@ -18,8 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.youscope.client.uielements.QuickLogger;
 import org.youscope.common.MessageListener;
+import org.youscope.uielements.QuickLogger;
 import org.youscope.uielements.StandardFormats;
 
 /**

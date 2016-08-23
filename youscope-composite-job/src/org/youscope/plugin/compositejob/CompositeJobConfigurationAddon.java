@@ -32,6 +32,7 @@ class CompositeJobConfigurationAddon extends ComponentAddonUIAdapter<CompositeJo
 				CompositeJob.class, 
 				"Job Container", 
 				new String[]{"Containers"},
+				"A job containing other jobs for grouping. The child-jobs are executed in the given order whenever the composite job is executed.",
 				"icons/box.png");
 	}
     

@@ -49,6 +49,8 @@ class TaskMeasurementAddonUI  extends MeasurementAddonUIAdapter<TaskMeasurementC
 	{
 		return new ComponentMetadataAdapter<TaskMeasurementConfiguration>(TaskMeasurementConfiguration.TYPE_IDENTIFIER, 
 				TaskMeasurementConfiguration.class, 
-				Measurement.class, "Task Measurement", new String[0], "icons/arrow-split.png");
+				Measurement.class, "Task Measurement", new String[0], 
+				"Measurement with several tasks submitting their jobs periodically for execution with different frequencies.",
+				"icons/arrow-split.png");
 	}
 }

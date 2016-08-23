@@ -53,7 +53,8 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
 	{
 		return new ComponentMetadataAdapter<CellXConfiguration>(CellXConfiguration.TYPE_IDENTIFIER, 
 				CellXConfiguration.class, 
-				CellXAddon.class, "CellX Cell-Detection", new String[]{"Cell Detection"});
+				CellXAddon.class, "CellX Cell-Detection", new String[]{"Cell Detection"}, "Uses the CellX algorithm to segment cells, and returns the segmentation image and the cells' positions and properties.",
+				"icons/smiley-mr-green.png");
 	}
     
     @Override

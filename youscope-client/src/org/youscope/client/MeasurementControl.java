@@ -710,7 +710,7 @@ class MeasurementControl
 		private final AddonMetadata addonMetadata;
 		StartProcessorMenuItem(AddonMetadata addonMetadata) throws AddonException
 		{
-			super(addonMetadata.getTypeName());
+			super(addonMetadata.getName());
 			this.addonMetadata = addonMetadata;
 			addActionListener(this);
 		}

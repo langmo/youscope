@@ -59,6 +59,7 @@ class ImagingJobConfigurationAddon extends ComponentAddonUIAdapter<ImagingJobCon
 				ImagingJob.class, 
 				"Imaging", 
 				new String[]{"Imaging"},
+				"Takes an image in a given channel, using a given exposure, and saves the image to disk.",
 				"icons/image.png");
 	}
 	

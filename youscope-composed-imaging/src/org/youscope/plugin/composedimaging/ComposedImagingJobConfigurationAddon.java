@@ -106,8 +106,10 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		return new ComponentMetadataAdapter<ComposedImagingJobConfiguration>(ComposedImagingJobConfiguration.TYPE_IDENTIFIER, 
 				ComposedImagingJobConfiguration.class, 
 				ComposedImagingJob.class, 
-				"Composed Imaging", 
-				new String[]{"Imaging"});
+				"Composed Imaging",
+				new String[]{"Imaging"},
+				"Takes partly overlapping images on a rectangular grid, such that the resulting images can be stitched together using a 3rd party algorithm (stitching is not part of the job).",
+				"icons/layers-group.png");
 	}
 
 	private void loadConfigGroupNames()
@@ -119,7 +121,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		}
 		catch(Exception e)
 		{
-			getClient().sendError("Could not obtain config group names.", e);
+			getClient().sendError("Could not obtain channel group names.", e);
 		}
 
 		if(configGroupNames == null || configGroupNames.length <= 0)

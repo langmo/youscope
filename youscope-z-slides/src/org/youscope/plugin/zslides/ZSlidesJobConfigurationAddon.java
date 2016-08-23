@@ -82,7 +82,9 @@ class ZSlidesJobConfigurationAddon extends ComponentAddonUIAdapter<ZSlidesJobCon
 				ZSlidesJobConfiguration.class, 
 				CompositeJob.class, 
 				"Z-Stack", 
-				new String[]{"Containers"}, "icons/pictures-stack.png");
+				new String[]{"Containers"}, 
+				"Takes images at different focal positions, realizing a stack of images which might e.g. be used to generate 3D images.",
+				"icons/pictures-stack.png");
 	}
 	@Override
 	protected Component createUI(ZSlidesJobConfiguration configuration) throws AddonException

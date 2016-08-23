@@ -69,7 +69,9 @@ class CustomSaveSettingTool extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Save Settings", null, "icons/block-share.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Save Settings", null, 
+				"A tool to define the setup of the directory structure and file and directory names in which YouScope saves measurement images and meta-data.",
+				"icons/block-share.png");
 	}
 	@Override
 	public java.awt.Component createUI() throws AddonException

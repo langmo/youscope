@@ -67,6 +67,7 @@ class CustomMicroplateManager
 				CustomRectangularMicroplateResource.class, 
 				getCustomMicroplateName(typeIdentifier), 
 				new String[0],
+				"A user defined (generalized) microplate layout, which can either represent a real microplate, or microplate-similar entities like microfluidic channels. The microplate consists of several generalized wells, representing positions in which images are taken in the microplate measurement of YouScope.",
 				"icons/block-share.png");
 	}
 	

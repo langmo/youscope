@@ -36,7 +36,9 @@ class SlimIdentification extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "SLIM Identification", new String[]{"misc"}, "icons/camera-lens.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "SLIM Identification", new String[]{"misc"}, 
+				"Tool for the parametrization of YouScope for SLIM microscopy.",
+				"icons/camera-lens.png");
 	}
 
 	@Override

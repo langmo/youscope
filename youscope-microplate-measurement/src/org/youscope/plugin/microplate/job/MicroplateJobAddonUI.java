@@ -41,6 +41,7 @@ class MicroplateJobAddonUI extends JobAddonUIAdapter<MicroplateJobConfiguration>
 				Job.class, 
 				"Microplate", 
 				new String[]{"containers"},
+				"A job realizing most of the functionality of a microplate measurement, but which can be combined with other jobs in a different kind of measurement. Takes images/executes a certain set of child jobs at the activated positions of a microplate or microplate-like object like microfluidic channels.",
 				"icons/map.png");
 	}
 }

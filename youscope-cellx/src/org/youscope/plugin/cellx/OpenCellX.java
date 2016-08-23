@@ -47,7 +47,9 @@ class OpenCellX extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open with CellX", new String[]{"Cell Detection"});
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open with CellX", new String[]{"Cell Detection"},
+				"Opens the meeasurement for cell segmentation in CellX.",
+				"icons/smiley-mr-green.png");
 	}
 	
 	/**

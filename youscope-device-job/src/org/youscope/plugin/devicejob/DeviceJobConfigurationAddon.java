@@ -37,6 +37,7 @@ class DeviceJobConfigurationAddon extends ComponentAddonUIAdapter<DeviceJobConfi
 				DeviceSettingJob.class, 
 				"Device Settings", 
 				new String[]{"Elementary"},
+				"Sets a set of device settings, that is, changes one or more hardware settings of the microscope.",
 				"icons/property-blue.png");
 	}
     

@@ -333,7 +333,7 @@ private JCheckBox								createVisualizationImageField			= new JCheckBox("Create
 		@Override
 		public String toString()
 		{
-			return metadata.getTypeName();
+			return metadata.getName();
 		}
 		
 		public String getTypeIdentifier()

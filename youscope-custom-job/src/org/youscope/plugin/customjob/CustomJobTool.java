@@ -73,7 +73,7 @@ class CustomJobTool extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Jobs", null, "icons/block-share.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Jobs", null, "A tool to define custom jobs, that is, jobs consisting of a certain list of child-jobs. All defined custom jobs are displayed in the configuration like regular jobs, such that groups of related jobs which are often defined can be quickly inserted into a measurement.", "icons/block-share.png");
 	}
 	@Override
 	public java.awt.Component createUI() throws AddonException

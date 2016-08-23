@@ -44,6 +44,7 @@ class CellDetectionMeasurementAddonUI extends MeasurementAddonUIAdapter<CellDete
 	{
 		return new ComponentMetadataAdapter<CellDetectionMeasurementConfiguration>(CellDetectionMeasurementConfiguration.TYPE_IDENTIFIER, 
 				CellDetectionMeasurementConfiguration.class, 
-				Measurement.class, "Cell-Detection", new String[]{"misc"}, "icons/smiley-mr-green.png");
+				Measurement.class, "Cell-Detection", new String[]{"misc"},
+				"A measurement providing several algorithms to segment microscopy images, and to extract information on the detected cells.", "icons/smiley-mr-green.png");
 	}
 }

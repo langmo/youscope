@@ -91,7 +91,9 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Measurement Viewer", new String[0], "icons/eye.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Measurement Viewer", new String[0], 
+				"Displays the images taken in a finished experiment. Provides a user interface to quickly visualize all images taken at a given position and channel, with the option to adjust the contrast.",
+				"icons/eye.png");
 	}
 	
 	/**

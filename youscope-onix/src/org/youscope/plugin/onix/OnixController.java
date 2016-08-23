@@ -103,7 +103,8 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Onix Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Onix Controller", new String[]{"microfluidics"}, 
+				"Allows to direclty set the flow rates/pressures of an Onix microfluidic device. Provides an option for pulse-width modulation to continuously mix media.", "icons/beaker.png");
 	}
 	
 	private final MessageListener onixListener = new MessageListener()

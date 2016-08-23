@@ -71,7 +71,9 @@ class OutOfFocusJobConfigurationAddon  extends ComponentAddonUIAdapter<OutOfFocu
 				OutOfFocusJobConfiguration.class, 
 				OutOfFocusJob.class, 
 				"Out-of-focus", 
-				new String[]{"Imaging"}, "icons/image-blur.png");
+				new String[]{"Imaging"}, 
+				"Changes the focus position for a given offset, takes an image and changes the focus position back.",
+				"icons/image-blur.png");
 	}
     
 	@Override

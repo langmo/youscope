@@ -24,7 +24,9 @@ class MultiColorStream extends ToolAddonUIAdapter implements YouScopeFrameListen
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Color Stream", new String[]{"misc"}, "icons/film-cast.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Color Stream", new String[]{"misc"}, 
+				"Successively takes images in up to three different channels, and overlays the individual images as an overlay image where each channel is represented by a different colors.",
+				"icons/film-cast.png");
 	}
 	
 	MultiColorStream(YouScopeClient client, YouScopeServer server) throws AddonException

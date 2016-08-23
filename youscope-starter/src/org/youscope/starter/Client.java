@@ -104,7 +104,7 @@ class Client extends ClientServerConnection
         {
         	if(e.getCause() != null && e.getCause() instanceof ServiceConfigurationError)
         	{
-        		throw new ConnectionFailedException("Could not initialize client since one or more plugins are invalid.\nDetect the respective plugin and remove it from the plugin folder.", e);
+        		throw new ConnectionFailedException("Could not initialize client since one or more plugins are invalid.\nRemove the corresponding plugin from the YouScope plugins directory, and try again.", e);
         	}
 			throw new ConnectionFailedException("Error occured while starting the client.", e);
         }

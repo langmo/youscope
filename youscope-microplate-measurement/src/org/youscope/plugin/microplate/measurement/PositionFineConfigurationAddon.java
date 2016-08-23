@@ -93,7 +93,9 @@ public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadat
 	}
 	static AddonMetadata getMetadata()
 	{
-		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "Position Configuration UI", new String[0]);
+		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "Position Configuration", new String[0],
+				"User interface to fine adjust the positions of the well/tiles to take images in.",
+				"icons/magnifier-zoom-fit.png");
 	}
 	
 	/**

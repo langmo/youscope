@@ -51,7 +51,9 @@ class MultiStream extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Camera Stream", new String[]{"multi-cam"}, "icons/films.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Camera Stream", new String[]{"multi-cam"}, 
+				"Displays the current images of multiple cameras next to one another.",
+				"icons/films.png");
 	}
 	
 	@Override

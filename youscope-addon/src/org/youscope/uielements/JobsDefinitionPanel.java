@@ -88,7 +88,7 @@ public class JobsDefinitionPanel extends JPanel
         	// ignore, not so important...
         	multiCam = false;
         }
-        // Chekc if multi cam job is available.
+        // Check if multi cam job is available.
         if(multiCam)
         {
 	        try

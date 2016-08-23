@@ -29,7 +29,9 @@ class OpenMeasurementFolder extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open Folder", new String[0]);
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open Folder", new String[0],
+				"Opens the folder containing the measurement data.",
+				"icons/folder-open-image.png");
 	}
 	
 	/**

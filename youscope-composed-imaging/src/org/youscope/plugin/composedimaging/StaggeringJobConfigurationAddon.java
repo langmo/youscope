@@ -63,7 +63,9 @@ class StaggeringJobConfigurationAddon  extends ComponentAddonUIAdapter<Staggerin
 				StaggeringJobConfiguration.class, 
 				StaggeringJob.class, 
 				"Staggering", 
-				new String[]{"Containers"});
+				new String[]{"Containers"},
+				"Performs one or more jobs at a rectangular x/y-grid. Thereby, the jobs of only every second/third/... grid element can be configured to be executed each evaluation, and also a certain number of evaluations can be skipped between the execution of the jobs of any grid element.",
+				"icons/layers-group.png");
 	}
 
     @Override

@@ -46,6 +46,8 @@ class ComposedImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Compos
 	{
 		return new ComponentMetadataAdapter<ComposedImagingMeasurementConfiguration>(ComposedImagingMeasurementConfiguration.TYPE_IDENTIFIER, 
 				ComposedImagingMeasurementConfiguration.class, 
-				Measurement.class, "Composed Imaging Measurement", new String[]{"misc"}, "icons/layers-group.png");
+				Measurement.class, "Composed Imaging Measurement", new String[]{"misc"},
+				"Takes partly overlapping images on a rectangular grid, such that the resulting images can be stitched together using a 3rd party algorithm (stitching is not part of the measurement).",
+				"icons/layers-group.png");
 	}
 }

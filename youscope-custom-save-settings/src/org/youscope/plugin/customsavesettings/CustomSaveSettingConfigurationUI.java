@@ -50,6 +50,7 @@ class CustomSaveSettingConfigurationUI extends ComponentAddonUIAdapter<CustomSav
 				CustomSaveSetting.class, 
 				name, 
 				new String[]{"save settings"},
+				"User defined setting of the directory structure and file and directory names in which YouScope saves measurement images and meta-data.",
 				"icons/block-share.png");
 	}
     

@@ -309,7 +309,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		private ComponentMetadata<? extends C> metadata;
 		Element(ComponentMetadata<? extends C> metadata)
 		{
-			super(TextTools.capitalize(metadata.getTypeName()));
+			super(TextTools.capitalize(metadata.getName()));
 			Icon icon = metadata.getIcon();
 			if(icon == null)
 			{
@@ -317,6 +317,9 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 			}
 			else
 				setIcon(icon);
+			String description = metadata.getDescription();
+			if(description != null)
+				setToolTipText(description);
 			this.metadata = metadata;
 		}
 		String getTypeIdentifier()

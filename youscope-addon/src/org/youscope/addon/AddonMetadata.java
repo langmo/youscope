@@ -13,7 +13,13 @@ public interface AddonMetadata
      * Returns a short human readable name of the addon.
      * @return Human readable name of the addon.
      */
-    String getTypeName();
+    String getName();
+    
+    /**
+     * Returns a description of this addon, or null, if no description is available. The description should be plain text, but might contain line-breaks.
+     * @return Short description of the addon, or null if no description is provided.
+     */
+    String getDescription();
     
     /**
 	 * Returns the type identifier of the addon.

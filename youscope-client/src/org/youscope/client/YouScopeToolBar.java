@@ -3,7 +3,6 @@
  */
 package org.youscope.client;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -11,12 +10,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
@@ -45,20 +45,41 @@ class YouScopeToolBar extends JToolBar
 	{
 		setFloatable(false);
 		setRollover(true);
-		//setBackground(Color.WHITE);
-		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0.3f,0.3f,0.3f)));
 	}
-	
+	/**
+	 * Button for the menu bar. Works better with certain look and feels.
+	 * @author Moritz
+	 *
+	 */
+	private class MenuButton extends JButton
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = 7754882737215008622L;
+		MenuButton(String text)
+		{
+			super(text);
+			super.setBorder(new EmptyBorder(3,5,3,5));
+		}
+		
+		@Override
+		public void setBorder(Border border)
+		{
+			// forbid the look and feel to add a border.
+			return;
+		}
+	}
 	private void addButton(String addonID)
 	{
 		try
 		{
 			final ComponentMetadata<? extends MeasurementConfiguration> metadata = ClientAddonProviderImpl.getProvider().getComponentMetadata(addonID, MeasurementConfiguration.class);
-			String addonName = metadata.getTypeName();
+			String addonName = metadata.getName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unnamed Measurement";
 			
-			JButton measurementButton = new JButton(TextTools.capitalize(addonName));
+			MenuButton measurementButton = new MenuButton(TextTools.capitalize(addonName));
 			measurementButton.setOpaque(false);
 			measurementButton.setFocusPainted(false); 
 			Icon measurementIcon = metadata.getIcon();
@@ -70,6 +91,9 @@ class YouScopeToolBar extends JToolBar
 				measurementButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 				measurementButton.setHorizontalTextPosition(SwingConstants.CENTER);
 			}
+			String description = metadata.getDescription();
+			if(description != null)
+				measurementButton.setToolTipText(description);
 			measurementButton.addActionListener(new ActionListener()
 			{
 				@Override
@@ -112,10 +136,11 @@ class YouScopeToolBar extends JToolBar
 		try
 		{
 			final ToolMetadata metadata = ClientAddonProviderImpl.getProvider().getToolMetadata(addonID);
-			String addonName = metadata.getTypeName();
+			String addonName = metadata.getName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unknown Tool";
-			JButton toolButton = new JButton(TextTools.capitalize(addonName));
+			MenuButton toolButton = new MenuButton(TextTools.capitalize(addonName));
+					
 			toolButton.setOpaque(false);
 			toolButton.setFocusPainted(false);
 			Icon toolIcon = metadata.getIcon();
@@ -127,6 +152,9 @@ class YouScopeToolBar extends JToolBar
 				toolButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 				toolButton.setHorizontalTextPosition(SwingConstants.CENTER);
 			}
+			String description = metadata.getDescription();
+			if(description != null)
+				toolButton.setToolTipText(description);
 			toolButton.addActionListener(new ActionListener()
 			{
 				@Override
@@ -151,7 +179,7 @@ class YouScopeToolBar extends JToolBar
 		}
 		catch(@SuppressWarnings("unused") AddonException e)
 		{
-			// do nothing, probably not a measurement.
+			// do nothing, probably not a tool.
 		}
 		
 		ScriptDefinition[] scriptDefinitions = ScriptDefinitionManager.getScriptDefinitions();
@@ -159,7 +187,7 @@ class YouScopeToolBar extends JToolBar
 		{
 			if(scriptDefinition.getName().equals(addonID))
 			{
-				JButton scriptButton = new JButton(addonID);
+				MenuButton scriptButton = new MenuButton(addonID);
 				scriptButton.setOpaque(false);
 				scriptButton.setFocusPainted(false);
 				ImageIcon scriptsIcon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "execute script");
@@ -169,6 +197,7 @@ class YouScopeToolBar extends JToolBar
 					scriptButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 					scriptButton.setHorizontalTextPosition(SwingConstants.CENTER);
 				}
+				scriptButton.setToolTipText("Run script.");
 				class NewScriptListener implements ActionListener
 				{
 					private final ScriptDefinition scriptDefinition;

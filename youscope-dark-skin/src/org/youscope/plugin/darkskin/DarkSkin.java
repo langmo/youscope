@@ -12,10 +12,10 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.AddonMetadataAdapter;
 import org.youscope.addon.skin.Skin;
-import org.youscope.client.uielements.QuickLogger;
-import org.youscope.client.uielements.plaf.BasicQuickLoggerUI;
-import org.youscope.client.uielements.plaf.ImageDesktopPaneUI;
 import org.youscope.uielements.ImageLoadingTools;
+import org.youscope.uielements.QuickLogger;
+import org.youscope.uielements.plaf.BasicQuickLoggerUI;
+import org.youscope.uielements.plaf.ImageDesktopPaneUI;
 
 class DarkSkin implements Skin {
 
@@ -30,7 +30,9 @@ class DarkSkin implements Skin {
 	{
 		return new AddonMetadataAdapter(TYPE_IDENTIFIER, 
 				"Dark skin", 
-				new String[]{"Skins"}, "icons/system-monitor.png");
+				new String[]{"Skins"}, 
+				"A dark skin of YouScope, with black background and white labels. Good for dark rooms.",
+				"icons/system-monitor.png");
 	}
 
 	@Override
@@ -38,8 +40,7 @@ class DarkSkin implements Skin {
 	{
 		UIManager.getDefaults().clear();
 		final Properties props = new Properties();
-        props.put("logoString", "");
-        props.put("textShadow", "off");
+        props.put("logoString", "YouScope");
         props.put("textShadow", "off");
 
         final String fontSpecs = "SansSerif 12";
@@ -51,15 +52,27 @@ class DarkSkin implements Skin {
         props.setProperty("subTextFont", fontSpecs);
 
         props.put("backgroundPattern", "off");
-        props.put("buttonColorLight", "0 0 0");
-        props.put("buttonColorDark", "0 0 0");
-
+        props.put("buttonColorLight", "40 40 40");
+        props.put("buttonColorDark", "40 40 40");
+        
         props.put("windowTitleColorLight", "40 40 40");
-        props.put("windowTitleColorDark", "40 40 40");
+        props.put("windowTitleColorDark", "0 0 0");
         props.put("windowInactiveTitleColorLight", "40 40 40");
-        props.put("windowInactiveTitleColorDark", "40 40 40");
-        props.put("controlColorLight", "0 0 0");
+        props.put("windowInactiveTitleColorDark", "0 0 0");
+        props.put("controlColorLight", "40 40 40");
         props.put("controlColorDark", "0 0 0");
+        
+        props.put("windowBorderColor", "40 40 40");
+        props.put("windowDecoration", "on");
+        props.put("menuOpaque", "on");
+        props.put("toolbarDecorated", "off");
+        props.put("toolbarForegroundColor", "40 40 40");
+        props.put("toolbarBackgroundColor", "40 40 40");
+        props.put("menuBackgroundColor", "40 40 40");
+        props.put("frameColor", "0 0 0");
+        props.put("tooltipCastShadow", "on");
+        props.put("tooltipBorderSize", "1");
+        props.put("tooltipShadowSize", "0");
         com.jtattoo.plaf.hifi.HiFiLookAndFeel.setCurrentTheme(props);
         
         UIManager.getDefaults().put("DesktopPaneUI", ImageDesktopPaneUI.class.getName());

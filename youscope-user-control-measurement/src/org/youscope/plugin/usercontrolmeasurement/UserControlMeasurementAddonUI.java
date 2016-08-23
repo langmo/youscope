@@ -47,6 +47,8 @@ class UserControlMeasurementAddonUI extends MeasurementAddonUIAdapter<UserContro
 	{
 		return new ComponentMetadataAdapter<UserControlMeasurementConfiguration>(UserControlMeasurementConfiguration.TYPE_IDENTIFIER, 
 				UserControlMeasurementConfiguration.class, 
-				Measurement.class, "User Control Measurement", new String[0], "icons/user-worker-boss.png");
+				Measurement.class, "User Control Measurement", new String[0], 
+				"Measurement in which the stage and focus position, as well as the channel is set by the user. Thus, images at different positions can be taken, and are automatically saved using the standard measurement save settings.",
+				"icons/user-worker-boss.png");
 	}
 }

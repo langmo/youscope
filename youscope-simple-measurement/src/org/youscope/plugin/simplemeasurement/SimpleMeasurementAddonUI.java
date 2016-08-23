@@ -49,6 +49,8 @@ class SimpleMeasurementAddonUI extends MeasurementAddonUIAdapter<SimpleMeasureme
 	{
 		return new ComponentMetadataAdapter<SimpleMeasurementConfiguration>(SimpleMeasurementConfiguration.TYPE_IDENTIFIER, 
 				SimpleMeasurementConfiguration.class, 
-				Measurement.class, "Simple Measurement", new String[0], "icons/paper-plane.png");
+				Measurement.class, "Simple Measurement", new String[0], 
+				"The most simple customizable type of measurement in YouScope. A certain list of jobs (elementary or composed actions like moving the stage or taking an image) is defined, which are executed once or several times with a fixed frequency or in burst mode.", 
+				"icons/paper-plane.png");
 	}
 }

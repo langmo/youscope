@@ -41,6 +41,7 @@ class WaitJobConfigurationAddon extends ComponentAddonUIAdapter<WaitJobConfigura
 				WaitJob.class, 
 				"Wait", 
 				new String[]{"Elementary"},
+				"Waits for a given amount of time.",
 				"icons/alarm-clock-select.png");
 	}
     

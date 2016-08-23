@@ -57,7 +57,9 @@ public class TemplateTool extends ToolAddonUIAdapter implements YouScopeFrameLis
 	 */
 	public static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Template Tool", new String[]{"Templates"});
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Template Tool", new String[]{"Templates"}, 
+				"Template to generate new tool addons for YouScope.",
+				"icons/projection-screen-presentation.png");
 	}
 	
 	/**
@@ -70,7 +72,7 @@ public class TemplateTool extends ToolAddonUIAdapter implements YouScopeFrameLis
 	 */
 	public TemplateTool(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
-		super(getMetadata(), client, server);
+		super(getMetadata(), client, server); 
 	}
 	@Override
 	public java.awt.Component createUI()

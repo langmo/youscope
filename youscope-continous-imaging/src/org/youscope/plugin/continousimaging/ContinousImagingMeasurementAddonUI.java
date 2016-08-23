@@ -21,6 +21,8 @@ import org.youscope.uielements.ImageLoadingTools;
  */
 class ContinousImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<ContinousImagingMeasurementConfiguration>
 {
+	private final static String DESCRIPTION = "A continuous imaging measurement is used to (rapidly) take images at the current position every given period.\n\n"+
+			"One can select the channel, the exposure time and the imaging period. Instead of choosing an imaging period, one can also choose to \"bulk image\", which means to image as fast as possible.";
 	/**
 	 * Constructor.
 	 * @param server YouScope server.
@@ -33,10 +35,9 @@ class ContinousImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Conti
 		
 		setTitle("Continuous Imaging Measurement");
 		
-		String description = "A continuous imaging measurement is used to (rapidly) take images at the current position every given period.\n\n"+
-				"One can select the channel, the exposure time and the imaging period. Instead of choosing an imaging period, one can also choose to \"bulk image\", which means to image as fast as possible.";
+		
 		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/continousimaging/images/continous-imaging.jpg", "Continuous Measurement");
-		addPage(new DescriptionPage(null, description, image, null));
+		addPage(new DescriptionPage(null, DESCRIPTION, image, null));
 		addPage(new GeneralSettingsPage<ContinousImagingMeasurementConfiguration>(client, ContinousImagingMeasurementConfiguration.class)); 
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingDefinitionPage(client, server));
@@ -47,6 +48,8 @@ class ContinousImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Conti
 	{
 		return new ComponentMetadataAdapter<ContinousImagingMeasurementConfiguration>(ContinousImagingMeasurementConfiguration.TYPE_IDENTIFIER, 
 				ContinousImagingMeasurementConfiguration.class, 
-				Measurement.class, "Continuous Imaging Measurement", new String[0], "icons/camcorder.png");
+				Measurement.class, "Continuous Imaging Measurement", new String[0], 
+				DESCRIPTION,
+				"icons/camcorder.png");
 	}
 }

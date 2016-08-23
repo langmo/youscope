@@ -47,7 +47,9 @@ class ShareExecutionJobConfigurationAddon extends ComponentAddonUIAdapter<ShareE
 				ShareExecutionJobConfiguration.class, 
 				ShareExecutionJob.class, 
 				"Share Execution Job", 
-				new String[]{"Containers"}, "icons/arrow-switch.png");
+				new String[]{"Containers"}, 
+				"Of all shared execution job with the same ID defined in a measurement, only the child jobs of a certain number is executed every iteration. The job ensures that the child jobs of all shared execution jobs are executed equally often.",
+				"icons/arrow-switch.png");
 	}
 	@Override
 	protected Component createUI(ShareExecutionJobConfiguration configuration) throws AddonException

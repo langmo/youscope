@@ -28,6 +28,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -214,7 +215,7 @@ public class YouScopeClientImpl extends JFrame
 	 */
 	private YouScopeClientImpl()
 	{
-		super("YouScope "+new YouScopeVersion("youscope-client").getVersion()+" - © Moritz Lang");
+		super("YouScope "+new YouScopeVersion("youscope-client").getVersion()+" - The Microscope Control Software");
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -288,7 +289,18 @@ public class YouScopeClientImpl extends JFrame
 		// Initialize menu
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		JMenuItem openMeasurementMenuItem = new JMenuItem("Open Measurement", KeyEvent.VK_O);
+		
+		JMenu newMeasurementMenuItem = new JMenu("New Measurement");
+		ImageIcon newMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new measurement");
+		if(newMeasurementIcon != null)
+			newMeasurementMenuItem.setIcon(newMeasurementIcon);
+		for(JMenuItem item : getMeasurementMenuItems())
+		{
+			newMeasurementMenuItem.add(item);
+		}
+		fileMenu.add(newMeasurementMenuItem);
+		
+		JMenuItem openMeasurementMenuItem = new JMenuItem("Load Measurement", KeyEvent.VK_O);
 		ImageIcon openMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt-import.png", "open measurement");
 		if(openMeasurementIcon != null)
 			openMeasurementMenuItem.setIcon(openMeasurementIcon);
@@ -373,7 +385,7 @@ public class YouScopeClientImpl extends JFrame
 		for(final AddonMetadata metadata : ClientAddonProviderImpl.getProvider().getSkinMetadata())
 		{
 			numSkins++;
-			String addonName = metadata.getTypeName();
+			String addonName = metadata.getName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unnamed Look-and-Feel";
 			
@@ -384,6 +396,9 @@ public class YouScopeClientImpl extends JFrame
 				skinIcon = defaultLookAndFeelIcon;
 			if(skinIcon != null)
 				skinMenuItem.setIcon(skinIcon);
+			String description = metadata.getDescription();
+			if(description != null)
+				skinMenuItem.setToolTipText(description);
 			skinMenuItem.addActionListener(new ActionListener()
 			{
 				
@@ -424,118 +439,7 @@ public class YouScopeClientImpl extends JFrame
 				
 		JMenu measurementMenu = new JMenu("Create Measurement");
 		measurementMenu.setMnemonic(KeyEvent.VK_M);
-		ImageIcon defaultNewMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new protocol");
-		ImageIcon measurementFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Job Folder");
-		Vector<JMenuItem> measurementMenuItems = new Vector<JMenuItem>();
-		for(final ComponentMetadata<? extends MeasurementConfiguration> metadata : ClientAddonProviderImpl.getProvider().getComponentMetadata(MeasurementConfiguration.class))
-		{
-			
-			String addonName = metadata.getTypeName();
-			if(addonName == null || addonName.length() <= 0)
-				addonName = "Unnamed Measurement";
-			String[] addonFolder = metadata.getClassification();
-			
-			JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
-			
-			Icon newMeasurementIcon = metadata.getIcon();
-			if(newMeasurementIcon == null)
-				newMeasurementIcon = defaultNewMeasurementIcon;
-			if(newMeasurementIcon != null)
-				newMeasurementMenuItem.setIcon(newMeasurementIcon);
-			newMeasurementMenuItem.addActionListener(new ActionListener()
-			{
-				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					openAddon();
-				}
-				private void openAddon()
-				{
-					ComponentAddonUI<? extends MeasurementConfiguration> addon;
-					try {
-						addon = ClientAddonProviderImpl.getProvider().createComponentUI(metadata);
-					} catch (AddonException e1) {
-						ClientSystem.err.println("Could not create measurement configuration UI.", e1);
-						return;
-					}
-					addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
-					{
-						@Override
-						public void configurationFinished(MeasurementConfiguration configuration) {
-							Measurement measurement = YouScopeClientImpl.addMeasurement(configuration);
-							if(measurement == null)
-							{
-								openAddon();
-								return;
-							}
-						}
-					});
-					YouScopeFrame confFrame;
-					try {
-						confFrame = addon.toFrame();
-					} catch (AddonException e) {
-						ClientSystem.err.println("Could not initialize measurement configuration UI.", e);
-						return;
-					}
-					confFrame.setVisible(true);
-				}
-			});
-			
-			// Setup folder structure
-			JMenu parentMenu = measurementMenu;
-			for(int i=0; i<addonFolder.length;i++)
-			{
-				// Iterate over all menus to check if it already exists
-				boolean found = false;
-				for(Component existingItem : (parentMenu == measurementMenu ? measurementMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
-				{
-					if(!(existingItem instanceof JMenu))
-						continue;
-					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
-					{
-						parentMenu = (JMenu)existingItem;
-						found = true;
-						break;
-					}
-				}
-				if(!found)
-				{
-					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
-					if(measurementFolderIcon != null)
-						newMenu.setIcon(measurementFolderIcon);
-					if(parentMenu == measurementMenu)
-						measurementMenuItems.add(newMenu);
-					else
-						parentMenu.add(newMenu);
-						
-					parentMenu = newMenu;
-				}
-			}
-			if(parentMenu == measurementMenu)
-				measurementMenuItems.add(newMeasurementMenuItem);
-			else
-				parentMenu.add(newMeasurementMenuItem);
-	
-		}
-		Collections.sort(measurementMenuItems, new Comparator<JMenuItem>()
-				{
-					@Override
-					public int compare(JMenuItem o1, JMenuItem o2)
-					{
-						if(o1 instanceof JMenu)
-						{
-							if(o2 instanceof JMenu)
-								return o1.getText().compareTo(o2.getText());
-							return -100;
-						}
-						else if(o2 instanceof JMenu)
-							return 100;
-						else
-							return o1.getText().compareTo(o2.getText());
-					}
-				});
-		for(JMenuItem item : measurementMenuItems)
+		for(JMenuItem item : getMeasurementMenuItems())
 		{
 			measurementMenu.add(item);
 		}
@@ -564,7 +468,7 @@ public class YouScopeClientImpl extends JFrame
 		Vector<JMenuItem> toolMenuItems = new Vector<JMenuItem>();
 		for(final ToolMetadata metadata : ClientAddonProviderImpl.getProvider().getToolMetadata())
 		{
-			String addonName = metadata.getTypeName();
+			String addonName = metadata.getName();
 			if(addonName == null || addonName.length() <= 0)
 				addonName = "Unknown Tool";
 			String[] addonFolder = metadata.getClassification();
@@ -576,6 +480,9 @@ public class YouScopeClientImpl extends JFrame
 			}
 			else if(defaultToolIcon != null)
 				newToolMenuItem.setIcon(defaultToolIcon);
+			String description = metadata.getDescription();
+			if(description != null)
+				newToolMenuItem.setToolTipText(description);
 			newToolMenuItem.addActionListener(new ActionListener()
 			{
 				@Override
@@ -802,16 +709,16 @@ public class YouScopeClientImpl extends JFrame
 		final String TRAY_ICON_URL96 = "org/youscope/client/images/icon-96.png";
 		final String TRAY_ICON_URL194 = "org/youscope/client/images/icon-194.png";
 		Vector<Image> trayIcons = new Vector<Image>();
-		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "tray icon");
+		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "YouScope");
 		if(trayIcon16 != null)
 			trayIcons.addElement(trayIcon16.getImage());
-		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "tray icon");
+		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "YouScope");
 		if(trayIcon32 != null)
 			trayIcons.addElement(trayIcon32.getImage());
-		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "tray icon");
+		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "YouScope");
 		if(trayIcon96 != null)
 			trayIcons.addElement(trayIcon96.getImage());
-		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "tray icon");
+		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "YouScope");
 		if(trayIcon194 != null)
 			trayIcons.addElement(trayIcon194.getImage());
 		if(trayIcons.size()>0)
@@ -830,6 +737,125 @@ public class YouScopeClientImpl extends JFrame
 		// Initialize main window layout.
 		setSize(600, 400);
 		setExtendedState(MAXIMIZED_BOTH);
+	}
+	
+	private List<JMenuItem> getMeasurementMenuItems()
+	{
+		ImageIcon defaultNewMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "New Measurement");
+		ImageIcon measurementFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Measurement Folder");
+		ArrayList<JMenuItem> measurementMenuItems = new ArrayList<JMenuItem>();
+		for(final ComponentMetadata<? extends MeasurementConfiguration> metadata : ClientAddonProviderImpl.getProvider().getComponentMetadata(MeasurementConfiguration.class))
+		{
+			
+			String addonName = metadata.getName();
+			if(addonName == null || addonName.length() <= 0)
+				addonName = "Unnamed Measurement";
+			String[] addonFolder = metadata.getClassification();
+			
+			JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
+			
+			Icon newMeasurementIcon = metadata.getIcon();
+			if(newMeasurementIcon == null)
+				newMeasurementIcon = defaultNewMeasurementIcon;
+			if(newMeasurementIcon != null)
+				newMeasurementMenuItem.setIcon(newMeasurementIcon);
+			String description = metadata.getDescription();
+			if(description != null)
+				newMeasurementMenuItem.setToolTipText(description);
+			newMeasurementMenuItem.addActionListener(new ActionListener()
+			{
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					openAddon();
+				}
+				private void openAddon()
+				{
+					ComponentAddonUI<? extends MeasurementConfiguration> addon;
+					try {
+						addon = ClientAddonProviderImpl.getProvider().createComponentUI(metadata);
+					} catch (AddonException e1) {
+						ClientSystem.err.println("Could not create measurement configuration UI.", e1);
+						return;
+					}
+					addon.addUIListener(new ComponentAddonUIListener<MeasurementConfiguration>()
+					{
+						@Override
+						public void configurationFinished(MeasurementConfiguration configuration) {
+							Measurement measurement = YouScopeClientImpl.addMeasurement(configuration);
+							if(measurement == null)
+							{
+								openAddon();
+								return;
+							}
+						}
+					});
+					YouScopeFrame confFrame;
+					try {
+						confFrame = addon.toFrame();
+					} catch (AddonException e) {
+						ClientSystem.err.println("Could not initialize measurement configuration UI.", e);
+						return;
+					}
+					confFrame.setVisible(true);
+				}
+			});
+			
+			// Setup folder structure
+			JMenu parentMenu = null;
+			for(int i=0; i<addonFolder.length;i++)
+			{
+				// Iterate over all menus to check if it already exists
+				boolean found = false;
+				for(Component existingItem : (parentMenu == null ? measurementMenuItems.toArray(new JMenuItem[measurementMenuItems.size()]) : parentMenu.getMenuComponents()))
+				{
+					if(!(existingItem instanceof JMenu))
+						continue;
+					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
+					{
+						parentMenu = (JMenu)existingItem;
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+				{
+					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
+					if(measurementFolderIcon != null)
+						newMenu.setIcon(measurementFolderIcon);
+					if(parentMenu == null)
+						measurementMenuItems.add(newMenu);
+					else
+						parentMenu.add(newMenu);
+						
+					parentMenu = newMenu;
+				}
+			}
+			if(parentMenu == null)
+				measurementMenuItems.add(newMeasurementMenuItem);
+			else
+				parentMenu.add(newMeasurementMenuItem);
+	
+		}
+		Collections.sort(measurementMenuItems, new Comparator<JMenuItem>()
+				{
+					@Override
+					public int compare(JMenuItem o1, JMenuItem o2)
+					{
+						if(o1 instanceof JMenu)
+						{
+							if(o2 instanceof JMenu)
+								return o1.getText().compareTo(o2.getText());
+							return -100;
+						}
+						else if(o2 instanceof JMenu)
+							return 100;
+						else
+							return o1.getText().compareTo(o2.getText());
+					}
+				});
+		return measurementMenuItems;
 	}
 	
 	private void refreshWindowsMenu()

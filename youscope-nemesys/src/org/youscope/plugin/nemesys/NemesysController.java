@@ -43,7 +43,7 @@ class NemesysController extends ToolAddonUIAdapter implements YouScopeFrameListe
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Nemesys Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Nemesys Controller", new String[]{"microfluidics"}, "Allows to directly set the flow rates of a Nemesys syringe pump system.", "icons/beaker.png");
 	}
 	
 	private class SyringeField extends DynamicPanel

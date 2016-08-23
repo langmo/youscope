@@ -53,7 +53,8 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Microplates", null, "icons/table.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Custom Microplates", null, "A tool to define custom (generalized) microplates, which might either represent real microplates, or similar objects like microfluidic channel. A microplate consists of several wells, and can be used to automatically configure the positions at which images are taken in a microplate measurement.",
+				"icons/table.png");
 	}
 	@Override
 	public java.awt.Component createUI()
@@ -109,7 +110,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
                 	ComponentMetadataAdapter<CustomMicroplateConfiguration> microplateType = microplateTypesList.getSelectedValue();
                     if (microplateType == null)
                         return;
-                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the microplate type \"" + microplateType.getTypeName() + "\" really be deleted?", "Delete Microplate", JOptionPane.YES_NO_OPTION);
+                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the microplate type \"" + microplateType.getName() + "\" really be deleted?", "Delete Microplate", JOptionPane.YES_NO_OPTION);
 					if(shouldDelete != JOptionPane.YES_OPTION)
 						return;
 					if(!CustomMicroplateManager.deleteCustomMicroplate(microplateType.getTypeIdentifier()))
@@ -178,7 +179,7 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 			@Override
 			public Component getListCellRendererComponent(JList<? extends ComponentMetadataAdapter<CustomMicroplateConfiguration>> list, ComponentMetadataAdapter<CustomMicroplateConfiguration> value, int index, boolean isSelected, boolean cellHasFocus)
 		    {
-				String text = value.getTypeName();
+				String text = value.getName();
 		        setText(text);
 		        if (isSelected) 
 		        {

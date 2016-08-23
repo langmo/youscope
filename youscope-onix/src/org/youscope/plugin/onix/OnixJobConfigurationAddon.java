@@ -57,6 +57,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
 				OnixJob.class, 
 				"onix control", 
 				new String[]{"microfluidics"},
+				"Sets the flow rates/pressures of an Onix microfluidic device. Provides an option for pulse-width modulation to continuously mix media.", 
 				"icons/beaker.png");
 	}
 	@Override

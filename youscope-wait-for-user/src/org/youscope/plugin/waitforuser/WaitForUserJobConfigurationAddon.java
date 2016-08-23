@@ -40,7 +40,9 @@ class WaitForUserJobConfigurationAddon extends ComponentAddonUIAdapter<WaitForUs
 				WaitForUserJobConfiguration.class, 
 				WaitForUserJob.class, 
 				"Wait for user", 
-				new String[]{"misc"}, "icons/user--exclamation.png");
+				new String[]{"misc"}, 
+				"Displays a message in form of a dialog to the user, and waits until the user acknowledges the dialog. Useful to schedule manual user interventions during a measurement.",
+				"icons/user--exclamation.png");
 	}
 
 	@Override

@@ -53,7 +53,9 @@ class DeviceSettingManager extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Device Setting Manager", null, "icons/wrench-screwdriver.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Device Setting Manager", null, 
+				"Allows to directly change the settings of the microscope hardware, e.g. to open or close shutters, change stage positions, and similar.",
+				"icons/wrench-screwdriver.png");
 	}
 	
 	@Override

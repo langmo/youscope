@@ -70,7 +70,9 @@ public class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
 	}
 	private static AddonMetadata getMetadata()
 	{
-		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "TileDefinition", new String[0]);
+		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "TileDefinition", new String[0],
+				"Interface to define a rectangular tile layout, and to select tiles in the defined layout.",
+				"icons/table-split.png");
 	}
 	/**
 	 * Sets the number of tiles.
@@ -298,18 +300,18 @@ public class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
 		private void fillDoubleArrow(Graphics2D g2D, double x1, double y1, double x2, double y2)
 		{
 			Shape arrow = createDoubleArrowShape(x1, y1, x2, y2);
-			g2D.setColor(Color.BLACK);
+			//g2D.setColor(Color.BLACK);
 			g2D.fill(arrow);
-			g2D.setColor(Color.DARK_GRAY);
+			//g2D.setColor(Color.DARK_GRAY);
 			g2D.draw(arrow);
 		}
 	
 		private void fillArrow(Graphics2D g2D, double x1, double y1, double x2, double y2)
 		{
 			Shape arrow = createArrowShape(x1, y1, x2, y2);
-			g2D.setColor(Color.BLACK);
+			//g2D.setColor(Color.BLACK);
 			g2D.fill(arrow);
-			g2D.setColor(Color.DARK_GRAY);
+			//g2D.setColor(Color.DARK_GRAY);
 			g2D.draw(arrow);
 		}
 	

@@ -110,7 +110,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 				SlimJobConfiguration.class, 
 				SlimJob.class, 
 				"SLIM", 
-				new String[]{"Imaging"}, "icons/camera-lens.png");
+				new String[]{"Imaging"},
+				"Automatically sets SLIM settings and takes four images at different phase shifts needed to generate a SLIM image."
+				,"icons/camera-lens.png");
 	}
 	
 	private void loadConfigGroupNames()

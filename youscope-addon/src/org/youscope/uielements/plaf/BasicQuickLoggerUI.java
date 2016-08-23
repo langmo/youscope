@@ -1,4 +1,4 @@
-package org.youscope.client.uielements.plaf;
+package org.youscope.uielements.plaf;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,8 +15,9 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.UIResource;
 
-import org.youscope.client.uielements.QuickLogger;
-import org.youscope.client.uielements.QuickLoggerModel;
+import org.youscope.uielements.QuickLogger;
+import org.youscope.uielements.QuickLoggerModel;
+
 
 /**
  * Default/basic UI delegate for the quick logger.

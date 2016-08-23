@@ -33,7 +33,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
 import org.youscope.uielements.StandardFormats;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  */
 class PlateScanningJobConfigurationAddon  extends ComponentAddonUIAdapter<PlateScanningJobConfiguration>
 {
@@ -59,8 +59,10 @@ class PlateScanningJobConfigurationAddon  extends ComponentAddonUIAdapter<PlateS
 		return new ComponentMetadataAdapter<PlateScanningJobConfiguration>(PlateScanningJobConfiguration.TYPE_IDENTIFIER, 
 				PlateScanningJobConfiguration.class, 
 				PlateScanningJob.class, 
-				"Plate Scanning", 
-				new String[]{"Containers"});
+				"Plate Scanning",
+				new String[]{"Containers"},
+				"Executes jobs on a rectangular x/y-grid. For example, images can be taken at every grid position, and the resulting images can be stitched together using a 3rd party algorithm (stitching is not part of the job).",
+				"icons/layers-group.png");
 	}
 
     @Override

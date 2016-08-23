@@ -1,5 +1,7 @@
 package org.youscope.addon.component;
 
+import javax.swing.Icon;
+
 import org.youscope.addon.AddonMetadataAdapter;
 import org.youscope.common.Component;
 import org.youscope.common.configuration.Configuration;
@@ -21,18 +23,20 @@ public class ComponentMetadataAdapter<C extends Configuration> extends AddonMeta
 	 * @param typeIdentifier Type identifier of the configuration.
 	 * @param configurationClass Class of the configuration.
 	 * @param componentInterface The interface of the measurement component which is created when the configuration is compiled.
-	 * @param typeName Human readable name for this configuration.
-	 * @param configurationClassification Classification of configuration. This classification can e.g. be used to order configurations into a certain folder structure.
+	 * @param name Human readable name for this configuration.
+	 * @param classification Classification of configuration. This classification can e.g. be used to order configurations into a certain folder structure.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param iconPath Path to an icon representing this configuration. This path should be a valid path to a resource, i.e. an icon saved inside a jar file loaded by YouScope.
 	 */
 	public ComponentMetadataAdapter(final String typeIdentifier,
 			final Class<C> configurationClass,
 			final Class<? extends Component> componentInterface,
-			final String typeName,
-			final String[] configurationClassification,
+			final String name,
+			final String[] classification,
+			final String description,
 			final String iconPath) 
 	{
-		super(typeIdentifier, typeName, configurationClassification, iconPath);
+		super(typeIdentifier, name, classification, description, iconPath);
 		this.configurationClass = configurationClass;
 		this.componentInterface = componentInterface;
 	}
@@ -42,61 +46,45 @@ public class ComponentMetadataAdapter<C extends Configuration> extends AddonMeta
 	 * @param typeIdentifier Type identifier of the configuration.
 	 * @param configurationClass Class of the configuration.
 	 * @param componentInterface The interface of the measurement component which is created when the configuration is compiled.
-	 * @param typeName Human readable name for this configuration.
-	 * @param configurationClassification Classification of configuration. This classification can e.g. be used to order configurations into a certain folder structure.
+	 * @param name Human readable name for this configuration.
+	 * @param classification Classification of configuration. This classification can e.g. be used to order configurations into a certain folder structure.
+	 * @param description Description of the addon. Set to null to not provide any description.
+	 * @param icon Icon of the addon. Set to null for default icon.
 	 */
 	public ComponentMetadataAdapter(final String typeIdentifier,
 			final Class<C> configurationClass,
 			final Class<? extends Component> componentInterface,
-			final String typeName,
-			final String[] configurationClassification)
+			final String name,
+			final String[] classification,
+			final String description,
+			final Icon icon) 
 	{
-		this(typeIdentifier,
-				configurationClass, componentInterface,
-				typeName,
-				configurationClassification,
-				null);
+		super(typeIdentifier, name, classification, description, icon);
+		this.configurationClass = configurationClass;
+		this.componentInterface = componentInterface;
 	}
 	
 	/**
-	 * Constructor.
+	 * Constructor. Sets the icon to the default icon, and the description to null/not available.
 	 * @param typeIdentifier Type identifier of the configuration.
 	 * @param configurationClass Class of the configuration.
 	 * @param componentInterface The interface of the measurement component which is created when the configuration is compiled.
-	 * @param typeName Human readable name for this configuration.
-	 * @param iconPath Path to an icon representing this configuration. This path should be a valid path to a resource, i.e. an icon saved inside a jar file loaded by YouScope.
+	 * @param name Human readable name for this configuration.
+	 * @param classification Classification of configuration. This classification can e.g. be used to order configurations into a certain folder structure.
 	 */
 	public ComponentMetadataAdapter(final String typeIdentifier,
 			final Class<C> configurationClass,
 			final Class<? extends Component> componentInterface,
-			final String typeName,
-			final String iconPath)
+			final String name,
+			final String[] classification)
 	{
 		this(typeIdentifier,
 				configurationClass, componentInterface,
-				typeName,
-				null,
-				iconPath);
+				name,
+				classification,
+				null, (Icon)null);
 	}
 	
-	/**
-	 * Constructor.
-	 * @param typeIdentifier Type identifier of the configuration.
-	 * @param configurationClass Class of the configuration.
-	 * @param componentInterface The interface of the measurement component which is created when the configuration is compiled.
-	 * @param typeName Human readable name for this configuration.
-	 */
-	public ComponentMetadataAdapter(final String typeIdentifier,
-			final Class<C> configurationClass,
-			final Class<? extends Component> componentInterface,
-			final String typeName)
-	{
-		this(typeIdentifier,
-				configurationClass, componentInterface,
-				typeName,
-				null,
-				null);
-	}
 
 	@Override
 	public Class<C> getConfigurationClass() 

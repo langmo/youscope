@@ -1,10 +1,10 @@
-package org.youscope.client.uielements;
+package org.youscope.uielements;
 
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import org.youscope.client.uielements.plaf.BasicQuickLoggerUI;
-import org.youscope.client.uielements.plaf.QuickLoggerUI;
+import org.youscope.uielements.plaf.BasicQuickLoggerUI;
+import org.youscope.uielements.plaf.QuickLoggerUI;
 
 /**
  * UI Component realizing a log screen/console.

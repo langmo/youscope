@@ -137,7 +137,7 @@ public class ComponentList<C extends Configuration> extends JPanel
 		@Override
 		public Component getListCellRendererComponent(JList<? extends ComponentMetadata<? extends C>> list,
 				ComponentMetadata<? extends C> metadata, int index, boolean isSelected, boolean cellHasFocus) {
-			setText(TextTools.capitalize(metadata.getTypeName()));
+			setText(TextTools.capitalize(metadata.getName()));
 			Icon icon = metadata.getIcon();
 			if(icon == null)
 				setIcon(ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Component"));

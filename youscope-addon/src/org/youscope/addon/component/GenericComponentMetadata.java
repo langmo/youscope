@@ -8,6 +8,7 @@ import org.youscope.common.Component;
 import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.configuration.YSConfigClassification;
+import org.youscope.common.configuration.YSConfigDescription;
 import org.youscope.common.configuration.YSConfigIcon;
 
 /**
@@ -42,7 +43,7 @@ public class GenericComponentMetadata<C extends Configuration> implements Compon
 	
 
 	@Override
-	public String getTypeName() 
+	public String getName() 
 	{
 		YSConfigAlias alias = configurationClass.getAnnotation(YSConfigAlias.class);
 		if(alias != null)
@@ -70,7 +71,7 @@ public class GenericComponentMetadata<C extends Configuration> implements Compon
 			return null;
 		URL iconURL = GenericComponentMetadata.class.getClassLoader().getResource(path.value());
 		if (iconURL != null)
-			return new ImageIcon(iconURL, getTypeName());
+			return new ImageIcon(iconURL, getName());
 		return null;
 	}
 
@@ -85,5 +86,15 @@ public class GenericComponentMetadata<C extends Configuration> implements Compon
 	@Override
 	public Class<? extends Component> getComponentInterface() {
 		return componentInterface;
+	}
+
+
+
+	@Override
+	public String getDescription() {
+		YSConfigDescription alias = configurationClass.getAnnotation(YSConfigDescription.class);
+		if(alias != null)
+			return alias.value();
+		return null;
 	}
 }

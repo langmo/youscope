@@ -43,6 +43,7 @@ class LiveModifiableJobConfigurationAddon  extends ComponentAddonUIAdapter<LiveM
 				LiveModifiableJob.class, 
 				"Live Modifiable Job", 
 				new String[]{"misc"},
+				"Allows to live modify its child-jobs, that is, either to change the configuration of the child jobs, to add or delete child jobs, or to (temporarily) deactivate the execution of the child jobs.",
 				"icons/edit-diff.png");
 	}
 

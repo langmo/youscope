@@ -5,6 +5,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/youscope-addon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/youscope-common"/>
 	<classpathentry kind="lib" path="/youscope-all/lib/JTattoo-1.6.11.jar"/>
-	<classpathentry kind="src" path="/youscope-client-uielements"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

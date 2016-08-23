@@ -45,7 +45,9 @@ class RepeatJobConfigurationAddon extends ComponentAddonUIAdapter<RepeatJobConfi
 				RepeatJobConfiguration.class, 
 				RepeatJob.class, 
 				"Repeat Job", 
-				new String[]{"Containers"}, "icons/arrow-circle.png");
+				new String[]{"Containers"}, 
+				"Repeatadly executes a given list of jobs several times in a row.",
+				"icons/arrow-circle.png");
 	}
 	@Override
 	protected Component createUI(RepeatJobConfiguration configuration) throws AddonException

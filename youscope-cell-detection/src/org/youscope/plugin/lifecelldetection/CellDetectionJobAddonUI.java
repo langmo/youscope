@@ -41,7 +41,9 @@ public class CellDetectionJobAddonUI extends ComponentAddonUIAdapter<CellDetecti
 	{
 		return new ComponentMetadataAdapter<CellDetectionJobConfiguration>(CellDetectionJobConfiguration.TYPE_IDENTIFIER, 
 				CellDetectionJobConfiguration.class, 
-				CellDetectionJob.class, "Cell-Detection", new String[]{"feedback"}, "icons/smiley-mr-green.png");
+				CellDetectionJob.class, "Cell-Detection", new String[]{"feedback"}, 
+				"A job providing several algorithms to segment microscopy images, and to extract information on the detected cells.",
+				"icons/smiley-mr-green.png");
 	}
     
 	@Override

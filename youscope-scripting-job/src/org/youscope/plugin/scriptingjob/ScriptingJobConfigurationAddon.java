@@ -72,6 +72,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
 				ScriptingJob.class, 
 				"Scripting", 
 				new String[]{"Misc"},
+				"A job which can be defined by one of the supported scripting languages, e.g. Matlab or JavaScript.",
 				"icons/script-code.png");
 	}
     

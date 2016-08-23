@@ -87,7 +87,8 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 	{
 		return new ComponentMetadataAdapter<AutoFocusJobConfiguration>(AutoFocusJobConfiguration.TYPE_IDENTIFIER, 
 				AutoFocusJobConfiguration.class, 
-				AutoFocusJob.class, "Auto-Focus", new String[]{"Misc"});
+				AutoFocusJob.class, "Auto-Focus", new String[]{"Misc"}, "Uses a software autofocus algorithm to find and set the optimal focal position",
+				"icons/arrow-stop-090.png");
 	}
     
 	@Override

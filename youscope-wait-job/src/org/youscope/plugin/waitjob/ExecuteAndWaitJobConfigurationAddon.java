@@ -36,7 +36,8 @@ class ExecuteAndWaitJobConfigurationAddon extends ComponentAddonUIAdapter<Execut
 				ExecuteAndWaitJobConfiguration.class, 
 				WaitJob.class, 
 				"Execute and Wait", 
-				new String[]{"Containers"},
+				new String[]{"Elementary"},
+				"Measures the time it takes to executes its child jobs. If the time is lower than a user-defined period, it waits for the rest of the remainder of the period. Useful to precisely time events.",
 				"icons/alarm-clock--exclamation.png");
 	}
     

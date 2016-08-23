@@ -24,21 +24,28 @@ class ErrorConsumer
         panel.add(new JLabel(description), BorderLayout.NORTH);
         String message = "";
         Throwable iter = exception;
-        for (int i = 0;; i++)
+        while(iter != null)
         {
-            if (i > 0)
-                message += "\n";
-            message += iter.getClass().getSimpleName() + ": " + iter.getMessage();
+            message += iter.getClass().getSimpleName() + ": " + iter.getMessage() + "\n";
             iter = iter.getCause();
             if (iter == null)
                 break;
+        }
+        if(exception.getStackTrace() != null)
+        {
+        	message += "\nStack Trace:";
+        	for(StackTraceElement element: exception.getStackTrace())
+        	{
+        		if(element != null && !element.isNativeMethod() && element.getFileName() != null)
+        			message+="\n"+element.getFileName()+", Line "+element.getLineNumber();
+        	}
         }
         JTextArea exceptionDescription = new JTextArea(message);
         exceptionDescription.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(exceptionDescription);
         scrollPane.setPreferredSize(new Dimension(700, 200));
         panel.add(scrollPane, BorderLayout.CENTER);
-        JOptionPane.showMessageDialog(null, panel, "YouScope could not start", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel, "Error while starting YouScope", JOptionPane.ERROR_MESSAGE);
         System.exit(1);
     }
 }

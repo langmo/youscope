@@ -78,7 +78,9 @@ class ParallelImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Paral
 				ParallelImagingJobConfiguration.class, 
 				ImagingJob.class, 
 				"Multi-Camera Imaging", 
-				new String[]{"Multi-Camera"}, "icons/images-stack.png");
+				new String[]{"Multi-Camera"}, 
+				"Uses several cameras to simultanuously take several images. Requires that the number of pixels per image and the number of bytes per pixel are equal for each camera. Experimental.",
+				"icons/images-stack.png");
 	}
 	@Override
 	protected Component createUI(ParallelImagingJobConfiguration configuration) throws AddonException

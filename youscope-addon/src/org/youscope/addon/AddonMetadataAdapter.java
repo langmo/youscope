@@ -6,64 +6,70 @@ import org.youscope.uielements.ImageLoadingTools;
 
 /**
  * Adapter to simplify {@link AddonMetadata} construction.
- * @author langmo
+ * @author Moritz Lang
  *
  */
 public class AddonMetadataAdapter implements AddonMetadata
 {
 	private final String typeIdentifier;
-	private final String typeName;
+	private final String name;
+	private final String description;
 	private final String[] classification;
 	private final Icon icon;
 	
 	/**
 	 * Constructor. Sets icon to default icon.
 	 * @param typeIdentifier Unique type identifier of the addon. Must not be null.
-	 * @param typeName Human readable name of the addon. Must not be null.
+	 * @param name Human readable name of the addon. Must not be null.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param classification Classification of the addon. Set to null for unclassified.
 	 */
-	public AddonMetadataAdapter(String typeIdentifier, String typeName, String[] classification)
+	public AddonMetadataAdapter(String typeIdentifier, String name, String[] classification, String description)
 	{
-		this(typeIdentifier, typeName, classification, (Icon)null);
+		this(typeIdentifier, name, classification, description, (Icon)null);
 	}
 	
 	/**
 	 * Constructor. 
 	 * @param typeIdentifier Unique type identifier of the addon. Must not be null.
-	 * @param typeName Human readable name of the addon. Must not be null.
+	 * @param name Human readable name of the addon. Must not be null.
 	 * @param classification Classification of the addon. Set to null for unclassified.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param icon Icon of the addon. Set to null for default icon.
 	 */
-	public AddonMetadataAdapter(String typeIdentifier, String typeName, String[] classification, Icon icon)
+	public AddonMetadataAdapter(String typeIdentifier, String name, String[] classification, String description, Icon icon)
 	{
-		if(typeIdentifier == null || typeName == null)
+		if(typeIdentifier == null || name == null)
 			throw new NullPointerException();
 		
 		this.typeIdentifier = typeIdentifier;
-		this.typeName = typeName;
+		this.name = name;
 		if(classification != null)
 			this.classification = classification;
 		else
 			this.classification = new String[0];
 		this.icon = icon;
+		
+		this.description = description;
 	}
 	
 	/**
 	 * Constructor.
 	 * @param typeIdentifier Unique type identifier of the addon. Must not be null.
-	 * @param typeName Human readable name of the addon. Must not be null.
+	 * @param name Human readable name of the addon. Must not be null.
 	 * @param classification Classification of the addon. Set to null for unclassified.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param iconPath Path of icon of the addon. Set to null for default icon.
 	 */
-	public AddonMetadataAdapter(String typeIdentifier, String typeName, String[] classification, String iconPath)
+	public AddonMetadataAdapter(String typeIdentifier, String name, String[] classification, String description, String iconPath)
 	{
-		this(typeIdentifier, typeName, classification, iconPath == null ? null : ImageLoadingTools.getResourceIcon(iconPath, typeName));
+		this(typeIdentifier, name, classification, description, iconPath == null ? null : ImageLoadingTools.getResourceIcon(iconPath, name));
 	}
 
 	@Override
-	public String getTypeName()
+	public String getName()
 	{
-		return typeName;
+		return name;
 	}
 
 	@Override
@@ -82,5 +88,10 @@ public class AddonMetadataAdapter implements AddonMetadata
 	public String[] getClassification()
 	{
 		return classification;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
 	}
 }

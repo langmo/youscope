@@ -44,7 +44,9 @@ class WaitSinceLastActionJobConfigurationAddon extends ComponentAddonUIAdapter<W
 				WaitSinceLastActionJobConfiguration.class, 
 				WaitSinceLastActionJob.class, 
 				"Wait since last action", 
-				new String[]{"misc"}, "icons/alarm-clock-select.png");
+				new String[]{"misc"}, 
+				"Measures the time span since any job with the same action ID was last executed, independently of the well/position it was executed in. If the time span is lower than a user-defined time period, it waits for the remaineder of the period. Useful to precisely schedule events over several positions.",
+				"icons/alarm-clock-select.png");
 	}
 
 	@Override

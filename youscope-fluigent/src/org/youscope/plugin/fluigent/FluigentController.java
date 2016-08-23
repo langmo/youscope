@@ -51,7 +51,9 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Fluigent Controller", new String[]{"microfluidics"}, "icons/beaker.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Fluigent Controller", new String[]{"microfluidics"}, 
+				"User interface to change medium flow rates of a Fluigent pump system.",
+				"icons/beaker.png");
 	}
 	
 	private class PressureControl extends DynamicPanel

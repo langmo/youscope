@@ -74,7 +74,9 @@ class PositionControl extends ToolAddonUIAdapter implements Runnable, YouScopeFr
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Stage and Focus Position", new String[0], "icons/map.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Stage and Focus Position", new String[0], 
+				"Allows to directly change stage and focus position",				
+				"icons/marker.png");
 	}
 	
 	/**

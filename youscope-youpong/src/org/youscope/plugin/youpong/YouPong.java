@@ -25,7 +25,9 @@ class YouPong extends ToolAddonUIAdapter implements YouScopeFrameListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouPong", new String[]{"misc"}, "icons/game.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouPong", new String[]{"misc"}, 
+				"Easter egg, representing a re-implementation of the classical pong game in which two users can compete against one another by moving their paddles with the stage or focus control hardware. Additionally displays the current camera image as a live-stream in the background.",
+				"icons/game.png");
 	}
 	
 	/**

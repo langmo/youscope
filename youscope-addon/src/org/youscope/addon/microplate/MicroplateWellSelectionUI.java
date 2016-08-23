@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
@@ -69,6 +70,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	private static final Font WELL_LABEL_FONT = new Font(Font.DIALOG, Font.BOLD, 12);
 	private static final double WELL_LABEL_FONT_MARGIN = 3;
 	private boolean center = false;
+	private final Color textColor;
 	
 	/**
 	 * Enumeration defining how many wells can be selected.
@@ -104,11 +106,17 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	{
 		super(getMetadata(), client, server);	
 		setMicroplateLayout((MicroplateLayout)null);
+		Color color = UIManager.getColor("Label.foreground");
+		if(color != null)
+			textColor = color;
+		else
+			textColor = Color.BLACK;
 	}
 	
 	private static AddonMetadata getMetadata()
 	{
-		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "Microplate Well Selection", new String[0]);
+		return new AddonMetadataAdapter(TYPE_IDENTIFIER, "Microplate Well Selection", new String[0],
+				"User interface to select wells of a microplate.");
 	}
 	
 	/**
@@ -667,7 +675,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 				{
 					well.paint(g);
 				}
-				g.setColor(Color.BLACK);
+				g.setColor(textColor);
 				g.setFont(WELL_LABEL_FONT.deriveFont((float)(WELL_LABEL_FONT.getSize() / transform.getScaleY())));
 				if(showXWellLabels && xWellLabelPositions != null)
 				{

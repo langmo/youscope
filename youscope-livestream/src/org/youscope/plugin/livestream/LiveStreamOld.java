@@ -29,7 +29,8 @@ class LiveStreamOld extends ToolAddonUIAdapter implements YouScopeFrameListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Old LiveStream", new String[]{"misc"}, "icons/film.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Old LiveStream", new String[]{"misc"}, 
+				"Old and deprecated implementation of the LiveStream. Displays the current camera image, with an option to change channel, exposure time and similar.","icons/film.png");
 	}
 	
 	@Override

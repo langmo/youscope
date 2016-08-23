@@ -29,7 +29,9 @@ class MultiCameraAndColorStream extends ToolAddonUIAdapter implements YouScopeFr
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Camera & -Color Stream", new String[]{"multi-cam"}, "icons/film-cast.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Multi-Camera & -Color Stream", new String[]{"multi-cam"}, 
+				"Displays the current images of multiple cameras as overlayed images of different colors.",
+				"icons/film-cast.png");
 	}
 
 	@Override

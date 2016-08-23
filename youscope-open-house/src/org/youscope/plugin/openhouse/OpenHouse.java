@@ -43,7 +43,7 @@ class OpenHouse extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open House", new String[]{"misc"}, "icons/beaker.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Open House", new String[]{"misc"}, "UI for the BSSE open house day 2014 \"Stress Yeast Cells\".", "icons/beaker.png");
 	}
 	
 	private void setFlowRate(int dosingUnit, double flowRate)

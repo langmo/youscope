@@ -64,7 +64,9 @@ class ScriptingTool extends ToolAddonUIAdapter implements EditFileListener
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Scripting Console", new String[0], "icons/script-block.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Scripting Console", new String[0], 
+				"Environment to script the microscope/Youscope's behavior using one of the supported script languages, e.g. Matlab or JavaScript.",
+				"icons/script-block.png");
 	}
 	
 	/**

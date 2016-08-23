@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface YSConfigDescription {
 	/**
-	 * Human readable description of configuration or field.
+	 * Human readable description of configuration or field. Should contain plain-text, but line-breaks are allowed.
 	 * 
 	 * @return human readable description.
 	 */

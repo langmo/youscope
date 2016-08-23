@@ -43,7 +43,9 @@ public class ControllerJobConfigurationAddon extends ComponentAddonUIAdapter<Con
 				ControllerJobConfiguration.class, 
 				ControllerJob.class, 
 				"controller", 
-				new String[]{"feedback"});
+				new String[]{"feedback"},
+				"A job consuming the output (in form of table data) of its first child job, performing computations on this data, and sending, based on the result, certain commands (in form of table data) to its second child job. Thus, this job realizes a control algorithm, with its first child job being the input/observer, and the second child job being the output/plant.",
+				"icons/robot.png");
 	}
     
 	@Override

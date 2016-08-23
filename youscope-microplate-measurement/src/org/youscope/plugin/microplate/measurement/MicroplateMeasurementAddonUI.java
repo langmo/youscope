@@ -53,6 +53,8 @@ class MicroplateMeasurementAddonUI extends MeasurementAddonUIAdapter<MicroplateM
 	{
 		return new ComponentMetadataAdapter<MicroplateMeasurementConfiguration>(MicroplateMeasurementConfiguration.TYPE_IDENTIFIER, 
 				MicroplateMeasurementConfiguration.class, 
-				Measurement.class, "Microplate Measurement", new String[0], "icons/map.png");
+				Measurement.class, "Microplate Measurement", new String[0], 
+				"Takes images/executes a certain set of jobs at the activated well/tile of a microplate or microplate-like object like microfluidic channels. From a list of pre-defined microplate layouts, an appropriate layout can be chosen such that not all imaging positions have to be manually defined. Alternatively, a custom microplate layout can be defined.",
+				"icons/map.png");
 	}
 }

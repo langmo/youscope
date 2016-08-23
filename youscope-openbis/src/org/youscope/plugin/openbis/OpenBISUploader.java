@@ -53,7 +53,9 @@ class OpenBISUploader extends ToolAddonUIAdapter
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Send to OpenBIS", new String[0]);
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "Send to OpenBIS", new String[0],
+				"Exports the measurement data into the OpenBIS database.", 
+				"icons/database-import.png");
 	}
 	
 	OpenBISUploader(YouScopeClient client, YouScopeServer server, String measurementFolder) throws AddonException

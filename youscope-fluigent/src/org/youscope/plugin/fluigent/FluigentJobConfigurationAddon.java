@@ -82,6 +82,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 				FluigentJob.class, 
 				"fluigent control", 
 				new String[]{"microfluidics"},
+				"Changes medium flow rates of a Fluigent pump system.",
 				"icons/beaker.png");
 	}
     

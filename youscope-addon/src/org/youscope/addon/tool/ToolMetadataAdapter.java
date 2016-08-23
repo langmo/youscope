@@ -6,43 +6,46 @@ import org.youscope.addon.AddonMetadataAdapter;
 
 /**
  * Adapter to simplify {@link ToolMetadata} construction.
- * @author langmo
+ * @author Moritz Lang
  *
  */
 public class ToolMetadataAdapter extends AddonMetadataAdapter implements ToolMetadata
-{
-	/**
-	 * Constructor. Sets icon to default icon.
-	 * @param typeIdentifier Unique type identifier of the tool type. Must not be null.
-	 * @param typeName Human readable name of the tool. Must not be null.
-	 * @param classification Classification of the tool. Set to null for unclassified.
-	 */
-	public ToolMetadataAdapter(String typeIdentifier, String typeName, String[] classification)
-	{
-		super(typeIdentifier, typeName, classification);
-	}
+{	
 	
+	/**
+	 * Constructor. Sets the icon to the default icon.
+	 * @param typeIdentifier Unique type identifier of the tool type. Must not be null.
+	 * @param name Human readable name of the tool. Must not be null.
+	 * @param classification Classification of the tool. Set to null for unclassified.
+	 * @param description Description of the addon. Set to null to not provide any description.
+	 */
+	public ToolMetadataAdapter(String typeIdentifier, String name, String[] classification, String description)
+	{
+		super(typeIdentifier, name, classification, description);
+	}
 	/**
 	 * Constructor. 
 	 * @param typeIdentifier Unique type identifier of the tool type. Must not be null.
-	 * @param typeName Human readable name of the tool. Must not be null.
+	 * @param name Human readable name of the tool. Must not be null.
 	 * @param classification Classification of the tool. Set to null for unclassified.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param icon Icon of the tool. Set to null for default icon.
 	 */
-	public ToolMetadataAdapter(String typeIdentifier, String typeName, String[] classification, Icon icon)
+	public ToolMetadataAdapter(String typeIdentifier, String name, String[] classification, String description, Icon icon)
 	{
-		super(typeIdentifier, typeName, classification, icon);
+		super(typeIdentifier, name, classification, description, icon);
 	}
 	
 	/**
 	 * Constructor.
 	 * @param typeIdentifier Unique type identifier of the tool type. Must not be null.
-	 * @param typeName Human readable name of the tool. Must not be null.
+	 * @param name Human readable name of the tool. Must not be null.
 	 * @param classification Classification of the tool. Set to null for unclassified.
+	 * @param description Description of the addon. Set to null to not provide any description.
 	 * @param iconPath Path of icon of the tool. Set to null for default icon.
 	 */
-	public ToolMetadataAdapter(String typeIdentifier, String typeName, String[] classification, String iconPath)
+	public ToolMetadataAdapter(String typeIdentifier, String name, String[] classification, String description, String iconPath) 
 	{
-		super(typeIdentifier, typeName, classification, iconPath);
+		super(typeIdentifier, name, classification, description, iconPath);
 	}
 }

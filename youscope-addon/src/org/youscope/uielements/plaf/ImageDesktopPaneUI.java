@@ -1,4 +1,4 @@
-package org.youscope.client.uielements.plaf;
+package org.youscope.uielements.plaf;
 
 import java.awt.Graphics;
 

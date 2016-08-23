@@ -867,7 +867,7 @@ public class Starter extends JFrame
 				}
 				catch(ConnectionFailedException e)
 				{
-					ErrorConsumer.consumeException("Could not start up client. Shutting down.", e);
+					ErrorConsumer.consumeException("Could not start up the YouScope client.", e);
 					System.exit(1);
 				}
 	

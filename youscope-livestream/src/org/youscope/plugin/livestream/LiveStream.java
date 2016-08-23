@@ -32,7 +32,9 @@ class LiveStream implements ToolAddonUI
 	
 	static ToolMetadata getMetadata()
 	{
-		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouScope LiveStream", new String[0], "icons/film.png");
+		return new ToolMetadataAdapter(TYPE_IDENTIFIER, "YouScope LiveStream", new String[0], 
+				"Displays the current camera image, with an option to change channel, exposure time and similar.",
+				"icons/film.png");
 	}
 
 	@Override
