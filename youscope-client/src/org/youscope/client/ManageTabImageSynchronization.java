@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
@@ -38,12 +39,14 @@ class ManageTabImageSynchronization extends ManageTabElement
 		imageSynchroTable.setColumnSelectionAllowed(false);
 		imageSynchroTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Before taking an image, YouScope waits until all devices belonging to the channel the image is made to, as well as the shutter (if any), have stopped moving.\nHowever, there might be additional devices which might not have finished moving before an image is taken, and, thus, produce artifacts in the image.\nIf you experience such artifacts, try to add the respective device to the image synchronization list. All devices in this list are waited to stop moving before taking any image.\n"
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Before taking an image, YouScope waits until all devices belonging to the channel the image is made to, as well as the shutter (if any), have stopped moving.\nHowever, there might be additional devices which might not have finished moving before an image is taken, and, thus, produce artifacts in the image.\nIf you experience such artifacts, try to add the respective device to the image synchronization list. All devices in this list are waited to stop moving before taking any image.\n"
 				+ "Note that this might not be sufficient in the case when the moving device is neither supporting handshaking nor polling. In this case you have to add an additional device delay.");
 		
 		setOpaque(false);
 		setLayout(new BorderLayout(5, 5));
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 		add(new JScrollPane(imageSynchroTable), BorderLayout.CENTER);
 	}
 

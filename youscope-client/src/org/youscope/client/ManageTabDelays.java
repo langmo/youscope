@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -38,11 +39,13 @@ class ManageTabDelays extends ManageTabElement
 		deviceDelayTable.setOpaque(false);
 		setOpaque(false);
 		setLayout(new BorderLayout(5, 5));
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Many devices support either a handshaking mechanism or polling to determine if they are currently changing their state. However, some devices don't.\nIf you experience that images are taken albeit a device was still changing its state, try to add a delay larger or equal to the maximal time the device needs to perform a state change. Whenever changing the state of the device, YouScope will wait at least the given time span before proceeding.\nNote that if the device supports handshaking or polling, YouScope will use this mechanism for synchronization first. However, if the polling/handshaking takes less time than the explicit delay, YouScope will afterwards wait for the time difference. Thus, the explicit delays represent the minimal time YouScope should wait for a device, and the actual time waited might be higher (but never lower) than the explicit delay.");
-		add(descriptionPanel, BorderLayout.NORTH);
-		JScrollPane scrollPane = new JScrollPane(deviceDelayTable);
-		scrollPane.setOpaque(false);
-		add(scrollPane, BorderLayout.CENTER);
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Many devices support either a handshaking mechanism or polling to determine if they are currently changing their state. However, some devices don't.\nIf you experience that images are taken albeit a device was still changing its state, try to add a delay larger or equal to the maximal time the device needs to perform a state change. Whenever changing the state of the device, YouScope will wait at least the given time span before proceeding.\nNote that if the device supports handshaking or polling, YouScope will use this mechanism for synchronization first. However, if the polling/handshaking takes less time than the explicit delay, YouScope will afterwards wait for the time difference. Thus, the explicit delays represent the minimal time YouScope should wait for a device, and the actual time waited might be higher (but never lower) than the explicit delay.");
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
+		JScrollPane scrollPane2 = new JScrollPane(deviceDelayTable);
+		scrollPane2.setOpaque(false);
+		add(scrollPane2, BorderLayout.CENTER);
 	}
 
 	@Override

@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,7 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.common.microscope.CameraDevice;
@@ -150,13 +152,15 @@ class ManageTabCameraCoordinates extends ManageTabElement
 		emptyPanel.setOpaque(false);
 		StandardFormats.addGridBagElement(emptyPanel, elementsLayout, bottomConstr, elementsPanel);
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Depending on the specific camera and the optics, images taken by the camera might be transposed or rotated. "
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", 
+				"Depending on the specific camera and the optics, images taken by the camera might be transposed or rotated. "
 				+ "For several taks, like image stitching, it is necessary that the camera coordinates are alligned to the stage.\n"
 				+ "To get to know the coordinates used by your camera, startn the \"YouScope LiveStream\" tool and manually move the stage. The image shown by the camera should move accordingly, e.g. when slowly moving the stage from well A1 to A2 of a microplate, the image should move to the left, and accordingly to the top when moving from A1 to B1.\n"
 				+ "If the images move to the wrong direction, transpose the respective axis. If the image moves vertically when moving the stage horizontally and vice versa, switch the axes.\n"
 				+ "Note that this configuration should be done AFTER the coordinate axis of the stage are configured.");
-		
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 		add(elementsPanel, BorderLayout.CENTER);
 	}
 

@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.PrintStream;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -19,6 +18,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.youscope.addon.AddonException;
+import org.youscope.addon.AddonMetadata;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.addon.component.ComponentMetadata;
@@ -26,7 +26,7 @@ import org.youscope.addon.tool.ToolAddonUI;
 import org.youscope.addon.tool.ToolMetadata;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.measurement.MeasurementConfiguration;
-import org.youscope.common.util.TextTools;
+import org.youscope.uielements.AddonButton;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
@@ -41,26 +41,40 @@ class YouScopeToolBar extends JToolBar
 	 */
 	private static final long	serialVersionUID	= 3692378888290252775L;
 	private static final String CONFIG_FILE = "configuration/toolbar.cfg";
+	
 	YouScopeToolBar()
 	{
 		setFloatable(false);
 		setRollover(true);
 	}
+		
 	/**
-	 * Button for the menu bar. Works better with certain look and feels.
+	 * Button representing an addon. The text, tooltip and icon is automatically initialized to the information provided in the addon metadata.
 	 * @author Moritz
 	 *
 	 */
-	private class MenuButton extends JButton
+	private static class ToolbarScriptButton extends JButton
 	{
 		/**
 		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = 7754882737215008622L;
-		MenuButton(String text)
+		ToolbarScriptButton(String text, Icon icon)
 		{
 			super(text);
+			setOpaque(false);
+			setFocusPainted(false);
 			super.setBorder(new EmptyBorder(3,5,3,5));
+			
+			setToolTipText("Run script "+text+".");
+			
+			if(icon != null)
+			{
+				setIcon(icon);
+				
+			}
+			setVerticalTextPosition(SwingConstants.BOTTOM);
+			setHorizontalTextPosition(SwingConstants.CENTER);
 		}
 		
 		@Override
@@ -70,30 +84,34 @@ class YouScopeToolBar extends JToolBar
 			return;
 		}
 	}
+	
+	private static class ToolbarAddonButton extends AddonButton<AddonMetadata>
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = -6575470641890270160L;
+		ToolbarAddonButton(AddonMetadata addonMetadata, Icon defaultIcon)
+		{
+			super(addonMetadata, defaultIcon);
+			setOpaque(false);
+			setFocusPainted(false);
+			super.setBorder(new EmptyBorder(3,5,3,5));
+		}
+		@Override
+		public void setBorder(Border border)
+		{
+			// forbid the look and feel to add a border.
+			return;
+		}
+	}
+	
 	private void addButton(String addonID)
 	{
 		try
 		{
 			final ComponentMetadata<? extends MeasurementConfiguration> metadata = ClientAddonProviderImpl.getProvider().getComponentMetadata(addonID, MeasurementConfiguration.class);
-			String addonName = metadata.getName();
-			if(addonName == null || addonName.length() <= 0)
-				addonName = "Unnamed Measurement";
-			
-			MenuButton measurementButton = new MenuButton(TextTools.capitalize(addonName));
-			measurementButton.setOpaque(false);
-			measurementButton.setFocusPainted(false); 
-			Icon measurementIcon = metadata.getIcon();
-			if(measurementIcon == null)
-				measurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new measurement");
-			if(measurementIcon != null)
-			{
-				measurementButton.setIcon(measurementIcon);
-				measurementButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-				measurementButton.setHorizontalTextPosition(SwingConstants.CENTER);
-			}
-			String description = metadata.getDescription();
-			if(description != null)
-				measurementButton.setToolTipText(description);
+			ToolbarAddonButton measurementButton = new ToolbarAddonButton(metadata, ImageLoadingTools.DEFAULT_MEASUREMENT_ICON);
 			measurementButton.addActionListener(new ActionListener()
 			{
 				@Override
@@ -136,25 +154,7 @@ class YouScopeToolBar extends JToolBar
 		try
 		{
 			final ToolMetadata metadata = ClientAddonProviderImpl.getProvider().getToolMetadata(addonID);
-			String addonName = metadata.getName();
-			if(addonName == null || addonName.length() <= 0)
-				addonName = "Unknown Tool";
-			MenuButton toolButton = new MenuButton(TextTools.capitalize(addonName));
-					
-			toolButton.setOpaque(false);
-			toolButton.setFocusPainted(false);
-			Icon toolIcon = metadata.getIcon();
-			if(toolIcon == null)
-				toolIcon = ImageLoadingTools.getResourceIcon("icons/application-form.png", "New Tool");
-			if(toolIcon != null)
-			{
-				toolButton.setIcon(toolIcon);
-				toolButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-				toolButton.setHorizontalTextPosition(SwingConstants.CENTER);
-			}
-			String description = metadata.getDescription();
-			if(description != null)
-				toolButton.setToolTipText(description);
+			ToolbarAddonButton toolButton = new ToolbarAddonButton(metadata, ImageLoadingTools.DEFAULT_TOOL_ICON);
 			toolButton.addActionListener(new ActionListener()
 			{
 				@Override
@@ -183,28 +183,13 @@ class YouScopeToolBar extends JToolBar
 		}
 		
 		ScriptDefinition[] scriptDefinitions = ScriptDefinitionManager.getScriptDefinitions();
-		for(ScriptDefinition scriptDefinition : scriptDefinitions)
+		for(final ScriptDefinition scriptDefinition : scriptDefinitions)
 		{
 			if(scriptDefinition.getName().equals(addonID))
 			{
-				MenuButton scriptButton = new MenuButton(addonID);
-				scriptButton.setOpaque(false);
-				scriptButton.setFocusPainted(false);
-				ImageIcon scriptsIcon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "execute script");
-				if(scriptsIcon != null)
+				ToolbarScriptButton scriptButton = new ToolbarScriptButton(addonID, ImageLoadingTools.DEFAULT_SCRIPT_ICON);
+				scriptButton.addActionListener(new ActionListener()
 				{
-					scriptButton.setIcon(scriptsIcon);
-					scriptButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-					scriptButton.setHorizontalTextPosition(SwingConstants.CENTER);
-				}
-				scriptButton.setToolTipText("Run script.");
-				class NewScriptListener implements ActionListener
-				{
-					private final ScriptDefinition scriptDefinition;
-					NewScriptListener(ScriptDefinition scriptDefinition)
-					{
-						this.scriptDefinition = scriptDefinition;
-					}
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
@@ -214,8 +199,7 @@ class YouScopeToolBar extends JToolBar
 					{
 						ScriptDefinitionManager.runScript(scriptDefinition);
 					}
-				}
-				scriptButton.addActionListener(new NewScriptListener(scriptDefinition));
+				});
 				add(scriptButton);
 				return;
 			}

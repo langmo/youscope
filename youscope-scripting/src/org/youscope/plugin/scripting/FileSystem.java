@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.script.ScriptException;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -129,11 +129,11 @@ class FileSystem extends JPanel
 			});
 		
 		// Initialize Buttons
-		ImageIcon newFileIcon = ImageLoadingTools.getResourceIcon("icons/document--plus.png", "New File");
-		ImageIcon editFileIcon = ImageLoadingTools.getResourceIcon("icons/document--pencil.png", "Edit File");
-		ImageIcon folderUpIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Folder Up");
-		ImageIcon runFileIcon = ImageLoadingTools.getResourceIcon("icons/document--arrow.png", "Run File");
-		ImageIcon actualizeIcon = ImageLoadingTools.getResourceIcon("icons/arrow-circle.png", "Actualize");
+		Icon newFileIcon = ImageLoadingTools.getResourceIcon("icons/document--plus.png", "New File");
+		Icon editFileIcon = ImageLoadingTools.getResourceIcon("icons/document--pencil.png", "Edit File");
+		Icon folderUpIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Folder Up");
+		Icon runFileIcon = ImageLoadingTools.getResourceIcon("icons/document--arrow.png", "Run File");
+		Icon actualizeIcon = ImageLoadingTools.getResourceIcon("icons/arrow-circle.png", "Actualize");
 		
 		if(newFileIcon != null)
 			newFileButton = new JButton(newFileIcon);
@@ -300,13 +300,13 @@ class FileSystem extends JPanel
 
 		// Customize icons
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-		ImageIcon leafIcon = ImageLoadingTools.getResourceIcon("icons/document.png", "document");
+		Icon leafIcon = ImageLoadingTools.getResourceIcon("icons/document.png", "document");
 		if(leafIcon != null)
 			renderer.setLeafIcon(leafIcon);
-		ImageIcon openIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "opened folder");
+		Icon openIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "opened folder");
 		if(openIcon != null)
 			renderer.setOpenIcon(openIcon);
-		ImageIcon closedIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal.png", "closed folder");
+		Icon closedIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal.png", "closed folder");
 		if(closedIcon != null)
 			renderer.setClosedIcon(closedIcon);
 		fileSystemTree.setCellRenderer(renderer);

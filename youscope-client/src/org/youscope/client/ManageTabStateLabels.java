@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JList;
@@ -70,11 +71,13 @@ class ManageTabStateLabels extends ManageTabElement
 		deviceLabelsPanel.add(new JScrollPane(deviceLabelsTable), BorderLayout.CENTER);
 		splitPanel.add(deviceLabelsPanel);
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Some devices have several states which can be accessed by their index. However, changing the state of a device by the index might be not intuitive and error-prone.\nTherefore, it is possible to assign each state to a human readable name, e.g. the name and wavelength of a filter. This name can then be used in YouScope instead of the index to change the state of the device.");
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Some devices have several states which can be accessed by their index. However, changing the state of a device by the index might be not intuitive and error-prone.\nTherefore, it is possible to assign each state to a human readable name, e.g. the name and wavelength of a filter. This name can then be used in YouScope instead of the index to change the state of the device.");
 		
 		setOpaque(false);
 		setLayout(new BorderLayout(5, 5));
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 		add(splitPanel, BorderLayout.CENTER);
 	}
 

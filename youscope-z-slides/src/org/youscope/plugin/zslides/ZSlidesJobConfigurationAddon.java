@@ -20,7 +20,7 @@ import java.text.ParseException;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -51,7 +51,7 @@ import org.youscope.uielements.JobsDefinitionPanel;
 import org.youscope.uielements.StandardFormats;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  */
 class ZSlidesJobConfigurationAddon extends ComponentAddonUIAdapter<ZSlidesJobConfiguration>
 {
@@ -124,10 +124,10 @@ class ZSlidesJobConfigurationAddon extends ComponentAddonUIAdapter<ZSlidesJobCon
         zSlicesScrollPane.setMinimumSize(new Dimension(10, 10));
         centralPanel.add(zSlicesScrollPane, BorderLayout.CENTER);
         // Up, down, add and remove Buttons
-        ImageIcon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move Upwards");
-        ImageIcon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move Downwards");
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Z-Position");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Z-Position");
+        Icon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move Upwards");
+        Icon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move Downwards");
+        Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Z-Position");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Z-Position");
         JButton upButton;
         if (upButtonIcon == null)
             upButton = new JButton("Move Up");

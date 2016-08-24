@@ -15,7 +15,7 @@ import java.util.Vector;
 
 import javax.script.ScriptException;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -305,7 +305,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		public UndoAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/arrow-return-270-left.png", "undo");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/arrow-return-270-left.png", "undo");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else
@@ -354,7 +354,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		public RedoAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/arrow-return-270.png", "redo");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/arrow-return-270.png", "redo");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else
@@ -403,7 +403,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		SaveAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/disk.png", "save");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/disk.png", "save");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else
@@ -428,7 +428,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		SaveAsAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/disk--pencil.png", "save as");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/disk--pencil.png", "save as");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else
@@ -453,7 +453,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		RunAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "run");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "run");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else
@@ -478,7 +478,7 @@ class ScriptEditorFrame implements UndoRedoListener
 		OpenAction()
 		{
 			super("");
-			ImageIcon icon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "open");
+			Icon icon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "open");
 			if(icon != null)
 				putValue(SMALL_ICON, icon);
 			else

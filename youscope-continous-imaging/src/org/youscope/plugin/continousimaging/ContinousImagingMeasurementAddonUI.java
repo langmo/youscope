@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.continousimaging;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -36,7 +36,7 @@ class ContinousImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Conti
 		setTitle("Continuous Imaging Measurement");
 		
 		
-		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/continousimaging/images/continous-imaging.jpg", "Continuous Measurement");
+		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/continousimaging/images/continous-imaging.jpg", "Continuous Measurement");
 		addPage(new DescriptionPage(null, DESCRIPTION, image, null));
 		addPage(new GeneralSettingsPage<ContinousImagingMeasurementConfiguration>(client, ContinousImagingMeasurementConfiguration.class)); 
 		addPage(new StartAndEndSettingsPage(client, server));

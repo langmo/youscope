@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,7 +19,6 @@ import java.rmi.RemoteException;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
@@ -51,13 +51,13 @@ class MeasurementControlManager extends JPanel
 	private final JDesktopPane desktop;
 	private boolean rightPanelShown = false;
 	private JTabbedPane tabbedPane = new JTabbedPane();
-	private final ImageIcon closeIcon;
+	private final Image closeImage;
 	public MeasurementControlManager(JDesktopPane desktop)
 	{
 		this.desktop = desktop;
 		setLayout(new BorderLayout());
 		add(desktop, BorderLayout.CENTER);
-		closeIcon = ImageLoadingTools.getResourceIcon("icons/cross-button.png", "close measurement");
+		closeImage = ImageLoadingTools.getResourceImage("icons/cross-button.png", "close measurement");
 	}
 	private void updateRightPanel()
 	{
@@ -175,8 +175,8 @@ class MeasurementControlManager extends JPanel
             {
                 g2.translate(1, 1);
             }
-            if(closeIcon != null)
-            	g2.drawImage(closeIcon.getImage(), 0, 0, this);
+            if(closeImage != null)
+            	g2.drawImage(closeImage, 0, 0, this);
             else
             {
             	g2.setColor(Color.RED);

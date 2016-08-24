@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -156,8 +156,8 @@ public class PathTable extends JPanel
         add(pathTableScrollPane, BorderLayout.CENTER);
         
         // Up, down, add and remove Buttons
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Position");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Position");
+        Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Position");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Position");
         JButton newPositionButton;
         if (addButtonIcon == null)
             newPositionButton = new JButton("Add Position");

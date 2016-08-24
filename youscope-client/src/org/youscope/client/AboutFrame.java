@@ -3,10 +3,10 @@ package org.youscope.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -33,7 +33,7 @@ class AboutFrame
 
         final Dimension totalSize = new Dimension(600, 361);
         
-        final ImageIcon backgroundImage = ImageLoadingTools.getResourceIcon(BACKGROUND_URL, "Logo");        
+        final Image backgroundImage = ImageLoadingTools.getResourceImage(BACKGROUND_URL, "Logo");        
         final JPanel contentPane = new JPanel(null)
         		{
 
@@ -50,7 +50,7 @@ class AboutFrame
 
 					    super.paintComponent(g);
 					    if(backgroundImage != null)
-					    	g.drawImage(backgroundImage.getImage(), 0, 0, this);
+					    	g.drawImage(backgroundImage, 0, 0, this);
 					}
         	
         		};

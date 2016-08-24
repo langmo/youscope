@@ -7,7 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,7 +75,7 @@ class StartPage extends MeasurementAddonUIPage<UserControlMeasurementConfigurati
 		add(descriptionScrollPane, BorderLayout.CENTER);
 		
 		// Descriptive image
-		ImageIcon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
+		Icon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
 		if(microplateMeasurementIcon != null)
 		{
 			JPanel imagePanel = new JPanel(new BorderLayout());

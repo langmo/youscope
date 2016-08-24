@@ -6,6 +6,7 @@ package org.youscope.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -14,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -65,7 +66,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		loadedDevicesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Buttons panel
-		ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "add device");
+		Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "add device");
 		JButton addButton;
 		if(addButtonIcon == null)
 			addButton= new JButton("Add Device");
@@ -85,7 +86,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 				}
 			});
 		
-		ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "remove device");
+		Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "remove device");
 		JButton deleteButton;
 		if(deleteButtonIcon == null)
 			deleteButton= new JButton("Remove Device");
@@ -128,7 +129,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
         emptyPanel.setOpaque(false);
         StandardFormats.addGridBagElement(emptyPanel, buttonLayout, bottomConstr, buttonPanel);
 		
-        DescriptionPanel descriptionPanel = new DescriptionPanel("YouScope communicates with the microscope by using so called device drivers. Thereby, a driver represents a small part of the microscope, like the stage, a shutter, a light source, and similar.\n"
+        DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "YouScope communicates with the microscope by using so called device drivers. Thereby, a driver represents a small part of the microscope, like the stage, a shutter, a light source, and similar.\n"
         		+ "The drivers of all devices which should be controlled by YouScope have to be loaded/added and separately configured. Thereby, you can assign a unique human readable name to every device with which it can later-on be identified.\n"
         		+ "Some device drivers might depend on others, and, thus, have to be loaded after the drivers they depend on. This includes drivers of devices connected to a serial port, for which the serial port driver has to be installed a priori, or devices communicating over a hub.\n"
         		+ "To get information how a specific driver or drivers of a device have to be installed, visit the respective site at http://www.micro-manager.org (YouScope uses the device drivers from the excellent open-source project microManager).");
@@ -137,7 +138,9 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		setLayout(new BorderLayout());
 		DynamicPanel mainPanel = new DynamicPanel();
 		mainPanel.setOpaque(false);
-		mainPanel.add(descriptionPanel);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		mainPanel.add(scrollPane);
 		mainPanel.add(new JLabel("Loaded Devices:"));
 		JPanel loadedDevicesPanel = new JPanel(new BorderLayout(5, 5));
 		loadedDevicesPanel.setOpaque(false);
@@ -181,7 +184,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 			 topPanel.add(libraryLabel);
 			 topPanel.add(deviceLabel);
 			 add(topPanel, BorderLayout.CENTER);
-			 ImageIcon icon = ImageLoadingTools.getResourceIcon("bonus/icons-24/wooden-box-label.png", "device");
+			 Icon icon = ImageLoadingTools.getResourceIcon("bonus/icons-24/wooden-box-label.png", "device");
 			 if(icon != null)
 				 add(new JLabel(icon), BorderLayout.WEST);
 			 setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));

@@ -17,7 +17,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -706,7 +706,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
     	StandardFormats.addGridBagElement(tempPanel, pwmLayout, bottomConstr, pwmPanel);
     	
     	// north-west image panel
-		ImageIcon onixIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/onix/images/onix.jpg", "Onix Plate");
+    	Icon onixIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/onix/images/onix.jpg", "Onix Plate");
 		JLabel imageLabel = null;
 		if(onixIcon != null)
 		{

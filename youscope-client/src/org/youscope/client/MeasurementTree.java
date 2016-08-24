@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -116,11 +116,11 @@ class MeasurementTree extends JTree
 			 * Serial Version UID.
 			 */
 			private static final long	serialVersionUID	= -4744253202373979909L;
-			private final ImageIcon lastImageIcon = ImageLoadingTools.getResourceIcon("icons/camcorder.png", "last image stream");
-			private final ImageIcon imageIcon = ImageLoadingTools.getResourceIcon("icons/camera.png", "image stream");
-			private final ImageIcon tableIcon = ImageLoadingTools.getResourceIcon("icons/chart.png", "image stream");
-			private final ImageIcon wellIcon = ImageLoadingTools.getResourceIcon("icons/map-pin.png", "well");
-			private final ImageIcon positionIcon = ImageLoadingTools.getResourceIcon("icons/maps-stack.png", "position");
+			private final Icon lastImageIcon = ImageLoadingTools.getResourceIcon("icons/camcorder.png", "last image stream");
+			private final Icon imageIcon = ImageLoadingTools.getResourceIcon("icons/camera.png", "image stream");
+			private final Icon tableIcon = ImageLoadingTools.getResourceIcon("icons/chart.png", "image stream");
+			private final Icon wellIcon = ImageLoadingTools.getResourceIcon("icons/map-pin.png", "well");
+			private final Icon positionIcon = ImageLoadingTools.getResourceIcon("icons/maps-stack.png", "position");
 			
 			@Override
 			public Component getTreeCellRendererComponent(

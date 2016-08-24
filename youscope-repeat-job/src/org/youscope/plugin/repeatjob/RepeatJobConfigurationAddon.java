@@ -14,7 +14,6 @@ import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.DescriptionPanel;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.IntegerTextField;
 import org.youscope.uielements.JobsDefinitionPanel;
@@ -59,8 +58,6 @@ class RepeatJobConfigurationAddon extends ComponentAddonUIAdapter<RepeatJobConfi
         jobPanel = new JobsDefinitionPanel(getClient(), getServer(), getContainingFrame());
         
         DynamicPanel topPanel = new DynamicPanel();
-        DescriptionPanel descriptionPanel = new DescriptionPanel("Repeats all sub-jobs for a given amount of times.\nAdd wait jobs to control timing.");
-        topPanel.add(descriptionPanel);
         topPanel.add(new JLabel("Number of times sub-jobs should be repeated:"));
         numRepeatsField.setMinimalValue(0);
         numRepeatsField.setOpaque(true);

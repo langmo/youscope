@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.ComboBoxModel;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -106,8 +106,8 @@ class WellTable extends JPanel
         add(pathTableScrollPane, BorderLayout.CENTER);
         
         // Up, down, add and remove Buttons
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Well");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Well");
+        Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Well");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Well");
         JButton addWellButton;
         if (addButtonIcon == null)
             addWellButton = new JButton("Add Well");

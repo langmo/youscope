@@ -53,7 +53,11 @@ class SystemSkin implements Skin {
      // Set default HTML style sheet
         HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = kit.getStyleSheet();
-        styleSheet.addRule("p {color:#000000;font-family:sans-serif;font-size:12pt;margin-top:4px;margin-bottom:0px}");
+        styleSheet.addRule("p {color:#000000;font-family:sans-serif;font-size:12pt;margin-top:0px;margin-bottom:4px}");
+        styleSheet.addRule("a {color:#000000;font-family:sans-serif;font-size:12pt;margin-top:0px;margin-bottom:4px}");
+        styleSheet.addRule("li {color:#000000;font-family:sans-serif;font-size:12pt;margin-top:0px;margin-bottom:4px}");
+        styleSheet.addRule("h1 {color:#000000;font-weight: bold;font-family:sans-serif;font-size:14pt;margin-top:0px;margin-bottom:4px}");
+        styleSheet.addRule("h2 {color:#000000;font-weight: bold;font-family:sans-serif;font-size:12pt;margin-top:0px;margin-bottom:4px}");
         
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

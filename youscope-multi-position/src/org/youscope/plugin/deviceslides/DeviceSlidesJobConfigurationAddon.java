@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -161,12 +161,12 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
         centralPanel.add(deviceSettingsOnListPane, BorderLayout.CENTER);
 
         // Up, down, add and remove Buttons
-        ImageIcon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move Upwards");
-        ImageIcon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move Downwards");
-        ImageIcon addRowButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Row");
-        ImageIcon deleteRowButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Row");
-        ImageIcon addColumnButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Column");
-        ImageIcon deleteColumnButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Column");
+        Icon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move Upwards");
+        Icon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move Downwards");
+        Icon addRowButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Row");
+        Icon deleteRowButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Row");
+        Icon addColumnButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Column");
+        Icon deleteColumnButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Column");
         
         JButton upButton;
         if (upButtonIcon == null)

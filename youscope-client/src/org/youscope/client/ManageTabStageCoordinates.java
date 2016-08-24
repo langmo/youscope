@@ -15,13 +15,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -164,7 +164,7 @@ class ManageTabStageCoordinates extends ManageTabElement
 		StandardFormats.addGridBagElement(emptyPanel, elementsLayout, bottomConstr, elementsPanel);
 		
 		// Descriptive image
-		ImageIcon coordinateIcon = ImageLoadingTools.getResourceIcon("org/youscope/client/images/right-hand-rule.jpg", "Right Hand Rule");
+		Image coordinateIcon = ImageLoadingTools.getResourceImage("org/youscope/client/images/right-hand-rule.jpg", "Right Hand Rule");
 		if(coordinateIcon != null)
 		{
 			class ImageField extends JComponent
@@ -216,14 +216,16 @@ class ManageTabStageCoordinates extends ManageTabElement
 			legendPane.setContentType("text/html");
 			legendPane.setText("<html><p style=\"font-size:small\"><b>Figure 1:</b> Visualization of typical stage coordinate systems. The YouScope coordinate system is defined by the increasing numbers of the microplate wells. Thus, the upper native stage coordinate system (e.g. Nikon) requires to transpose the x-direction, the lower one (e.g. Leica) to transpose the y-direction.</p></html>");
 			legendPane.setEditable(false);
-			imagePanel.add(new ImageField(coordinateIcon.getImage()), BorderLayout.CENTER);
+			imagePanel.add(new ImageField(coordinateIcon), BorderLayout.CENTER);
 			imagePanel.add(legendPane, BorderLayout.SOUTH);
 			
-			DescriptionPanel descriptionPanel = new DescriptionPanel("Depending on the manufacturer, the coordinate system of and seldomly also the units used by stages can be different (see Figure 1).\nYouScope needs to know the coordinate system of the stage to e.g. iterate through the wells of a microplate appropriately.\n"
+			DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Depending on the manufacturer, the coordinate system of and seldomly also the units used by stages can be different (see Figure 1).\nYouScope needs to know the coordinate system of the stage to e.g. iterate through the wells of a microplate appropriately.\n"
 					+ "To get to know which coordinate system your stage is using, start the \"Stage and Focus Position\" tool of YouScope. Both, the X and the Y position of the stage should increase when moving the stage e.g. from well A1 to B2 of a microplate. If this is not the case, transpose the respective coordinate(s).\n"
 					+ "Please re-check if the change to the coordinate system was correct by again moving the stage from well A1 to B2. If correct, the coordinates should now increase.");
 			
-			add(descriptionPanel, BorderLayout.NORTH);
+			JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+			scrollPane.setPreferredSize(new Dimension(400, 150));
+			add(scrollPane, BorderLayout.NORTH);
 			add(imagePanel, BorderLayout.CENTER);
 			add(elementsPanel, BorderLayout.EAST);
 		}

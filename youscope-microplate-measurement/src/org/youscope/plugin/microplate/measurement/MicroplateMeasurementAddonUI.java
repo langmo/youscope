@@ -4,7 +4,7 @@
 package org.youscope.plugin.microplate.measurement;
 
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -38,7 +38,7 @@ class MicroplateMeasurementAddonUI extends MeasurementAddonUIAdapter<MicroplateM
 		String description = "A microplate measurement helps to perform an identical imaging protocol for several wells and/or positions in a microplate.\n\n" +
 				"To configure such a measurement, the wells to be measured are selected and combined with the imaging protocol consisting of several subelements, called jobs.\n\n" +
 				"One job thereby corresponds to a single step of the imaging protocol, like taking a bright-field or a green fluorescence image.";
-		ImageIcon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/microplate/measurement/images/microplate-measurement.jpg", "Microplate Measurement");
+		Icon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/microplate/measurement/images/microplate-measurement.jpg", "Microplate Measurement");
 		String imageLegend = "Flowchart of a microplate measurement.";
 		addPage(new DescriptionPage(null, description, microplateMeasurementIcon, imageLegend));
 		addPage(new GeneralSettingsPage(client));

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -79,8 +79,8 @@ class FlexibleSyringeTable extends JPanel
         add(syringeTableScrollPane, BorderLayout.CENTER);
         
         // Up, down, add and remove Buttons
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Row");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Row");
+        Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Row");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Remove Row");
         JButton newPositionButton;
         if (addButtonIcon == null)
             newPositionButton = new JButton("Add Row");

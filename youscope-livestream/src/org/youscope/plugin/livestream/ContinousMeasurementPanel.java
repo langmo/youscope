@@ -29,7 +29,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -525,7 +525,7 @@ public class ContinousMeasurementPanel extends JPanel
     		setVisible(false);
     		addMouseListener(this);
     		
-    		ImageIcon saveIcon = ImageLoadingTools.getResourceIcon("bonus/icons-shadowless-24/disk-black.png", "Save Image");
+    		Icon saveIcon = ImageLoadingTools.getResourceIcon("bonus/icons-shadowless-24/disk-black.png", "Save Image");
     		
     		JButton saveButton;
     		if(saveIcon == null)

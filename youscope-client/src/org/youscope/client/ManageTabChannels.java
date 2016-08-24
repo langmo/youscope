@@ -5,12 +5,13 @@ package org.youscope.client;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -107,8 +108,8 @@ class ManageTabChannels extends ManageTabElement
 		channelOffSettingsPanel.addActionListener(settingsListener);
 		
 		// Buttons
-		ImageIcon addChannelIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Channel");
-        ImageIcon deleteChannelIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Channel");
+		Icon addChannelIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Channel");
+		Icon deleteChannelIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Channel");
         if (addChannelIcon == null)
             addChannelButton = new JButton("New");
         else
@@ -276,13 +277,15 @@ class ManageTabChannels extends ManageTabElement
 		channelDefinitionPanel.add(topPanel, BorderLayout.CENTER);
 		mainPanel.add(channelDefinitionPanel);
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("In YouScope, every image is taken in a specific channel. A channel is described by a set of device settings which are applied before taking an image, e.g. setting filters, and changing light sources.\n Furthermore, several device settings might be necessary to be applied after imaging in a channel, e.g. to turn of a light source to reduce bleaching when not using shutters.\nTypically, not additional device delay must be specified, since YouScope automatically synchronizes with all devices whose state is changed and the shutter before imaging. However, some devices might be slow, like turning on some lights, and then an additional delay might be specified which is applied right after applying all device settings, but before opening the shutter (if any) and imaging.\n"
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "In YouScope, every image is taken in a specific channel. A channel is described by a set of device settings which are applied before taking an image, e.g. setting filters, and changing light sources.\n Furthermore, several device settings might be necessary to be applied after imaging in a channel, e.g. to turn of a light source to reduce bleaching when not using shutters.\nTypically, not additional device delay must be specified, since YouScope automatically synchronizes with all devices whose state is changed and the shutter before imaging. However, some devices might be slow, like turning on some lights, and then an additional delay might be specified which is applied right after applying all device settings, but before opening the shutter (if any) and imaging.\n"
 				+ "Typically, a microscope has several specified channels, e.g. to image in bright-field, or to image green or red fluorescence proteins.");
 
 		setOpaque(false);
 		setLayout(new BorderLayout(5, 5));
 		add(mainPanel, BorderLayout.CENTER);
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 	}
 	private class ChannelListRenderer extends JLabel implements ListCellRenderer<Object>
 	{

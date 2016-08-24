@@ -1,6 +1,5 @@
 package org.youscope.uielements;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -35,9 +33,9 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	 */
 	private static final long serialVersionUID = 4762690329904024235L;
 	private final JPopupMenu componentChooser;
-	private final HashMap<String, Element> elements = new HashMap<String, Element>();	
+	private final HashMap<String, AddonMenuItem<ComponentMetadata<? extends C>>> elements = new HashMap<>();	
 	private final ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
-	private Element selectedElement = null;
+	private AddonMenuItem<ComponentMetadata<? extends C>> selectedElement = null;
 	private boolean customTextIcon = false;
 	private int popupLocation = SwingConstants.BOTTOM;
 	private final int numChoices;
@@ -48,15 +46,15 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		@Override
 		public void actionPerformed(ActionEvent e) 
 		{
-			if(e.getSource() instanceof ComponentComboBox.Element)
+			if(e.getSource() instanceof AddonMenuItem)
 			{
-				setSelectedElement(((ComponentComboBox.Element)e.getSource()).getTypeIdentifier());
+				setSelectedElement(((AddonMenuItem)e.getSource()).getTypeIdentifier());
 				fireActionEvent();
 			}
 		}
 	};
 	
-	private static final Icon DOWN_ICON = new Icon()
+	private final Icon downIcon = new Icon()
 	{
 
 		@Override
@@ -71,13 +69,13 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 
 		@Override 
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			g.setColor(c.getForeground());
+			g.setColor(ComponentComboBox.this.getForeground());
 			g.fillPolygon(new int[]{x,x+getIconWidth(),x+getIconWidth()/2}, new int[]{y,y,y+getIconHeight()}, 3);
 		}
 
 	};
 			
-	private static final Icon RIGHT_ICON = new Icon()
+	private final Icon rightIcon = new Icon()
 	{
 
 		@Override
@@ -92,7 +90,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 
 		@Override 
 		public void paintIcon(Component c, Graphics g, int x, int y) {
-			g.setColor(Color.BLACK);
+			g.setColor(ComponentComboBox.this.getForeground());
 			g.fillPolygon(new int[]{x,x+getIconWidth(),x}, new int[]{y,y+getIconHeight()/2,y+getIconHeight()}, 3);
 		}
 
@@ -158,7 +156,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	public ComponentMetadata<? extends C> getSelectedElement()
 	{
 		if(selectedElement != null)
-			return selectedElement.metadata;
+			return selectedElement.getAddonMetadata();
 		return null;
 	}
 	
@@ -208,10 +206,10 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		Icon icon;
 		if(popupLocation == SwingConstants.BOTTOM)
 		{
-			icon = DOWN_ICON;
+			icon = downIcon;
 		}
 		else
-			icon = RIGHT_ICON;
+			icon = rightIcon;
 	
 		int x = getWidth() - icon.getIconWidth() - 10; 
 		int y = (getHeight() - icon.getIconHeight()) / 2;
@@ -283,7 +281,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	 */
 	public void setSelectedElement(String typeIdentifier)
 	{
-		Element element;
+		AddonMenuItem<ComponentMetadata<? extends C>> element;
 		if(typeIdentifier == null)
 		{
 			if(elements.size() == 0)
@@ -300,51 +298,19 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		updateVisuals();
 	}
 	
-	private class Element extends JMenuItem
-	{
-		/**
-		 * Serial Version UID.
-		 */
-		private static final long serialVersionUID = -9172694469309763297L;
-		private ComponentMetadata<? extends C> metadata;
-		Element(ComponentMetadata<? extends C> metadata)
-		{
-			super(TextTools.capitalize(metadata.getName()));
-			Icon icon = metadata.getIcon();
-			if(icon == null)
-			{
-				setIcon(ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Component"));
-			}
-			else
-				setIcon(icon);
-			String description = metadata.getDescription();
-			if(description != null)
-				setToolTipText(description);
-			this.metadata = metadata;
-		}
-		String getTypeIdentifier()
-		{
-			return metadata.getTypeIdentifier();
-		}
-		String[] getConfigurationClassification()
-		{
-			return metadata.getClassification();
-		}
-	}
-	
+		
 	private void createHierachy(List<ComponentMetadata<? extends C>> componentMetadata)
 	{
-		ImageIcon folderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Folder");
 		JMenu rootMenu = new JMenu();
 		for (ComponentMetadata<? extends C> addon : componentMetadata)
         {
-			Element element = new Element(addon);
+			AddonMenuItem<ComponentMetadata<? extends C>> element = new AddonMenuItem<ComponentMetadata<? extends C>>(addon, ImageLoadingTools.DEFAULT_COMPONENT_ICON);
 			element.addActionListener(elementSelectionListener);
 			elements.put(element.getTypeIdentifier(), element);
             
 			// Setup folder structure
 			JMenu parentMenu = rootMenu;
-			for(String classification : element.getConfigurationClassification())
+			for(String classification : addon.getClassification())
 			{
 				// Iterate over all menus to check if it already exists
 				boolean found = false;
@@ -364,8 +330,8 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 				if(!found)
 				{
 					JMenu newMenu = new JMenu(TextTools.capitalize(classification));
-					if(folderIcon != null)
-						newMenu.setIcon(folderIcon);
+					if(ImageLoadingTools.FOLDER_ICON != null)
+						newMenu.setIcon(ImageLoadingTools.FOLDER_ICON);
 					parentMenu.add(newMenu);
 					parentMenu = newMenu;
 				}
@@ -379,9 +345,7 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 		for(Component component : rootMenu.getMenuComponents())
 		{
 			componentChooser.add(component);
-		}
-		//componentChooser.add(rootMenu);
-      
+		}      
 	}
 	private void shrinkOptions(JMenu parentMenu)
 	{

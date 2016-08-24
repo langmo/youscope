@@ -15,7 +15,7 @@ import java.awt.event.FocusListener;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -125,10 +125,10 @@ public class DeviceSettingsPanel extends JPanel
         add(deviceSettingsListPane, BorderLayout.CENTER);
 
         // Up, down, add and remove Buttons
-        ImageIcon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "up");
-        ImageIcon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Down");
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Device Setting");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Device Setting");
+        Icon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "up");
+        Icon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Down");
+        Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Device Setting");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Device Setting");
         
         if (upButtonIcon == null)
             upButton = new JButton("Up");

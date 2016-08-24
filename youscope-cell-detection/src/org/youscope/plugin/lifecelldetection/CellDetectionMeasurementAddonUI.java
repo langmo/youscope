@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.lifecelldetection;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -32,7 +32,7 @@ class CellDetectionMeasurementAddonUI extends MeasurementAddonUIAdapter<CellDete
 		
 		setTitle("Life Cell Detection Measurement");
 		String description = "Continuously takes images in a given channel and detects the cells in it.<br>If selected, an image is automatically created highlighting all detected cells.";
-		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/lifecelldetection/images/life-cell-detection.jpg", "Life Cell Detection Measurement");
+		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/lifecelldetection/images/life-cell-detection.jpg", "Life Cell Detection Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
 		
 		addPage(new GeneralSettingsPage<CellDetectionMeasurementConfiguration>(client, CellDetectionMeasurementConfiguration.class));

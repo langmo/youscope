@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.usercontrolmeasurement;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -37,7 +37,7 @@ class UserControlMeasurementAddonUI extends MeasurementAddonUIAdapter<UserContro
 				"The principal idea is that the user can interactively manually choose the position of the stage and adjust the focus. It is thus possible to quickly take several images at different positions, without requiring the overhead of configuring a more complex measurement type\n\n" +
 				"However, it is recommended not to use this measurement type exhaustively, and to rather use the more precise other measurement types.\n\n" +
 				"This measurement type incorporates an stage monitoring possibility to automatically detect if images were taken at the same position or not. This optional feature then automatically adjusts the file names of the stored images, such that they are easier to identify lateron.";
-		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
+		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/usercontrolmeasurement/images/usercontrolmeasurement.jpg", "User Control Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
 		addPage(new GeneralSettingsPage(client));
 		addPage(new MonitorPage(client, server));

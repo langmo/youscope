@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
@@ -65,7 +66,7 @@ final class YouScopeFrameImpl extends JInternalFrame
     /**
      * Icon of the frame.
      */
-    private static final ImageIcon                  TRAY_ICON;
+    private static final Icon                  TRAY_ICON;
 
     /**
 	 * image displayed on top of every frame

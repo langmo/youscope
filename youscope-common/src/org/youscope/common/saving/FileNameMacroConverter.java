@@ -15,6 +15,7 @@ import org.youscope.common.ExecutionInformation;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.Well;
 import org.youscope.common.image.ImageEvent;
+import org.youscope.common.util.TextTools;
 
 /**
  * Helper class to convert file names templates containing macros (e.g. %N for the image name) to real file names.
@@ -321,7 +322,7 @@ public class FileNameMacroConverter
 		date.setTimeInMillis(saveInformation.getMeasurementStartTime());
 		
 		ArrayList<ReplaceInformation> info = new ArrayList<>();
-		info.add(new ReplaceInformation(PATTERN_MEASUREMENT_NAME, saveInformation.getMeasurementName()));
+		info.add(new ReplaceInformation(PATTERN_MEASUREMENT_NAME, TextTools.convertToFileName(saveInformation.getMeasurementName())));
 		
 		info.add(new ReplaceInformation(PATTERN_MEASUREMENT_DAY, Integer.toString(date.get(Calendar.DAY_OF_MONTH))));
 		info.add(new ReplaceInformation(PATTERN_MEASUREMENT_MONTH, Integer.toString(1+date.get(Calendar.MONTH))));
@@ -339,7 +340,7 @@ public class FileNameMacroConverter
 	private static List<ReplaceInformation> getTableReplaceInformation(String tableName)
 	{
 		ArrayList<ReplaceInformation> info = new ArrayList<>(1);
-		info.add(new ReplaceInformation(PATTERN_TABLE_NAME, tableName));
+		info.add(new ReplaceInformation(PATTERN_TABLE_NAME, TextTools.convertToFileName(tableName)));
 		return info;
 	}
 	
@@ -380,7 +381,7 @@ public class FileNameMacroConverter
 		}
 		info.add(new ReplaceInformation(PATTERN_IMAGE_INDEX, string, string.length()));
 		info.add(new ReplaceInformation(PATTERN_IMAGE_NUMBER, string2, string2.length()));
-		info.add(new ReplaceInformation(PATTERN_IMAGE_NAME, imageName));
+		info.add(new ReplaceInformation(PATTERN_IMAGE_NAME, TextTools.convertToFileName(imageName)));
 		info.add(new ReplaceInformation(PATTERN_IMAGE_CHANNEL, channel));
 		info.add(new ReplaceInformation(PATTERN_IMAGE_CAMERA, camera));
 	
@@ -452,7 +453,7 @@ public class FileNameMacroConverter
 		{
 			fileNameTemplate = replace.replace(fileNameTemplate);
 		}
-		replaceInformation = getImageReplaceInformation(event, imageName);
+		replaceInformation = getImageReplaceInformation(event, TextTools.convertToFileName(imageName));
 		for(ReplaceInformation replace : replaceInformation)
 		{
 			fileNameTemplate = replace.replace(fileNameTemplate);

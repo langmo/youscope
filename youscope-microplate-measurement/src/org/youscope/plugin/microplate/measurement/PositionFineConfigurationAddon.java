@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -472,7 +472,7 @@ public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadat
 		selectedPositions = getSelectedPositions();
 		
 		// Direction buttons.
-		ImageIcon eastIcon = ImageLoadingTools.getResourceIcon("icons/arrow.png", "Next Position");
+		Icon eastIcon = ImageLoadingTools.getResourceIcon("icons/arrow.png", "Next Position");
 		JButton eastButton;
 		if(eastIcon == null)
 			eastButton = new JButton("Next");
@@ -499,7 +499,7 @@ public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadat
 			}
 		});
 		
-		ImageIcon westIcon = ImageLoadingTools.getResourceIcon("icons/arrow-180.png", "Previous Position");
+		Icon westIcon = ImageLoadingTools.getResourceIcon("icons/arrow-180.png", "Previous Position");
 		JButton westButton;
 		if(eastIcon == null)
 			westButton = new JButton("Previous");
@@ -526,7 +526,7 @@ public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadat
 			}
 		});
 		
-		ImageIcon saveIcon = ImageLoadingTools.getResourceIcon("icons/disk.png", "Save Positions");
+		Icon saveIcon = ImageLoadingTools.getResourceIcon("icons/disk.png", "Save Positions");
 		JButton saveButton;
 		if(saveIcon == null)
 			saveButton = new JButton("Save");
@@ -549,7 +549,7 @@ public class PositionFineConfigurationAddon  extends AddonUIAdapter<AddonMetadat
 			}
 		});
 		
-		ImageIcon discardIcon = ImageLoadingTools.getResourceIcon("icons/cross.png", "Discard Positions");
+		Icon discardIcon = ImageLoadingTools.getResourceIcon("icons/cross.png", "Discard Positions");
 		final JButton discardButton;
 		if(discardIcon == null)
 			discardButton = new JButton("Discard");

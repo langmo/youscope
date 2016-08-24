@@ -17,7 +17,7 @@ import java.awt.geom.Point2D;
 import java.text.ParseException;
 import java.util.Formatter;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -109,12 +109,12 @@ class PositionControl extends ToolAddonUIAdapter implements Runnable, YouScopeFr
 		newLineNotFillConstr.weightx = 0;
         			
 		// Load icons
-		ImageIcon southButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-270.png", "Move South");
-		ImageIcon westButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-180.png", "Move West");
-		ImageIcon northButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-090.png", "Move North");
-		ImageIcon eastButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow.png", "Move East");
-		ImageIcon focusInIcon = ImageLoadingTools.getResourceIcon("icons/arrow-step-out.png", "Zoom In");
-		ImageIcon focusOutIcon = ImageLoadingTools.getResourceIcon("icons/arrow-step.png", "Zoom Out");
+		Icon southButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-270.png", "Move South");
+		Icon westButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-180.png", "Move West");
+		Icon northButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow-090.png", "Move North");
+		Icon eastButtonIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/arrow.png", "Move East");
+		Icon focusInIcon = ImageLoadingTools.getResourceIcon("icons/arrow-step-out.png", "Zoom In");
+		Icon focusOutIcon = ImageLoadingTools.getResourceIcon("icons/arrow-step.png", "Zoom Out");
 		
 		// Focusing / PFS Panel
         //GridBagLayout rightLayout = new GridBagLayout();

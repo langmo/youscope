@@ -15,7 +15,6 @@ import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.DescriptionPanel;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.IntegerTextField;
 import org.youscope.uielements.JobsDefinitionPanel;
@@ -61,8 +60,6 @@ class ShareExecutionJobConfigurationAddon extends ComponentAddonUIAdapter<ShareE
         jobPanel = new JobsDefinitionPanel(getClient(), getServer(), getContainingFrame());
         
         DynamicPanel topPanel = new DynamicPanel();
-        DescriptionPanel descriptionPanel = new DescriptionPanel("Of all share execution jobs with the same share ID, only a certain number is executed in each iteration. Execution is sheduled such that each job gets executed equally often.");
-        topPanel.add(descriptionPanel);
         topPanel.add(new JLabel("Number of share execution jobs executed per iteration:"));
         numShareField.setMinimalValue(1);
         topPanel.add(numShareField);

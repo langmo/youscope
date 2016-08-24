@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.Microscope;
@@ -168,10 +170,12 @@ class ManageTabStandardRoles extends ManageTabElement
 		elementsPanel.add(new JLabel("Standard Auto-Focus:"));
 		elementsPanel.add(autoFocusField);
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("YouScope supports having more than one device of a specific type, e.g. more than one camera or stage. As a result, one would have to specify each time when performing a standard task (like changing the stage position) which device should perform the task. However, since typically nearly always the same device is used for standard tasks, YouScope conveniently allows to assign a device to be the standard device for a certain task. This device is then automatically used for this task by YouScope, except when explicitly specified differently.");
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "YouScope supports having more than one device of a specific type, e.g. more than one camera or stage. As a result, one would have to specify each time when performing a standard task (like changing the stage position) which device should perform the task. However, since typically nearly always the same device is used for standard tasks, YouScope conveniently allows to assign a device to be the standard device for a certain task. This device is then automatically used for this task by YouScope, except when explicitly specified differently.");
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
 		
 		DynamicPanel mainPanel = new DynamicPanel();
-		mainPanel.add(descriptionPanel);
+		mainPanel.add(scrollPane);
 		mainPanel.add(elementsPanel);
 		mainPanel.addFillEmpty();
 		

@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -69,11 +69,11 @@ public class JobsDefinitionPanel extends JPanel
         setOpaque(false);
 
         // Load icons
-        ImageIcon defaultAddButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Job");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Job");
-        ImageIcon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit Job");
-        ImageIcon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move upwards");
-        ImageIcon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move downwards");
+        Icon defaultAddButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Job");
+        Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Job");
+        Icon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit Job");
+        Icon upButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-090.png", "Move upwards");
+        Icon downButtonIcon = ImageLoadingTools.getResourceIcon("icons/arrow-270.png", "Move downwards");
 
         // Add Buttons
         DynamicPanel buttonsPanel = new DynamicPanel();

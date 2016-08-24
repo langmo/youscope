@@ -206,4 +206,17 @@ public class TextTools {
 			return string;
 		return Character.toUpperCase(string.charAt(0))+string.substring(1);
 	}
+	/**
+	 * Takes the string, and converts it to a string which can be used as a filename.
+	 * White spaces are converted to dashes (-). All characters except a-z, A-Z, 0-9, _, or - are replaced by an underscore (_).  
+	 * @param string The string which should be converted.
+	 * @return the converted string.
+	 */
+	public static String convertToFileName(String string)
+	{
+		string = string.replace(' ', '-').replaceAll("[^a-zA-Z0-9_\\-.]", "_");
+		if(Character.isDigit(string.charAt(0)))
+				return "_"+string;
+		return string;
+	}
 }

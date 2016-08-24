@@ -4,6 +4,7 @@
 package org.youscope.plugin.microplate.measurement;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
@@ -95,11 +97,13 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		private static final long serialVersionUID = -1528365488715327529L;
 		NoPositionSelectedPanel()
 		{
-			DescriptionPanel descriptionPane = new DescriptionPanel("No Wells/Tiles Selected",
-					"<span style=\"color:#AA0000\">The wells selected for imaging are invalid.</span><br /><br />At least one well has to be selected. If the option to image multiple tiles per well was selected, additionally at least one tile has to be selected.<br />"
+			DescriptionPanel descriptionPanel = new DescriptionPanel("No Wells/Tiles Selected",
+					"At least one well/tile has to be selected. If the option to image multiple tiles per well was selected, additionally at least one tile has to be selected.\n"
 					+ "Go to the previous page and select at least one well/tile."
 					);
-			addFill(descriptionPane);
+			JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+			scrollPane.setPreferredSize(new Dimension(400, 150));
+			addFill(scrollPane);
 		}
 		@Override
 		public void close() {
@@ -121,13 +125,15 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		private JComboBox<String> stageDeviceField;
 		NoPositionsConfiguredPanel()
 		{
-			DescriptionPanel descriptionPane = new DescriptionPanel("Microplate Positions not Configured",
+			DescriptionPanel descriptionPanel = new DescriptionPanel("Microplate Positions not Configured",
 					"Press <i>"+newFineConfiguration.getText()+"</i> to define the exact positions where images are taken. "
 					+ "In the first mandatory step, the stage has to be manually moved to the center of the first well/tile indicated at the top-left. Based on this information, YouScope automatically calculates the positions of all other wells/tiles."
-					+ "In the second optional step, the positions of all other wells/tiles can be adjusted. Alternatively, press <i>Save Positions</i> to accept the automatically calculated positions."
-					+"<br /><br /><span style=\"color:#AA0000\">Warning: Incorrectly providing the position of the first well/tile can damage the microscope (e.g. stage colliding with objectives)!</span>"
+					+ "In the second optional step, the positions of all other wells/tiles can be adjusted. Alternatively, press <i>Save Positions</i> to accept the automatically calculated positions.\n"
+					+"<b>Warning: Incorrectly providing the position of the first well/tile can damage the microscope (e.g. stage colliding with objectives)!</b>"
 					);
-			addFill(descriptionPane);
+			JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+			scrollPane.setPreferredSize(new Dimension(400, 150));
+			addFill(scrollPane);
 			
 			try
 			{

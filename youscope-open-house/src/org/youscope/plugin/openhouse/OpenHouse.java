@@ -5,10 +5,12 @@ package org.youscope.plugin.openhouse;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
@@ -111,7 +113,9 @@ class OpenHouse extends ToolAddonUIAdapter
 		JPanel contentPane = new JPanel(new BorderLayout(5,5));
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 		contentPane.add(stressButton, BorderLayout.EAST);
-		contentPane.add(descPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		contentPane.add(scrollPane, BorderLayout.NORTH);
 		
 		stressSlider.addChangeListener(new ChangeListener()
 		{

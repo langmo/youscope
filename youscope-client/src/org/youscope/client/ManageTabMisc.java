@@ -4,6 +4,7 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.uielements.DescriptionPanel;
@@ -93,7 +95,7 @@ class ManageTabMisc extends ManageTabElement
 		contentPanel.add(imageBufferPanel);
 		contentPanel.addFillEmpty();
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Here you can set several settings influencing how YouScope communicates to the microscope hardware, and how it stores image data in the RAM before saving to the disk.\n"
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Here you can set several settings influencing how YouScope communicates to the microscope hardware, and how it stores image data in the RAM before saving to the disk.\n"
 			+ "The communication timeout specifies how long YouScope will wait for a device to accomplish a task before assuming that a hardware/firmware error occured, i.e. that the specific device will not indicate that a given task was done. Typically, 5s are sufficient. However, when using e.g. a slow stage which needs considerable time to move from one well to another well far away, a higher communication timeout might be appropriate.\n"
 			+ "The ping period specifies the time - for devices which do not support handshaking but only polling - between two polls, e.g. when waiting for a device to finish a state change, in which period YouScope asks the device if the state change is finished. A short ping period can reduce unnessecary waiting times, however, produces overhead which might slow down slower computers. A ping period of 10ms is typically appropriate.\n"
 			+ "Finally, YouScope stores images taken by cameras in a temporary buffer before saving them to the disk. The normal buffer size (i.e. unchecked check box) is typically sufficient for most applications. However, when imaging fast or even faster than the data can be saved to the disk (depends on hard-disk used for image saving), this buffer can overflow, i.e. some older images might not be saved but discarded. In this case, allocating more space/buffer size can significantly increase the maximal time it can be imaged with high speed before this effect taking place. The buffer size should be smaller than the minimally free RAM space, i.e. the space used by the operating system and all other processes. As a rule of thumb, the free space after setting the buffer size should be around 10 percent of the total space, and at least a few hundret MB (depends on operating system).");
@@ -101,7 +103,9 @@ class ManageTabMisc extends ManageTabElement
 		setLayout(new BorderLayout());
 		setOpaque(false);
 		add(contentPanel, BorderLayout.CENTER);
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 	}
 	
 	@Override

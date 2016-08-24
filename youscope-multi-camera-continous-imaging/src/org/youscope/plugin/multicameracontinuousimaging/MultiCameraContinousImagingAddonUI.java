@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.multicameracontinuousimaging;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -35,7 +35,7 @@ class MultiCameraContinousImagingAddonUI extends MeasurementAddonUIAdapter<Multi
 		
 		String description = "A multi-camera continuous imaging measurement is used to (rapidly) take images with several cameras in parallel at the current position every given period.\n\n"+
 				"One can select the channel, the exposure time and the imaging period. Instead of choosing an imaging period, one can also choose to \"bulk image\", which means to image as fast as possible.";
-		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/multicameracontinuousimaging/images/continous-imaging.jpg", "Multi-Camera Measurement");
+		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/multicameracontinuousimaging/images/continous-imaging.jpg", "Multi-Camera Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
 		addPage(new GeneralSettingsPage<MultiCameraContinousImagingConfiguration>(client, MultiCameraContinousImagingConfiguration.class));
 		addPage(new StartAndEndSettingsPage(client, server));

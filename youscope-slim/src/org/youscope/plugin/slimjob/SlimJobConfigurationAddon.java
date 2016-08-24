@@ -5,7 +5,6 @@ package org.youscope.plugin.slimjob;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +39,6 @@ import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.DescriptionPanel;
 import org.youscope.uielements.DoubleTextField;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImagePanel;
@@ -111,7 +109,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 				SlimJob.class, 
 				"SLIM", 
 				new String[]{"Imaging"},
-				"Automatically sets SLIM settings and takes four images at different phase shifts needed to generate a SLIM image."
+				"Automatically sets SLIM settings and takes four images at different phase shifts needed to generate a SLIM image. At least one \"Reflector\" device and one camera must be installed. After taking four images, the mask and phase shifts are set to zero."
 				,"icons/camera-lens.png");
 	}
 	
@@ -461,10 +459,6 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		phasePanel.add(loadButton);
 		phasePanel.addFillEmpty();
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "This job allows to produce SLIM images.\nTo produce such images, at least a \"Reflector\" device and a camera must be installed. After taking four images, the mask and background phase shift is set to zero.");
-		descriptionPanel.setMinimumSize(new Dimension(300, 100));
-		descriptionPanel.setPreferredSize(new Dimension(300, 100));
-		
 		// Load state
 		int numCams = loadCameras();
 		if(numCams <= 0)
@@ -612,7 +606,6 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		
 		JPanel contentPane = new JPanel(new BorderLayout());
 		contentPane.add(mainPanel, BorderLayout.CENTER);
-		contentPane.add(descriptionPanel, BorderLayout.NORTH);
 		contentPane.add(snapSlimButton, BorderLayout.SOUTH);
 		return contentPane;
 	}

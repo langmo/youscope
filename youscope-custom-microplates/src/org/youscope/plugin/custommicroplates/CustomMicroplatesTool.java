@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,7 +33,7 @@ import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
 class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
@@ -64,9 +64,9 @@ class CustomMicroplatesTool extends ToolAddonUIAdapter implements ActionListener
 		setTitle("Custom Microplates Configuration");
 		setShowCloseButton(true);
 		
-        ImageIcon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add");
-        ImageIcon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete");
-        ImageIcon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit");
+		Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add");
+		Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete");
+		Icon editButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "Edit");
         
         JButton newMicroplateTypeButton = new JButton("New Rectangular Microplate", addButtonIcon);
         newMicroplateTypeButton.setHorizontalAlignment(SwingConstants.LEFT);

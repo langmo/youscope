@@ -36,7 +36,6 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -75,6 +74,7 @@ import org.youscope.common.util.TextTools;
 import org.youscope.serverinterfaces.YouScopeLogin;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.serverinterfaces.YouScopeServerProperties;
+import org.youscope.uielements.AddonMenuItem;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
@@ -291,7 +291,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		
 		JMenu newMeasurementMenuItem = new JMenu("New Measurement");
-		ImageIcon newMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new measurement");
+		Icon newMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "new measurement");
 		if(newMeasurementIcon != null)
 			newMeasurementMenuItem.setIcon(newMeasurementIcon);
 		for(JMenuItem item : getMeasurementMenuItems())
@@ -301,7 +301,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.add(newMeasurementMenuItem);
 		
 		JMenuItem openMeasurementMenuItem = new JMenuItem("Load Measurement", KeyEvent.VK_O);
-		ImageIcon openMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt-import.png", "open measurement");
+		Icon openMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt-import.png", "open measurement");
 		if(openMeasurementIcon != null)
 			openMeasurementMenuItem.setIcon(openMeasurementIcon);
 		openMeasurementMenuItem.addActionListener(new ActionListener()
@@ -316,7 +316,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.addSeparator();
 		
 		JMenuItem manageDevicesMenuItem = new JMenuItem("Edit Microscope Configuration", KeyEvent.VK_C);
-		ImageIcon manageDevicesMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database--pencil.png", "edit microscope configuration");
+		Icon manageDevicesMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database--pencil.png", "edit microscope configuration");
 		if(manageDevicesMenuItemIcon != null)
 			manageDevicesMenuItem.setIcon(manageDevicesMenuItemIcon);
 		manageDevicesMenuItem.addActionListener(new ActionListener()
@@ -333,7 +333,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.add(manageDevicesMenuItem);
 		
 		JMenuItem loadConfigurationMenuItem = new JMenuItem("Load Microscope Configuration", KeyEvent.VK_C);
-		ImageIcon loadConfigurationMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database-import.png", "load microscope configuration");
+		Icon loadConfigurationMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database-import.png", "load microscope configuration");
 		if(loadConfigurationMenuItemIcon != null)
 			loadConfigurationMenuItem.setIcon(loadConfigurationMenuItemIcon);
 		loadConfigurationMenuItem.addActionListener(new ActionListener()
@@ -347,7 +347,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.add(loadConfigurationMenuItem);
 		
 		JMenuItem saveConfigurationMenuItem = new JMenuItem("Save Microscope Configuration", KeyEvent.VK_C);
-		ImageIcon saveConfigurationMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database-export.png", "save microscope configuration");
+		Icon saveConfigurationMenuItemIcon = ImageLoadingTools.getResourceIcon("icons/database-export.png", "save microscope configuration");
 		if(saveConfigurationMenuItemIcon != null)
 			saveConfigurationMenuItem.setIcon(saveConfigurationMenuItemIcon);
 		saveConfigurationMenuItem.addActionListener(new ActionListener()
@@ -363,7 +363,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.addSeparator();
 		
 		JMenuItem configurationMenuItem = new JMenuItem("Customization", KeyEvent.VK_C);
-		ImageIcon configurationIcon = ImageLoadingTools.getResourceIcon("icons/wrench.png", "configuration");
+		Icon configurationIcon = ImageLoadingTools.getResourceIcon("icons/wrench.png", "configuration");
 		if(configurationIcon != null)
 			configurationMenuItem.setIcon(configurationIcon);
 		configurationMenuItem.addActionListener(new ActionListener()
@@ -380,7 +380,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.add(configurationMenuItem);
 		
 		JMenu skinMenu = new JMenu("Skin");
-		ImageIcon defaultLookAndFeelIcon = ImageLoadingTools.getResourceIcon("icons/application-blog.png", "skin");
+		Icon defaultLookAndFeelIcon = ImageLoadingTools.getResourceIcon("icons/application-blog.png", "skin");
 		int numSkins = 0;
 		for(final AddonMetadata metadata : ClientAddonProviderImpl.getProvider().getSkinMetadata())
 		{
@@ -424,7 +424,7 @@ public class YouScopeClientImpl extends JFrame
 		fileMenu.addSeparator();
 		
 		JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_E);
-		ImageIcon exitIcon = ImageLoadingTools.getResourceIcon("icons/slash.png", "exit");
+		Icon exitIcon = ImageLoadingTools.getResourceIcon("icons/slash.png", "exit");
 		if(exitIcon != null)
 			exitMenuItem.setIcon(exitIcon);
 		exitMenuItem.addActionListener(new ActionListener()
@@ -447,7 +447,7 @@ public class YouScopeClientImpl extends JFrame
 		JMenu toolsMenu = new JMenu("Tools");
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
 		JMenuItem measurementQueueMenuItem = new JMenuItem("Measurement Manager", KeyEvent.VK_P);
-		ImageIcon measurementQueueIcon = ImageLoadingTools.getResourceIcon("icons/receipts.png", "Measurement Manager");
+		Icon measurementQueueIcon = ImageLoadingTools.getResourceIcon("icons/receipts.png", "Measurement Manager");
 		if(measurementQueueIcon != null)
 			measurementQueueMenuItem.setIcon(measurementQueueIcon);
 		measurementQueueMenuItem.addActionListener(new ActionListener()
@@ -463,102 +463,7 @@ public class YouScopeClientImpl extends JFrame
 		});
 		toolsMenu.add(measurementQueueMenuItem);
 		toolsMenu.addSeparator();
-		ImageIcon defaultToolIcon = ImageLoadingTools.getResourceIcon("icons/application-form.png", "New Tool");
-		ImageIcon toolFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Job Folder");
-		Vector<JMenuItem> toolMenuItems = new Vector<JMenuItem>();
-		for(final ToolMetadata metadata : ClientAddonProviderImpl.getProvider().getToolMetadata())
-		{
-			String addonName = metadata.getName();
-			if(addonName == null || addonName.length() <= 0)
-				addonName = "Unknown Tool";
-			String[] addonFolder = metadata.getClassification();
-			JMenuItem newToolMenuItem = new JMenuItem(TextTools.capitalize(addonName));
-			Icon toolIcon = metadata.getIcon();
-			if(toolIcon != null)
-			{
-				newToolMenuItem.setIcon(toolIcon);
-			}
-			else if(defaultToolIcon != null)
-				newToolMenuItem.setIcon(defaultToolIcon);
-			String description = metadata.getDescription();
-			if(description != null)
-				newToolMenuItem.setToolTipText(description);
-			newToolMenuItem.addActionListener(new ActionListener()
-			{
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					openAddon();
-				}
-				private void openAddon()
-				{
-					ToolAddonUI addon;
-					try
-					{
-						addon = ClientAddonProviderImpl.getProvider().createToolUI(metadata);
-						YouScopeFrame toolFrame = addon.toFrame();
-						toolFrame.setVisible(true);
-					}
-					catch (AddonException e)
-					{
-						ClientSystem.err.println("Error creating tool UI.", e);
-						return;
-					}
-				}
-			});
-			
-			// Setup folder structure
-			JMenu parentMenu = toolsMenu;
-			for(int i=0; i<addonFolder.length;i++)
-			{
-				// Iterate over all menus to check if it already exists
-				boolean found = false;
-				for(Component existingItem : (parentMenu == toolsMenu ? toolMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
-				{
-					if(!(existingItem instanceof JMenu))
-						continue;
-					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
-					{
-						parentMenu = (JMenu)existingItem;
-						found = true;
-						break;
-					}
-				}
-				if(!found)
-				{
-					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
-					if(toolFolderIcon != null)
-						newMenu.setIcon(toolFolderIcon);
-					if(toolsMenu == parentMenu)
-						toolMenuItems.add(newMenu);
-					else
-						parentMenu.add(newMenu);
-					parentMenu = newMenu;
-				}
-			}
-			if(toolsMenu == parentMenu)
-				toolMenuItems.add(newToolMenuItem);
-			else
-				parentMenu.add(newToolMenuItem);
-		}
-		Collections.sort(toolMenuItems, new Comparator<JMenuItem>()
-				{
-					@Override
-					public int compare(JMenuItem o1, JMenuItem o2)
-					{
-						if(o1 instanceof JMenu)
-						{
-							if(o2 instanceof JMenu)
-								return o1.getText().compareTo(o2.getText());
-							return -100;
-						}
-						else if(o2 instanceof JMenu)
-							return 100;
-						else
-							return o1.getText().compareTo(o2.getText());
-					}
-				});
-		for(JMenuItem item : toolMenuItems)
+		for(JMenuItem item : getToolsMenuItems())
 		{
 			toolsMenu.add(item);
 		}
@@ -566,7 +471,7 @@ public class YouScopeClientImpl extends JFrame
 		JMenu emergencyMenu = new JMenu("Emergency Stop");
 		emergencyMenu.setMnemonic(KeyEvent.VK_S);
 		JMenuItem emergencyOnMenuItem = new JMenuItem("Emergency Stop", KeyEvent.VK_S);
-		ImageIcon emergencyOnIcon = ImageLoadingTools.getResourceIcon("icons/cross-button.png", "Emergency Stop");
+		Icon emergencyOnIcon = ImageLoadingTools.getResourceIcon("icons/cross-button.png", "Emergency Stop");
 		if(emergencyOnIcon != null)
 			emergencyOnMenuItem.setIcon(emergencyOnIcon);
 		emergencyOnMenuItem.addActionListener(new ActionListener()
@@ -586,7 +491,7 @@ public class YouScopeClientImpl extends JFrame
 			}
 		});
 		JMenuItem emergencyOffMenuItem = new JMenuItem("Reset Emergency Stop", KeyEvent.VK_R);
-		ImageIcon emergencyOffIcon = ImageLoadingTools.getResourceIcon("icons/tick-button.png", "Emergency Reset");
+		Icon emergencyOffIcon = ImageLoadingTools.getResourceIcon("icons/tick-button.png", "Emergency Reset");
 		if(emergencyOffIcon != null)
 			emergencyOffMenuItem.setIcon(emergencyOffIcon);
 		emergencyOffMenuItem.addActionListener(new ActionListener()
@@ -623,7 +528,7 @@ public class YouScopeClientImpl extends JFrame
 		if(Desktop.isDesktopSupported())
 		{
 			JMenuItem documentationMenuItem = new JMenuItem("Online Tutorial", KeyEvent.VK_D);
-			ImageIcon documentationIcon = ImageLoadingTools.getResourceIcon("icons/book-question.png", "Tutorial");
+			Icon documentationIcon = ImageLoadingTools.getResourceIcon("icons/book-question.png", "Tutorial");
 			if(documentationIcon != null)
 				documentationMenuItem.setIcon(documentationIcon);
 			documentationMenuItem.addActionListener(new ActionListener()
@@ -649,7 +554,7 @@ public class YouScopeClientImpl extends JFrame
 			
 			
 			JMenuItem visitYouScopeMenuItem = new JMenuItem("Visit www.youscope.org", KeyEvent.VK_V);
-			ImageIcon visitYouScopeIcon = ImageLoadingTools.getResourceIcon("icons/globe-green.png", "visit YouScope");
+			Icon visitYouScopeIcon = ImageLoadingTools.getResourceIcon("icons/globe-green.png", "visit YouScope");
 			if(visitYouScopeIcon != null)
 				visitYouScopeMenuItem.setIcon(visitYouScopeIcon);
 			visitYouScopeMenuItem.addActionListener(new ActionListener()
@@ -678,7 +583,7 @@ public class YouScopeClientImpl extends JFrame
 		}
 
 		JMenuItem aboutMenuItem = new JMenuItem("About YouScope", KeyEvent.VK_A);
-		ImageIcon aboutIcon = ImageLoadingTools.getResourceIcon("icons/question-button.png", "About");
+		Icon aboutIcon = ImageLoadingTools.getResourceIcon("icons/question-button.png", "About");
 		if(aboutIcon != null)
 			aboutMenuItem.setIcon(aboutIcon);
 		aboutMenuItem.addActionListener(new ActionListener()
@@ -708,19 +613,19 @@ public class YouScopeClientImpl extends JFrame
 		final String TRAY_ICON_URL32 = "org/youscope/client/images/icon-32.png";
 		final String TRAY_ICON_URL96 = "org/youscope/client/images/icon-96.png";
 		final String TRAY_ICON_URL194 = "org/youscope/client/images/icon-194.png";
-		Vector<Image> trayIcons = new Vector<Image>();
-		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "YouScope");
+		ArrayList<Image> trayIcons = new ArrayList<Image>(4);
+		Image trayIcon16 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL16, "YouScope");
 		if(trayIcon16 != null)
-			trayIcons.addElement(trayIcon16.getImage());
-		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "YouScope");
+			trayIcons.add(trayIcon16);
+		Image trayIcon32 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL32, "YouScope");
 		if(trayIcon32 != null)
-			trayIcons.addElement(trayIcon32.getImage());
-		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "YouScope");
+			trayIcons.add(trayIcon32);
+		Image trayIcon96 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL96, "YouScope");
 		if(trayIcon96 != null)
-			trayIcons.addElement(trayIcon96.getImage());
-		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "YouScope");
+			trayIcons.add(trayIcon96);
+		Image trayIcon194 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL194, "YouScope");
 		if(trayIcon194 != null)
-			trayIcons.addElement(trayIcon194.getImage());
+			trayIcons.add(trayIcon194);
 		if(trayIcons.size()>0)
 			this.setIconImages(trayIcons);
 
@@ -739,29 +644,99 @@ public class YouScopeClientImpl extends JFrame
 		setExtendedState(MAXIMIZED_BOTH);
 	}
 	
+	private List<JMenuItem> getToolsMenuItems()
+	{
+		ArrayList<JMenuItem> toolMenuItems = new ArrayList<JMenuItem>();
+		for(final ToolMetadata metadata : ClientAddonProviderImpl.getProvider().getToolMetadata())
+		{
+			String[] addonFolder = metadata.getClassification();
+			AddonMenuItem<ToolMetadata> newToolMenuItem = new AddonMenuItem<>(metadata, ImageLoadingTools.DEFAULT_TOOL_ICON);
+			newToolMenuItem.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					openAddon();
+				}
+				private void openAddon()
+				{
+					ToolAddonUI addon;
+					try
+					{
+						addon = ClientAddonProviderImpl.getProvider().createToolUI(metadata);
+						YouScopeFrame toolFrame = addon.toFrame();
+						toolFrame.setVisible(true);
+					}
+					catch (AddonException e)
+					{
+						ClientSystem.err.println("Error creating tool UI.", e);
+						return;
+					}
+				}
+			});
+			
+			// Setup folder structure
+			JMenu parentMenu = null;
+			for(int i=0; i<addonFolder.length;i++)
+			{
+				// Iterate over all menus to check if it already exists
+				boolean found = false;
+				for(Component existingItem : (parentMenu == null ? toolMenuItems.toArray(new JMenuItem[0]) : parentMenu.getMenuComponents()))
+				{
+					if(!(existingItem instanceof JMenu))
+						continue;
+					if(((JMenu)existingItem).getText().compareToIgnoreCase(addonFolder[i]) == 0)
+					{
+						parentMenu = (JMenu)existingItem;
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+				{
+					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
+					if(ImageLoadingTools.FOLDER_ICON != null)
+						newMenu.setIcon(ImageLoadingTools.FOLDER_ICON);
+					if(null == parentMenu)
+						toolMenuItems.add(newMenu);
+					else
+						parentMenu.add(newMenu);
+					parentMenu = newMenu;
+				}
+			}
+			if(null == parentMenu)
+				toolMenuItems.add(newToolMenuItem);
+			else
+				parentMenu.add(newToolMenuItem);
+		}
+		Collections.sort(toolMenuItems, new Comparator<JMenuItem>()
+				{
+					@Override
+					public int compare(JMenuItem o1, JMenuItem o2)
+					{
+						if(o1 instanceof JMenu)
+						{
+							if(o2 instanceof JMenu)
+								return o1.getText().compareTo(o2.getText());
+							return -100;
+						}
+						else if(o2 instanceof JMenu)
+							return 100;
+						else
+							return o1.getText().compareTo(o2.getText());
+					}
+				});
+		return toolMenuItems;
+	}
+	
 	private List<JMenuItem> getMeasurementMenuItems()
 	{
-		ImageIcon defaultNewMeasurementIcon = ImageLoadingTools.getResourceIcon("icons/receipt--plus.png", "New Measurement");
-		ImageIcon measurementFolderIcon = ImageLoadingTools.getResourceIcon("icons/folder-horizontal-open.png", "Measurement Folder");
 		ArrayList<JMenuItem> measurementMenuItems = new ArrayList<JMenuItem>();
 		for(final ComponentMetadata<? extends MeasurementConfiguration> metadata : ClientAddonProviderImpl.getProvider().getComponentMetadata(MeasurementConfiguration.class))
 		{
-			
-			String addonName = metadata.getName();
-			if(addonName == null || addonName.length() <= 0)
-				addonName = "Unnamed Measurement";
 			String[] addonFolder = metadata.getClassification();
 			
-			JMenuItem newMeasurementMenuItem = new JMenuItem(TextTools.capitalize(addonName));
-			
-			Icon newMeasurementIcon = metadata.getIcon();
-			if(newMeasurementIcon == null)
-				newMeasurementIcon = defaultNewMeasurementIcon;
-			if(newMeasurementIcon != null)
-				newMeasurementMenuItem.setIcon(newMeasurementIcon);
-			String description = metadata.getDescription();
-			if(description != null)
-				newMeasurementMenuItem.setToolTipText(description);
+			AddonMenuItem<ComponentMetadata<? extends MeasurementConfiguration>> newMeasurementMenuItem = new AddonMenuItem<ComponentMetadata<? extends MeasurementConfiguration>>(metadata, ImageLoadingTools.DEFAULT_MEASUREMENT_ICON);
 			newMeasurementMenuItem.addActionListener(new ActionListener()
 			{
 				
@@ -822,8 +797,8 @@ public class YouScopeClientImpl extends JFrame
 				if(!found)
 				{
 					JMenu newMenu = new JMenu(TextTools.capitalize(addonFolder[i]));
-					if(measurementFolderIcon != null)
-						newMenu.setIcon(measurementFolderIcon);
+					if(ImageLoadingTools.FOLDER_ICON != null)
+						newMenu.setIcon(ImageLoadingTools.FOLDER_ICON);
 					if(parentMenu == null)
 						measurementMenuItems.add(newMenu);
 					else
@@ -888,7 +863,7 @@ public class YouScopeClientImpl extends JFrame
 		}
 
 		windowsMenu.removeAll();
-		ImageIcon frameIcon = ImageLoadingTools.getResourceIcon("icons/application-blue.png", "show window");
+		Icon frameIcon = ImageLoadingTools.getResourceIcon("icons/application-blue.png", "show window");
 		for(JInternalFrame frame : desktop.getAllFrames())
 		{
 			JMenuItem frameMenuItem = new JMenuItem(frame.getTitle());
@@ -899,7 +874,7 @@ public class YouScopeClientImpl extends JFrame
 		}
 		windowsMenu.addSeparator();
 		JMenuItem closeAllMenuItem = new JMenuItem("Close All");
-		ImageIcon closeAllIcon = ImageLoadingTools.getResourceIcon("icons/applications-blue.png", "close all windows");
+		Icon closeAllIcon = ImageLoadingTools.getResourceIcon("icons/applications-blue.png", "close all windows");
 		if(closeAllIcon != null)
 			closeAllMenuItem.setIcon(closeAllIcon);
 		closeAllMenuItem.addActionListener(new ActionListener()
@@ -935,7 +910,7 @@ public class YouScopeClientImpl extends JFrame
 		}
 
 		scriptsMenu.removeAll();
-		ImageIcon scriptsIcon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "execute script");
+		Icon scriptsIcon = ImageLoadingTools.getResourceIcon("icons/script--arrow.png", "execute script");
 		
 		for(ScriptDefinition scriptDefinition : ScriptDefinitionManager.getScriptDefinitions())
 		{
@@ -948,7 +923,7 @@ public class YouScopeClientImpl extends JFrame
 		
 		scriptsMenu.addSeparator();
 		JMenuItem manageScriptsMenuItem = new JMenuItem("Manage Script Shortcuts");
-		ImageIcon manageScriptsIcon = ImageLoadingTools.getResourceIcon("icons/scripts.png", "manage scripts");
+		Icon manageScriptsIcon = ImageLoadingTools.getResourceIcon("icons/scripts.png", "manage scripts");
 		if(manageScriptsIcon != null)
 			manageScriptsMenuItem.setIcon(manageScriptsIcon);
 		manageScriptsMenuItem.addActionListener(new ActionListener()
@@ -1302,14 +1277,6 @@ public class YouScopeClientImpl extends JFrame
 	{
 		JOptionPane.showMessageDialog(this, "The change of the skin will have effect only after restarting YouScope.", "Change Requires Restart", JOptionPane.INFORMATION_MESSAGE);
 		ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
-		/*try {
-			skin.applySkin();
-			ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
-		} catch (AddonException e1) {
-			ClientSystem.err.println("Could not apply look and feel.", e1);
-			return;
-		}
-		SwingUtilities.updateComponentTreeUI(this);*/
 	}
 	
 	static boolean addMeasurement(Measurement measurement)
@@ -1387,8 +1354,6 @@ public class YouScopeClientImpl extends JFrame
                         lastMeasurementConfigurationsList.setSelectedIndex(lastIndex);
                         lastMeasurementConfigurationsList.ensureIndexIsVisible(lastIndex);
                     }
-                    if(lastMeasurements.length > 0)
-                        lastMeasurementConfigurationsList.setSelectedIndex(0);
                 }
             };
 

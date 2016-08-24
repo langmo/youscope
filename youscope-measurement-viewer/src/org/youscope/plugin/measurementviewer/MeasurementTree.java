@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -122,8 +122,8 @@ class MeasurementTree extends JTree
 	private static class MyTreeRenderer implements TreeCellRenderer
 	{
 		private final JLabel cellLabel = new JLabel();
-		private final ImageIcon leafIcon;
-		private final ImageIcon positionIcon;
+		private final Icon leafIcon;
+		private final Icon positionIcon;
 		MyTreeRenderer()
 		{
 			cellLabel.setOpaque(false);

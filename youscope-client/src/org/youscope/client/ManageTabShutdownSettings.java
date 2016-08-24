@@ -4,8 +4,11 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JScrollPane;
 
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.uielements.DescriptionPanel;
@@ -37,10 +40,12 @@ class ManageTabShutdownSettings extends ManageTabElement
 			}
 		});
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("Similar to startup settings, shutdown settings are applied by YouScope whenever unloading a given microscope configuration, typically during shutdown of YouScope.\nYouScope can then automatically apply a set of device settings, e.g. turn off lights or change the image path.");
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "Similar to startup settings, shutdown settings are applied by YouScope whenever unloading a given microscope configuration, typically during shutdown of YouScope.\nYouScope can then automatically apply a set of device settings, e.g. turn off lights or change the image path.");
 		
 		setLayout(new BorderLayout(5, 5));
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 		add(deviceSettingPanel, BorderLayout.CENTER);
 	}
 	

@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -758,7 +758,7 @@ class ManageAddDeviceFrame
 			}
 		});
 		
-		ImageIcon previousFirst = ImageLoadingTools.getResourceIcon("org/youscope/client/images/arrowLeft.png", "select previous tab first");
+		Icon previousFirst = ImageLoadingTools.getResourceIcon("org/youscope/client/images/arrowLeft.png", "select previous tab first");
 		
 		JLabel selectTypeLabel = new JLabel("<html><p style=\"font-size:16pt\">Select device type!</p></html>", SwingConstants.CENTER);
 		selectTypeLabel.setOpaque(false);
@@ -921,7 +921,7 @@ class ManageAddDeviceFrame
 			 topPanel.add(deviceLabel);
 			 add(topPanel, BorderLayout.CENTER);
 			 add(descriptionLabel, BorderLayout.SOUTH);
-			 ImageIcon newIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/wooden-box.png", "add driver");
+			 Icon newIcon = ImageLoadingTools.getResourceIcon("bonus/icons-24/wooden-box.png", "add driver");
 			 if(newIcon != null)
 				 add(new JLabel(newIcon), BorderLayout.WEST);
 			 setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));

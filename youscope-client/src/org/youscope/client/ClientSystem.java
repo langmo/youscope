@@ -25,7 +25,7 @@ import org.youscope.common.MessageListener;
  */
 class ClientSystem
 {
-    private static final String fileNameOut = "log_client.txt";
+	private static final String fileNameOut = "log_client.txt";
 
     private static final String fileNameErr = "error_client.txt";
 

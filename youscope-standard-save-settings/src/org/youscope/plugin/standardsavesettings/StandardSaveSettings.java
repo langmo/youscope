@@ -14,6 +14,7 @@ import org.youscope.common.resource.ResourceAdapter;
 import org.youscope.common.saving.FileNameMacroConverter;
 import org.youscope.common.saving.SaveInformation;
 import org.youscope.common.saving.SaveSettings;
+import org.youscope.common.util.TextTools;
 
 /**
  * Standard save settings, e.g. the definition where images should be stored under which name.
@@ -69,12 +70,12 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	@Override
 	public String getMeasurementBasePath(SaveInformation saveInformation) {
 		DateFormat dateToFileName = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		return getConfiguration().getBaseFolder() + File.separator + saveInformation.getMeasurementName() + File.separator + dateToFileName.format(new Date(saveInformation.getMeasurementStartTime()));
+		return getConfiguration().getBaseFolder() + File.separator +  TextTools.convertToFileName(saveInformation.getMeasurementName()) + File.separator + dateToFileName.format(new Date(saveInformation.getMeasurementStartTime()));
 	}
 
 	@Override
 	public String getTableFilePath(SaveInformation saveInformation, String tableName) {
-		return tableName+".csv";
+		return TextTools.convertToFileName(tableName)+".csv";
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 		{
 			if(imageFolderName.length() > 0)
 				imageFolderName += File.separator;
-			imageFolderName += imageName;
+			imageFolderName += TextTools.convertToFileName(imageName);
 		}
 
 		// Combine both to obtain full path

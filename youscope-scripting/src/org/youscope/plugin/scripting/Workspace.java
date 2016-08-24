@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -28,7 +28,7 @@ import javax.swing.tree.TreePath;
 import org.youscope.uielements.ImageLoadingTools;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
 class Workspace extends JPanel implements ScriptVariablesListener
@@ -65,13 +65,13 @@ class Workspace extends JPanel implements ScriptVariablesListener
 		
 		// Customize icons
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-		ImageIcon leafIcon = ImageLoadingTools.getResourceIcon("icons/sticky-note-pin.png", "document");
+		Icon leafIcon = ImageLoadingTools.getResourceIcon("icons/sticky-note-pin.png", "document");
 		if(leafIcon != null)
 			renderer.setLeafIcon(leafIcon);
-		ImageIcon openIcon = ImageLoadingTools.getResourceIcon("icons/wooden-box.png", "opened folder");
+		Icon openIcon = ImageLoadingTools.getResourceIcon("icons/wooden-box.png", "opened folder");
 		if(openIcon != null)
 			renderer.setOpenIcon(openIcon);
-		ImageIcon closedIcon = ImageLoadingTools.getResourceIcon("icons/wooden-box.png", "closed folder");
+		Icon closedIcon = ImageLoadingTools.getResourceIcon("icons/wooden-box.png", "closed folder");
 		if(closedIcon != null)
 			renderer.setClosedIcon(closedIcon);
 		variablesTree.setCellRenderer(renderer);

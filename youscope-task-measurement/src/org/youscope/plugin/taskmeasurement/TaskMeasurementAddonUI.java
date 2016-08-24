@@ -3,7 +3,7 @@
  */
 package org.youscope.plugin.taskmeasurement;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
@@ -38,7 +38,7 @@ class TaskMeasurementAddonUI  extends MeasurementAddonUIAdapter<TaskMeasurementC
 				"One job thereby corresponds to a single action of the microscope, like taking a bright-field image or changing the stage position.\n\n" +
 				"Every task either has a fixed period length, meaning that its jobs are executed e.g. every two minutes, or a variable period length, meaning that its jobs are executed a given time span after they finished."+
 				"The latter one is useful if a task of lower priority should be executed with a high frequency, but without blocking the exectution of tasks of higher priority.";
-		ImageIcon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/taskmeasurement/images/taskMeasurement.jpg", "Task Measurement");
+		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/taskmeasurement/images/taskMeasurement.jpg", "Task Measurement");
 		String imageLegend = "Flowchart of a task measurement.";
 		addPage(new DescriptionPage(null, description, image, imageLegend));
 		addPage(new GeneralSettingsPage<TaskMeasurementConfiguration>(client, TaskMeasurementConfiguration.class));

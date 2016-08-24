@@ -18,9 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -93,19 +92,19 @@ class ConfigFileChooser extends JFrame
 		final String TRAY_ICON_URL32 = "org/youscope/server/images/icon-32.png";
 		final String TRAY_ICON_URL96 = "org/youscope/server/images/icon-96.png";
 		final String TRAY_ICON_URL194 = "org/youscope/server/images/icon-194.png";
-		Vector<Image> trayIcons = new Vector<Image>();
-		ImageIcon trayIcon16 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL16, "tray icon");
+		ArrayList<Image> trayIcons = new ArrayList<Image>();
+		Image trayIcon16 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL16, "tray icon");
 		if(trayIcon16 != null)
-			trayIcons.addElement(trayIcon16.getImage());
-		ImageIcon trayIcon32 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL32, "tray icon");
+			trayIcons.add(trayIcon16);
+		Image trayIcon32 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL32, "tray icon");
 		if(trayIcon32 != null)
-			trayIcons.addElement(trayIcon32.getImage());
-		ImageIcon trayIcon96 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL96, "tray icon");
+			trayIcons.add(trayIcon32);
+		Image trayIcon96 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL96, "tray icon");
 		if(trayIcon96 != null)
-			trayIcons.addElement(trayIcon96.getImage());
-		ImageIcon trayIcon194 = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL194, "tray icon");
+			trayIcons.add(trayIcon96);
+		Image trayIcon194 = ImageLoadingTools.getResourceImage(TRAY_ICON_URL194, "tray icon");
 		if(trayIcon194 != null)
-			trayIcons.addElement(trayIcon194.getImage());
+			trayIcons.add(trayIcon194);
 		if(trayIcons.size()>0)
 			this.setIconImages(trayIcons);
 

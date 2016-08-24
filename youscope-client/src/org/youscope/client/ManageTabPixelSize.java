@@ -4,12 +4,13 @@
 package org.youscope.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -86,8 +87,8 @@ class ManageTabPixelSize extends ManageTabElement
 			});
 		
 		// Buttons
-		ImageIcon addPixelSizeIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Pixel Size Setting");
-        ImageIcon deletePixelSizeIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Pixel Size Setting");
+		Icon addPixelSizeIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "Add Pixel Size Setting");
+		Icon deletePixelSizeIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "Delete Pixel Size Setting");
         if (addPixelSizeIcon == null)
             addPixelSizeButton = new JButton("New");
         else
@@ -182,13 +183,15 @@ class ManageTabPixelSize extends ManageTabElement
 		pixelSizeDefinitionPanel.addFill(deviceSettingsPanel);
 		mainPanel.add(pixelSizeDefinitionPanel);
 		
-		DescriptionPanel descriptionPanel = new DescriptionPanel("For several tasks, like stitching, the size of a pixel in micro-meter must be known by YouScope.\n"
+		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", "For several tasks, like stitching, the size of a pixel in micro-meter must be known by YouScope.\n"
 			+ "This size typically depends on certain device settings which change the magnification of the microscope, like the lenses used, and the physical pixel size of the camera (typically 6.45 micro meters).\n"
 			+ "The pixel size is then calculated by taking the physical pixel size of the camera, and dividing it through the magnification which is active if the given set of device settings is active.");
 		
 		setOpaque(false);
 		setLayout(new BorderLayout(5, 5));
-		add(descriptionPanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(descriptionPanel);
+		scrollPane.setPreferredSize(new Dimension(400, 150));
+		add(scrollPane, BorderLayout.NORTH);
 		add(mainPanel, BorderLayout.CENTER);
 	}
 	
