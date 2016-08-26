@@ -174,6 +174,7 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 			{
 				if(!pages.get(currentPage).saveData(configuration))
 					return;
+				int lastPage = currentPage;
 				currentPage++;
 				while(currentPage < pages.size() && !pages.get(currentPage).isAppear(configuration))
 				{
@@ -181,6 +182,8 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 				}
 				if(currentPage >= pages.size())
 				{
+					// If closing of addon fails, we want to be at a valid current page...
+					currentPage = lastPage;
 					closeAddon();
 					return;
 				}
@@ -202,16 +205,16 @@ public class MeasurementAddonUIAdapter<T extends MeasurementConfiguration> exten
 					previousButton.setEnabled(true);
 				nextButton.setText("Next");
 				
-				boolean lastPage = true;
+				boolean isLastPage = true;
 				for(int pageID = pages.size()-1; pageID>currentPage; pageID--)
 				{
 					if(pages.get(pageID).isAppear(configuration))
 					{
-						lastPage = false;
+						isLastPage = false;
 						break;
 					}
 				}
-				if(lastPage)
+				if(isLastPage)
 					nextButton.setText("Finish");
 				else
 					nextButton.setText("Next");

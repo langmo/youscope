@@ -51,7 +51,7 @@ import org.youscope.uielements.ImageLoadingTools;
  * A panel showing the images of a continuous measurement.
  * @author Moritz Lang
  */
-public class ContinousMeasurementPanel extends JPanel
+class ContinousMeasurementPanel extends JPanel
 {
     /**
      * Serial Version UID.

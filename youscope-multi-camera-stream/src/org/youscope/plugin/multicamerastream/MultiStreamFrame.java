@@ -42,12 +42,11 @@ import org.youscope.common.task.MeasurementTask;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.HistogramPlot;
 import org.youscope.uielements.IntegerTextField;
 import org.youscope.uielements.StandardFormats;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
 class MultiStreamFrame implements YouScopeFrameListener

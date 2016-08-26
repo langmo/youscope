@@ -82,7 +82,27 @@ public enum StandardProperty
     /**
      * if contrast should be increased automatically in live stream, and similar.
      */
-    PROPERTY_STREAM_LAST_AUTO_CONTRAST ("YouScope.LiveStream.LastAutoContrast", false),
+    PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST ("YouScope.ImagePanel.LastAutoContrast", false),
+    /**
+     * Percentage of lower auto-cutoff for auto-adjustment of histogram.
+     */
+    PROPERTY_IMAGE_PANEL_LOWER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE ("YouScope.ImagePanel.LowerAutoAdjustmentCutoffPercentage", 0.03),
+    /**
+     * Percentage of upper auto-cutoff for auto-adjustment of histogram.
+     */
+    PROPERTY_IMAGE_PANEL_UPPER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE ("YouScope.ImagePanel.UpperAutoAdjustmentCutoffPercentage", 0.03),
+    /**
+     * Number of bins histogram.
+     */
+    PROPERTY_IMAGE_PANEL_NUM_BINS ("YouScope.ImagePanel.NumBins", 100),
+    /**
+     * True if histogram logarithmic, false if linear.
+     */
+    PROPERTY_IMAGE_PANEL_LOGARITHMIC ("YouScope.ImagePanel.Logarithmic", false),
+    /**
+     * True if histogram shows message when image is overexposed.
+     */
+    PROPERTY_IMAGE_PANEL_NOTIFY_IF_OVEREXPOSED("YouScope.ImagePanel.NotifyIfOverexposed", true),
 	/**
      * Name of the last channel group used in live stream, and similar.
      */
@@ -116,7 +136,7 @@ public enum StandardProperty
     /**
      * if contrast should be increased automatically in live stream, and similar.
      */
-    PROPERTY_STREAM_DEFAULT_AUTO_CONTRAST ("YouScope.LiveStream.DefaultAutoContrast", false),
+    PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST ("YouScope.LiveStream.DefaultAutoContrast", false),
 	/**
      * Name of the default channel group used in live stream, and similar.
      */

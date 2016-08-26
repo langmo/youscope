@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.uielements;
+package org.youscope.plugin.multicolorstream;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,7 +26,7 @@ import javax.swing.border.LineBorder;
  * @author langmo
  * 
  */
-public class HistogramPlot extends JPanel
+class HistogramPlot extends JPanel
 {
 	/**
 	 * Serial Version UID.

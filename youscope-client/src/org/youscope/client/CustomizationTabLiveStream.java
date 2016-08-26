@@ -92,7 +92,7 @@ class CustomizationTabLiveStream extends ManageTabElement
 		cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
 		channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
 				(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
-		increaseContrastField.setSelected((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_AUTO_CONTRAST));
+		increaseContrastField.setSelected((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
     }
 
     @Override
@@ -105,7 +105,7 @@ class CustomizationTabLiveStream extends ManageTabElement
 		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA, cameraField.getCameraDevice());
 		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP, channelField.getChannelGroup()); 
 		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL, channelField.getChannel());
-		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_AUTO_CONTRAST, increaseContrastField.isSelected());
+		client.getProperties().setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST, increaseContrastField.isSelected());
         return false;
     }
 

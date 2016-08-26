@@ -34,14 +34,13 @@ import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.HistogramPlot;
 import org.youscope.uielements.StandardFormats;
 
 /**
  * A panel containing the UI to view and control a continuous measurement.
  * @author Moritz Lang
  */
-public class ContinousMeasurementAndControlsPanel extends JPanel
+class ContinousMeasurementAndControlsPanel extends JPanel
 {
 
 	/**

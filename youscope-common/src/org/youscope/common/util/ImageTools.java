@@ -160,7 +160,7 @@ public class ImageTools
 			upperCutoff = 1;
 		if(lowerCutoff == 0.0 && upperCutoff == 1.0)
 			return bufferedImage;
-		long maxValue = getMaximalPixelValue(bufferedImage);
+		long maxValue = getMaximalExpectedPixelValue(bufferedImage);
 		if(maxValue <=0)
 			return bufferedImage;
 		
@@ -499,13 +499,108 @@ public class ImageTools
 		}
 		return -1;
 	}
+	
 	/**
-	 * Returns the maximal intensity a pixel in the image can have.
+	 * Returns the maximal intensity a pixel actually has in the image.
+	 * Method does only work if image is a 1 or 2 byte grayscale image.
+	 * @param imageEvent The image from which the maximal pixel intensity should be returned.
+	 * @return The maximal pixel intensity , or -1 if image is not a 1 or 2 byte grayscale image.
+	 */
+	public static long getMaximalPixelValue(ImageEvent<?> imageEvent)
+	{
+		int bytesPerPixel = imageEvent.getBytesPerPixel();
+		if(bytesPerPixel == 1)// && bands == 1)
+		{
+			byte[] imageData = (byte[])imageEvent.getImageData();
+			short maxValue = 0;
+			for(byte pixel : imageData)
+			{
+				short value = (short) (pixel & 0xff);
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else if(bytesPerPixel == 2)
+		{
+			short[] imageData = (short[])imageEvent.getImageData();
+			int maxValue = 0;
+			for(short pixel : imageData)
+			{
+				int value = (short) (pixel & 0xffff);
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else
+			return -1;
+	}
+	
+	/**
+	 * Returns the maximal intensity a pixel actually has in the image.
 	 * Method does only work if image is a 1 or 2 byte grayscale image.
 	 * @param bufferedImage The image from which the maximal pixel intensity should be returned.
-	 * @return The maximal pixel intensity at the specific position, or -1 if image is not a 1 or 2 byte grayscale image.
+	 * @return The maximal pixel intensity , or -1 if image is not a 1 or 2 byte grayscale image.
 	 */
 	public static long getMaximalPixelValue(BufferedImage bufferedImage)
+	{
+		Raster ras = bufferedImage.getData();
+		DataBuffer data = ras.getDataBuffer();
+		if(data instanceof DataBufferInt)
+		{
+			long maxValue = 0;
+			for(int valueRaw : ((DataBufferInt)data).getData())
+			{
+				long value = valueRaw & 0xffffffff;
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else if(data instanceof DataBufferShort)
+		{
+			int maxValue = 0;
+			for(short valueRaw : ((DataBufferShort)data).getData())
+			{
+				int value = valueRaw & 0xffff;
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else if(data instanceof DataBufferUShort)
+		{
+			int maxValue = 0;
+			for(short valueRaw : ((DataBufferUShort)data).getData())
+			{
+				int value = valueRaw & 0xffff;
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else if(data instanceof DataBufferByte)
+		{
+			short maxValue = 0;
+			for(byte valueRaw : ((DataBufferByte)data).getData())
+			{
+				short value = (short) (valueRaw & 0xff);
+				if(value > maxValue)
+					maxValue = value;
+			}
+			return maxValue;
+		}
+		else
+			return -1;
+	}
+	/**
+	 * Returns the maximal intensity a pixel can theoretically have in the image.
+	 * Method does only work if image is a 1 or 2 byte grayscale image.
+	 * @param bufferedImage The image from which the maximal pixel intensity should be returned.
+	 * @return The maximal pixel intensity , or -1 if image is not a 1 or 2 byte grayscale image.
+	 */
+	public static long getMaximalExpectedPixelValue(BufferedImage bufferedImage)
 	{
 		int imageType = bufferedImage.getType();
 		int dataType = bufferedImage.getRaster().getTransferType();
@@ -525,6 +620,15 @@ public class ImageTools
 		else
 			return -1;
 	}
+	/**
+	 * Returns the maximal intensity a pixel can theoretically have in the image.
+	 * @param imageEvent The image from which the maximal pixel intensity should be returned.
+	 * @return The maximal pixel intensity.
+	 */
+	public static long getMaximalExpectedPixelValue(ImageEvent<?> imageEvent)
+	{
+		return(long) (Math.pow(2, imageEvent.getBitDepth())-1);
+		}
 	
 	/**
 	 * Generates a histogram for the given image.

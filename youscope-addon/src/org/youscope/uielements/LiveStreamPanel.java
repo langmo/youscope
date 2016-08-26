@@ -84,11 +84,7 @@ public class LiveStreamPanel extends ImagePanel {
 		insertControl("Imaging", channelControl, 0);
 		addControl("Control", startStopControl);
 		
-		if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
-			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_AUTO_CONTRAST));
-		else
-			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_AUTO_CONTRAST));
-		setAutoStartStream((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
+		loadSettings(client.getProperties());
 	}
 	
 	/**
@@ -163,25 +159,45 @@ public class LiveStreamPanel extends ImagePanel {
 			SwingUtilities.invokeLater(runner);
 	}
 	
-	/**
-	 * Call this function such that the current channel settings get saved. When starting a LiveStream again, the same settings will appear.
-	 */
-	public void saveSettings()
+	
+	@Override
+	public void saveSettings(YouScopeProperties properties)
 	{
+		super.saveSettings(properties);
 		String camera = channelControl.getCamera();
     	String channelGroup = channelControl.getChannelGroup();
     	String channel = channelControl.getChannel();
     	double exposure = channelControl.getExposure();
     	int imagingPeriod = channelControl.getImagingPeriod();
-    	boolean autocontrast = isAutoAdjustContrast();
     	
-    	YouScopeProperties props = client.getProperties();
-    	props.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL, channel);
-    	props.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP, channelGroup);
-    	props.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA, camera);
-    	props.setProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE, exposure);
-    	props.setProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD, imagingPeriod);
-    	client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_LAST_AUTO_CONTRAST, autocontrast);
+    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL, channel);
+    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP, channelGroup);
+    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA, camera);
+    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE, exposure);
+    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD, imagingPeriod);
+	}
+	@Override
+	public void loadSettings(YouScopeProperties properties)
+	{
+		super.loadSettings(properties);
+		setAutoStartStream((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
+		
+		if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+		{
+			channelControl.setExposure((double)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
+			channelControl.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
+			channelControl.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
+					(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
+		}
+		else
+		{
+			channelControl.setExposure((double)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD));
+			channelControl.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
+			channelControl.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
+					(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
+		}
 	}
 	
 	/**
@@ -206,7 +222,7 @@ public class LiveStreamPanel extends ImagePanel {
 			@Override
 			public void frameClosed() {
 				stopLiveStream();
-				saveSettings();
+				saveSettings(client.getProperties());
 				superListener.frameClosed();
 			}
 		};
@@ -323,24 +339,6 @@ public class LiveStreamPanel extends ImagePanel {
 			exposureField.setMinimalValue(0);
 			imagingPeriodField.setMinimalValue(0);
 			
-			// Load settings
-			if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
-			{
-				exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
-				imagingPeriodField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
-				cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
-				channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
-						(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
-			}
-			else
-			{
-				exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
-				imagingPeriodField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD));
-				cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
-				channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
-						(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
-			}
-			
 			ActionListener changeListener = new ActionListener()
 			{
 				@Override
@@ -422,6 +420,15 @@ public class LiveStreamPanel extends ImagePanel {
 			return channelField.getChannel();
 		}
 		/**
+		 * Sets the currently selected channel
+		 * @param channelGroup channel group
+		 * @param channel channel
+		 */
+		public void setChannel(String channelGroup, String channel)
+		{
+			channelField.setChannel(channelGroup, channel);
+		}
+		/**
 		 * Returns the currently selected channel group.
 		 * @return Currently selected channel group.
 		 */
@@ -438,12 +445,28 @@ public class LiveStreamPanel extends ImagePanel {
 			return exposureField.getValue();
 		}
 		/**
+		 * Sets the currently selected exposure
+		 * @param exposure exposure time in ms.
+		 */
+		public void setExposure(double exposure)
+		{
+			exposureField.setValue(exposure);
+		}
+		/**
 		 * Returns the currently selected imaging period in ms.
 		 * @return Imaging period in ms.
 		 */
 		public int getImagingPeriod()
 		{
 			return imagingPeriodField.getValue();
+		}
+		/**
+		 * Sets the currently selected imaging period in ms.
+		 * @param period Imaging period in ms.
+		 */
+		public void setImagingPeriod(int period)
+		{
+			imagingPeriodField.setValue(period);
 		}
 		/**
 		 * Returns the currently selected camera.
@@ -454,6 +477,16 @@ public class LiveStreamPanel extends ImagePanel {
 		public String getCamera()
 		{
 			return cameraField.getCameraDevice();
+		}
+		/**
+		 * Sets the currently selected camera.
+		 * Note: the camera selection field will only be shown if more than one camera is available. This function
+		 * nevertheless will set the camera name even if only one camera is available.
+		 * @param camera Name of currently selected camera.
+		 */
+		public void setCamera(String camera)
+		{
+			cameraField.setCamera(camera);
 		}
 	}
 	

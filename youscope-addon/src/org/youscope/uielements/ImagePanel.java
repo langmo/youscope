@@ -25,6 +25,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,9 +54,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
+import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
@@ -89,8 +93,8 @@ public class ImagePanel extends JPanel
     private BufferedImage renderedImage = null;
     
     private final Object imageLock = new Object();
-    
-    private HistogramPlot				histogram				= new HistogramPlot();
+        
+    protected final HistogramPanel histogramPanel = new HistogramPanel();
     private final ControlsPanel controlsPanel;
 	private final YouScopeClient client;
 	private String noImageText = "No image available yet.";
@@ -117,7 +121,6 @@ public class ImagePanel extends JPanel
 	private Point startLine = null;
 	private Point endLine = null;
 	
-	private boolean autoAdjustContrast = false;
 	private static final double ZOOM_IN_STEP = Math.sqrt(2);
 	private static final double ZOOM_OUT_STEP = 1/Math.sqrt(2);
 	private static final double ZOOM_MAX = 100;
@@ -488,8 +491,7 @@ public class ImagePanel extends JPanel
 	 */
 	public void setAutoAdjustContrast(boolean autoAdjustContrast)
 	{
-		this.autoAdjustContrast = autoAdjustContrast;
-		histogramControl.autoAdjustField.setSelected(autoAdjustContrast);
+		histogramPanel.setAutoAdjusting(autoAdjustContrast);
 	}
 	/**
 	 * Returns if the contrast should be automatically adjusted whenever a new image is set.
@@ -497,7 +499,7 @@ public class ImagePanel extends JPanel
 	 */
 	public boolean isAutoAdjustContrast()
 	{
-		return autoAdjustContrast;
+		return histogramPanel.isAutoAdjusting();
 	}
 	
 	private class HistogramControl  extends DynamicPanel
@@ -506,7 +508,7 @@ public class ImagePanel extends JPanel
 		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = -4695291153764223394L;
-		JCheckBox autoAdjustField = new JCheckBox("auto-adjust contrast", autoAdjustContrast);
+		private final JCheckBox autoAdjustField = new JCheckBox("auto-adjust", histogramPanel.isAutoAdjusting());
 		public HistogramControl()
 		{
 			JPanel contrastButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -517,14 +519,13 @@ public class ImagePanel extends JPanel
 				adjustButton = new JButton(adjustIcon);
 			else
 				adjustButton = new JButton("adjust");
-			adjustButton.setToolTipText("Automatically adjust contrast.");
+			adjustButton.setToolTipText("Enhance contrast.");
 			adjustButton.setOpaque(false);
 			adjustButton.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					histogram.adjust();
-					fireImageChanged();
+					histogramPanel.autoAdjust();
 				}
 			});
 			contrastButtonsPanel.add(adjustButton);
@@ -535,33 +536,38 @@ public class ImagePanel extends JPanel
 				noAdjustButton = new JButton(noAdjustIcon);
 			else
 				noAdjustButton = new JButton("original");
-			noAdjustButton.setToolTipText("Show original contrast.");
+			noAdjustButton.setToolTipText("Original contrast.");
 			noAdjustButton.setOpaque(false);
 			noAdjustButton.addActionListener(new ActionListener()
 			{
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					histogram.setMinMax(0, 1);
-					fireImageChanged();
+					histogramPanel.adjust(0, 1);
 				}
 			});
 			contrastButtonsPanel.add(noAdjustButton);
 			
-			add(histogram);
+			add(histogramPanel);
 			add(contrastButtonsPanel);
+			
+			
 			autoAdjustField.setOpaque(false);
 			add(autoAdjustField);
+			
+			histogramPanel.addPropertyChangeListener("autoAdjusting", new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					autoAdjustField.setSelected(histogramPanel.isAutoAdjusting());				
+				}
+			});
 			
 			autoAdjustField.addActionListener(new ActionListener() 
 			{	
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					autoAdjustContrast = autoAdjustField.isSelected();
-					if(autoAdjustContrast)
-					{
-						histogram.adjust();
-						fireImageChanged();
-					}
+				public void actionPerformed(ActionEvent e) 
+				{
+					histogramPanel.setAutoAdjusting(autoAdjustField.isSelected());
 				}
 			});
 			autoAdjustField.setForeground(DEFAULT_FOREGROUND);
@@ -979,7 +985,7 @@ public class ImagePanel extends JPanel
 		else
 		{
 			long pixelValue = ImageTools.getPixelValue(lastDrawnOrgBufferedImage, (int)pos.getX(), (int)pos.getY());
-			long maxValue = ImageTools.getMaximalPixelValue(lastDrawnOrgBufferedImage);
+			long maxValue = ImageTools.getMaximalExpectedPixelValue(lastDrawnOrgBufferedImage);
 			if(pixelValue >= 0 && maxValue >= 0)
 				pixelInfo = new PixelInfo((int)pos.getX(), (int)pos.getY(), pixelValue, ((double)pixelValue)/maxValue);
 			else
@@ -1091,8 +1097,8 @@ public class ImagePanel extends JPanel
 		add(controlsPanel);
 		add(lineInfoPopup);
 		
-		histogram.setAutoAdjusting(false);
-		histogram.addActionListener(new ActionListener()
+		histogramPanel.setAutoAdjusting(false);
+		histogramPanel.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
@@ -1210,12 +1216,14 @@ public class ImagePanel extends JPanel
 				renderedImage = null;
 			else if(renderedImage == null)
 	        {
-				double[] minMax = histogram.getMinMax();
+				double min = histogramPanel.getLowerCutoff();
+				double max = histogramPanel.getUpperCutoff();
+				//double[] minMax = histogram.getMinMax();
 				if(imageEvent != null)
 				{
 		        	
 		        	try {
-		        		renderedImage = ImageTools.getScaledMicroscopeImage(imageEvent, (float)minMax[0], (float)minMax[1]);
+		        		renderedImage = ImageTools.getScaledMicroscopeImage(imageEvent, (float)min, (float)max);
 					} catch (ImageConvertException e) {
 						client.sendError("Could not generate image.", e);
 						noImageText = "Error painting image.";
@@ -1224,7 +1232,7 @@ public class ImagePanel extends JPanel
 				}
 				else
 				{
-					renderedImage = ImageTools.getScaledImage(bufferedImage, (float)minMax[0], (float)minMax[1], null);
+					renderedImage = ImageTools.getScaledImage(bufferedImage, (float)min, (float)max, null);
 				}
 	        }
 			image = renderedImage;
@@ -1456,24 +1464,23 @@ public class ImagePanel extends JPanel
 	 */
 	public synchronized void setImage(BufferedImage bufferedImage)
 	{
-		int[][] bins;
-		try
-		{
-			bins = ImageTools.getHistogram(bufferedImage, (int)controlsPanel.getPreferredSize().getWidth());
-			histogram.setBins(bins);
-			if(autoAdjustContrast)
-				histogram.adjust();
-		}
-		catch(ImageConvertException e)
-		{
-			client.sendError("Could not calculate histogram of image.", e);
-		}
+		ImageConvertException exception = null;
 		synchronized(imageLock)
 		{
 			this.orgBufferedImage = bufferedImage;
 			this.orgImageEvent = null;
+			try
+			{
+				histogramPanel.setImage(bufferedImage);
+			}
+			catch(ImageConvertException e)
+			{
+				exception = e;
+			}
 			fireImageChanged();
 		}
+		if(exception != null)
+			client.sendError("Could not calculate histogram of image.", exception);
 	}
 	
 	/**
@@ -1482,24 +1489,23 @@ public class ImagePanel extends JPanel
 	 */
 	public synchronized void setImage(ImageEvent<?> imageEvent)
 	{
-		int[][] bins;
-		try
-		{
-			bins = ImageTools.getHistogram(imageEvent, (int)controlsPanel.getPreferredSize().getWidth());
-			histogram.setBins(bins);
-			if(autoAdjustContrast)
-				histogram.adjust();
-		}
-		catch(ImageConvertException e)
-		{
-			client.sendError("Could not calculate histogram of image.", e);
-		}
+		ImageConvertException exception = null;
 		synchronized(imageLock)
 		{
 			this.orgBufferedImage = null;
 			this.orgImageEvent = imageEvent;
+			try
+			{
+				histogramPanel.setImage(imageEvent);
+			}
+			catch(ImageConvertException e)
+			{
+				exception = e;
+			}
 			fireImageChanged();
 		}
+		if(exception != null)
+			client.sendError("Could not calculate histogram of image.", exception);
 	}
 	/**
 	 * Sets the title of the frame, which is opened by {@link #toFrame()}. Has no effect when using this panel directly.
@@ -1510,5 +1516,35 @@ public class ImagePanel extends JPanel
 		this.title = title;
 		if(frame != null)
 			frame.setTitle(title);
+	}
+	/**
+	 * Call this function such that the current settings are saved in the YouScope properties, and reloaded the next time started.
+	 * @param properties The properties of YouScope to save settings in.
+	 */
+	public void saveSettings(YouScopeProperties properties) {
+		boolean autocontrast = isAutoAdjustContrast();
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST, autocontrast);
+    	
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LOWER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE, histogramPanel.getLowerAutoAdjustmentCutoffPercentage());
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_UPPER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE, histogramPanel.getUpperAutoAdjustmentCutoffPercentage());
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_NUM_BINS, histogramPanel.getNumBins());
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LOGARITHMIC, histogramPanel.isLogarithmic());
+    	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_NOTIFY_IF_OVEREXPOSED, histogramPanel.isNotifyIfOverExposed());
+	}
+	/**
+	 * Call this function the current settings from the YouScope properties.
+	 * @param properties The properties of YouScope the settings are saved in.
+	 */
+	public void loadSettings(YouScopeProperties properties) {
+		if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
+		else
+			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST));
+		
+		histogramPanel.setAutoAdjustmentCutoffPercentages((double)properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LOWER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE),
+				(double)properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_UPPER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE));
+		histogramPanel.setNumBins((int) properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_NUM_BINS));
+		histogramPanel.setLogarithmic((boolean) properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LOGARITHMIC));
+		histogramPanel.setNotifyIfOverExposed((boolean) properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_NOTIFY_IF_OVEREXPOSED));
 	}
 }
