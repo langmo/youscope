@@ -215,7 +215,7 @@ public class YouScopeClientImpl extends JFrame
 	 */
 	private YouScopeClientImpl()
 	{
-		super("YouScope "+new YouScopeVersion("youscope-client").getVersion()+" - The Microscope Control Software");
+		super("YouScope "+YouScopeVersion.getProductVersion()+" - The Microscope Control Software");
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 

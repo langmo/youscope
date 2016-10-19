@@ -7,7 +7,7 @@ import org.youscope.common.YouScopeVersion;
 
 /**
  * Holds information which program generated a microscope configuration file.
- * @author langmo
+ * @author Moritz Lang
  * 
  */
 class ConfigFileGenerator
@@ -38,7 +38,7 @@ class ConfigFileGenerator
 	ConfigFileGenerator()
 	{
 		this.name = "YouScope";
-		this.version = new YouScopeVersion("youscope-server").getMajorVersion();
+		this.version = YouScopeVersion.getDeveloperVersion();
 	}
 
 	@Override

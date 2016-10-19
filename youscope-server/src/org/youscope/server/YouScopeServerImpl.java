@@ -550,8 +550,7 @@ public class YouScopeServerImpl implements YouScopeServer
 		// Set tray icon
 		trayIcon = new TrayIcon(trayIconImage);
 		trayIcon.setImageAutoSize(true);
-		final YouScopeVersion version = new YouScopeVersion("youscope-server");
-		final String versionString = version.getFullVersion();
+		final String versionString = YouScopeVersion.getFullVersion();
 		trayIcon.setToolTip("YouScope " + versionString + "\nThe microscope control environment\n\n© Moritz Lang, ETH Zurich, Switzerland");
 		final SystemTray tray = SystemTray.getSystemTray();
 

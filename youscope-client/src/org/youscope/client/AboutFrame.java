@@ -24,8 +24,7 @@ class AboutFrame
     
     AboutFrame(final YouScopeFrame frame)
     {
-    	final YouScopeVersion version = new YouScopeVersion("youscope-client");
-        frame.setTitle("YouScope "+ version.getFullVersion());
+        frame.setTitle("YouScope "+ YouScopeVersion.getFullVersion());
         frame.setResizable(false);
         frame.setClosable(true);
         frame.setMaximizable(false);
@@ -75,7 +74,7 @@ class AboutFrame
         
         description.setContentType("text/html");
         description.setText("<html><p style=\"margin:0px;padding:0px;font-weight:bold;color: #000000;\">"
-                +"YouScope "+ version.getFullVersion() + "<br />"
+                +"YouScope "+ YouScopeVersion.getFullVersion() + "<br />"
                 + "Created by Moritz Lang and contributers.<br /><br />"
                 + "(c) Copyright Moritz Lang, contributors and others 2009-2016.<br/>"
                 + "All rights reserved.<br /><br />"
