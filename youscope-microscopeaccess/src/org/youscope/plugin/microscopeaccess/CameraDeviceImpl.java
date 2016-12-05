@@ -144,15 +144,22 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 				// Set exposure and channel
 				setExposure(exposure, accessID);
 				
+				if(Thread.interrupted())
+					throw new InterruptedException();
+				
 				// open shutter
 				if(channel != null)
 					channel.openShutter(accessID);
 					
 				// Make image
-				if(Thread.interrupted())
-					throw new InterruptedException();
 				imageCreationTime = new Date().getTime();
 				core.snapImage();
+				// close shutter
+				if(channel != null)
+					channel.closeShutter(accessID);
+				
+				if(Thread.interrupted())
+					throw new InterruptedException();
 				
 				// notify clients that image was taken.
 				String message = "Made image";
@@ -167,9 +174,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 				message += ".";
 				microscope.stateChanged(message);
 				
-				// close shutter
-				if(channel != null)
-					channel.closeShutter(accessID);
+				
 			}
 			catch(InterruptedException e)
 			{
@@ -1011,6 +1016,10 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 	@Override
 	public ImageEvent<?> makeImage(ChannelInternal channel, double exposure, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
 	{
+		return makeImage(channel, exposure, accessID, true);
+	}
+	private ImageEvent<?> makeImage(ChannelInternal channel, double exposure, int accessID, boolean retry) throws MicroscopeException, MicroscopeLockedException, InterruptedException, SettingException
+	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
 		// Get data from device
@@ -1021,6 +1030,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 		int bands;
 		Object imageDataRaw = null;
 		long imageCreationTime;
+		Exception error = null;
 		try
 		{
 			CMMCore core = microscope.startWrite(accessID);
@@ -1053,7 +1063,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			imageHeight = (int)core.getImageHeight();
 			bitDepth = (int)core.getImageBitDepth();
 			bands = (int)core.getNumberOfComponents();
-			// Workaround: Some cameras wrongly claim to have 3 bytes per pixel, although 4 is more reasonable...
+			// Workaround: Some cameras wrongly claim to have 3 bytes per pixel, although 4 is more reasonable (they might not use the fourth byte, however, still store each pixel as 4 byte...)
 			if(bytesPerPixel == 3)
 				bytesPerPixel = 4;
 			// Workaround: Band number seems not to be always correct. Thus correct manually for color images.
@@ -1068,7 +1078,8 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			}
 			catch(Exception e)
 			{
-				microscope.errorOccured("Couldn't get image from microscope although image should be available. Trying to recover...", e);
+				error = e;
+				microscope.stateChanged("Couldn't get image from microscope although image should be available ("+e.getMessage()+"). Trying to recover...");
 				for(int i = 0; i < 10; i++)
 				{
 					Thread.sleep(100);
@@ -1080,16 +1091,11 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 					}
 					catch(@SuppressWarnings("unused") Exception e2)
 					{
-						microscope.stateChanged("Recovery " + Integer.toString(i + 1) + " failed...");
+						microscope.stateChanged("Recovery " + Integer.toString(i + 1) + " of 10 failed...");
 						continue;
 					}
-					microscope.stateChanged("Recovery " + Integer.toString(i + 1) + " succeeded.");
+					microscope.stateChanged("Recovery " + Integer.toString(i + 1) + " of 10 succeeded.");
 					break;
-				}
-				if(imageDataRaw == null)
-				{
-					microscope.stateChanged("Recovery failed.");
-					throw new MicroscopeException("Couldn't get picture from microscope.", e);
 				}
 			}
 			// deactivate channel
@@ -1100,6 +1106,30 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 		{
 			deviceStateModified();
 			microscope.unlockWrite();
+		}
+		if(imageDataRaw == null)
+		{
+			// If we still don't have any image, something went seriously wrong and the image probably will never arrive.
+			// To still try to rescue the measurement, we repeat the whole image taking progress from the beginning (but only once).
+			
+			String message = "Camera signalled that image";
+			if(channel != null)
+				message += " in channel " + channel.getChannelGroupID() + "." + channel.getChannelID();
+			if(exposure > 0)
+			{
+				Formatter formatter = new Formatter();
+				message += " with exposure of " + formatter.format("%2.2f ms", exposure);
+				formatter.close();
+			}
+			message += " was made, but error occured when trying to obtain the image data from the camera and waiting additional time for the image data to show up did not help.";
+			
+			if(retry) 
+			{
+				microscope.errorOccured(message+". Trying to restart the image making process from the beginning one last time before finally giving up...", error);
+				return makeImage(channel, exposure, accessID, false);
+			}
+			microscope.errorOccured(message+". Since this happened two times in succession, this indicates a serious error in the hardware or the driver.", error);
+			throw new MicroscopeException(message+". Since this happened two times in succession, this indicates a serious error in the hardware or the driver.", error);
 		}
 		
 		// Create event object

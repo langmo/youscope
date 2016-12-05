@@ -678,6 +678,8 @@ class MicroscopeImpl implements MicroscopeInternal
 		{
 			lockWrite(accessID);
 			applyDeviceSettingAsync(setting, accessID);
+			if(Thread.interrupted())
+				throw new InterruptedException();
 			getDevice(setting.getDevice()).waitForDevice();
 		}
 		catch(DeviceException e)
@@ -714,6 +716,26 @@ class MicroscopeImpl implements MicroscopeInternal
 	@Override
 	public void applyDeviceSettings(DeviceSetting[] settings, int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException, SettingException
 	{
+		// Synchronous way: apply each setting one by one.
+		if(Thread.interrupted())
+			throw new InterruptedException();
+		try
+		{
+			lockWrite(accessID);
+			for(DeviceSetting setting : settings)
+			{
+				if(setting == null)
+					throw new SettingException("Device setting is null.");
+				applyDeviceSetting(setting, accessID);
+			}
+		}
+		finally
+		{
+			unlockWrite();
+		}
+		/*
+		Alternative way: apply first all device settings, and then wait for devices.
+		
 		try
 		{
 			lockWrite(accessID);
@@ -741,6 +763,7 @@ class MicroscopeImpl implements MicroscopeInternal
 		{
 			unlockWrite();
 		}
+		*/
 	}
 
 	@Override

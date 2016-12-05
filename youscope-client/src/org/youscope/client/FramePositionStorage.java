@@ -28,7 +28,7 @@ import org.youscope.clientinterfaces.StandardProperty;
 class FramePositionStorage
 {
     // Position loading and saving
-    private final static String FRAME_POSITION_FILE = "frame_positions.prop";
+    private final static String FRAME_POSITION_FILE = "configuration/frame_positions.prop";
     
     private final static String FRAME_POSTFIX_SEPARATOR = "__";
     
@@ -182,7 +182,8 @@ class FramePositionStorage
                 in.close();
             } catch (IOException e)
             {
-                ClientSystem.err.println("Could not load last settings. New settings might be generated.", e);
+                ClientSystem.err.println("Could not load frame position configuration file "+FRAME_POSITION_FILE+". A new file will be generated.", e);
+                saveToDisk();
                 return;
             }
         }

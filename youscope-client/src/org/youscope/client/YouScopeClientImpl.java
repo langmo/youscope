@@ -1373,7 +1373,7 @@ public class YouScopeClientImpl extends JFrame
 		int answer = JOptionPane.showConfirmDialog(this, "Should the program really quit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
 		if(answer == JOptionPane.NO_OPTION)
 			return;
-
+		
 		// Close all frames
 		// run several times, to ensure that frames which did not close because child frames were still active, which are now closed
 		// will close...
@@ -1403,6 +1403,9 @@ public class YouScopeClientImpl extends JFrame
 			if(answer == JOptionPane.NO_OPTION)
 				return;
 		}
+		
+		// Store frame positions (only does so if activated).
+		FramePositionStorage.getInstance().saveToDisk();
 		
 		dispose();
 		clientFinished();
