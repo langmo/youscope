@@ -152,7 +152,7 @@ class ConnectionEstablisher
 			{
 				Method addSearchPath = microManagerClass.getMethod("addSearchPath", new Class<?>[] {String.class});
 				addSearchPath.setAccessible(true);
-				System.out.println("Adding folder " + driverFolder.getAbsolutePath() + " to microManger path.");
+				System.out.println("Adding folder " + driverFolder.getAbsolutePath() + " to driver path.");
 				addSearchPath.invoke(microManager, new Object[] {driverFolder.getAbsolutePath()});
 			}
 			catch(Exception e)

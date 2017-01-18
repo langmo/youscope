@@ -197,7 +197,6 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 		{
 			microscope.unlockExclusiveWrite(accessID);
 		}
-		System.out.println("Added setting " + setting.toString() + " to activation settings of channel " + this.toString() + ".");
 	}
 
 	void addChannelOffSetting(DeviceSetting setting, int accessID) throws MicroscopeLockedException, SettingException

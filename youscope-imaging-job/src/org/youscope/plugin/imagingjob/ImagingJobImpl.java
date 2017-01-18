@@ -20,7 +20,7 @@ import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.Microscope;
 
 /**
- * Implementation of a focussing job.
+ * Implementation of the basic imaging job.
  * @author Moritz Lang
  */
 class ImagingJobImpl extends JobAdapter implements ImagingJob

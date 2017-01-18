@@ -81,7 +81,6 @@ public class CustomSaveSetting extends ResourceAdapter<CustomSaveSettingConfigur
 		String baseFolder = saveSettingType.getBaseFolder();
 		if(baseFolder == null)
 			baseFolder = getConfiguration().getBaseFolder();
-		
 		return baseFolder + File.separator + FileNameMacroConverter.convertGeneralPath(saveSettingType.getBaseFolderExtension(), saveInformation);
 	}
 

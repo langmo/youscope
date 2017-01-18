@@ -215,8 +215,9 @@ public class TextTools {
 	public static String convertToFileName(String string)
 	{
 		string = string.replace(' ', '-').replaceAll("[^a-zA-Z0-9_\\-.]", "_");
-		if(Character.isDigit(string.charAt(0)))
-				return "_"+string;
+		// TODO: was there a reason to require file names not to being with a number?
+		//if(Character.isDigit(string.charAt(0)))
+		//		return "_"+string;
 		return string;
 	}
 }

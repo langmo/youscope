@@ -52,11 +52,28 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 	}
 
 	@Override
-	public void imageMade(final ImageEvent<?> e)
+	public void imageMade(final ImageEvent<?> event)
 	{
 		if(!supervisor.isReady())
 			return;
+		final String relativePath;
+		final String filePath;
+		final String fileType;
+		try {
+			relativePath = supervisor.getRelativeImagePath(event, imageSaveName);
+			filePath = supervisor.getFullImagePath(event, imageSaveName);
+			fileType = supervisor.getImageFileType(event, imageSaveName);
+		} catch (ResourceException | RemoteException e1) {
+			ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved since it could not be determined where or how to save the image.", e1);
+			return;
+		}
+		if(filePath == null || fileType == null || relativePath == null)
+		{
+			ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved since image file name was not defined.", null);
+			return;
+		}
 		
+		ServerSystem.out.println("Queuing image of type " + imageSaveName + " to be saved to " + filePath + ".");
 		FileSaverManager.execute(new Runnable()
 		{
 			@Override
@@ -64,7 +81,7 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 			{
 				try
 				{
-					saveImage(e);
+					saveImage(event, relativePath, filePath, fileType);
 				}
 				catch(RemoteException e)
 				{
@@ -74,7 +91,7 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 		});
 	}
 
-	private void saveImage(ImageEvent<?> event) throws RemoteException
+	private void saveImage(final ImageEvent<?> event, final String relativePath, final String filePath, final String fileType) throws RemoteException
 	{
 		// Convert image.
 		BufferedImage image = reusableImages.pollFirst();
@@ -89,24 +106,6 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 		}
 
 		// Save image
-		String relativePath;
-		String filePath;
-		String fileType;
-		try {
-			relativePath = supervisor.getRelativeImagePath(event, imageSaveName);
-			filePath = supervisor.getFullImagePath(event, imageSaveName);
-			fileType = supervisor.getImageFileType(event, imageSaveName);
-		} catch (ResourceException e1) {
-			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved since it could not be determined where or how to save the image.", e1);
-			reusableImages.offer(image);
-			return;
-		}
-		if(filePath == null || fileType == null || relativePath == null)
-		{
-			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved since image file name was not defined.", null);
-			reusableImages.offer(image);
-			return;
-		}
 		File file = new File(filePath);
 		File folder = file.getParentFile();
 		try
@@ -118,18 +117,18 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 				ServerSystem.out.println("Image of type " + imageSaveName + " saved to " + filePath + ".");
 			}
 			else
-				ServerSystem.err.println("Image of type " + imageSaveName + " could not be saved. Format \"" + fileType + "\" not supported!", null);
+				ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ". Format \"" + fileType + "\" not supported!", null);
 		}
 		catch(Exception e)
 		{
-			ServerSystem.err.println("New image of type " + imageSaveName + " could not be saved.", e);
+			ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ".", e);
 		}
 		reusableImages.offer(image);
 		// Save image metadata
 		try {
 			saveImageMetadataInList(event, relativePath, imageSaveName);
 		} catch (TableException e) {
-			ServerSystem.err.println("Metadata of image " + imageSaveName + " could not be saved in image table.", e);
+			ServerSystem.err.println("Metadata of image of type " + imageSaveName + " saved to " + filePath + " cannot be saved in image table.", e);
 		}
 	}
 
