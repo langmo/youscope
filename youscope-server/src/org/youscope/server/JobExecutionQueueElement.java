@@ -14,12 +14,10 @@ class JobExecutionQueueElement
 {
 	public final int			evaluationNumber;
 	public final Job	job;
-	public final long			measurementStartTime;
 
-	public JobExecutionQueueElement(Job job, int evaluationNumber, long measurementStartTime)
+	public JobExecutionQueueElement(Job job, int evaluationNumber)
 	{
 		this.job = job;
 		this.evaluationNumber = evaluationNumber;
-		this.measurementStartTime = measurementStartTime;
 	}
 }

@@ -1,11 +1,14 @@
 package org.youscope.uielements;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import javax.swing.JToolTip;
 import javax.swing.UIManager;
 
 import org.youscope.addon.AddonMetadata;
-import org.youscope.common.util.TextTools;
 import org.youscope.uielements.plaf.BasicAddonToolTipUI;
+
 import org.youscope.uielements.plaf.AddonToolTipUI;
 
 /**
@@ -72,7 +75,7 @@ public class AddonToolTip extends JToolTip
 	}
 	
 	/**
-	 * Constructor. Initializes the tooltip with the information in the provided metadata. Sets the wiki page name to the name of the addon, with spaces and special characters replaced by underscores (see {@link TextTools#convertToFileName(String)}).
+	 * Constructor. Initializes the tooltip with the information in the provided metadata. 
 	 * @param addonMetadata The metadata of the addon this tool tip describes.
 	 */
 	public AddonToolTip(AddonMetadata addonMetadata)
@@ -81,12 +84,16 @@ public class AddonToolTip extends JToolTip
 		updateUI();		
 	}
 	/**
-	 * Initializes the tooltip with the information in the provided metadata. Sets the wiki page name to the name of the addon, with spaces and special characters replaced by underscores (see {@link TextTools#convertToFileName(String)}).
+	 * Initializes the tooltip with the information in the provided metadata. Sets the wiki page name to the name of the addon, with special characters encoded by {@link URLEncoder#encode(String, String)}.
 	 * @param addonMetadata The metadata of the addon this tool tip describes.
 	 */
 	public void initialize(AddonMetadata addonMetadata)
 	{
-		setAddonWikiPage(TextTools.convertToFileName(addonMetadata.getName()));
+		try {
+			setAddonWikiPage(URLEncoder.encode(addonMetadata.getName(), "UTF-8"));
+		} catch (@SuppressWarnings("unused") UnsupportedEncodingException e) {
+			setAddonWikiPage(null);
+		}
 		setAddonName(addonMetadata.getName());
 		String description = addonMetadata.getDescription();
 		if(description == null)

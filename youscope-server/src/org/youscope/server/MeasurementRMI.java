@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.MeasurementState;
@@ -55,35 +56,30 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public boolean isRunning()
+	public void startMeasurement() throws MeasurementException
     {
-        return measurement.isRunning();
-    }
-
-    @Override
-	public void startMeasurement()
-    {
+    	MeasurementState state = measurement.getState();
+    	if(state != MeasurementState.READY && state != MeasurementState.UNINITIALIZED)
+    		throw new MeasurementException("Measurement must be in state Ready or Uninitialized to be started. Current state: "+state.toString()+".");
         measurementManager.addMeasurement(measurement);
     }
 
     @Override
-	public void stopMeasurement()
+	public void stopMeasurement() throws MeasurementException
     {
         measurement.stopMeasurement();
         measurementManager.removeMeasurement(measurement);
     }
 
     @Override
-	public void waitForMeasurementFinish()
-    {
-        measurement.waitForMeasurementFinish();
-    }
-
-    @Override
 	public void interruptMeasurement()
     {
-        measurement.stopMeasurement();
-        measurementManager.interruptMeasurement(measurement);
+    	try {
+			measurement.stopMeasurement();
+		} catch (@SuppressWarnings("unused") MeasurementException e) {
+			// do nothing, only thrown if execution is not currently active.
+		}
+    	measurementManager.interruptMeasurement(measurement);
     }
 
     @Override
@@ -202,13 +198,13 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public Date getStartTime()
+	public long getStartTime()
     {
         return measurement.getStartTime();
     }
 
     @Override
-	public Date getEndTime()
+	public long getEndTime()
     {
         return measurement.getEndTime();
     }
@@ -251,7 +247,7 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
 	@Override
-    public void setInitialMeasurementContextProperty(String identifier, Serializable property)
+    public void setInitialMeasurementContextProperty(String identifier, Serializable property) throws MeasurementRunningException
     {
         measurement.setInitialMeasurementContextProperty(identifier, property);
     }

@@ -4,49 +4,60 @@
 package org.youscope.common.measurement;
 
 /**
- * @author langmo
+ * The state of a measurement.
+ * @author Moritz Lang
  */
 public enum MeasurementState
 {
 	/**
-	 * The measurement is queued and will be executed when the microscope gets free.
+	 * The measurement is created and ready to be initialized.
+	 */
+	READY,
+	/**
+	 * The measurement is queued and will be executed (initialized) when the microscope gets free.
 	 */
 	QUEUED,
 	/**
-	 * The measurement was removed from the queue without having run. It may be started again.
+	 * The measurement is currently initializing (still uninitialized, but trying to initialize).
 	 */
-	UNQUEUED,
+	INITIALIZING,
+	/**
+	 * The measurement is initialized and can be started.
+	 */
+	INITIALIZED,
 	/**
 	 * The measurement is currently running.
 	 */
 	RUNNING,
 	/**
-	 * The measurement is finished and can be started again.
-	 */
-	FINISHED,
-	/**
-	 * The measurement is ready to be started.
-	 */
-	READY,
-	/**
-	 * During the execution of the measurement an error occurred. It stopped and may be started
-	 * again.
-	 */
-	ERROR,
-	/**
-	 * The measurement is trying to stop itself.
+	 * The measurement is currently finishing/stopping (still running, but trying to finish).
 	 */
 	STOPPING,
 	/**
-	 * The measurement is trying to interrupt itself
+	 * The measurement is finished/stopped and can be uninitialized.
 	 */
-	INTERRUPTING,
+	STOPPED,
 	/**
-	 * The measurement is currently initializing.
+	 * The measurement is currently uninitializing (i.e. finished, but trying to uninitialize).
 	 */
-	INITIALIZING,
+	UNINITIALIZING,
 	/**
-	 * The measurement is currently uninitializing.
+	 * The measurement uninitialized and can be initialized again. Functionally the same as {@link #READY}.
 	 */
-	UNINITIALIZING
+	UNINITIALIZED,
+	/**
+	 * The measurement is paused, and can be resumed again.
+	 */
+	PAUSED,
+	/**
+	 * During the execution of the measurement an error occurred. The measurement stopped and cannot be restarted, but must be constructed completely again.
+	 */
+	ERROR;
+	
+	
+	@Override
+	public String toString() 
+	{
+	   return super.name().toLowerCase();
+	}
 }

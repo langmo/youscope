@@ -5,7 +5,6 @@ package org.youscope.common.measurement;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Date;
 
 import org.youscope.common.Component;
 import org.youscope.common.microscope.DeviceSetting;
@@ -20,19 +19,12 @@ import org.youscope.common.task.MeasurementTask;
 public interface Measurement extends Component
 {
 	/**
-	 * Returns if measurement is currently running or not.
-	 * 
-	 * @return True if measurement is running, false otherwise.
-	 * @throws RemoteException
-	 */
-	boolean isRunning() throws RemoteException;
-
-	/**
      * Stops the execution of the measurement after all queued jobs were finished. Note: If measurement is queued, it gets disabled but not un-queued.
+	 * @throws MeasurementException 
      * 
      * @throws RemoteException
      */
-    void quickStopMeasurement() throws RemoteException;
+    void quickStopMeasurement() throws MeasurementException, RemoteException;
     /**
      * Sets a measurement context property. The measurement context of the measurement will be initialized upon measurement initialization to already
      * contain this context property. A measurement context property can be loaded and overwritten by any other measurement component in the measurement. Any property
@@ -40,9 +32,10 @@ public interface Measurement extends Component
      * 
      * @param identifier a short identifier for the property.
      * @param property The property which should be saved.
+     * @throws MeasurementRunningException 
      * @throws RemoteException
      */
-    void setInitialMeasurementContextProperty(String identifier, Serializable property) throws RemoteException;
+    void setInitialMeasurementContextProperty(String identifier, Serializable property) throws MeasurementRunningException, RemoteException;
 	/**
 	 * Returns the current state of the measurement.
 	 * 
@@ -54,24 +47,20 @@ public interface Measurement extends Component
 	/**
 	 * Starts the execution of the measurement. Note: If other measurements are already running, the
 	 * measurement gets queued.
+	 * @throws MeasurementException 
 	 * 
 	 * @throws RemoteException
 	 */
-	void startMeasurement() throws RemoteException;
+	void startMeasurement() throws MeasurementException, RemoteException;
 
 	/**
 	 * Stops the execution of the measurement after all queued jobs were finished. Note: If
 	 * measurement is queued, it gets disabled but not un-queued.
+	 * @throws MeasurementException 
 	 * 
 	 * @throws RemoteException
 	 */
-	void stopMeasurement() throws RemoteException;
-
-	/**
-	 * Stops the execution of the calling thread until the measurement is finished.
-	 * @throws RemoteException
-	 */
-	void waitForMeasurementFinish() throws RemoteException;
+	void stopMeasurement() throws MeasurementException, RemoteException;
 
 	/**
 	 * Interrupts the execution of the measurement. All queued jobs are discarded.
@@ -115,18 +104,18 @@ public interface Measurement extends Component
 	int getRuntime() throws RemoteException;
 
 	/**
-	 * Returns the time when the last execution of this measurement started, or null, if it did not yet start.
+	 * Returns the time when the last execution of this measurement started (as returned by {@link System#currentTimeMillis()}), or -1 if it did not yet start or if unknown.
 	 * @return Last measurement start time.
 	 * @throws RemoteException
 	 */
-	Date getStartTime() throws RemoteException;
+	long getStartTime() throws RemoteException;
 
 	/**
-	 * Returns the time when the last execution of this measurement stopped regularly, or null, if it did not yet stop regularly.
+	 * Returns the time when the last execution of this measurement stopped  (as returned by {@link System#currentTimeMillis()}), or -1 if it did not yet stop or if unknown.
 	 * @return Last measurement stop time.
 	 * @throws RemoteException
 	 */
-	Date getEndTime() throws RemoteException;
+	long getEndTime() throws RemoteException;
 
 	/**
 	 * Sets if write access to the microscope is locked during the measurement.

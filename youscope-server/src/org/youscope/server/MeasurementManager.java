@@ -4,13 +4,16 @@
 package org.youscope.server;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
 import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementException;
-import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.MicroscopeStateListener;
@@ -25,12 +28,6 @@ class MeasurementManager
 	 * at a given time.
 	 */
 	private volatile Vector<MeasurementImpl>			measurementQueue			= new Vector<MeasurementImpl>();
-
-	/**
-	 * Queue for the jobs. Jobs are added by the currently running measurement and processed first
-	 * in first out.
-	 */
-	private volatile Vector<JobExecutionQueueElement>	jobQueue					= new Vector<JobExecutionQueueElement>();
 
 	/**
 	 * The main worker thread.
@@ -48,21 +45,15 @@ class MeasurementManager
 	private volatile boolean							shouldStop					= false;
 
 	/**
-	 * Indicating if currently a measurement is processed or if the worker thread is waiting for new
-	 * measurements to arrive.
-	 */
-	private volatile boolean							isProcessingMeasurement		= false;
-
-	/**
 	 * The currently running measurement.
 	 */
-	private volatile MeasurementImpl					currentMeasurement			= null;
-
+	private volatile MeasurementSupervision currentMeasurement = null;
+	
 	/**
 	 * All listener which get notified if there is a change in the current measurement or in the
 	 * measurement queue.
 	 */
-	protected Vector<MicroscopeStateListener>			queueListener				= new Vector<MicroscopeStateListener>();
+	private ArrayList<MicroscopeStateListener>			queueListeners				= new ArrayList<MicroscopeStateListener>();
 
 	/**
 	 * Constructor
@@ -81,9 +72,9 @@ class MeasurementManager
 	 */
 	void addQueueListener(MicroscopeStateListener listener)
 	{
-		synchronized(queueListener)
+		synchronized(queueListeners)
 		{
-			queueListener.addElement(listener);
+			queueListeners.add(listener);
 		}
 	}
 
@@ -94,29 +85,29 @@ class MeasurementManager
 	 */
 	void removeQueueListener(MicroscopeStateListener listener)
 	{
-		synchronized(queueListener)
+		synchronized(queueListeners)
 		{
-			queueListener.removeElement(listener);
+			queueListeners.remove(listener);
 		}
 	}
 
 	/**
 	 * Used internally to notify all queue listener that the queue changed.
 	 */
-	private void signalQueueChanged()
+	private void notifyQueueChanged()
 	{
-		synchronized(queueListener)
+		synchronized(queueListeners)
 		{
-			for(int i = 0; i < queueListener.size(); i++)
+			for(Iterator<MicroscopeStateListener> iterator = queueListeners.iterator(); iterator.hasNext();)
 			{
-				MicroscopeStateListener listener = queueListener.elementAt(i);
+				MicroscopeStateListener listener = iterator.next();
 				try
 				{
 					listener.measurementQueueChanged();
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{
-					queueListener.removeElementAt(i);
+					iterator.remove();
 				}
 			}
 		}
@@ -125,20 +116,20 @@ class MeasurementManager
 	/**
 	 * Used internally to notify all queue listener that the current measurement changed.
 	 */
-	private void signalCurrentMeasurementChanged()
+	private void notifyCurrentMeasurementChanged()
 	{
-		synchronized(queueListener)
+		synchronized(queueListeners)
 		{
-			for(int i = 0; i < queueListener.size(); i++)
+			for(Iterator<MicroscopeStateListener> iterator = queueListeners.iterator(); iterator.hasNext();)
 			{
-				MicroscopeStateListener listener = queueListener.elementAt(i);
+				MicroscopeStateListener listener = iterator.next();
 				try
 				{
 					listener.currentMeasurementChanged();
 				}
 				catch(@SuppressWarnings("unused") RemoteException e)
 				{
-					queueListener.removeElementAt(i);
+					iterator.remove();
 				}
 			}
 		}
@@ -148,16 +139,16 @@ class MeasurementManager
 	 * Adds a measurement to the measurement queue and eventually starts it automatically.
 	 * 
 	 * @param measurement The measurement to add.
+	 * @throws MeasurementException 
 	 */
-	void addMeasurement(MeasurementImpl measurement)
+	void addMeasurement(MeasurementImpl measurement) throws MeasurementException
 	{
-		int queueLength;
 		boolean currentlyRunningMeasurement;
 		synchronized(this)
 		{
+			currentlyRunningMeasurement =  currentMeasurement != null || !measurementQueue.isEmpty();
+			measurement.queueMeasurement();
 			measurementQueue.add(measurement);
-			queueLength = measurementQueue.size();
-			currentlyRunningMeasurement = isProcessingMeasurement;
 			notifyAll();
 		}
 
@@ -165,13 +156,11 @@ class MeasurementManager
 		// running, than this measurement will be
 		// started immediately. If this is not true, inform the measurement that its execution will
 		// be delayed.
-		if(queueLength > 1 || currentlyRunningMeasurement)
+		if(currentlyRunningMeasurement)
 		{
-			measurement.measurementQueued();
-			ServerSystem.out.println("Queued measurement \"" + measurement.getName() + "\" (" + Integer.toString(queueLength) + " measurements currently in the queue).");
+			ServerSystem.out.println("Queued measurement \"" + measurement.getName() + "\" for future execution when currently running measurement is finished.");
 		}
-
-		signalQueueChanged();
+		notifyQueueChanged();
 	}
 
 	/**
@@ -179,8 +168,9 @@ class MeasurementManager
 	 * currently running.
 	 * 
 	 * @param measurement
+	 * @throws MeasurementException 
 	 */
-	void removeMeasurement(MeasurementImpl measurement)
+	void removeMeasurement(MeasurementImpl measurement) throws MeasurementException
 	{
 		boolean unqueued;
 		synchronized(this)
@@ -189,8 +179,8 @@ class MeasurementManager
 		}
 		if(unqueued)
 		{
-			measurement.measurementUnqueued();
-			signalQueueChanged();
+			notifyQueueChanged();
+			measurement.unqueueMeasurement();
 			ServerSystem.out.println("Unqueued measurement \"" + measurement.getName() + "\" (" + Integer.toString(measurementQueue.size()) + " measurements currently in the queue).");
 		}
 	}
@@ -224,13 +214,12 @@ class MeasurementManager
 					}
 
 					// Set current measurement to newly arrived measurement
-					currentMeasurement = measurementQueue.remove(0);
-					isProcessingMeasurement = true;
+					currentMeasurement = new MeasurementSupervision(measurementQueue.remove(0));
 				}
 
 				ServerSystem.out.println("Starting measurement \"" + currentMeasurement.getName() + "\".");
-				signalQueueChanged();
-				signalCurrentMeasurementChanged();
+				notifyQueueChanged();
+				notifyCurrentMeasurementChanged();
 
 				// Lock microscope
 				boolean lockMicroscopeWhileRunning = currentMeasurement.isLockMicroscopeWhileRunning();
@@ -249,12 +238,8 @@ class MeasurementManager
 						}
 					}
 
-					// Initialize measurement
-					currentMeasurement.initializeMeasurement(microscope);
-
-					// Run measurement
-					MeasurementSupervision supervision = new MeasurementSupervision(currentMeasurement);
-					measurementThread = currentMeasurement.runMeasurement(supervision);
+					// Start measurement
+					currentMeasurement.startupMeasurement(microscope);
 
 					// Check if thread got interrupted.
 					if(Thread.interrupted())
@@ -270,28 +255,31 @@ class MeasurementManager
 						synchronized(this)
 						{
 							// Wait until new job arrives or measurement is finished.
-							while(jobQueue.isEmpty() && currentMeasurement.isRunning())
+							while(currentMeasurement.isJobQueueEmpty() && currentMeasurement.isRunning())
 							{
 								wait();
 							}
 
-							if(jobQueue.isEmpty())
+							if(!currentMeasurement.isRunning())
 							{
 								// Current measurement finished. Stop the inner loop.
-								currentMeasurement.uninitializeMeasurement(microscope);
+								currentMeasurement.shutdownMeasurement(microscope);
 								break;
 							}
 
 							// Set current job to newly arrived job
-							currentJob = jobQueue.remove(0);
+							currentJob = currentMeasurement.unqueueJob();
 						}
 
-						currentJob.job.executeJob(new ExecutionInformation(currentJob.measurementStartTime, currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
-
-						// Check if thread got interrupted.
-						if(Thread.interrupted())
+						if(currentJob != null)
 						{
-							throw new InterruptedException();
+							currentJob.job.executeJob(new ExecutionInformation(currentMeasurement.getMeasurementStartTime(), currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
+	
+							// Check if thread got interrupted.
+							if(Thread.interrupted())
+							{
+								throw new InterruptedException();
+							}
 						}
 					}
 				}
@@ -308,70 +296,29 @@ class MeasurementManager
 							ServerSystem.err.println("Could not give exclusive write access to microscope back after measurement execution finished.", e);
 						}
 					}
-					jobQueue.clear();
-					isProcessingMeasurement = false;
 				}
 
 				// Measurement finished normally.
 				ServerSystem.out.println("Finished measurement \"" + currentMeasurement.getName() + "\".");
 			}
-			catch(@SuppressWarnings("unused") InterruptedException e)
+			catch(InterruptedException e)
 			{
 				// User wants to stop the current measurement OR quit the program. We here only stop
 				// the measurement, if
 				// user wants to quit completely, he has also set shouldStop = true and the loop
 				// won't be executed again...
-				if(measurementThread != null)
-					measurementThread.interrupt();
-				if(currentMeasurement != null)
-					ServerSystem.out.println("Processing of measurement \"" + currentMeasurement.getName() + "\" was interrupted.");
-			}
-			catch(JobException e)
-			{
-				if(measurementThread != null)
-					measurementThread.interrupt();
 				if(currentMeasurement != null)
 				{
-					ServerSystem.err.println("One of the jobs of measurement \"" + currentMeasurement.getName() + "\" produced an error and thus the measurement was interrupted.", e);
-					currentMeasurement.measurementFailed(e);
+					currentMeasurement.failMeasurement(e);
+					ServerSystem.out.println("Measurement \"" + currentMeasurement.getName() + "\" was interrupted.");
 				}
 			}
-			catch(MeasurementException e)
-			{
-				if(measurementThread != null)
-					measurementThread.interrupt();
-				if(currentMeasurement != null)
-				{
-					ServerSystem.err.println("The measurement \"" + currentMeasurement.getName() + "\" produced an error and thus was interrupted.", e);
-					currentMeasurement.measurementFailed(e);
-				}
-			}
-			catch(MeasurementRunningException e)
+			catch(JobException | MeasurementException | RemoteException | RuntimeException e)
 			{
 				if(currentMeasurement != null)
 				{
-					ServerSystem.err.println("The measurement \"" + currentMeasurement.getName() + "\" should have been started, however, was already running. Do not restart a measurement before it was finished.", e);
-					currentMeasurement.measurementFailed(e);
-				}
-			}
-			catch(RemoteException e)
-			{
-				if(measurementThread != null)
-					measurementThread.interrupt();
-				if(currentMeasurement != null)
-				{
-					ServerSystem.err.println("Measurement \"" + currentMeasurement.getName() + "\" had problems to remotely communicate with the microscope and thus was interrupted.", e);
-					currentMeasurement.measurementFailed(null);
-				}
-			}
-			catch(RuntimeException e) 
-			{
-				if(measurementThread != null)
-					measurementThread.interrupt();
-				if(currentMeasurement != null)
-				{
-					ServerSystem.err.println("Measurement \"" + currentMeasurement.getName() + "\" produced an unexpected error and, thus, the measurement was interrupted.", e);
-					currentMeasurement.measurementFailed(e);
+					currentMeasurement.failMeasurement(e);
+					ServerSystem.err.println("Measurement \"" + currentMeasurement.getName() + "\" produced an error and thus the measurement was interrupted.", e);
 				}
 			}
 			finally
@@ -380,7 +327,7 @@ class MeasurementManager
 				measurementThread = null;
 				currentMeasurement = null;
 			}
-			signalCurrentMeasurementChanged();
+			notifyCurrentMeasurementChanged();
 
 			// Go out of the loop if signal was send.
 			synchronized(this)
@@ -399,45 +346,65 @@ class MeasurementManager
 	}
 
 	/**
-	 * Class to monitor state of a measurement.
+	 * Helper class to simplify access to {@link MeasurementImpl} during measurement processing.
 	 * 
-	 * @author langmo
+	 * @author Moritz Lang
 	 */
-	class MeasurementSupervision implements MeasurementControlListener
+	private class MeasurementSupervision
 	{
-		private MeasurementImpl	measurement;
-
+		private final MeasurementImpl	measurement;
 		MeasurementSupervision(MeasurementImpl measurement)
 		{
 			this.measurement = measurement;
 		}
 
-		@Override
-		public void measurementFinished()
-		{
-			synchronized(MeasurementManager.this)
-			{
-				MeasurementManager.this.notifyAll();
-			}
+		public MeasurementContext getMeasurementContext() {
+			return measurement.getMeasurementContext();
 		}
 
-		@Override
-		public void addJobToExecutionQueue(JobExecutionQueueElement job)
-		{
-			if(measurement.isRunning())
-				addElementaryJob(job);
+		public void failMeasurement(Exception e) {
+			measurement.failMeasurement(e);
 		}
-	}
 
-	/**
-	 * Internally used if a measurement wants to start (queue) a new job.
-	 * 
-	 * @param job The job to start.
-	 */
-	synchronized void addElementaryJob(JobExecutionQueueElement job)
-	{
-		jobQueue.add(job);
-		notifyAll();
+		public long getMeasurementStartTime() {
+			return measurement.getStartTime();
+		}
+
+		boolean isMeasurement(MeasurementImpl measurement)
+		{
+			return this.measurement == measurement;
+		}
+
+		boolean isRunning()
+		{
+			return measurement.getState() == MeasurementState.RUNNING;
+		}
+		boolean isLockMicroscopeWhileRunning()
+		{
+			return measurement.isLockMicroscopeWhileRunning();
+		}
+		String getName()
+		{
+			return measurement.getName();
+		}
+		void startupMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
+		{
+			measurement.startupMeasurement(microscope);
+		}
+		void shutdownMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
+		{
+			measurement.shutdownMeasurement(microscope);
+		}
+		boolean isJobQueueEmpty()
+		{
+			MeasurementJobQueue queue = measurement.getJobQueue();
+			return queue == null || queue.isJobQueueEmpty();
+		}
+		JobExecutionQueueElement unqueueJob()
+		{
+			MeasurementJobQueue queue = measurement.getJobQueue();
+			return queue == null ? null : queue.unqueueJob();
+		}
 	}
 
 	/**
@@ -450,28 +417,18 @@ class MeasurementManager
 	{
 		if(measurement == null)
 			throw new NullPointerException();
-		if(currentMeasurement == null || currentMeasurement != measurement)
+		if(currentMeasurement == null || !currentMeasurement.isMeasurement(measurement))
 		{
 			// Measurement is not currently running. Just remove it from the queue.
-			removeMeasurement(measurement);
+			try {
+				removeMeasurement(measurement);
+			} catch (@SuppressWarnings("unused") MeasurementException e) {
+				// do nothing. Just means that the measurement had an error, but unqueing worked.
+			}
 			return;
 		}
 		interruptCurrentMeasurement();
 	}
-	synchronized void quickStopMeasurement(MeasurementImpl measurement)
-    {
-        if (measurement == null)
-            throw new NullPointerException();
-        if (currentMeasurement == null || currentMeasurement != measurement)
-        {
-            // Measurement is not currently running. Just remove it from the queue.
-            removeMeasurement(measurement);
-            return;
-        }
-       
-        jobQueue.clear();
-        notifyAll();
-    }
 
 	/**
 	 * Interrupts the currently running measurement. If no measurement is running, nothing happens.
@@ -487,7 +444,7 @@ class MeasurementManager
 			{
 				currentMeasurement = null;
 			}
-			signalCurrentMeasurementChanged();
+			notifyCurrentMeasurementChanged();
 			return;
 		}
 		measurementManagerThread.interrupt();
@@ -518,11 +475,12 @@ class MeasurementManager
 	 * @return Currently running measurement.
 	 * @throws RemoteException
 	 */
-	synchronized Measurement getCurrentMeasurement() throws RemoteException
+	Measurement getCurrentMeasurement() throws RemoteException
 	{
-		if(currentMeasurement == null)
+		MeasurementSupervision measurement = currentMeasurement;
+		if(measurement == null)
 			return null;
-		return new MeasurementRMI(currentMeasurement, this);
+		return new MeasurementRMI(measurement.measurement, this);
 	}
 
 	/**

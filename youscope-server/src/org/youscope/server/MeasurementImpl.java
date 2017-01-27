@@ -10,8 +10,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,18 +26,19 @@ import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.TaskException;
 import org.youscope.common.task.TaskListener;
+import org.youscope.common.task.TaskState;
 
 /**
  * @author Moritz Lang
  */
 class MeasurementImpl
 {
-	private volatile boolean						running						= false;
-
-	private volatile Vector<MeasurementListener>	measurementListeners		= new Vector<MeasurementListener>();
+	private volatile MeasurementJobQueue jobQueue = null;
+	
+	private volatile ArrayList<MeasurementListener>	measurementListeners		= new ArrayList<MeasurementListener>();
 
 	private volatile int							measurementRuntime			= -1;
 
@@ -47,7 +48,6 @@ class MeasurementImpl
 
 	// True if the current measurement should shut down.
 	private volatile boolean						shouldMeasurementStop		= false;
-	private volatile boolean shouldMeasurementQuickStop = false;
 
 	DeviceSetting[]								startUpDeviceSettings		= new DeviceSetting[0];
 
@@ -57,11 +57,11 @@ class MeasurementImpl
 
 	private String									userDefinedType				= "";
 
-	private MeasurementState						measurementState			= MeasurementState.READY;
+	private volatile MeasurementState						measurementState			= MeasurementState.READY;
 
-	private Date									startTime					= null;
+	private long									measurementStartTime					= -1;
 
-	private Date									endTime						= null;
+	private long									measurementEndTime						= -1;
 	
 	private final MeasurementContextImpl measurementContext = new MeasurementContextImpl(this);
 	
@@ -71,11 +71,17 @@ class MeasurementImpl
 	
 	private final UUID uniqueIdentifier = UUID.randomUUID();
 	
+	/**
+	 * Measurement with infinite runtime.
+	 */
 	MeasurementImpl()
 	{
 		this(-1);
 	}
-
+	/**
+	 * Measurement which stops after a certain runtime. Set runtime to negative values for infinite runtime.
+	 * @param measurementRuntime time, in ms, after which measurement should stop.
+	 */
 	MeasurementImpl(int measurementRuntime)
 	{
 		this.measurementRuntime = measurementRuntime;
@@ -85,47 +91,16 @@ class MeasurementImpl
         return measurementContext;
     }
 
+	MeasurementJobQueue getJobQueue()
+	{
+		return jobQueue;
+	}
+	
 	public UUID getUUID() 
 	{
 		return uniqueIdentifier;
 	}
-	public boolean isRunning()
-	{
-		return running;
-	}
-	
-	public synchronized void quickStopMeasurement()
-    {
-        shouldMeasurementQuickStop = true;
-        stopMeasurement();
-    }
-	
-	void measurementStructureModified()
-    {
-        MeasurementListener[] listeners = measurementListeners.toArray(new MeasurementListener[0]);
-        for (MeasurementListener l : listeners)
-        {
-            try
-            {
-                l.measurementStructureModified();
-            } catch (RemoteException e)
-            {
-                ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-                measurementListeners.remove(l);
-            }
-        }
-    }
-
-	private synchronized void setRunning(boolean running)
-	{
-		this.running = running;
-		if(running)
-			startTime = new Date();
-		else
-			endTime = new Date();
-		notifyAll();
-	}
-	
+		
 	public void addMessageListener(MessageListener writer)
 	{
 		synchronized(messageWriters)
@@ -161,15 +136,69 @@ class MeasurementImpl
 		}
 	}
 
-	private synchronized void assertRunning() throws MeasurementRunningException
+	/**
+	 * Sets the state of the measurement and notifies all listeners.
+	 * Does nothing if the state remained the same, or if the current state is {@link MeasurementState#ERROR}.
+	 * @param state New state of the measurement.
+	 */
+	private void toState(MeasurementState state)
 	{
-		if(isRunning())
+		MeasurementState oldState;
+		synchronized(this)
+		{
+			oldState = this.measurementState;
+			// prevent error state from being accidentially cleared.
+			if(oldState == MeasurementState.ERROR)
+				state = MeasurementState.ERROR;
+			this.measurementState = state;
+		}
+		if(oldState != state)
+			notifyMeasurementStateChanged(oldState, state);
+	}
+	/**
+	 * Sets the measurement state to {@link MeasurementState#ERROR}, notifies all listeners of the state change, notifies all listeners of the error, and returns the exception (e.g. to be used in throws).
+	 * @param e Exception which occurred.
+	 * @return The exception gotten as a parameter.
+	 */
+	private <T extends Exception> T toErrorState(T e)
+	{
+		toState(MeasurementState.ERROR);
+		notifyMeasurementError(e);
+		return e;
+	}
+	
+	private void assertCorrectState(String errorMessage, MeasurementState... allowedStates) throws MeasurementException
+	{
+		MeasurementState state = this.measurementState;
+		for(MeasurementState allowedState : allowedStates)
+		{
+			if(state == allowedState)
+				return;
+		}
+		StringBuilder message = new StringBuilder(errorMessage);
+		message.append(" Expected state: ");
+		for(int i=0; i<allowedStates.length; i++)
+		{
+			if(i>0 && i==allowedStates.length-1)
+				message.append(" or ");
+			else if(i>0)
+				message.append(", ");
+			message.append(allowedStates[i].toString());
+		}
+		message.append(". Current state: "+state.toString()+".");
+		throw new MeasurementException(message.toString());
+	}
+	
+	private void assertEditable() throws MeasurementRunningException
+	{
+		MeasurementState state = this.measurementState;
+		if(state != MeasurementState.READY && state != MeasurementState.UNINITIALIZED && state != MeasurementState.QUEUED)
 			throw new MeasurementRunningException();
 	}
 
 	private synchronized void addTask(MeasurementTaskImpl task) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		tasks.add(task);
 	}
 
@@ -180,7 +209,7 @@ class MeasurementImpl
 
 	synchronized void setTypeIdentifier(String type) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		userDefinedType = type;
 	}
 
@@ -188,57 +217,70 @@ class MeasurementImpl
 	{
 		return userDefinedType;
 	}
-
-	synchronized void initializeMeasurement(Microscope microscope) throws RemoteException, MeasurementException, InterruptedException, MeasurementRunningException
+	/**
+	 * Sets the state of the measurement to {@link MeasurementState#QUEUED}.
+	 * Should only be called by {@link MeasurementManager}.
+	 */
+	synchronized void queueMeasurement() throws MeasurementException 
 	{
-		assertRunning();
-		sendMessage("Starting initializing measurement.");
+		assertCorrectState("Cannot queue measurement.", MeasurementState.READY, MeasurementState.UNINITIALIZED, MeasurementState.PAUSED);
+		toState(MeasurementState.QUEUED);
+	}
+	/**
+	 * Sets the state of the measurement to {@link MeasurementState#READY}.
+	 * Should only be called by {@link MeasurementManager}.
+	 */
+	synchronized void unqueueMeasurement() throws MeasurementException 
+	{
+		assertCorrectState("Cannot unqueue measurement.", MeasurementState.QUEUED);
+		toState(MeasurementState.READY);
+	}
+	/**
+	 * Interrupts the measurement, sets it to error state, and notifies all listeners.
+	 * Should only be called by {@link MeasurementManager#runMeasurements()} when processing of the measurement failed.
+	 * @param e
+	 */
+	synchronized void failMeasurement(Exception e) 
+	{
+		toErrorState(e);
+		stopMeasurement();
+	}
+	
+	private synchronized void initializeMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
+	{
+		assertCorrectState("Cannot initialize measurement.", MeasurementState.READY, MeasurementState.UNINITIALIZED, MeasurementState.QUEUED);
 		
-		measurementState = MeasurementState.INITIALIZING;
-		for(int i = 0; i < measurementListeners.size(); i++)
-		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
-			{
-				listener.measurementInitializing();
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
-		}
-		
+		toState(MeasurementState.INITIALIZING);
+		sendMessage("Initializing measurement...");
+		jobQueue = new MeasurementJobQueue();
+					
 		// Setup empty measurement context
         measurementContext.clear();
-        synchronized (initialMeasurementContextProperties)
+        for (Map.Entry<String, Serializable> entry : initialMeasurementContextProperties.entrySet())
         {
-            for (Map.Entry<String, Serializable> entry : initialMeasurementContextProperties.entrySet())
-            {
-            	Serializable clone;
-            	// we want to make a copy of the serializable object. However, we cannot assume that it implements Cloneable. Thus, we simply
-            	// serializa and deserialize it, which has the same effect.
-            	
-            	try
-            	{
-	            	ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-	            	ObjectOutputStream out = new ObjectOutputStream(outStream);
-	                out.writeObject(entry.getValue());
-	                out.close();
-	                ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-	                ObjectInputStream in = new ObjectInputStream(inStream);
-	                clone = (Serializable) in.readObject();
-	                in.close();
-            	}
-            	catch(Exception e)
-            	{
-            		throw new MeasurementException("Serialization of initial measurement context property " + entry.getKey() + " failed. Is the context property not only implementing Serializable, but also follow the rules what is allowed and what not when implementing Serializable?", e);
-            	}
-            	
-                measurementContext.setProperty(entry.getKey(), clone);
-            }
+        	Serializable clone;
+        	// we want to make a copy of the serializable object. However, we cannot assume that it implements Cloneable. Thus, we simply
+        	// serializa and deserialize it, which has the same effect.
+        	
+        	try
+        	{
+            	ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            	ObjectOutputStream out = new ObjectOutputStream(outStream);
+                out.writeObject(entry.getValue());
+                out.close();
+                ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+                ObjectInputStream in = new ObjectInputStream(inStream);
+                clone = (Serializable) in.readObject();
+                in.close();
+        	}
+        	catch(Exception e)
+        	{
+        		throw toErrorState(new MeasurementException("Serialization of initial measurement context property " + entry.getKey() + " failed. Is the context property not only implementing Serializable, but also follow the rules what is allowed and what not when implementing Serializable?", e));
+        	}
+        	
+            measurementContext.setProperty(entry.getKey(), clone);
         }
+
 
 		// Process startup settings
 		if(startUpDeviceSettings != null && startUpDeviceSettings.length > 0)
@@ -249,11 +291,11 @@ class MeasurementImpl
 			}
 			catch(Exception e)
 			{
-				throw new MeasurementException("Could not apply measurement start settings.", e);
+				throw toErrorState(new MeasurementException("Could not apply measurement startup settings.", e));
 			}
 			// Stop if measurement got interrupted
 			if(Thread.interrupted())
-				throw new InterruptedException();
+				throw toErrorState(new InterruptedException());
 		}
 		// Initialize tasks and their jobs
 		for(MeasurementTaskImpl task : tasks)
@@ -264,34 +306,23 @@ class MeasurementImpl
 			}
 			catch(Exception e)
 			{
-				throw new MeasurementException("Could not initialize all tasks of measurement.", e);
+				throw toErrorState(new MeasurementException("Could not initialize all tasks of measurement.", e));
 			}
 			if(Thread.interrupted())
-				throw new InterruptedException();
+				throw toErrorState(new InterruptedException());
 		}
-		
+		toState(MeasurementState.INITIALIZED);
 		sendMessage("Finished initializing measurement.");
 	}
 
-	void uninitializeMeasurement(Microscope microscope) throws RemoteException, MeasurementException, InterruptedException
+	synchronized void uninitializeMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
 	{
-		sendMessage("Starting uninitializing measurement.");
+		assertCorrectState("Cannot uninitialize measurement.", MeasurementState.STOPPED, MeasurementState.INITIALIZED, MeasurementState.PAUSED, MeasurementState.UNINITIALIZED);
+		if(measurementState == MeasurementState.UNINITIALIZED)
+			return;
 		
-		measurementState = MeasurementState.UNINITIALIZING;
-		for(int i = 0; i < measurementListeners.size(); i++)
-		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
-			{
-				listener.measurementUninitializing();
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
-		}
+		toState(MeasurementState.UNINITIALIZING);
+		sendMessage("Uninitializing measurement...");
 
 		// Uninitialize tasks and their jobs
 		for(MeasurementTaskImpl task : tasks)
@@ -302,10 +333,10 @@ class MeasurementImpl
 			}
 			catch(Exception e)
 			{
-				throw new MeasurementException("Could not uninitialize all tasks.", e);
+				throw toErrorState(new MeasurementException("Could not uninitialize all tasks.", e));
 			}
 			if(Thread.interrupted())
-				throw new InterruptedException();
+				throw toErrorState(new InterruptedException());
 		}
 
 		// Process shutdown settings
@@ -317,161 +348,70 @@ class MeasurementImpl
 			}
 			catch(Exception e)
 			{
-				throw new MeasurementException("Could not apply all measurement shutdown device settings.", e);
+				throw toErrorState(new MeasurementException("Could not apply all measurement shutdown device settings.", e));
 			}
 			// Stop if measurement got interrupted
 			if(Thread.interrupted())
-				throw new InterruptedException();
+				throw toErrorState(new InterruptedException());
 		}
 
-		// Notify all listeners that measurement stopped.
-		for(int i = 0; i < measurementListeners.size(); i++)
-		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
-			{
-				listener.measurementFinished();
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
-		}
-
+		toState(MeasurementState.UNINITIALIZED);
 		sendMessage("Finished uninitializing measurement.");
 	}
-
-	public boolean isMeasurementQuickStop()
-    {
-        return shouldMeasurementQuickStop;
-    }
 	
 	/**
-	 * This function is called by the measurement manager to run this measurement.
+	 * This function starts or resumes the measurement. It should only be called by {@link MeasurementManager#runMeasurements()}.
 	 * 
-	 * @param controlListener
-	 * @return The thread in which the measurement is running.
+	 * @throws InterruptedException 
 	 * @throws MeasurementRunningException
 	 * @throws RemoteException
 	 */
-	Thread runMeasurement(MeasurementControlListener controlListener) throws MeasurementRunningException
+	synchronized void startupMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
 	{
-		synchronized(this)
-		{
-			if(isRunning())
-				throw new MeasurementRunningException();
-			shouldMeasurementStop = false;
-			shouldMeasurementQuickStop = false;
-			setRunning(true);
-		}
-		sendMessage("Starting measurement execution.");
-
-		class MeasurementRunner implements Runnable
-		{
-			private final MeasurementControlListener	controlListener;
-
-			MeasurementRunner(MeasurementControlListener controlListener)
-			{
-				this.controlListener = controlListener;
-			}
-
-			@SuppressWarnings("unused")
-			@Override
-			public void run()
-			{
-				try
-				{
-					runMeasurementInternal(controlListener);
-				}
-				catch(MeasurementRunningException e)
-				{
-					// Should not happen.
-					ServerSystem.err.println("Measurement was already running and, thus, could not be run.", e);
-				}
-				catch(InterruptedException e)
-				{
-					// This exception is thrown when measurement is stopped by
-					// the measurement
-					// manager.
-					// Thus, this is "normal" behavior and we don't have to do
-					// anything.
-				}
-			}
-
-		}
-
-		Thread thread = new Thread(new MeasurementRunner(controlListener), "Measurement");
-		thread.start();
-		return thread;
+		// TODO: resume measurement
+		shouldMeasurementStop = false;
+		measurementStartTime = -1;
+		measurementEndTime = -1;
+		initializeMeasurement(microscope);
+		runMeasurement();
 	}
-
-	private void runMeasurementInternal(MeasurementControlListener controlListener) throws MeasurementRunningException, InterruptedException
+	/**
+	 * This function runs the uninitialization of the measurement, or methods to pause it. It should only be called by {@link MeasurementManager#runMeasurements()} after the measurement has stopped.
+	 * 
+	 * @throws InterruptedException 
+	 * @throws MeasurementRunningException
+	 * @throws RemoteException
+	 */
+	synchronized void shutdownMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
 	{
-		// Startup the measurement
-		try
-		{
-			measurementState = MeasurementState.RUNNING;
-			for(int i = 0; i < measurementListeners.size(); i++)
-			{
-				MeasurementListener listener = measurementListeners.elementAt(i);
-				try
-				{
-					listener.measurementStarted();
-				}
-				catch(RemoteException e)
-				{
-					ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-					measurementListeners.removeElementAt(i);
-					i--;
-				}
-			}
-
-			// Stop if measurement got interrupted
-			if(Thread.interrupted())
-				throw new InterruptedException();
-
-			// Process all tasks
-			runTasks(controlListener);
-
-			// Stop if measurement got interrupted
-			if(Thread.interrupted())
-				throw new InterruptedException();
-		}
-		finally
-		{
-			// Set state of the measurement to "not running".
-			setRunning(false);
-			// Inform the measurement manager, that this thread stopped, such
-			// that it can start a
-			// new measurement.
-			controlListener.measurementFinished();
-		}
-		sendMessage("Finished measurement execution.");
+		// TODO: pause measurement
+		uninitializeMeasurement(microscope);
 	}
-
-	private void runTasks(MeasurementControlListener controlListener) throws MeasurementRunningException, InterruptedException
+	
+	
+	private synchronized void runMeasurement() throws MeasurementException
 	{
-		// Wait until measurement should be finished
-		TaskListener taskFinishListener = new TaskListener()
-		{
+		assertCorrectState("Cannot start/run measurement.", MeasurementState.INITIALIZED);
+		
+		toState(MeasurementState.RUNNING);
+		sendMessage("Starting measurement...");
+		
+		// start tasks.
+		final TaskListener taskListener = new TaskListener() {
+			
 			@Override
-			public void taskStarted() throws RemoteException
-			{
-				// do nothing.
-			}
-
-			@Override
-			public void taskFinished() throws RemoteException
-			{
+			public void taskStateChanged(TaskState oldState, TaskState newState) throws RemoteException {
 				checkIfFinished();
 			}
-
+			
 			@Override
-			public void jobsSubmitted(int submissionNumber) throws RemoteException
-			{
+			public void taskExecuted(int executionNumber) throws RemoteException {
 				// do nothing.
+			}
+			
+			@Override
+			public void taskError(Exception e) throws RemoteException {
+				// do nothing
 			}
 		};
 		try
@@ -479,164 +419,195 @@ class MeasurementImpl
 			// Activate tasks
 			for(MeasurementTaskImpl task : tasks)
 			{
-				task.addTaskListener(taskFinishListener);
-				task.startTask(controlListener, startTime);
-			}
-			synchronized(this)
-			{
-				if(measurementRuntime > 0)
-				{
-					// Measurement should be stopped after a certain time. Set a
-					// timer for this
-					// task.
-					(new Timer("Measurement Stop Timer")).schedule(new TimerTask()
-					{
-						@Override
-						public void run()
-						{
-							stopMeasurement();
-						}
-					}, measurementRuntime);
-				}
-				while(!shouldMeasurementStop)
-				{
-					wait();
+				task.addTaskListener(taskListener);
+				try {
+					task.startTask(jobQueue);
+				} catch (TaskException e1) {
+					throw new MeasurementException("Error while starting tasks.", e1);
 				}
 			}
 		}
-		finally
+		catch(MeasurementException e)
 		{
-			// Stop tasks
 			for(MeasurementTaskImpl task : tasks)
 			{
-				task.cancelTask();
-				task.removeTaskListener(taskFinishListener);
+				try 
+				{
+					task.stopTask();
+				} 
+				catch (@SuppressWarnings("unused") TaskException e1) 
+				{
+					// do nothing, we already have an exception to throw
+				}
+				task.removeTaskListener(taskListener);
 			}
+			measurementStartTime = System.currentTimeMillis();
+			measurementEndTime = System.currentTimeMillis();
+			throw toErrorState(e);
 		}
+		
+		measurementStartTime = System.currentTimeMillis();
+		final Timer measurementStopTimer = new Timer("Measurement Stop Timer");
+		if(measurementRuntime > 0)
+		{
+			// Measurement should be stopped after a certain time. Set a
+			// timer to do so. 
+			measurementStopTimer.schedule(new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					synchronized(MeasurementImpl.this)
+					{
+						stopMeasurement();
+					}
+				}
+			}, measurementRuntime);
+		}
+		Thread waitUntilFinishThread = new Thread(new Runnable()
+		{
+			@Override
+			public void run() 
+			{
+				synchronized(MeasurementImpl.this)
+				{
+					while(!shouldMeasurementStop && !Thread.interrupted())
+					{
+						try {
+							MeasurementImpl.this.wait();
+						} catch (@SuppressWarnings("unused") InterruptedException e) {
+							break;
+						}
+					}
+				}
+				measurementStopTimer.cancel();
+				// Stop tasks
+				TaskException exception = null;
+				for(MeasurementTaskImpl task : tasks)
+				{
+					try 
+					{
+						task.stopTask();
+					} 
+					catch (TaskException e1) 
+					{
+						exception = e1;
+					}
+					task.removeTaskListener(taskListener);
+				}
+				measurementEndTime = System.currentTimeMillis();
+				if(exception != null)
+					toErrorState(new MeasurementException("Could not stop task.", exception));
+				else
+				{
+					toState(MeasurementState.STOPPED);
+					sendMessage("Finished measurement.");
+				}
+			}
+	
+		});
+		waitUntilFinishThread.setDaemon(true);
+		waitUntilFinishThread.start();
 	}
 
 	private synchronized void checkIfFinished()
 	{
-		if(!isRunning())
-			return;
 		for(MeasurementTaskImpl task : tasks)
 		{
-			if(task.isRunning())
+			if(task.getState() == TaskState.RUNNING)
 				return;
 		}
 		// All tasks are finished.
-		shouldMeasurementStop = true;
-		notifyAll();
+		stopMeasurement();
 	}
 
 	synchronized void stopMeasurement()
 	{
 		shouldMeasurementStop = true;
+		if(measurementState == MeasurementState.RUNNING)
+			toState(MeasurementState.STOPPING);
 		notifyAll();
 	}
-
-	synchronized void waitForMeasurementFinish()
-	{
-		if(!isRunning())
-			return;
-		while(isRunning())
+	
+	/**
+	 * Calls {@link MeasurementListener#measurementError(Exception)} on all measurement listeners.
+	 */
+	private void notifyMeasurementError(Exception e)
+    {
+		synchronized(measurementListeners)
 		{
-			try
+			for (Iterator<MeasurementListener> iterator = measurementListeners.iterator(); iterator.hasNext();) 
 			{
-				wait();
-			}
-			catch(InterruptedException e)
-			{
-				ServerSystem.err.println("Waiting for measurement stop got interrupted.", e);
-			}
+				try
+	            {
+	            	iterator.next().measurementError(e);
+	            } 
+				catch (RemoteException e1)
+	            {
+	                ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e1);
+	                iterator.remove();
+	            }
+	        }
 		}
-	}
-
-	void errorOccured(MicroscopeException e)
-	{
-		measurementState = MeasurementState.ERROR;
-		for(int i = 0; i < measurementListeners.size(); i++)
+    }
+	/**
+	 * Calls {@link MeasurementListener#measurementStateChanged(MeasurementState, MeasurementState)} on all measurement listeners.
+	 */
+	private void notifyMeasurementStateChanged(MeasurementState oldState, MeasurementState newState)
+    {
+		synchronized(measurementListeners)
 		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
+			for (Iterator<MeasurementListener> iterator = measurementListeners.iterator(); iterator.hasNext();) 
 			{
-				listener.errorOccured(e);
-			}
-			catch(RemoteException e1)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e1);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
+				try
+	            {
+	            	iterator.next().measurementStateChanged(oldState, newState);
+	            } 
+				catch (RemoteException e)
+	            {
+	                ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
+	                iterator.remove();
+	            }
+	        }
 		}
-	}
-
-	void measurementQueued()
-	{
-		measurementState = MeasurementState.QUEUED;
-		for(int i = 0; i < measurementListeners.size(); i++)
+    }
+	
+	/**
+	 * Calls {@link MeasurementListener#measurementStructureModified()} on all measurement listeners.
+	 */
+	void notifyMeasurementStructureModified()
+    {
+		synchronized(measurementListeners)
 		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
+			for (Iterator<MeasurementListener> iterator = measurementListeners.iterator(); iterator.hasNext();) 
 			{
-				listener.measurementQueued();
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
+				try
+	            {
+	            	iterator.next().measurementStructureModified();
+	            } 
+				catch (RemoteException e)
+	            {
+	                ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
+	                iterator.remove();
+	            }
+	        }
 		}
-	}
-
-	void measurementFailed(Exception exception)
-	{
-		measurementState = MeasurementState.ERROR;
-		for(int i = 0; i < measurementListeners.size(); i++)
-		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
-			{
-				listener.errorOccured(exception);
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
-		}
-	}
-
-	void measurementUnqueued()
-	{
-		measurementState = MeasurementState.UNQUEUED;
-		for(int i = 0; i < measurementListeners.size(); i++)
-		{
-			MeasurementListener listener = measurementListeners.elementAt(i);
-			try
-			{
-				listener.measurementUnqueued();
-			}
-			catch(RemoteException e)
-			{
-				ServerSystem.err.println("Measurement listener not answering. Removing him from the queue.", e);
-				measurementListeners.removeElementAt(i);
-				i--;
-			}
-		}
-	}
+    }
+	
 
 	synchronized void setStartupDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
 	{
-		assertRunning();
-		startUpDeviceSettings = settings;
+		assertEditable();
+		startUpDeviceSettings = new DeviceSetting[settings.length];
+		for(int i=0; i<settings.length; i++)
+		{
+			startUpDeviceSettings[i] = new DeviceSetting(settings[i]);
+		}
 	}
 
 	synchronized void addStartupDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		DeviceSetting[] newSettings = new DeviceSetting[startUpDeviceSettings.length + 1];
 		System.arraycopy(startUpDeviceSettings, 0, newSettings, 0, startUpDeviceSettings.length);
 		newSettings[startUpDeviceSettings.length] = new DeviceSetting(setting);
@@ -645,13 +616,17 @@ class MeasurementImpl
 
 	synchronized void setFinishDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
 	{
-		assertRunning();
-		shutDownDeviceSettings = settings;
+		assertEditable();
+		shutDownDeviceSettings = new DeviceSetting[settings.length];
+		for(int i=0; i<settings.length; i++)
+		{
+			shutDownDeviceSettings[i] = new DeviceSetting(settings[i]);
+		}
 	}
 
 	synchronized void addFinishDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		DeviceSetting[] newSettings = new DeviceSetting[shutDownDeviceSettings.length + 1];
 		System.arraycopy(shutDownDeviceSettings, 0, newSettings, 0, shutDownDeviceSettings.length);
 		newSettings[shutDownDeviceSettings.length] = new DeviceSetting(setting);
@@ -669,19 +644,25 @@ class MeasurementImpl
 			this.name = name;
 	}
 
-	public synchronized void removeMeasurementListener(MeasurementListener listener)
+	public void removeMeasurementListener(MeasurementListener listener)
 	{
-		measurementListeners.remove(listener);
+		synchronized(measurementListeners)
+		{
+			measurementListeners.remove(listener);
+		}
 	}
 
-	public synchronized void addMeasurementListener(MeasurementListener listener)
+	public void addMeasurementListener(MeasurementListener listener)
 	{
-		measurementListeners.add(listener);
+		synchronized(measurementListeners)
+		{
+			measurementListeners.add(listener);
+		}
 	}
 
 	public synchronized void setRuntime(int measurementRuntime) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		this.measurementRuntime = measurementRuntime;
 	}
 
@@ -692,7 +673,7 @@ class MeasurementImpl
 
 	public synchronized void setLockMicroscopeWhileRunning(boolean lock) throws MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		lockMicroscopeWhileRunning = lock;
 	}
 
@@ -708,13 +689,13 @@ class MeasurementImpl
 
 	synchronized MeasurementTask addTask(int period, boolean fixedTimes, int startTime) throws RemoteException, MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		return addTask(period, fixedTimes, startTime, -1);
 	}
 
 	synchronized MeasurementTask addTask(int period, boolean fixedTimes, int startTime, int numExecutions) throws RemoteException, MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		MeasurementTaskImpl measurementTask = new MeasurementTaskImpl(period, fixedTimes, startTime, numExecutions);
 		addTask(measurementTask);
 		return measurementTask;
@@ -722,36 +703,30 @@ class MeasurementImpl
 
 	synchronized MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime) throws RemoteException, MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		return addMultiplePeriodTask(periods, breakTime, startTime, -1);
 	}
 
 	synchronized MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime, int numExecutions) throws RemoteException, MeasurementRunningException
 	{
-		assertRunning();
+		assertEditable();
 		MeasurementTaskImpl measurementTask = new MeasurementTaskImpl(periods, breakTime, startTime, numExecutions);
 		addTask(measurementTask);
 		return measurementTask;
 	}
 
-	public Date getStartTime()
+	public long getStartTime()
 	{
-		if(startTime != null)
-			return (Date)startTime.clone();
-		return null;
+		return measurementStartTime;
 	}
 
-	public Date getEndTime()
+	public long getEndTime()
 	{
-		if(endTime != null)
-			return (Date)endTime.clone();
-		return null;
+		return measurementEndTime;
 	}
-	public void setInitialMeasurementContextProperty(String identifier, Serializable property)
+	public void setInitialMeasurementContextProperty(String identifier, Serializable property) throws MeasurementRunningException
     {
-        synchronized (initialMeasurementContextProperties)
-        {
-            initialMeasurementContextProperties.put(identifier, property);
-        }
+		assertEditable();
+        initialMeasurementContextProperties.put(identifier, property);
     }
 }

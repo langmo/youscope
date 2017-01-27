@@ -207,17 +207,21 @@ public class TextTools {
 		return Character.toUpperCase(string.charAt(0))+string.substring(1);
 	}
 	/**
-	 * Takes the string, and converts it to a string which can be used as a filename.
-	 * White spaces are converted to dashes (-). All characters except a-z, A-Z, 0-9, _, or - are replaced by an underscore (_).  
+	 * Takes the string, and converts it to a string which can be used as part of a filename.
+	 * The following characters are forbidden, based on windows systems: "*\/:<>?|
+	 * These characters are replaced by underscores. Additionally, an underscore is added to the beginning of the file name
+	 * if it starts
 	 * @param string The string which should be converted.
 	 * @return the converted string.
 	 */
 	public static String convertToFileName(String string)
 	{
-		string = string.replace(' ', '-').replaceAll("[^a-zA-Z0-9_\\-.]", "_");
-		// TODO: was there a reason to require file names not to being with a number?
-		//if(Character.isDigit(string.charAt(0)))
-		//		return "_"+string;
+		string = string.replaceAll("[\"\\*/:<>\\?\\\\\\|]", "_");
+		
+		//string = string.replace(' ', '-').replaceAll("[^a-zA-Z0-9_\\-\\+\\.]", "_");
+		// File names starting with a point not permitted always in Windows
+		if(string.charAt(0)=='.')
+			return "_"+string;
 		return string;
 	}
 }

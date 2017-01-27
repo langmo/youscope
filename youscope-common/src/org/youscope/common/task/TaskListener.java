@@ -14,21 +14,25 @@ import java.util.EventListener;
 public interface TaskListener extends EventListener, Remote
 {
 	/**
-	 * Called when task started to operate, i.e. to send its jobs--possibly regularly--to the job execution queue.
+	 * Function gets invoked when state of task changed.
+	 * @param oldState Old state before the change.
+	 * @param newState New state.
 	 * @throws RemoteException
 	 */
-	void taskStarted() throws RemoteException;
+	void taskStateChanged(TaskState oldState, TaskState newState) throws RemoteException;
+	
+	/**
+	 * Function gets invoked if error occurs during the execution of the task. 
+	 * 
+	 * @param e Object describing the error.
+	 * @throws RemoteException
+	 */
+	void taskError(Exception e) throws RemoteException;
 
 	/**
-	 * Called when the task finished to operate, i.e. won't send any jobs to the job queue anymore.
+	 * Called when the task was executed, i.e. when it scheduled all its jobs for execution.
+	 * @param executionNumber The number of times the jobs have been send since the task started, starting at zero.
 	 * @throws RemoteException
 	 */
-	void taskFinished() throws RemoteException;
-
-	/**
-	 * Called when the task did send its jobs to the job queue.
-	 * @param submissionNumber The number of times the jobs have been send since the task started, starting at zero.
-	 * @throws RemoteException
-	 */
-	void jobsSubmitted(int submissionNumber) throws RemoteException;
+	void taskExecuted(int executionNumber) throws RemoteException;
 }

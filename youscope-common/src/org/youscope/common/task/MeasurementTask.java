@@ -14,14 +14,14 @@ import org.youscope.common.job.EditableJobContainer;
  */
 public interface MeasurementTask extends EditableJobContainer
 {
-
 	/**
-	 * Returns if task is currently executed.
-	 * @return True if task is executed.
+	 * Returns the current state of the task.
+	 * 
+	 * @return Current state.
 	 * @throws RemoteException
 	 */
-	boolean isRunning() throws RemoteException;
-
+	TaskState getState() throws RemoteException;
+	
 	/**
 	 * Adds a listener which gets informed over the progress of the task.
 	 * @param listener

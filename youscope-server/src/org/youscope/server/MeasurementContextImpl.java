@@ -67,7 +67,7 @@ class MeasurementContextImpl implements MeasurementContext
     @Override
     public void notifyMeasurementStructureChanged() throws RemoteException
     {
-        measurement.measurementStructureModified();
+        measurement.notifyMeasurementStructureModified();
     }
 
 	@Override
