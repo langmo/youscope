@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("wait-job")
-public class WaitJobConfiguration extends JobConfiguration
+public class WaitJobConfiguration implements JobConfiguration
 {
 
 	/**
@@ -34,12 +34,6 @@ public class WaitJobConfiguration extends JobConfiguration
 	{
 		String description = "<p>wait("+Long.toString(waitTime)+"ms)</p>";
 		return description;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
 	}
 
 	/**
@@ -68,8 +62,7 @@ public class WaitJobConfiguration extends JobConfiguration
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
-		
+	
 		if(waitTime < 0)
 			throw new ConfigurationException("Wait time must be bigger or equal to zero.");
 	}

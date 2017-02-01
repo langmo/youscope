@@ -41,6 +41,7 @@ import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.MeasurementProvider;
@@ -187,41 +188,12 @@ class ContinousMeasurementPanel extends JPanel
             {
                 try
                 {
-                    measurement.stopMeasurement();
+                    measurement.stopMeasurement(false);
                 } 
-                catch (RemoteException e)
+                catch (RemoteException | MeasurementException e)
                 {
                     client.sendError("Could not stop measurement.", e);
                 }
-                measurement = null;
-            }
-            if(imageHandler != null)
-            {
-            	imageHandler.stopListening();
-                imageHandler = null;
-            }
-        }
-    }
-    
-    /**
-     * Stops the measurement and waits until it is finished. 
-     */
-    public void stopMeasurementAndWait()
-    {
-    	synchronized (this)
-        {
-            if (measurement != null)
-            {
-                try
-                {
-                    measurement.stopMeasurement();
-                    measurement.waitForMeasurementFinish();
-                } 
-                catch (RemoteException e)
-                {
-                	client.sendError("Could not stop measurement.", e);
-                }
-
                 measurement = null;
             }
             if(imageHandler != null)
@@ -238,7 +210,7 @@ class ContinousMeasurementPanel extends JPanel
     public void startMeasurement()
     {
     	// stop any previous measurement
-    	stopMeasurementAndWait();
+    	stopMeasurement();
     	
         // Create measurement on server
         try

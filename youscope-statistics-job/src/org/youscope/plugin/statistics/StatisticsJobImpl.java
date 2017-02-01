@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
-import org.youscope.common.job.JobContainer;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.JobListener;
 import org.youscope.common.job.basicjobs.StatisticsJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
@@ -166,9 +166,9 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 		JobStatisticListener listener = new JobStatisticListener(job);
 		listener.addListener();
 		jobListeners.add(listener);
-		if(job instanceof JobContainer)
+		if(job instanceof CompositeJob)
 		{
-			for(Job childJob : ((JobContainer)job).getJobs())
+			for(Job childJob : ((CompositeJob)job).getJobs())
 			{
 				addJobListener(childJob);
 			}
@@ -194,7 +194,7 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Gathering Statistics";
 	}
@@ -222,7 +222,7 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 	}
 
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -232,17 +232,17 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -268,7 +268,7 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		jobs.add(jobIndex, job);
 	}
 

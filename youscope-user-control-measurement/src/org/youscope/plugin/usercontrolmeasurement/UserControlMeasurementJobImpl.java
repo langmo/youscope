@@ -9,6 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -18,7 +19,6 @@ import org.youscope.common.image.ImageListener;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.StageDevice;
 
@@ -164,12 +164,12 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	}
 	
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "User Control Measurement";
 	}
 
-	public void setMeasurementCallback(UserControlMeasurementCallback callback) throws RemoteException, MeasurementRunningException
+	public void setMeasurementCallback(UserControlMeasurementCallback callback) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.callback = callback;
@@ -321,9 +321,9 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	 * If the stage device moves less than the tolerance between two successive images, the images are assumed to be made
 	 * at the same position. Set to null to use the default stage.
 	 * @param stageDevice ID of the stage to monitor, or null to use the default stage.
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public synchronized void setStageDevice(String stageDevice) throws MeasurementRunningException
+	public synchronized void setStageDevice(String stageDevice) throws ComponentRunningException
 	{
 		assertRunning();
 		this.stageDevice = stageDevice;
@@ -345,9 +345,9 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	 * If the stage device moves less than the tolerance between two successive images, the images are assumed to be made
 	 * at the same position. Set to a negative value to not monitor the stage.
 	 * @param stageTolerance Tolerance for stage in muM, or negative number to not monitor stage.
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public synchronized void setStageTolerance(double stageTolerance) throws MeasurementRunningException
+	public synchronized void setStageTolerance(double stageTolerance) throws ComponentRunningException
 	{
 		assertRunning();
 		this.stageTolerance = stageTolerance;

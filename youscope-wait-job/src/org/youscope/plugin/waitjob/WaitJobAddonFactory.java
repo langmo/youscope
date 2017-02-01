@@ -9,12 +9,13 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.WaitJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -43,7 +44,7 @@ public class WaitJobAddonFactory extends ComponentAddonFactoryAdapter
 				job = new WaitJobImpl(positionInformation);
 				job.setWaitTime(configuration.getWaitTime());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create wait job since newly created job already running.", e);
 			} catch (RemoteException e) {
@@ -77,10 +78,14 @@ public class WaitJobAddonFactory extends ComponentAddonFactoryAdapter
 					} catch (ComponentCreationException e) {
 						throw new AddonException("Could not create child job.", e);
 					}
-					job.addJob(childJob);
+					try {
+						job.addJob(childJob);
+					} catch (JobException e) {
+						throw new AddonException("Could not add child job to job.", e);
+					}
 				}
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create wait job since newly created job already running.", e);
 			} catch (RemoteException e) {

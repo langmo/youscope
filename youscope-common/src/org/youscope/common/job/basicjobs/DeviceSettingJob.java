@@ -5,8 +5,8 @@ package org.youscope.common.job.basicjobs;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.table.TableConsumer;
 
@@ -42,17 +42,17 @@ public interface DeviceSettingJob extends Job, TableConsumer
 	 * 
 	 * @param settings List of device settings.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
+	void setDeviceSettings(DeviceSetting[] settings) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Removes all settings.
 	 * 
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void clearDeviceSettings() throws RemoteException, MeasurementRunningException;
+	void clearDeviceSettings() throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new device setting.
@@ -61,7 +61,7 @@ public interface DeviceSettingJob extends Job, TableConsumer
 	 * @param property Name of the device's property.
 	 * @param value Value to set device's property to.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void addDeviceSetting(String device, String property, String value) throws RemoteException, MeasurementRunningException;
+	void addDeviceSetting(String device, String property, String value) throws RemoteException, ComponentRunningException;
 }

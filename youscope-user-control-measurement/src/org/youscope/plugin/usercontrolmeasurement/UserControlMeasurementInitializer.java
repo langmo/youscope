@@ -7,12 +7,13 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
+import org.youscope.common.task.TaskException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -25,7 +26,7 @@ class UserControlMeasurementInitializer implements MeasurementInitializer<UserCo
 	@Override
 	public void initializeMeasurement(Measurement measurement, UserControlMeasurementConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException
 	{
-		MeasurementTask mainTask;
+		Task mainTask;
 		try
 		{
 			mainTask = measurement.addTask(0, false, 0, -1);
@@ -61,9 +62,13 @@ class UserControlMeasurementInitializer implements MeasurementInitializer<UserCo
 				throw new AddonException("Measurement callback for the user control measurement is not responding.", e);
 			}
 			job.setMeasurementCallback(callback);
-			mainTask.addJob(job);
+			try {
+				mainTask.addJob(job);
+			} catch (TaskException e) {
+				throw new AddonException("Could not add job to task.", e);
+			}
 		}
-		catch(MeasurementRunningException e)
+		catch(ComponentRunningException e)
 		{
 			throw new AddonException("Could not create measurement since it is already running.", e);
 		}

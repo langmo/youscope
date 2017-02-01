@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("controller-job")
-public class ControllerJobConfiguration extends JobConfiguration  implements TableProducerConfiguration
+public class ControllerJobConfiguration implements JobConfiguration, TableProducerConfiguration
 {
 
 	/**
@@ -245,7 +245,6 @@ public class ControllerJobConfiguration extends JobConfiguration  implements Tab
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
 		if(inputJob == null)
 			throw new ConfigurationException("No input job selected.");
 		inputJob.checkConfiguration();

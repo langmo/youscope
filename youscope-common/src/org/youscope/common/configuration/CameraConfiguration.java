@@ -80,11 +80,7 @@ public final class CameraConfiguration  implements Configuration, Comparable<Cam
 		else
 			return cameraDevice.compareTo(other.cameraDevice);
 	}
-	@Override
-	public CameraConfiguration clone() 
-	{
-		return new CameraConfiguration(this);
-	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

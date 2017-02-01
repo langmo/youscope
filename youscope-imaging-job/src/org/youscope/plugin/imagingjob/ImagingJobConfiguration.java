@@ -9,6 +9,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.job.basicjobs.ImagingJob;
+import org.youscope.common.util.ConfigurationTools;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -21,7 +22,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("imaging-job")
-public class ImagingJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class ImagingJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -151,12 +152,6 @@ public class ImagingJobConfiguration extends JobConfiguration implements ImagePr
 	{
 		return ImagingJob.DEFAULT_TYPE_IDENTIFIER;
 	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 	
 	@Override
 	public String[] getImageSaveNames()
@@ -196,7 +191,12 @@ public class ImagingJobConfiguration extends JobConfiguration implements ImagePr
 	 */
 	public ChannelConfiguration getChannelConfiguration() 
 	{
-		return channelConfiguration.clone();
+		try {
+			return ConfigurationTools.deepCopy(channelConfiguration, ChannelConfiguration.class);
+		} catch (@SuppressWarnings("unused") ConfigurationException e) 
+		{
+			return channelConfiguration;
+		}
 	}
 
 	/**
@@ -213,7 +213,11 @@ public class ImagingJobConfiguration extends JobConfiguration implements ImagePr
 	 * @return Camera configuration
 	 */
 	public CameraConfiguration getCameraConfiguration() {
-		return cameraConfiguration.clone();
+		try {
+			return ConfigurationTools.deepCopy(cameraConfiguration, CameraConfiguration.class);
+		} catch (@SuppressWarnings("unused") ConfigurationException e) {
+			return cameraConfiguration;
+		}
 	}
 
 	/**
@@ -226,8 +230,6 @@ public class ImagingJobConfiguration extends JobConfiguration implements ImagePr
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
-		
 		if(cameraConfiguration != null)
 			cameraConfiguration.checkConfiguration();
 		if(channelConfiguration != null)

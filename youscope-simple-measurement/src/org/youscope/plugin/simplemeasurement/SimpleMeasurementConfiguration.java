@@ -3,13 +3,13 @@
  */
 package org.youscope.plugin.simplemeasurement;
 
-import java.io.Serializable;
 import java.util.Vector;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.task.PeriodConfiguration;
+import org.youscope.common.util.ConfigurationTools;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("simple-measurement")
-public class SimpleMeasurementConfiguration extends MeasurementConfiguration implements Cloneable, Serializable, JobContainerConfiguration
+public class SimpleMeasurementConfiguration extends MeasurementConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -38,13 +38,20 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	@XStreamAlias("allow-edits-while-running")
 	private boolean allowEditsWhileRunning = false;
 	
-	@Override
+	/**
+	 * Returns the jobs executed each time the measurement executes.
+	 * 
+	 * @return Jobs.
+	 */
 	public JobConfiguration[] getJobs()
 	{
 		return jobs.toArray(new JobConfiguration[jobs.size()]);
 	}
 
-	@Override
+	/**
+	 * Set the jobs executed each time the measurement executes.
+	 * @param jobs Jobs to be executed.
+	 */
 	public void setJobs(JobConfiguration[] jobs)
 	{
 		this.jobs.clear();
@@ -54,13 +61,18 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 		}
 	}
 
-	@Override
+	/**
+	 * Adds a job to be executed each time the measurement executes.
+	 * @param job Job to add.
+	 */
 	public void addJob(JobConfiguration job)
 	{
 		jobs.add(job);
 	}
 
-	@Override
+	/**
+	 * Removes all jobs executed each time the measurement executes.
+	 */
 	public void clearJobs()
 	{
 		jobs.clear();
@@ -100,30 +112,20 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 		return TYPE_IDENTIFIER;
 	}
 
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		SimpleMeasurementConfiguration clone = (SimpleMeasurementConfiguration)super.clone();
-		clone.jobs = new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		if(period != null)
-		{
-			clone.period = (PeriodConfiguration)period.clone();
-		}
-		
-		return clone;
-	}
-
-	@Override
-	public void removeJobAt(int index)
+	/**
+	 * Removes a job executed each time the measurement executes with the given index.
+	 * @param index Index of job to be removed.
+	 */
+	public void removeJob(int index)
 	{
 		jobs.removeElementAt(index);
 	}
 
-	@Override
+	/**
+	 * Inserts a job executed each time the measurement executes at the given index. 
+	 * @param job job to add.
+	 * @param index index where to add job.
+	 */
 	public void addJob(JobConfiguration job, int index)
 	{
 		jobs.insertElementAt(job, index);
@@ -138,9 +140,9 @@ public class SimpleMeasurementConfiguration extends MeasurementConfiguration imp
 	{
 		try
 		{
-			this.period = (PeriodConfiguration)period.clone();
+			this.period = ConfigurationTools.deepCopy(period, PeriodConfiguration.class);
 		}
-		catch(CloneNotSupportedException e)
+		catch(ConfigurationException e)
 		{
 			throw new IllegalArgumentException("Period can not be cloned.", e);
 		}

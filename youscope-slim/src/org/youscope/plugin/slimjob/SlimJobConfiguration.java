@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.slimjob;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
 
@@ -15,7 +16,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  *
  */
 @XStreamAlias("slim-job")
-public class SlimJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class SlimJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -223,13 +224,6 @@ public class SlimJobConfiguration extends JobConfiguration implements ImageProdu
 	{
 		this.imageSaveName = name;
 	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		SlimJobConfiguration clone = (SlimJobConfiguration)super.clone();
-		return clone;
-	}
 	
 	@Override
 	public String[] getImageSaveNames()
@@ -430,5 +424,11 @@ public class SlimJobConfiguration extends JobConfiguration implements ImageProdu
 	public String getMaskFileName()
 	{
 		return maskFileName;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing, too complicated.
+		
 	}
 }

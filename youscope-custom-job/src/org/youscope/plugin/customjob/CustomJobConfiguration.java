@@ -3,10 +3,11 @@
  */
 package org.youscope.plugin.customjob;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -16,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("custom-job")
-public class CustomJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class CustomJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -28,7 +29,7 @@ public class CustomJobConfiguration extends JobConfiguration implements JobConta
 	 * The jobs which should be run when the composite job starts.
 	 */
 	@XStreamAlias("jobs")
-	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
+	private ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
 
 	@XStreamAlias("custom-job-name")
 	private String customJobName = "unnamed";
@@ -46,18 +47,6 @@ public class CustomJobConfiguration extends JobConfiguration implements JobConta
 		}
 		description += "</ul><p>end</p>";
 		return description;
-	}
-
-	@Override
-	public CustomJobConfiguration clone() throws CloneNotSupportedException
-	{
-		CustomJobConfiguration clone = (CustomJobConfiguration)super.clone();
-		clone.jobs= new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		return clone;
 	}
 
 	@Override
@@ -91,13 +80,13 @@ public class CustomJobConfiguration extends JobConfiguration implements JobConta
 	@Override
 	public void removeJobAt(int index)
 	{
-		jobs.removeElementAt(index);
+		jobs.remove(index);
 	}
 
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 	}
 
 	@Override
@@ -122,5 +111,14 @@ public class CustomJobConfiguration extends JobConfiguration implements JobConta
 	public String getCustomJobName()
 	{
 		return customJobName;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
+		
 	}
 }

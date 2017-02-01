@@ -16,14 +16,15 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerResource;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.ChangePositionJob;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.FocusingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.plugin.microplate.measurement.XYAndFocusPosition;
@@ -34,11 +35,11 @@ import org.youscope.serverinterfaces.ConstructionContext;
  */
 public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter 
 {
-	private static final CustomAddonCreator<MicroplateJobConfiguration, CompositeJob> CREATOR = new CustomAddonCreator<MicroplateJobConfiguration, CompositeJob>()
+	private static final CustomAddonCreator<MicroplateJobConfiguration, SimpleCompositeJob> CREATOR = new CustomAddonCreator<MicroplateJobConfiguration, SimpleCompositeJob>()
 	{
 
 		@Override
-		public CompositeJob createCustom(PositionInformation mainPositionInformation,
+		public SimpleCompositeJob createCustom(PositionInformation mainPositionInformation,
 				MicroplateJobConfiguration configuration, ConstructionContext constructionContext)
 						throws ConfigurationException, AddonException 
 		{
@@ -46,9 +47,9 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 			{
 				String stageDeviceID = configuration.getStageDevice();		
 				
-				CompositeJob microplateJob;
+				SimpleCompositeJob microplateJob;
 				try {
-					microplateJob = constructionContext.getComponentProvider().createJob(mainPositionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+					microplateJob = constructionContext.getComponentProvider().createJob(mainPositionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 				} catch (ComponentCreationException e3) {
 					throw new AddonException("Microplate measurements need the composite job plugin.", e3);
 				}
@@ -90,15 +91,19 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 						String locationString = positionInformation.toString();
 						
 						// Create a job container in which all jobs at the given position are put into.
-						CompositeJob jobContainer;
+						SimpleCompositeJob jobContainer;
 						try {
-							jobContainer = constructionContext.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+							jobContainer = constructionContext.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 						} catch (ComponentCreationException e2) {
 							throw new AddonException("Microplate measurements need the composite job plugin.",e2);
 						}
 						
 						jobContainer.setName("Job container for " + locationString);
-						microplateJob.addJob(jobContainer);
+						try {
+							microplateJob.addJob(jobContainer);
+						} catch (JobException e2) {
+							throw new AddonException("Could not add child job to job.", e2);
+						}
 						
 						// Set position to well
 						ChangePositionJob positionJob;
@@ -110,7 +115,11 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 						positionJob.setPosition(position.getX(), position.getY());
 						positionJob.setStageDevice(stageDeviceID);
 						positionJob.setName("Moving stage to " + locationString);
-						jobContainer.addJob(positionJob);
+						try {
+							jobContainer.addJob(positionJob);
+						} catch (JobException e1) {
+							throw new AddonException("Could not add child job to job.", e1);
+						}
 
 						// Set Focus
 						if(configuration.getFocusConfiguration() != null)
@@ -125,7 +134,11 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 							focusingJob.setPosition(position.getFocus(), false);
 							focusingJob.setFocusDevice(configuration.getFocusConfiguration().getFocusDevice());
 							focusingJob.setName("Setting focus for " + locationString);
-							jobContainer.addJob(focusingJob);
+							try {
+								jobContainer.addJob(focusingJob);
+							} catch (JobException e) {
+								throw new AddonException("Could not add child job to job.", e);
+							}
 						}
 
 						// Add all other configured jobs
@@ -138,7 +151,11 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 							} catch (ComponentCreationException e) {
 								throw new AddonException("Could not create child job.", e);
 							}
-							jobContainer.addJob(job);
+							try {
+								jobContainer.addJob(job);
+							} catch (JobException e) {
+								throw new AddonException("Could not add child job to job.", e);
+							}
 						}
 						
 							
@@ -149,14 +166,14 @@ public class MicroplateJobAddonFactory extends ComponentAddonFactoryAdapter
 			catch(RemoteException e)
 			{
 				throw new AddonException("Could not create job due to remote exception.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}
 
 		@Override
-		public Class<CompositeJob> getComponentInterface() {
-			return CompositeJob.class;
+		public Class<SimpleCompositeJob> getComponentInterface() {
+			return SimpleCompositeJob.class;
 		}
 		
 	};

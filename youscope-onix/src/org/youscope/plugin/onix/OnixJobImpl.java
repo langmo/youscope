@@ -6,13 +6,13 @@ package org.youscope.plugin.onix;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
@@ -58,7 +58,7 @@ class OnixJobImpl extends JobAdapter implements OnixJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String text = "onix.";
 		text += waitUntilFinished ? "eval(" : "parallel_eval(\"";
@@ -153,7 +153,7 @@ class OnixJobImpl extends JobAdapter implements OnixJob
 	}
 
 	@Override
-	public void setOnixProtocol(String onixProtocol) throws MeasurementRunningException
+	public void setOnixProtocol(String onixProtocol) throws ComponentRunningException
 	{
 		assertRunning();
 		this.onixProtocol = onixProtocol == null ? "" : onixProtocol;
@@ -166,7 +166,7 @@ class OnixJobImpl extends JobAdapter implements OnixJob
 	}
 
 	@Override
-	public void setWaitUntilFinished(boolean waitUntilFinished) throws MeasurementRunningException
+	public void setWaitUntilFinished(boolean waitUntilFinished) throws ComponentRunningException
 	{
 		assertRunning();
 		this.waitUntilFinished = waitUntilFinished;

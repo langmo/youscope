@@ -9,16 +9,16 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.common.ComponentException;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.plugin.livemodifiablejob.LiveModifiableJob;
@@ -35,7 +35,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 	@Override
 	public void initializeMeasurement(Measurement measurement, SimpleMeasurementConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException
 	{
-		MeasurementTask mainTask;
+		Task mainTask;
 		if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 		{
 			RegularPeriodConfiguration period = (RegularPeriodConfiguration)configuration.getPeriod();
@@ -43,7 +43,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 			{
 				mainTask = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create measurement since it is already running.", e);
 			}
@@ -59,7 +59,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 			{
 				mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create measurement since it is already running.", e);
 			}
@@ -78,13 +78,13 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 		try
 		{
 			// Create a job container in which all jobs are put into.
-			EditableJobContainer jobContainer;
+			CompositeJob jobContainer;
 			if(configuration.getStatisticsFileName() == null)
 			{
-				CompositeJob job;
+				SimpleCompositeJob job;
 				try 
 				{
-					job = jobInitializer.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+					job = jobInitializer.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 					job.setName("Job container for simple measurement imaging protocol");
 					mainTask.addJob(job);	
 				} 
@@ -130,7 +130,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 					System.arraycopy(jobConfigurations, 0, allConfigs, 0, jobConfigurations.length);
 					try {
 						modJob.setChildJobConfigurations(allConfigs);
-					} catch (RemoteException | CloneNotSupportedException e) {
+					} catch (RemoteException | ConfigurationException e) {
 						throw new AddonException("Could not initialize live modifications of jobs.", e);
 					}
 					

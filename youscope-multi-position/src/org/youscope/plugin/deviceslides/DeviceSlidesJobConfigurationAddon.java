@@ -47,7 +47,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.FloatProperty;
@@ -93,7 +93,7 @@ class DeviceSlidesJobConfigurationAddon  extends ComponentAddonUIAdapter<DeviceS
 	{
 		return new ComponentMetadataAdapter<DeviceSlidesJobConfiguration>(DeviceSlidesJobConfiguration.TYPE_IDENTIFIER, 
 				DeviceSlidesJobConfiguration.class, 
-				CompositeJob.class, 
+				SimpleCompositeJob.class, 
 				"Device-Slides", 
 				new String[]{"Containers"});
 	}

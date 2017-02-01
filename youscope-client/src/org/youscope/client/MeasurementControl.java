@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Date;
 import java.util.EventListener;
 import java.util.List;
 import java.util.Vector;
@@ -38,6 +37,7 @@ import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.saving.MeasurementFileLocations;
@@ -51,29 +51,52 @@ class MeasurementControl
 {
 	private MeasurementConfiguration	configuration				= null;
 
-	private Measurement		measurement;
+	private final Measurement		measurement;
 
 	private JTextField					measurementField;
 
 	private MeasurementStateField					stateField;
 	
 	private JTextField runTimeField = new JTextField("0d 0h 0m 0s"); 
-	private Date startTime = null;
-	private volatile Timer			runTimeTimer				= null;
+	private final Timer			runTimeTimer				= new Timer(1000, new ActionListener()
+	{
+		@Override
+		public void actionPerformed(ActionEvent arg0)
+		{
+			if(getState() == MeasurementState.RUNNING)
+			{
+				long startTime;
+				try {
+					startTime = measurement.getStartTime();
+				} 
+				catch (RemoteException e) {
+					runTimeTimer.stop();
+					ClientSystem.err.println("Could not get measurement start time for measurement duration display. Stopping duration updates.", e);
+					return;
+				}
+				if(startTime < 0)
+					return;
+				long duration = System.currentTimeMillis() - startTime;
+				setDuration(duration);
+			}
+			else
+				runTimeTimer.stop();
+		}
+	});
 
-	private JButton						processMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">View<br>Results</p></body></html>");
+	private final JButton						processMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">View<br>Results</p></body></html>");
 	
-	private JButton						startMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">Start<br>Measurement</p></body></html>");
+	private final JButton						startMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">Start<br>Measurement</p></body></html>");
 
-	private JButton						stopMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Stop<br>Measurement</p></body></html>");
+	private final JButton						stopMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Stop<br>Measurement</p></body></html>");
 
-	private JButton						quickStopMeasurementButton	= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Quick Stop<br>Measurement</p></body></html>");
+	private final JButton						quickStopMeasurementButton	= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Quick Stop<br>Measurement</p></body></html>");
 
-	private JButton						emergencyStopButton			= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#AA0000\">Emergency<br>Stop</p></body></html>");
+	private final JButton						emergencyStopButton			= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#AA0000\">Emergency<br>Stop</p></body></html>");
 
-	private JButton						saveMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Save<br>Measurement</p></body></html>");
+	private final JButton						saveMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Save<br>Measurement</p></body></html>");
 
-	private JButton						editMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Edit<br>Measurement</p></body></html>");
+	private final JButton						editMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Edit<br>Measurement</p></body></html>");
 
 	private volatile MeasurementState				state						= MeasurementState.READY;
 
@@ -257,7 +280,7 @@ class MeasurementControl
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					if(state == MeasurementState.READY || state == MeasurementState.FINISHED || state == MeasurementState.ERROR || state == MeasurementState.UNQUEUED)
+					if(state == MeasurementState.READY || state == MeasurementState.UNINITIALIZED || state == MeasurementState.ERROR)
 					{
 						ComponentAddonUI<? extends MeasurementConfiguration> addon;
 						try {
@@ -306,7 +329,8 @@ class MeasurementControl
 		// Initialize status field
 		StandardFormats.addGridBagElement(new JLabel("Status:"), informationLayout, newLineConstr, informationPanel);
 		stateField = new MeasurementStateField();
-		setState(measurement.getState());
+		this.state = measurement.getState();
+		actualizeStateInternal();
 		StandardFormats.addGridBagElement(stateField, informationLayout, newLineConstr, informationPanel);
 		
 		StandardFormats.addGridBagElement(new JLabel("Duration:"), informationLayout, newLineConstr, informationPanel);
@@ -322,8 +346,7 @@ class MeasurementControl
 				switch(state)
 				{
 					case READY:
-					case FINISHED:
-					case UNQUEUED:
+					case UNINITIALIZED:
 						startMeasurement();
 						break;
 					default:
@@ -363,7 +386,7 @@ class MeasurementControl
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				stopMeasurement();
+				stopMeasurement(true);
 			}
 		});
 		quickStopMeasurementButton.addActionListener(new ActionListener()
@@ -371,7 +394,7 @@ class MeasurementControl
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				quickStopMeasurement();
+				stopMeasurement(false);
 			}
 		});
 		emergencyStopButton.addActionListener(new ActionListener()
@@ -421,39 +444,37 @@ class MeasurementControl
 	{
 		return state;
 	}
-	private void setState(MeasurementState state)
+	private synchronized void setState(final MeasurementState state)
 	{
+		if(state == this.state)
+			return;
+		this.state = state;
 		if(SwingUtilities.isEventDispatchThread())
-			actualizeStateInternal(state);
+			actualizeStateInternal();
 		else
 		{
-			class Runner implements Runnable
+			SwingUtilities.invokeLater(new Runnable()
 			{
-				private final MeasurementState state;
-				Runner(MeasurementState state)
-				{
-					this.state = state;
-				}
+				
 				@Override
 				public void run()
 				{
-					actualizeStateInternal(state);
+					actualizeStateInternal();
 				}
-			}
-			SwingUtilities.invokeLater(new Runner(state));
+			});
 		}
 	}
 	private boolean showMeasurementProcessors()
 	{
 		return measurementProcessorChooser.getComponentCount() > 0 && ClientSystem.isLocalServer();
 	}
-	private synchronized void actualizeStateInternal(MeasurementState state)
+	private void actualizeStateInternal()
 	{
-		this.state = state;
+		MeasurementState state = this.state;
 		// Set behavior.
 		switch(state)
 		{
-			case FINISHED:
+			case UNINITIALIZED:
 				if(showMeasurementProcessors())
 					processMeasurementButton.setVisible(true);
 				else
@@ -464,18 +485,28 @@ class MeasurementControl
 				quickStopMeasurementButton.setVisible(false);
 				break;
 			case READY:
-			case UNQUEUED:
 				processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(true);
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(false);
 				quickStopMeasurementButton.setVisible(false);
 				break;
+			case PAUSED:
+				if(showMeasurementProcessors())
+					processMeasurementButton.setVisible(true);
+				else
+					processMeasurementButton.setVisible(false);
+				startMeasurementButton.setVisible(true);
+				editMeasurementButton.setVisible(false);
+				stopMeasurementButton.setVisible(true);
+				quickStopMeasurementButton.setVisible(true);
+				break;
 			case QUEUED:
+			case INITIALIZING:
+			case INITIALIZED:
 			case RUNNING:
 			case STOPPING:
-			case INTERRUPTING:
-			case INITIALIZING:
+			case STOPPED:
 			case UNINITIALIZING:
 				if(showMeasurementProcessors())
 					processMeasurementButton.setVisible(true);
@@ -503,42 +534,20 @@ class MeasurementControl
 		// Set duration updating
 		if(state == MeasurementState.RUNNING)
 		{
-			try
-			{
-				startTime = measurement.getStartTime();
-				runTimeTimer = new Timer(1000, new ActionListener()
-					{
-						@Override
-						public void actionPerformed(ActionEvent arg0)
-						{
-							if(getState() == MeasurementState.RUNNING && startTime != null)
-							{
-								long duration = new Date().getTime() - startTime.getTime();
-								setDuration(duration);
-							}
-						}
-					});
-				runTimeTimer.start();
-			}
-			catch(RemoteException e)
-			{
-				ClientSystem.err.println("Could not get measurement start time", e);
-			}	
+			runTimeTimer.restart();
 		}
-		else if(state == MeasurementState.FINISHED)
+		else
 		{
 			try
 			{
-				if(runTimeTimer != null)
+				runTimeTimer.stop();
+				final long startTime = measurement.getStartTime();
+				if(startTime >= 0)
 				{
-					runTimeTimer.stop();
-					runTimeTimer = null;
-				}
-				startTime = measurement.getStartTime();
-				Date endTime = measurement.getEndTime();
-				if(startTime != null && endTime != null)
-				{
-					long duration = endTime.getTime() - startTime.getTime();
+					long endTime = measurement.getEndTime();
+					if(endTime < 0)
+						endTime = System.currentTimeMillis();
+					long duration = endTime - startTime;
 					setDuration(duration);
 				}
 			}
@@ -562,40 +571,20 @@ class MeasurementControl
 		runTimeField.setText(Long.toString(days)+"d "+Long.toString(hours)+"h " + Long.toString(minutes)+"m " + Long.toString(seconds)+"s");
 	}
 
-	private void stopMeasurement()
+	private void stopMeasurement(final boolean processJobQueue)
 	{
 		setState(MeasurementState.STOPPING);
-		if(measurement != null)
+		
+		try
 		{
-			try
-			{
-				measurement.stopMeasurement();
-			}
-			catch(RemoteException e)
-			{
-				ClientSystem.err.println("Could not stop measurement.", e);
-				setState(MeasurementState.ERROR);
-			}
+			measurement.stopMeasurement(processJobQueue);
 		}
-	}
-
-	private void quickStopMeasurement()
-	{
-		if(measurement != null)
+		catch(RemoteException | MeasurementException e)
 		{
-			setState(MeasurementState.STOPPING);
-			try
-			{
-				measurement.quickStopMeasurement();
-			}
-			catch(RemoteException e)
-			{
-				ClientSystem.err.println("Could not quick stop measurement.", e);
-				setState(MeasurementState.ERROR);
-				return;
-			}
-			setState(MeasurementState.FINISHED);
+			ClientSystem.err.println("Could not stop measurement.", e);
+			setState(MeasurementState.ERROR);
 		}
+	
 	}
 
 	private void emergencyStop()
@@ -620,7 +609,7 @@ class MeasurementControl
 			// Start measurement
 			measurement.startMeasurement();
 		}
-		catch(RemoteException e)
+		catch(RemoteException | MeasurementException e)
 		{
 			ClientSystem.err.println("Could not start measurement.", e);
 			setState(MeasurementState.ERROR);
@@ -644,55 +633,24 @@ class MeasurementControl
 		private MeasurementListenerImpl() throws RemoteException
 		{
 			super();
-		}
-
-		@Override
-		public void errorOccured(Exception e) throws RemoteException
-		{
-			setState(MeasurementState.ERROR);
-			ClientSystem.err.println("Error in measurement \"" + measurement.getName() + "\" occured.", e);
-		}
-
-		@Override
-		public void measurementFinished() throws RemoteException
-		{
-			setState(MeasurementState.FINISHED);
-		}
-
-		@Override
-		public void measurementQueued() throws RemoteException
-		{
-			setState(MeasurementState.QUEUED);
-		}
-
-		@Override
-		public void measurementStarted() throws RemoteException
-		{
-			setState(MeasurementState.RUNNING);
-		}
-
-		@Override
-		public void measurementUnqueued() throws RemoteException
-		{
-			setState(MeasurementState.UNQUEUED);
-		}
-
-		@Override
-		public void measurementInitializing() throws RemoteException
-		{
-			setState(MeasurementState.INITIALIZING);
-		}
-
-		@Override
-		public void measurementUninitializing() throws RemoteException
-		{
-			setState(MeasurementState.UNINITIALIZING);
-		}
+		}		
 
 		@Override
 		public void measurementStructureModified() throws RemoteException 
 		{
 			refreshMeasurementTree();
+		}
+
+		@Override
+		public void measurementStateChanged(MeasurementState oldState, MeasurementState newState)
+				throws RemoteException {
+			setState(newState);
+		}
+
+		@Override
+		public void measurementError(Exception e) throws RemoteException {
+			ClientSystem.err.println("Error in measurement \"" + measurement.getName() + "\" occured.", e);
+			
 		}
 	}
 	

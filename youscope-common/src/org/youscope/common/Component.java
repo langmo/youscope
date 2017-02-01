@@ -46,8 +46,9 @@ public interface Component extends Remote
 	 * of advantage to rename certain components which have a specific meaning for the respective measurement.
 	 * @param name Name/short description of the component.
 	 * @throws RemoteException
+	 * @throws ComponentRunningException 
 	 */
-	public void setName(String name) throws RemoteException;
+	public void setName(String name) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns a unique ID of the component. No two components have the same unique ID, even if they are created using the same configuration.

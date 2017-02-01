@@ -6,9 +6,9 @@ package org.youscope.plugin.composedimaging;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
@@ -23,9 +23,9 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * @param deviceGroup The device group where the channel is defined.
 	 * @param channel The channel.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setChannel(String deviceGroup, String channel) throws RemoteException, MeasurementRunningException;
+	void setChannel(String deviceGroup, String channel) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the channel.
@@ -49,9 +49,9 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposure The exposure.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setExposure(double exposure) throws RemoteException, MeasurementRunningException;
+	void setExposure(double exposure) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the exposure. If more than one camera is initialized, returns the exposure of the first camera.
@@ -68,10 +68,10 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposures The exposures.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws IllegalArgumentException Thrown if number of elements in exposure array is unequal to the number of cameras.
 	 */
-	void setExposures(double[] exposures) throws RemoteException, MeasurementRunningException, IllegalArgumentException;
+	void setExposures(double[] exposures) throws RemoteException, ComponentRunningException, IllegalArgumentException;
 
 	/**
 	 * Gets the exposures of the initialized cameras.
@@ -87,9 +87,9 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * 
 	 * @param cameras Device names of the cameras
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setCameras(String[] cameras) throws RemoteException, MeasurementRunningException;
+	void setCameras(String[] cameras) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the cameras.
@@ -113,10 +113,10 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * @param deltaX
 	 *            Distance in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
 	void setDeltaX(double deltaX) throws RemoteException,
-	MeasurementRunningException;
+	ComponentRunningException;
 
 	/**
 	 * Returns the distance between two vertically attached sub-images.
@@ -132,10 +132,10 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * @param deltaY
 	 *            Distance in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
 	void setDeltaY(double deltaY) throws RemoteException,
-	MeasurementRunningException;
+	ComponentRunningException;
 
 	/**
 	 * Returns the number of sub-images.
@@ -151,8 +151,8 @@ public interface ComposedImagingJob extends Job, ImageProducer
 	 * @param imageNumbers
 	 *            Number of sub-images.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
 	void setSubImageNumber(Dimension imageNumbers) throws RemoteException,
-	MeasurementRunningException;
+	ComponentRunningException;
 }

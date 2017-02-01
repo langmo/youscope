@@ -6,16 +6,16 @@ package org.youscope.common.job.basicjobs;
 import java.net.URL;
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.scripting.RemoteScriptEngine;
 
 /**
  * A scripting job executes a script every time it runs, and-depending on the script-its child jobs.
  * @author Moritz Lang
  */
-public interface ScriptingJob extends Job, EditableJobContainer
+public interface ScriptingJob extends Job, CompositeJob
 {
 	/**
 	 * The type identifier of the default implementation of this job. 
@@ -39,27 +39,27 @@ public interface ScriptingJob extends Job, EditableJobContainer
 	 * @param key Name of variable to be used in script.
 	 * @param value Value of the variable.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void putVariable(String key, Object value) throws RemoteException, MeasurementRunningException;
+	void putVariable(String key, Object value) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the remote script engine which should be null.
 	 * 
 	 * @param scriptEngine Sets the script engine to use.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setRemoteScriptEngine(RemoteScriptEngine scriptEngine) throws RemoteException, MeasurementRunningException;
+	void setRemoteScriptEngine(RemoteScriptEngine scriptEngine) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the script engine with which the scripts should be evaluated. If a remote script engine is set, this setting is ignored.
 	 * 
 	 * @param engine The script engine to use.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setScriptEngine(String engine) throws RemoteException, MeasurementRunningException;
+	void setScriptEngine(String engine) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the name of the script engine, or null, if script engine is not set.
@@ -72,9 +72,9 @@ public interface ScriptingJob extends Job, EditableJobContainer
 	 * Sets the file of the script which should be evaluated by the corresponding script engine.
 	 * @param scriptFile The file containing the script which should be evaluated.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setScriptFile(URL scriptFile) throws RemoteException, MeasurementRunningException;
+	void setScriptFile(URL scriptFile) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the file of the script which should be evaluated by the corresponding script engine.

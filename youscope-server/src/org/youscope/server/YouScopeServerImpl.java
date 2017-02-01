@@ -34,7 +34,7 @@ import org.youscope.common.measurement.Measurement;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
-import org.youscope.common.microscope.MicroscopeStateListener;
+import org.youscope.common.microscope.MeasurementProcessingListener;
 import org.youscope.serverinterfaces.ComponentProvider;
 import org.youscope.serverinterfaces.MeasurementProvider;
 import org.youscope.serverinterfaces.YouScopeLogin;
@@ -360,7 +360,7 @@ public class YouScopeServerImpl implements YouScopeServer
 		try
 		{
 			measurementManager = new MeasurementManager(getMicroscope());
-			measurementFactory = new MeasurementFactoryImpl(measurementManager);
+			measurementFactory = new MeasurementProviderImpl(measurementManager);
 		}
 		catch(RemoteException e)
 		{
@@ -801,19 +801,19 @@ public class YouScopeServerImpl implements YouScopeServer
 	}
 
 	@Override
-	public void addStateListener(MicroscopeStateListener listener)
+	public void addMeasurementProcessingListener(MeasurementProcessingListener listener)
 	{
 		if(measurementManager == null)
 			throw new IllegalStateException("Server not initialized yet.");
-		measurementManager.addQueueListener(listener);
+		measurementManager.addMeasurementProcessingListener(listener);
 	}
 
 	@Override
-	public void removeStateListener(MicroscopeStateListener listener)
+	public void removeMeasurementProcessingListener(MeasurementProcessingListener listener)
 	{
 		if(measurementManager == null)
 			throw new IllegalStateException("Server not initialized yet.");
-		measurementManager.removeQueueListener(listener);
+		measurementManager.removeMeasurementProcessingListener(listener);
 	}
 
 	@Override

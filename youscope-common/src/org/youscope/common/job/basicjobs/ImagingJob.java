@@ -5,9 +5,9 @@ package org.youscope.common.job.basicjobs;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * A job which makes a microscope image in the defined channel.
@@ -36,9 +36,9 @@ public interface ImagingJob extends Job, ImageProducer
 	 * @param deviceGroup The device group where the channel is defined.
 	 * @param channel The channel.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setChannel(String deviceGroup, String channel) throws RemoteException, MeasurementRunningException;
+	void setChannel(String deviceGroup, String channel) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the channel.
@@ -62,9 +62,9 @@ public interface ImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposure The exposure.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	public void setExposure(double exposure) throws RemoteException, MeasurementRunningException;
+	public void setExposure(double exposure) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the exposure. If more than one camera is initialized, returns the exposure of the first camera.
@@ -81,10 +81,10 @@ public interface ImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposures The exposures.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws IllegalArgumentException Thrown if number of elements in exposure array is unequal to the number of cameras.
 	 */
-	void setExposures(double[] exposures) throws RemoteException, MeasurementRunningException, IllegalArgumentException;
+	void setExposures(double[] exposures) throws RemoteException, ComponentRunningException, IllegalArgumentException;
 
 	/**
 	 * Gets the exposures of the initialized cameras.
@@ -100,18 +100,18 @@ public interface ImagingJob extends Job, ImageProducer
 	 * 
 	 * @param cameras Device names of the cameras
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setCameras(String[] cameras) throws RemoteException, MeasurementRunningException;
+	void setCameras(String[] cameras) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the camera with which it should be imaged. If set to null, the default (currently initialized) camera is used.
 	 * 
 	 * @param camera Device names of the camera.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setCamera(String camera) throws RemoteException, MeasurementRunningException;
+	void setCamera(String camera) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the names/IDs of the cameras. Elements being null correspond to the default camera.
@@ -134,7 +134,7 @@ public interface ImagingJob extends Job, ImageProducer
 	 * Sets a short string describing the images which are made by this job.
 	 * @param description The description which should be returned for the images produced by this job, or null, to switch to the default description.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setImageDescription(String description) throws RemoteException, MeasurementRunningException;
+	void setImageDescription(String description) throws RemoteException, ComponentRunningException;
 }

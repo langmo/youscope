@@ -5,13 +5,13 @@ package org.youscope.plugin.waitforuser;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackException;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -41,7 +41,7 @@ class WaitForUserJobImpl  extends JobAdapter implements WaitForUserJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Wait for user";
 	}
@@ -53,7 +53,7 @@ class WaitForUserJobImpl  extends JobAdapter implements WaitForUserJob
 	}
 
 	@Override
-	public void setMessage(String message) throws RemoteException, MeasurementRunningException
+	public void setMessage(String message) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		if(message != null)
@@ -61,7 +61,7 @@ class WaitForUserJobImpl  extends JobAdapter implements WaitForUserJob
 	}
 
 	@Override
-	public void setMeasurementCallback(WaitForUserCallback callback) throws RemoteException, MeasurementRunningException
+	public void setMeasurementCallback(WaitForUserCallback callback) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.callback = callback;

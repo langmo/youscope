@@ -5,8 +5,8 @@ package org.youscope.plugin.waitforuser;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
@@ -28,15 +28,15 @@ public interface WaitForUserJob extends Job
 	 * 
 	 * @param message Message to be displayed.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	void setMessage(String message) throws RemoteException,	MeasurementRunningException;
+	void setMessage(String message) throws RemoteException,	ComponentRunningException;
 	
 	/**
 	 * Sets the callback to the client used by this job. Must be set before initialization.
 	 * @param callback Callback to be used to wait for the user.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	void setMeasurementCallback(WaitForUserCallback callback) throws RemoteException, MeasurementRunningException;
+	void setMeasurementCallback(WaitForUserCallback callback) throws RemoteException, ComponentRunningException;
 }

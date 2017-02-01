@@ -6,6 +6,7 @@ package org.youscope.plugin.outoffocus;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -13,7 +14,6 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
@@ -62,7 +62,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public synchronized void setExposure(double exposure) throws MeasurementRunningException
+	public synchronized void setExposure(double exposure) throws ComponentRunningException
 	{
 		assertRunning();
 		this.exposure = exposure;
@@ -81,7 +81,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public synchronized void setChannel(String deviceGroup, String channel) throws MeasurementRunningException
+	public synchronized void setChannel(String deviceGroup, String channel) throws ComponentRunningException
 	{
 		assertRunning();
 		this.channelGroup = deviceGroup;
@@ -133,7 +133,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Out of focus (offset "+Double.toString(getOffset())+"um) imaging channel " + getChannelGroup() + "." + getChannel() + ", exposure " + Double.toString(getExposure()) + "ms";
 	}
@@ -184,7 +184,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public void setFocusDevice(String focusDevice) throws MeasurementRunningException
+	public void setFocusDevice(String focusDevice) throws ComponentRunningException
 	{
 		assertRunning();
 		this.focusDevice = focusDevice;
@@ -197,7 +197,7 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public void setFocusAdjustmentTime(int adjustmentTime) throws MeasurementRunningException
+	public void setFocusAdjustmentTime(int adjustmentTime) throws ComponentRunningException
 	{
 		assertRunning();
 		this.adjustmentTime = adjustmentTime;
@@ -210,14 +210,14 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 	}
 
 	@Override
-	public void setOffset(double offset) throws MeasurementRunningException
+	public void setOffset(double offset) throws ComponentRunningException
 	{
 		assertRunning();
 		this.offset = offset;
 	}
 
 	@Override
-	public void setImageDescription(String description) throws RemoteException, MeasurementRunningException
+	public void setImageDescription(String description) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		imageDescription = description;

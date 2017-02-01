@@ -5,8 +5,8 @@ package org.youscope.common.job.basicjobs;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * A job to change the stage's position.
@@ -58,18 +58,18 @@ public interface ChangePositionJob extends Job
 	 * @param x X-position in micro meter.
 	 * @param y Y-position in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setPosition(double x, double y) throws RemoteException, MeasurementRunningException;
+	void setPosition(double x, double y) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the relative distance for which the microscope should move, starting at the current position.
 	 * @param dx the distance in the x-direction, in micro meter.
 	 * @param dy the distance in the y-direction, in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setRelativePosition(double dx, double dy) throws RemoteException, MeasurementRunningException;
+	void setRelativePosition(double dx, double dy) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the ID of the stage device whose position should be changed.
@@ -82,7 +82,7 @@ public interface ChangePositionJob extends Job
 	 * Sets the ID of the stage device whose position should be changed.
 	 * @param deviceID ID of the stage device, or null, if default stage device should be used.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setStageDevice(String deviceID) throws RemoteException, MeasurementRunningException;
+	void setStageDevice(String deviceID) throws RemoteException, ComponentRunningException;
 }

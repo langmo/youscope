@@ -169,10 +169,4 @@ public class ContinousImagingMeasurementConfiguration extends MeasurementConfigu
 	{
 		return saveImages;
 	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}	
 }

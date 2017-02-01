@@ -12,13 +12,14 @@ import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.TaskException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -76,7 +77,7 @@ public class CellDetectionMeasurementInitializer implements MeasurementInitializ
 		}		
 		
 		period.setStartTime(0);
-		MeasurementTask task;
+		Task task;
 		try
 		{
 			task = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
@@ -102,12 +103,16 @@ public class CellDetectionMeasurementInitializer implements MeasurementInitializ
 				cellDetectionJob.addImageListener(constructionContext.getMeasurementSaver().getSaveImageListener("Detect"));
 						
 			cellDetectionJob.addJob(continuousJob);
-			task.addJob(cellDetectionJob);
+			try {
+				task.addJob(cellDetectionJob);
+			} catch (TaskException e) {
+				throw new AddonException("Could not add job to task.", e);
+			}
 		}
 		catch(RemoteException e)
 		{
 			throw new AddonException("Remote exception while creating job.", e);
-		} catch (MeasurementRunningException e) {
+		} catch (ComponentRunningException e) {
 			throw new AddonException("Could not initialize measurement since measurement is already running.", e);
 		}
 	}

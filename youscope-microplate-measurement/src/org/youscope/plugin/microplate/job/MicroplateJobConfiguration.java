@@ -3,19 +3,20 @@
  */
 package org.youscope.plugin.microplate.job;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.youscope.addon.microplate.MicroplateConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.Well;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.plugin.microplate.measurement.FineConfigurationConverter;
 import org.youscope.plugin.microplate.measurement.TileConfiguration;
 import org.youscope.plugin.microplate.measurement.XYAndFocusPosition;
@@ -29,7 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("microplate-job")
-public class MicroplateJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class MicroplateJobConfiguration implements CompositeJobConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -39,7 +40,7 @@ public class MicroplateJobConfiguration extends JobConfiguration implements JobC
 	/**
 	 * A list of all the jobs which should be done during the measurement.
 	 */
-	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
+	private final ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
 
 	@XStreamAlias("stage")
 	private String stageDevice = null;
@@ -217,13 +218,13 @@ public class MicroplateJobConfiguration extends JobConfiguration implements JobC
 	@Override
 	public void removeJobAt(int index)
 	{
-		jobs.removeElementAt(index);
+		jobs.remove(index);
 	}
 
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 
 	}
 
@@ -283,5 +284,13 @@ public class MicroplateJobConfiguration extends JobConfiguration implements JobC
 			description += "<p>No well specified.</p>";
 		}
 		return description;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
 	}
 }

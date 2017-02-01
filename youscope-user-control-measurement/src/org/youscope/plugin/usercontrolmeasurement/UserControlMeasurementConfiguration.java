@@ -3,8 +3,6 @@
  */
 package org.youscope.plugin.usercontrolmeasurement;
 
-import java.io.Serializable;
-
 import org.youscope.common.measurement.MeasurementConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -16,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("user-control-measurement")
-public class UserControlMeasurementConfiguration extends MeasurementConfiguration implements Cloneable, Serializable
+public class UserControlMeasurementConfiguration extends MeasurementConfiguration
 {
 	/**
 	 * Serial version UID.

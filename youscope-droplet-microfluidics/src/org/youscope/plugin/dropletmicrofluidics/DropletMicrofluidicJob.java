@@ -7,9 +7,8 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResource;
-import org.youscope.common.job.Job;
-import org.youscope.common.job.JobContainer;
-import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.table.TableProducer;
 import org.youscope.plugin.autofocus.AutoFocusJob;
 import org.youscope.plugin.nemesys.NemesysJob;
@@ -19,7 +18,7 @@ import org.youscope.plugin.nemesys.NemesysJob;
  * @author Moritz Lang
  *
  */
-public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
+public interface DropletMicrofluidicJob extends CompositeJob, TableProducer
 {
 	/**
 	 * Returns the job which is used to produce the input for the controller, i.e. the autofocus job.
@@ -32,9 +31,9 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * Sets the input job.
 	 * @param inputJob input job.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setInputJob(AutoFocusJob inputJob) throws RemoteException, MeasurementRunningException;
+	public void setInputJob(AutoFocusJob inputJob) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns the nemesys job which is used as the output.
@@ -47,10 +46,10 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * Sets the nemesys job which is used as the output
 	 * @param outputJob output job.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 * @throws IllegalArgumentException If outputJob does not implement OutputConsumerConfiguration.
 	 */
-	public void setOutputJob(NemesysJob outputJob) throws RemoteException, MeasurementRunningException, IllegalArgumentException;
+	public void setOutputJob(NemesysJob outputJob) throws RemoteException, ComponentRunningException, IllegalArgumentException;
 	
 	/**
 	 * Returns the control algorithm used to correct droplet heights by changing inflow or outflow.
@@ -63,9 +62,9 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * Sets the control algorithm used to correct droplet heights by changing inflow or outflow.
 	 * @param controller controller algorithm.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setController(DropletControllerResource controller) throws RemoteException, MeasurementRunningException;
+	public void setController(DropletControllerResource controller) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns the observer algorithm used to estimate the droplet heights from periodical autofocus measurements.
@@ -78,9 +77,9 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * Sets the observer algorithm used to estimate the droplet heights from periodical autofocus measurements.
 	 * @param observer observer algorithm.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setObserver(DropletObserverResource observer) throws RemoteException, MeasurementRunningException;
+	public void setObserver(DropletObserverResource observer) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns the ID of the droplet microfluidic chip/part of the chip which is controlled by this job.
@@ -99,17 +98,17 @@ public interface DropletMicrofluidicJob extends Job, JobContainer, TableProducer
 	 * Thus, it is possible to control the droplet heights of several chips by having different IDs.
 	 * @param microfluidicChipID  chip id.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, MeasurementRunningException;
+	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Sets the IDs of the syringes of the nemesys device connected to the chip/part of the chip.
 	 * @param connectedSyringes IDs (zero based) of nemesys syringes, or null if not yet configured.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, MeasurementRunningException;
+	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns the IDs of the syringes of the nemesys device connected to the chip/part of the chip.

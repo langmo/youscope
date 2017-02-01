@@ -68,21 +68,20 @@ class MeasurementStateField extends JLabel implements ActionListener
 		{
 			case READY:
 				return new Color(120, 250, 120);
-			case UNQUEUED:
-				return new Color(120, 250, 120);
 			case QUEUED:
+			case PAUSED:
 				return new Color(250, 250, 30);
 			case RUNNING:
 			case INITIALIZING:
-			case UNINITIALIZING:
+			case INITIALIZED:
 				return new Color(120, 250, 30);
 			case ERROR:
 				return new Color(250, 30, 30);
-			case FINISHED:
+			case UNINITIALIZED:
 				return new Color(120, 250, 120);
 			case STOPPING:
-				return new Color(250, 250, 30);
-			case INTERRUPTING:
+			case UNINITIALIZING:
+			case STOPPED:
 				return new Color(250, 250, 30);
 			default:
 				return new Color(150, 150, 150);
@@ -94,14 +93,17 @@ class MeasurementStateField extends JLabel implements ActionListener
 		switch(state)
 		{
 			case READY:
-			case UNQUEUED:
+			case QUEUED:
 			case ERROR:
-			case FINISHED:
+			case PAUSED:
+			case UNINITIALIZED:
+			case INITIALIZED:
+			case STOPPED:
 				return false;
 			case RUNNING:
-			case QUEUED:
 			case STOPPING:
-			case INTERRUPTING:
+			case INITIALIZING:
+			case UNINITIALIZING:
 				return true;
 			default:
 				return false;
@@ -144,21 +146,27 @@ class MeasurementStateField extends JLabel implements ActionListener
 		switch(state)
 		{
 			case READY:
-				return "Measurement Initialized.";
-			case UNQUEUED:
-				return "Measurement Unqueued.";
+				return "Measurement Ready.";
 			case QUEUED:
 				return "Measurement Queued.";
-			case RUNNING:
-				return "Measurement Running.";
 			case ERROR:
 				return "Error in Measurement.";
-			case FINISHED:
+			case PAUSED:
+				return "Measurement Paused.";
+			case UNINITIALIZED:
 				return "Measurement Finished.";
+			case RUNNING:
+				return "Measurement Running.";
 			case STOPPING:
 				return "Measurement Stopping.";
-			case INTERRUPTING:
-				return "Measurement Interrupting.";
+			case INITIALIZING:
+				return "Measurement Initializing.";
+			case INITIALIZED:
+				return "Measurement Initialized.";
+			case UNINITIALIZING:
+				return "Measurement Uninitializing.";
+			case STOPPED:
+				return "Measurement Stopped.";
 			default:
 				return state.toString();
 		}

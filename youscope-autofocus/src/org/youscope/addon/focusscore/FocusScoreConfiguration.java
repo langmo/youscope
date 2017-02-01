@@ -23,10 +23,4 @@ public abstract class FocusScoreConfiguration extends ResourceConfiguration
 	 * Serial Version UID.
 	 */
 	private static final long	serialVersionUID	= 1623512978102625712L;
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 }

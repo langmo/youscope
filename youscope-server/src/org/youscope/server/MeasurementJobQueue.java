@@ -3,6 +3,7 @@
  */
 package org.youscope.server;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -16,10 +17,14 @@ class MeasurementJobQueue
 	 * in first out.
 	 */
 	private final ConcurrentLinkedQueue<JobExecutionQueueElement>	jobQueue					= new ConcurrentLinkedQueue<JobExecutionQueueElement>();
-
-	boolean isJobQueueEmpty()
+	private volatile boolean blocked = false;
+	private final ArrayList<JobQueueListener> jobQueueListeners = new ArrayList<>(1);
+	boolean isEmpty()
 	{
-		return jobQueue.isEmpty();
+		synchronized(jobQueue)
+		{
+			return jobQueue.isEmpty();
+		}
 	}
 	
 	JobExecutionQueueElement unqueueJob()
@@ -33,14 +38,42 @@ class MeasurementJobQueue
 	{
 		synchronized(jobQueue)
 		{
-			jobQueue.add(job);
+			if(!blocked)
+				jobQueue.add(job);
+		}
+		synchronized(jobQueueListeners)
+		{
+			for(JobQueueListener listener : jobQueueListeners)
+			{
+				listener.jobQueued();
+			}
 		}
 	}
-	void clearJobQueue()
+	void clearAndBlock()
 	{
 		synchronized(jobQueue)
 		{
+			blocked = true;
 			jobQueue.clear();
 		}
+	}
+	void addJobQueueListener(JobQueueListener listener)
+	{
+		synchronized(jobQueueListeners)
+		{
+			jobQueueListeners.add(listener);
+		}
+	}
+	void removeJobQueueListener(JobQueueListener listener)
+	{
+		synchronized(jobQueueListeners)
+		{
+			jobQueueListeners.remove(listener);
+		}
+	}
+	
+	static interface JobQueueListener
+	{
+		void jobQueued();
 	}
 }

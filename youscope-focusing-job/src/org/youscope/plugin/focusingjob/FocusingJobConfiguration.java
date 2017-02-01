@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.focusingjob;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.configuration.YSConfigClassification;
@@ -20,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @YSConfigAlias("Focussing")
 @YSConfigClassification("elementary")
 @YSConfigIcon("icons/application-dock-270.png")
-public class FocusingJobConfiguration extends JobConfiguration
+public class FocusingJobConfiguration implements JobConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -127,11 +128,8 @@ public class FocusingJobConfiguration extends JobConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		FocusingJobConfiguration clone = (FocusingJobConfiguration)super.clone();
-		if(focusConfiguration != null)
-			clone.focusConfiguration = focusConfiguration.clone();
-		return clone;
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing, always correct.
+		
 	}
 }

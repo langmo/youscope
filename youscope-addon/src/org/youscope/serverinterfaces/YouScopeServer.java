@@ -10,7 +10,7 @@ import org.youscope.common.MessageListener;
 import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.microscope.MicroscopeStateListener;
+import org.youscope.common.microscope.MeasurementProcessingListener;
 
 /**
  * The main interface of the YouScope server, which controls the microscope, executes measurements, and similar.
@@ -70,12 +70,12 @@ public interface YouScopeServer extends Remote
 	void removeMessageListener(MessageListener listener) throws RemoteException;
 
 	/**
-	 * Adds a listener which detects state changes from the server/microscope.
+	 * Adds a listener which gets informed about the current state of measurement processing.
 	 * 
-	 * @param listener Listener which detects state changes.
+	 * @param listener Listener to add.
 	 * @throws RemoteException
 	 */
-	void addStateListener(MicroscopeStateListener listener) throws RemoteException;
+	void addMeasurementProcessingListener(MeasurementProcessingListener listener) throws RemoteException;
 
 	/**
 	 * Removes a previously added listener.
@@ -83,7 +83,7 @@ public interface YouScopeServer extends Remote
 	 * @param listener the listener.
 	 * @throws RemoteException
 	 */
-	void removeStateListener(MicroscopeStateListener listener) throws RemoteException;
+	void removeMeasurementProcessingListener(MeasurementProcessingListener listener) throws RemoteException;
 
 	/**
 	 * Returns the currently running measurement or NULL, if none is running.

@@ -139,12 +139,6 @@ public final class FocusConfiguration implements Configuration
 	}
 
 	@Override
-	public FocusConfiguration clone()
-	{
-		return new FocusConfiguration(this);
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		if(adjustmentTime < 0)
 			throw new ConfigurationException("Focus adjustment time must be bigger or equal to zero.");

@@ -5,13 +5,13 @@ package org.youscope.plugin.devicejob;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
@@ -41,7 +41,7 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	}
 
 	@Override
-	public synchronized void setDeviceSettings(DeviceSetting[] settings) throws MeasurementRunningException
+	public synchronized void setDeviceSettings(DeviceSetting[] settings) throws ComponentRunningException
 	{
 		assertRunning();
 		if(settings == null)
@@ -65,13 +65,13 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	}
 
 	@Override
-	public void clearDeviceSettings() throws MeasurementRunningException
+	public void clearDeviceSettings() throws ComponentRunningException
 	{
 		DeviceJobImpl.this.setDeviceSettings(null);
 	}
 
 	@Override
-	public void addDeviceSetting(String device, String property, String value) throws MeasurementRunningException
+	public void addDeviceSetting(String device, String property, String value) throws ComponentRunningException
 	{
 		assertRunning();
 		DeviceSetting[] newSettings = new DeviceSetting[settings.length + 1];
@@ -162,8 +162,9 @@ class DeviceJobImpl extends JobAdapter implements DeviceSettingJob
 	}
 
 	@Override
-	public synchronized String getDefaultName()
+	protected String getDefaultName()
 	{
+		DeviceSetting[] settings = this.settings;
 		String text = "Device Settings(";
 		for(int i = 0; i < settings.length; i++)
 		{

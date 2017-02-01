@@ -7,9 +7,10 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.youscope.common.Component;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.saving.MeasurementSaver;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 
 /**
  * Represents a measurement a microscope should do.
@@ -18,13 +19,6 @@ import org.youscope.common.task.MeasurementTask;
  */
 public interface Measurement extends Component
 {
-	/**
-     * Stops the execution of the measurement after all queued jobs were finished. Note: If measurement is queued, it gets disabled but not un-queued.
-	 * @throws MeasurementException 
-     * 
-     * @throws RemoteException
-     */
-    void quickStopMeasurement() throws MeasurementException, RemoteException;
     /**
      * Sets a measurement context property. The measurement context of the measurement will be initialized upon measurement initialization to already
      * contain this context property. A measurement context property can be loaded and overwritten by any other measurement component in the measurement. Any property
@@ -32,10 +26,10 @@ public interface Measurement extends Component
      * 
      * @param identifier a short identifier for the property.
      * @param property The property which should be saved.
-     * @throws MeasurementRunningException 
+     * @throws ComponentRunningException 
      * @throws RemoteException
      */
-    void setInitialMeasurementContextProperty(String identifier, Serializable property) throws MeasurementRunningException, RemoteException;
+    void setInitialMeasurementContextProperty(String identifier, Serializable property) throws ComponentRunningException, RemoteException;
 	/**
 	 * Returns the current state of the measurement.
 	 * 
@@ -54,13 +48,16 @@ public interface Measurement extends Component
 	void startMeasurement() throws MeasurementException, RemoteException;
 
 	/**
-	 * Stops the execution of the measurement after all queued jobs were finished. Note: If
-	 * measurement is queued, it gets disabled but not un-queued.
+	 * If measurement runs:
+	 * Stops the execution of the measurement either after all queued jobs were processed, or when currently processed job finished. 
+	 * If measurement is queued:
+	 * Unqueues measurement.
+	 * @param processJobQueue True if all queued jobs should be processed before finishing, false if finishing directly after currently processed job.
 	 * @throws MeasurementException 
-	 * 
 	 * @throws RemoteException
+	 * @see #interruptMeasurement()
 	 */
-	void stopMeasurement() throws MeasurementException, RemoteException;
+	void stopMeasurement(boolean processJobQueue) throws MeasurementException, RemoteException;
 
 	/**
 	 * Interrupts the execution of the measurement. All queued jobs are discarded.
@@ -91,9 +88,9 @@ public interface Measurement extends Component
 	 * @param measurementRuntime Runtime of the measurement in milliseconds. Set to -1 for an
 	 *            infinite runtime.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setRuntime(int measurementRuntime) throws RemoteException, MeasurementRunningException;
+	void setRuntime(int measurementRuntime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the runtime of the measurement.
@@ -122,9 +119,9 @@ public interface Measurement extends Component
 	 * 
 	 * @param lock True if should be locked.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setLockMicroscopeWhileRunning(boolean lock) throws RemoteException, MeasurementRunningException;
+	void setLockMicroscopeWhileRunning(boolean lock) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns if write access to the microscope is locked during the measurement.
@@ -139,9 +136,9 @@ public interface Measurement extends Component
 	 * 
 	 * @param type Type identifier.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setTypeIdentifier(String type) throws RemoteException, MeasurementRunningException;
+	void setTypeIdentifier(String type) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns a previously defined type identifier.
@@ -169,9 +166,9 @@ public interface Measurement extends Component
 	 * @param startTime The time when the jobs are started first (in ms).
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	MeasurementTask addTask(int period, boolean fixedTimes, int startTime) throws RemoteException, MeasurementRunningException;
+	Task addTask(int period, boolean fixedTimes, int startTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times (<startTime> + i * <period>) ms, i =
@@ -185,9 +182,9 @@ public interface Measurement extends Component
 	 * @param numExecutions Maximal number of executions. -1 for an infinite amount.
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	MeasurementTask addTask(int period, boolean fixedTimes, int startTime, int numExecutions) throws RemoteException, MeasurementRunningException;
+	Task addTask(int period, boolean fixedTimes, int startTime, int numExecutions) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times {startTime, startTime + periods[0],
@@ -202,9 +199,9 @@ public interface Measurement extends Component
 	 * @param startTime The time when the jobs should be started first (in ms).
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime) throws RemoteException, MeasurementRunningException;
+	Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times {startTime, startTime + periods[0],
@@ -219,9 +216,9 @@ public interface Measurement extends Component
 	 * @param numExecutions Maximal number of executions. -1 for an infinite amount.
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime, int numExecutions) throws RemoteException, MeasurementRunningException;
+	Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime, int numExecutions) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns a list of all tasks of this measurement.
@@ -229,41 +226,41 @@ public interface Measurement extends Component
 	 * @return List of tasks.
 	 * @throws RemoteException
 	 */
-	MeasurementTask[] getTasks() throws RemoteException;
+	Task[] getTasks() throws RemoteException;
 
 	/**
 	 * Sets the device settings which should be applied (once) the measurement starts.
 	 * 
 	 * @param settings The device settings which should be applied.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setStartupDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
+	void setStartupDeviceSettings(DeviceSetting[] settings) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the device settings which should be applied (once) the measurement ends.
 	 * 
 	 * @param settings The device settings which should be applied.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFinishDeviceSettings(DeviceSetting[] settings) throws RemoteException, MeasurementRunningException;
+	void setFinishDeviceSettings(DeviceSetting[] settings) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a device setting which should be applied (once) the measurement starts.
 	 * 
 	 * @param setting The device settings which should be added.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void addStartupDeviceSetting(DeviceSetting setting) throws RemoteException, MeasurementRunningException;
+	void addStartupDeviceSetting(DeviceSetting setting) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a device settings which should be applied (once) the measurement ends.
 	 * 
 	 * @param setting The device settings which should be added.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void addFinishDeviceSetting(DeviceSetting setting) throws RemoteException, MeasurementRunningException;
+	void addFinishDeviceSetting(DeviceSetting setting) throws RemoteException, ComponentRunningException;
 }

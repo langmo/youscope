@@ -6,15 +6,15 @@ package org.youscope.plugin.composedimaging;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
  * @author langmo
  */
-public interface PlateScanningJob extends Job, EditableJobContainer
+public interface PlateScanningJob extends Job, CompositeJob
 {
 	/**
 	 * Returns the distance between two horizontally attached sub-images.
@@ -30,9 +30,9 @@ public interface PlateScanningJob extends Job, EditableJobContainer
 	 * @param deltaX
 	 *            Distance in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setDeltaX(double deltaX) throws RemoteException, MeasurementRunningException;
+	void setDeltaX(double deltaX) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the distance between two vertically attached sub-images.
@@ -48,9 +48,9 @@ public interface PlateScanningJob extends Job, EditableJobContainer
 	 * @param deltaY
 	 *            Distance in micro meter.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setDeltaY(double deltaY) throws RemoteException, MeasurementRunningException;
+	void setDeltaY(double deltaY) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the number of tiles/sub-images.
@@ -65,7 +65,7 @@ public interface PlateScanningJob extends Job, EditableJobContainer
 	 * 
 	 * @param numTiles Number of tiles/sub-images.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setNumTiles(Dimension numTiles) throws RemoteException, MeasurementRunningException;
+	void setNumTiles(Dimension numTiles) throws RemoteException, ComponentRunningException;
 }

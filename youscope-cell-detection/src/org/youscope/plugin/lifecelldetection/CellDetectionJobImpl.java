@@ -11,6 +11,7 @@ import org.youscope.addon.celldetection.CellDetectionException;
 import org.youscope.addon.celldetection.CellDetectionResult;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
 import org.youscope.addon.celldetection.CellVisualizationException;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -21,7 +22,6 @@ import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.Table;
@@ -254,7 +254,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	
 	
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String retVal = "Cell Detection Job";
 		return retVal;
@@ -333,7 +333,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	}
 	
 	@Override
-	public synchronized void addJob(Job job) throws MeasurementRunningException
+	public synchronized void addJob(Job job) throws ComponentRunningException
 	{
 		if(!(job instanceof ImageProducer))
 			throw new IllegalArgumentException("All child jobs of a cell detection job must be image producers!");
@@ -346,17 +346,17 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws MeasurementRunningException
+	public synchronized void clearJobs() throws ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -375,7 +375,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	}
 
 	@Override
-	public synchronized void setDetectionAlgorithm(CellDetectionAddon detectionAlgorithm) throws MeasurementRunningException
+	public synchronized void setDetectionAlgorithm(CellDetectionAddon detectionAlgorithm) throws ComponentRunningException
 	{
 		assertRunning();
 		this.detectionAlgorithm = detectionAlgorithm;
@@ -388,7 +388,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	}
 	
 	@Override
-	public void setVisualizationAlgorithm(CellVisualizationAddon visualizationAlgorithm) throws MeasurementRunningException
+	public void setVisualizationAlgorithm(CellVisualizationAddon visualizationAlgorithm) throws ComponentRunningException
 	{
 		assertRunning();
 		this.visualizationAlgorithm = visualizationAlgorithm;
@@ -407,14 +407,14 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 	}
 	
 	@Override
-	public void setImageDescription(String description) throws MeasurementRunningException
+	public void setImageDescription(String description) throws ComponentRunningException
 	{
 		assertRunning();
 		imageDescription = description;
 	}
 
 	@Override
-	public void setMinimalTimeMS(long minimalTimeMS) throws MeasurementRunningException
+	public void setMinimalTimeMS(long minimalTimeMS) throws ComponentRunningException
 	{
 		assertRunning();
 		this.minimalTimeMS = minimalTimeMS;
@@ -526,7 +526,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		assertRunning();
 		jobs.add(jobIndex, job);
 	}

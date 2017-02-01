@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -16,7 +17,6 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -67,7 +67,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public void setDeltaX(double deltaX) throws MeasurementRunningException
+	public void setDeltaX(double deltaX) throws ComponentRunningException
 	{
 		assertRunning();
 		ComposedImagingJobImpl.this.dx = deltaX;
@@ -80,7 +80,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public void setDeltaY(double deltaY) throws MeasurementRunningException
+	public void setDeltaY(double deltaY) throws ComponentRunningException
 	{
 		assertRunning();
 		ComposedImagingJobImpl.this.dy = deltaY;
@@ -93,7 +93,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public void setSubImageNumber(Dimension imageNumbers) throws MeasurementRunningException
+	public void setSubImageNumber(Dimension imageNumbers) throws ComponentRunningException
 	{
 		assertRunning();
 		ComposedImagingJobImpl.this.nx = imageNumbers.width;
@@ -214,13 +214,13 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Composed Imaging";
 	}
 
 	@Override
-	public void setExposure(double exposure) throws MeasurementRunningException
+	public void setExposure(double exposure) throws ComponentRunningException
 	{
 		exposures = new double[cameras.length];
 		for(int i = 0; i < exposures.length; i++)
@@ -249,7 +249,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public synchronized void setChannel(String deviceGroup, String channel) throws MeasurementRunningException
+	public synchronized void setChannel(String deviceGroup, String channel) throws ComponentRunningException
 	{
 		assertRunning();
 		this.configGroup = deviceGroup;
@@ -263,7 +263,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public synchronized void setCameras(String[] cameras) throws MeasurementRunningException
+	public synchronized void setCameras(String[] cameras) throws ComponentRunningException
 	{
 		assertRunning();
 
@@ -293,7 +293,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 	}
 
 	@Override
-	public synchronized void setExposures(double[] exposures) throws MeasurementRunningException
+	public synchronized void setExposures(double[] exposures) throws ComponentRunningException
 	{
 		assertRunning();
 		this.exposures = exposures;

@@ -3,12 +3,11 @@
  */
 package org.youscope.plugin.microplate.measurement;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.youscope.addon.microplate.MicroplateConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
@@ -16,10 +15,10 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.Well;
 import org.youscope.common.task.PeriodConfiguration;
+import org.youscope.common.util.ConfigurationTools;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -30,7 +29,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("microplate-measurement")
-public class MicroplateMeasurementConfiguration extends MeasurementConfiguration implements Cloneable, Serializable, JobContainerConfiguration
+public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -40,7 +39,7 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	/**
 	 * A list of all the jobs which should be done during the measurement.
 	 */
-	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
+	private ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
 
 	@XStreamAlias("statistics-file")
 	private String statisticsFileName = "statistics";
@@ -194,14 +193,21 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	public void setTileConfiguration(TileConfiguration tileConfiguration) {
 		this.tileConfiguration = tileConfiguration;
 	}
-
-	@Override
+	/**
+	 * Returns the jobs executed in each well/tile of the measurement.
+	 * 
+	 * @return Jobs.
+	 */
 	public JobConfiguration[] getJobs()
 	{
 		return jobs.toArray(new JobConfiguration[jobs.size()]);
 	}
 
-	@Override
+	/**
+	 * Sets the jobs executed in each well/tile of the measurement.
+	 * 
+	 * @param jobs New jobs.
+	 */
 	public void setJobs(JobConfiguration[] jobs) 
 	{
 		this.jobs.clear();
@@ -210,14 +216,18 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 			this.jobs.add(job);
 		}
 	}
-
-	@Override
+	/**
+	 * Adds a job to the jobs executed in each well/tile of the measurement.
+	 * 
+	 * @param job Job to be added.
+	 */
 	public void addJob(JobConfiguration job)
 	{
 		jobs.add(job);
 	}
-
-	@Override
+	/**
+	 * Removes all jobs executed in each well/tile of the measurement.
+	 */
 	public void clearJobs()
 	{
 		jobs.clear();
@@ -272,48 +282,37 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		MicroplateMeasurementConfiguration clone = (MicroplateMeasurementConfiguration)super.clone();
-		clone.jobs = new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		if(period != null)
-		{
-			clone.period = (PeriodConfiguration)period.clone();
-		}
-		if(focusConfiguration != null)
-			clone.focusConfiguration = focusConfiguration.clone();
-		
-		clone.configuredPositions = new HashMap<>(configuredPositions);
-		clone.selectedTiles = new HashSet<>(selectedTiles);
-		clone.selectedWells = new HashSet<>(selectedWells);
-		if(zeroPosition != null)
-			clone.zeroPosition = new XYAndFocusPosition(zeroPosition.getX(), zeroPosition.getY(), zeroPosition.getFocus());
-		return clone;
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		super.checkConfiguration();
 		if(configuredPositions.isEmpty())
 		{
 			throw new ConfigurationException("Position/well configuration not yet run.\nThe position fine configuration has to be run in order for the measurement to obtain valid stage positions.");
 		}
+		for(JobConfiguration childJob:jobs)
+		{
+			childJob.checkConfiguration();
+		}
 	}
 	
-	@Override
-	public void removeJobAt(int index)
+	/**
+	 * Removes the job at the given index.
+	 * 
+	 * @param index Index of the job to be removed.
+	 */
+	public void removeJob(int index)
 	{
-		jobs.removeElementAt(index);
+		jobs.remove(index);
 	}
 
-	@Override
+	/**
+	 * Inserts a job to the jobs executed at each well/tile of the measurement.
+	 * 
+	 * @param job Job to be added.
+	 * @param index position where to insert. 
+	 */
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 
 	}
 
@@ -342,9 +341,9 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	{
 		try
 		{
-			this.period = (PeriodConfiguration)period.clone();
+			this.period = ConfigurationTools.deepCopy(period, PeriodConfiguration.class);
 		}
-		catch(CloneNotSupportedException e)
+		catch(ConfigurationException e)
 		{
 			throw new IllegalArgumentException("Period can not be cloned.", e);
 		}

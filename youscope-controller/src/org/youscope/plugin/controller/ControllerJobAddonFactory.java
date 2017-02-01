@@ -9,10 +9,10 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -61,7 +61,7 @@ public class ControllerJobAddonFactory extends ComponentAddonFactoryAdapter
 				throw new AddonException("Could not create controller job due to remote exception.", e);
 			} catch (ComponentCreationException e) {
 				throw new AddonException("Could not create all components of controller job.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created controller job since job is already running.", e);
 			}
 		}

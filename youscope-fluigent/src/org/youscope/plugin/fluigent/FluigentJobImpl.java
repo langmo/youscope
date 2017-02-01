@@ -17,12 +17,12 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.Microscope;
@@ -71,7 +71,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 		super(positionInformation);
 	}
 	@Override
-	public void setScriptEngine(String engine) throws RemoteException, MeasurementRunningException
+	public void setScriptEngine(String engine) throws RemoteException, ComponentRunningException
 	{
 		if(engine == null)
 			this.scriptEngine = "Oracle Nashorn";
@@ -86,7 +86,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 	}
 
 	@Override
-	public void setScript(String script) throws RemoteException, MeasurementRunningException
+	public void setScript(String script) throws RemoteException, ComponentRunningException
 	{
 		if(script == null)
 			this.script = "";
@@ -217,7 +217,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		return "Fluigent Job";
 	}
@@ -461,7 +461,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 		return fluigentDeviceName;
 	}
 	@Override
-	public void setFluigentDeviceName(String deviceName) throws RemoteException, MeasurementRunningException
+	public void setFluigentDeviceName(String deviceName) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		fluigentDeviceName = deviceName;

@@ -82,12 +82,6 @@ public class RegularPeriodConfiguration extends PeriodConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException 
 	{
 		super.checkConfiguration();

@@ -3,8 +3,9 @@
  */
 package org.youscope.plugin.deviceslides;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.common.microscope.DeviceSetting;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -13,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author langmo
  */
 @XStreamAlias("multi-position-job")
-public class DeviceSlidesJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class DeviceSlidesJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -83,30 +84,6 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		DeviceSlidesJobConfiguration job = (DeviceSlidesJobConfiguration)super.clone();
-		job.jobs = new JobConfiguration[jobs.length];
-		for(int i = 0; i < jobs.length; i++)
-		{
-			job.jobs[i] = (JobConfiguration)jobs[i].clone();
-		}
-
-		job.multiPosDeviceSettings = new DeviceSetting[multiPosDeviceSettings.length][];
-		for(int i = 0; i < multiPosDeviceSettings.length; i++)
-		{
-			job.multiPosDeviceSettings[i] = new DeviceSetting[multiPosDeviceSettings[i].length];
-			for(int j=0; j < multiPosDeviceSettings[i].length; j++)
-			{
-				job.multiPosDeviceSettings[i][j] = multiPosDeviceSettings[i][j].clone();
-			}
-			
-		}
-
-		return job;
-	}
-
-	@Override
 	public JobConfiguration[] getJobs()
 	{
 		return jobs;
@@ -115,7 +92,10 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	@Override
 	public void setJobs(JobConfiguration[] jobs)
 	{
-		this.jobs = jobs;
+		if(jobs != null)
+			this.jobs = jobs;
+		else
+			this.jobs = new JobConfiguration[0];
 	}
 
 	@Override
@@ -169,5 +149,13 @@ public class DeviceSlidesJobConfiguration extends JobConfiguration implements Jo
 	public String getTypeIdentifier()
 	{
 		return TYPE_IDENTIFIER;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
 	}
 }

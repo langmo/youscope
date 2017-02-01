@@ -60,4 +60,32 @@ public enum MeasurementState
 	{
 	   return super.name().toLowerCase();
 	}
+	/**
+	 * Returns true if the measurement is in an error state.
+	 * Currently, this is true if the state is {@link #ERROR}.
+	 * @return True if measurement is in error state.
+	 */
+	public boolean isError()
+	{
+		return this == MeasurementState.ERROR;
+	}
+	/**
+	 * Returns true if the measurement is currently executed.
+	 * Currently, this is true if the state is either {@link #RUNNING} or {@link #STOPPING}.
+	 * @return True if measurement is currently executed.
+	 */
+	public boolean isRunning()
+	{
+		return this == MeasurementState.RUNNING || this == MeasurementState.STOPPING;
+	}
+	
+	/**
+	 * Returns true if the current state allows for safe editing of the measurement.
+	 * Currently, this is true if this state is either {@link #READY} or {@link #UNINITIALIZED}.
+	 * @return True if safe editing is possible.
+	 */
+	public boolean isEditable()
+	{
+		return this == MeasurementState.READY || this == MeasurementState.UNINITIALIZED;
+	}
 }

@@ -9,12 +9,12 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 
@@ -56,13 +56,7 @@ public class LiveModifiableJobAddonFactory extends ComponentAddonFactoryAdapter
 	            
 	            job.setData(constructionContext, callback);
 	            job.setEnabled(configuration.isEnabledAtStartup());
-	            try
-	            {
-	            	job.setChildJobConfigurations(configuration.getJobs());
-	            } catch (CloneNotSupportedException e1)
-	            {
-	                throw new AddonException("Child jobs do not allow for clone().", e1);
-	            }
+	            job.setChildJobConfigurations(configuration.getJobs());
 
 	            // Add all child jobs
                 for (JobConfiguration childJobConfig : configuration.getJobs())
@@ -79,7 +73,7 @@ public class LiveModifiableJobAddonFactory extends ComponentAddonFactoryAdapter
 				throw new AddonException("Could not create job due to remote exception.", e);
 			} catch (ComponentCreationException e) {
 				throw new AddonException("Could not create all components of job.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}

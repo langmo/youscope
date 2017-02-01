@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("wait-since-last-action-job")
-public class WaitSinceLastActionJobConfiguration extends JobConfiguration
+public class WaitSinceLastActionJobConfiguration implements JobConfiguration
 {
 
 	/**
@@ -102,12 +102,6 @@ public class WaitSinceLastActionJobConfiguration extends JobConfiguration
 		return description;
 	}
 
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
 	/**
 	 * Returns the wait time in ms.
 	 * @return Wait time in ms.
@@ -139,8 +133,6 @@ public class WaitSinceLastActionJobConfiguration extends JobConfiguration
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
-		
 		if(waitTime < 0 || initialWaitTime < 0)
 			throw new ConfigurationException("Wait time must be bigger or equal to zero.");
 	}

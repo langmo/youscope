@@ -9,7 +9,7 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
@@ -39,7 +39,7 @@ public class ContinousImagingMeasurementInitializer implements MeasurementInitia
 		}		
 		// start first query delayed, such that image can have arrived.
 		period.setStartTime(taskPeriod);
-		MeasurementTask task;
+		Task task;
 		try
 		{
 			task = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());

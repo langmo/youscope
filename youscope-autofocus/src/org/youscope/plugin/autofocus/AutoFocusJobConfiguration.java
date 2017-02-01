@@ -11,7 +11,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableProducerConfiguration;
 
@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  */
 @XStreamAlias("auto-focus-job") 
-public class AutoFocusJobConfiguration extends JobConfiguration implements ImageProducerConfiguration, JobContainerConfiguration, TableProducerConfiguration
+public class AutoFocusJobConfiguration implements ImageProducerConfiguration, CompositeJobConfiguration, TableProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -220,15 +220,6 @@ public class AutoFocusJobConfiguration extends JobConfiguration implements Image
 	{
 		this.imageSaveName = name;
 	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		AutoFocusJobConfiguration clone = (AutoFocusJobConfiguration)super.clone();
-		if(focusConfiguration != null)
-			clone.focusConfiguration = focusConfiguration.clone();
-		return clone;
-	}
 	
 	@Override
 	public String[] getImageSaveNames()
@@ -369,5 +360,9 @@ public class AutoFocusJobConfiguration extends JobConfiguration implements Image
 		if(focusSearchAlgorithm == null)
 			throw new ConfigurationException("Not focus search algorithm selected.");
 		focusSearchAlgorithm.checkConfiguration();
+		for(JobConfiguration childJob:jobs)
+		{
+			childJob.checkConfiguration();
+		}
 	}
 }

@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author langmo
  */
 @XStreamAlias("staggering-job")
-public class StaggeringJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class StaggeringJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -155,18 +155,6 @@ public class StaggeringJobConfiguration extends JobConfiguration implements JobC
 	public String getTypeIdentifier()
 	{
 		return TYPE_IDENTIFIER;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		StaggeringJobConfiguration clone = (StaggeringJobConfiguration)super.clone();
-		clone.jobs= new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		return clone;
 	}
 
 	@Override

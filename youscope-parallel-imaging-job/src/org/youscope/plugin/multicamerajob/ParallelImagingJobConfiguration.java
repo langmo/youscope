@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.multicamerajob;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
 
@@ -13,11 +14,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  * 
  */
 @XStreamAlias("parallel-imaging-job")
-public class ParallelImagingJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class ParallelImagingJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -198,5 +199,11 @@ public class ParallelImagingJobConfiguration extends JobConfiguration implements
 	public int getNumberOfImages()
 	{
 		return cameras == null ? 0 : cameras.length;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing, too complicated.
+		
 	}
 }

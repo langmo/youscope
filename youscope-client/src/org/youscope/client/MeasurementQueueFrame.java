@@ -21,7 +21,8 @@ import javax.swing.SwingConstants;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.microscope.MicroscopeStateListener;
+import org.youscope.common.measurement.MeasurementException;
+import org.youscope.common.microscope.MeasurementProcessingListener;
 
 /**
  * @author langmo
@@ -30,7 +31,7 @@ class MeasurementQueueFrame
 {
     protected JPanel queueListPanel = new JPanel(new BorderLayout(5, 5));
 
-    protected MicroscopeStateListener microscopeListener;
+    protected MeasurementProcessingListener measurementProcessingListener;
 
     protected YouScopeFrame									frame;
     
@@ -42,7 +43,7 @@ class MeasurementQueueFrame
 		frame.setClosable(true);
 		frame.setMaximizable(false);
 
-        class QueueListener extends UnicastRemoteObject implements MicroscopeStateListener
+        class QueueListener extends UnicastRemoteObject implements MeasurementProcessingListener
         {
             /**
              * Serializable Version UID.
@@ -66,10 +67,16 @@ class MeasurementQueueFrame
                 actualizeQueueList();
             }
 
+			@Override
+			public void measurementProcessingStopped() throws RemoteException 
+			{
+				// do nothing.
+			}
+
         }
         try
         {
-            microscopeListener = new QueueListener();
+            measurementProcessingListener = new QueueListener();
         } catch (RemoteException e2)
         {
             ClientSystem.err.println("Could not create microscope queue listener.", e2);
@@ -82,8 +89,8 @@ class MeasurementQueueFrame
                 {
                     try
                     {
-                        YouScopeClientImpl.getServer().removeStateListener(
-                                microscopeListener);
+                        YouScopeClientImpl.getServer().removeMeasurementProcessingListener(
+                                measurementProcessingListener);
                     } catch (RemoteException e)
                     {
                         ClientSystem.err.println("Could not remove microscope queue listener.", e);
@@ -95,7 +102,7 @@ class MeasurementQueueFrame
                 {
                     try
                     {
-                        YouScopeClientImpl.getServer().addStateListener(microscopeListener);
+                        YouScopeClientImpl.getServer().addMeasurementProcessingListener(measurementProcessingListener);
                     } catch (RemoteException e)
                     {
                         ClientSystem.err.println("Could not add microscope queue listener.", e);
@@ -210,8 +217,8 @@ class MeasurementQueueFrame
                         {
                             try
                             {
-                                QueueListElement.this.measurement.stopMeasurement();
-                            } catch (RemoteException e)
+                                QueueListElement.this.measurement.stopMeasurement(false);
+                            } catch (RemoteException | MeasurementException e)
                             {
                                 ClientSystem.err.println("Could not stop measurement.", e);
                             }

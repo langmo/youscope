@@ -10,13 +10,14 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.JobException;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.PropertyType;
 import org.youscope.serverinterfaces.ConstructionContext;
@@ -26,19 +27,19 @@ import org.youscope.serverinterfaces.ConstructionContext;
  */
 public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter 
 {
-	private static final CustomAddonCreator<DeviceSlidesJobConfiguration, CompositeJob> CREATOR = new CustomAddonCreator<DeviceSlidesJobConfiguration, CompositeJob>()
+	private static final CustomAddonCreator<DeviceSlidesJobConfiguration, SimpleCompositeJob> CREATOR = new CustomAddonCreator<DeviceSlidesJobConfiguration, SimpleCompositeJob>()
 	{
 
 		@Override
-		public CompositeJob createCustom(PositionInformation positionInformation,
+		public SimpleCompositeJob createCustom(PositionInformation positionInformation,
 				DeviceSlidesJobConfiguration configuration, ConstructionContext constructionContext)
 						throws ConfigurationException, AddonException 
 		{
 			try
 			{
-				CompositeJob compositeJob;
+				SimpleCompositeJob compositeJob;
 				try {
-					compositeJob = constructionContext.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+					compositeJob = constructionContext.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 				} catch (ComponentCreationException e1) {
 					throw new AddonException("Device slides job requires composite job plugin.", e1);
 				}
@@ -161,7 +162,11 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 						throw new AddonException("Multi positions jobs need the device job plugin.", e);
 					}
 					deviceJob.setDeviceSettings(internalSettings);
-					compositeJob.addJob(deviceJob);
+					try {
+						compositeJob.addJob(deviceJob);
+					} catch (JobException e1) {
+						throw new AddonException("Could not add child job to job.", e1);
+					}
 
 					// Second, the jobs which are equal at each position.
 					for(JobConfiguration childJobConfig : configuration.getJobs())
@@ -172,7 +177,11 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Error while creating child job.", e);
 						}
-						compositeJob.addJob(childJob);
+						try {
+							compositeJob.addJob(childJob);
+						} catch (JobException e) {
+							throw new AddonException("Could not add child job to job.", e);
+						}
 					}
 				}
 
@@ -202,21 +211,25 @@ public class DeviceSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 					throw new AddonException("Multi positions jobs need the device job plugin.", e);
 				}
 				deviceJob.setDeviceSettings(tempSettings.toArray(new DeviceSetting[tempSettings.size()]));
-				compositeJob.addJob(deviceJob);
+				try {
+					compositeJob.addJob(deviceJob);
+				} catch (JobException e) {
+					throw new AddonException("Could not add child job to job.", e);
+				}
 				
 				return compositeJob;
 			}
 			catch(RemoteException e)
 			{
 				throw new AddonException("Could not create job due to remote exception.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}
 
 		@Override
-		public Class<CompositeJob> getComponentInterface() {
-			return CompositeJob.class;
+		public Class<SimpleCompositeJob> getComponentInterface() {
+			return SimpleCompositeJob.class;
 		}
 		
 	};

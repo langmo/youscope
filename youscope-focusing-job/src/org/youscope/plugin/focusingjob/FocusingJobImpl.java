@@ -5,13 +5,13 @@ package org.youscope.plugin.focusingjob;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.FocusingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -45,7 +45,7 @@ class FocusingJobImpl extends JobAdapter implements FocusingJob
 	}
 
 	@Override
-	public void setPosition(double position, boolean relative) throws MeasurementRunningException
+	public void setPosition(double position, boolean relative) throws ComponentRunningException
 	{
 		assertRunning();
 		FocusingJobImpl.this.position = position;
@@ -59,7 +59,7 @@ class FocusingJobImpl extends JobAdapter implements FocusingJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String text = "";
 		if(focusDevice == null)
@@ -111,7 +111,7 @@ class FocusingJobImpl extends JobAdapter implements FocusingJob
 	}
 
 	@Override
-	public void setFocusDevice(String focusDevice) throws MeasurementRunningException
+	public void setFocusDevice(String focusDevice) throws ComponentRunningException
 	{
 		assertRunning();
 		this.focusDevice = focusDevice;
@@ -124,7 +124,7 @@ class FocusingJobImpl extends JobAdapter implements FocusingJob
 	}
 
 	@Override
-	public void setFocusAdjustmentTime(int adjustmentTime) throws MeasurementRunningException
+	public void setFocusAdjustmentTime(int adjustmentTime) throws ComponentRunningException
 	{
 		assertRunning();
 		this.adjustmentTime = adjustmentTime;

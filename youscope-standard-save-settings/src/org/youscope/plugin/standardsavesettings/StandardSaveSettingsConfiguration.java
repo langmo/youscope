@@ -93,12 +93,6 @@ public class StandardSaveSettingsConfiguration  extends SaveSettingsConfiguratio
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
-	@Override
 	public String getTypeIdentifier() {
 		return TYPE_IDENTIFIER;
 	}

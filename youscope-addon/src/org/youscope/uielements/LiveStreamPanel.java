@@ -26,6 +26,7 @@ import org.youscope.clientinterfaces.YouScopeProperties;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.serverinterfaces.MeasurementProvider;
 import org.youscope.serverinterfaces.YouScopeServer;
 
@@ -660,9 +661,9 @@ public class LiveStreamPanel extends ImagePanel {
             {
                 try
                 {
-                    measurement.stopMeasurement();
+                    measurement.stopMeasurement(false);
                 } 
-                catch (RemoteException e)
+                catch (RemoteException | MeasurementException e)
                 {
                     client.sendError("Could not stop measurement.", e);
                 }
@@ -675,49 +676,6 @@ public class LiveStreamPanel extends ImagePanel {
             }
         }
         startStopControl.updateButtons();
-    }
-    
-    /**
-     * Stops the live stream. Does nothing if live stream is not running.
-     * The call returns after the live stream has stopped.
-     */
-    public void stopLiveStreamAndWait()
-    {
-    	Measurement measurement;
-    	synchronized (measurementControlLock)
-        {
-    		measurement = this.measurement;
-    		streamRunning = false;
-            if (measurement != null)
-            {
-                try
-                {
-                    measurement.stopMeasurement();
-                } 
-                catch (RemoteException e)
-                {
-                	client.sendError("Could not stop measurement.", e);
-                }
-
-                this.measurement = null;
-            }
-            if(imageHandler != null)
-            {
-            	imageHandler.stopListening();
-                imageHandler = null;
-            }
-        }
-    	
-    	try 
-    	{
-    		if (measurement != null)
-    			measurement.waitForMeasurementFinish();
-		}
-    	catch (RemoteException e) {
-			client.sendError("Could not wait for measurement to finish.", e);
-		}
-    	
-    	startStopControl.updateButtons();
     }
 
     /**
@@ -761,7 +719,7 @@ public class LiveStreamPanel extends ImagePanel {
 	    	// stop any previous measurement
 	    	if(streamRunning)
 	    	{
-	    		stopLiveStreamAndWait();	
+	    		stopLiveStream();	
 	    		// wait some additional time to reduce risk for snc errors.
 	    		try {
 					Thread.sleep(500);

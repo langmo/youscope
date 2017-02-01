@@ -37,7 +37,7 @@ class MultiCameraAndColorStream extends ToolAddonUIAdapter implements YouScopeFr
 	@Override
 	public void frameClosed()
 	{
-		mainPanel.stopMeasurement(false);
+		mainPanel.stopMeasurement();
 	}
 
 	@Override

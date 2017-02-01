@@ -5,7 +5,8 @@ package org.youscope.plugin.livemodifiablejob;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
 
@@ -14,7 +15,7 @@ import org.youscope.common.job.JobConfiguration;
  * 
  * @author Moritz Lang
  */
-public interface LiveModifiableJob extends Job, EditableJobContainer
+public interface LiveModifiableJob extends Job, CompositeJob
 {
     /**
      * Set to true if the child jobs should be executed during the next execution of this job, and to false otherwise.
@@ -34,15 +35,15 @@ public interface LiveModifiableJob extends Job, EditableJobContainer
      * Returns the job configurations of the currently active child jobs.
      * @return array of child jobs.
      * @throws RemoteException
-     * @throws CloneNotSupportedException 
+     * @throws ConfigurationException 
      */
-    public JobConfiguration[] getChildJobConfigurations() throws RemoteException, CloneNotSupportedException;
+    public JobConfiguration[] getChildJobConfigurations() throws RemoteException, ConfigurationException;
     
     /**
      * Sets the configurations of the child jobs. Any previously existing child jobs will be removed and replaced by the jobs defined in the configuration.
      * @param newConfigurations array of new child jobs
      * @throws RemoteException
-     * @throws CloneNotSupportedException 
+     * @throws ConfigurationException 
      */
-    public void setChildJobConfigurations(JobConfiguration[] newConfigurations) throws RemoteException, CloneNotSupportedException;
+    public void setChildJobConfigurations(JobConfiguration[] newConfigurations) throws RemoteException, ConfigurationException;
 }

@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.oscillatinginput;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -13,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  */
 @XStreamAlias("oscillating-device-job")
-public class OscillatingDeviceJobConfiguration extends JobConfiguration
+public class OscillatingDeviceJobConfiguration implements JobConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -168,8 +169,8 @@ public class OscillatingDeviceJobConfiguration extends JobConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing
+		
 	}
 }

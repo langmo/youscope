@@ -23,12 +23,12 @@ import javax.swing.tree.TreePath;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.image.ImageProducer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.job.JobContainer;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.Well;
 import org.youscope.common.table.TableProducer;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.util.TextTools;
 import org.youscope.uielements.ImageLoadingTools;
 
@@ -169,8 +169,35 @@ class MeasurementTree extends JTree
         	return jobNode.toHTML();
 		return null;
     }
-	
-	private void computeTreeRepresentationOfJobContainer(RootNode rootNode, JobContainer jobContainer)
+	private void computeTreeRepresentationOfTask(RootNode rootNode, Task task)
+	{
+		Job[] jobs;
+		try
+		{
+			jobs = task.getJobs();
+		}
+		catch(RemoteException e)
+		{
+			ClientSystem.err.println("Failure in construction of measurement tree representation. Trying to rescue...", e);
+			return;
+		}
+		for(Job job : jobs)
+		{
+			if(job instanceof CompositeJob)
+			{
+				computeTreeRepresentationOfJobContainer(rootNode, (CompositeJob)job);
+			}
+			if(job instanceof ImageProducer)
+			{
+				computeTreeRepresentationOfImageProducer(rootNode, job);
+			}
+			if(job instanceof TableProducer)
+			{
+				computeTreeRepresentationOfTableDataProducer(rootNode, job);
+			}
+		}
+	}
+	private void computeTreeRepresentationOfJobContainer(RootNode rootNode, CompositeJob jobContainer)
 	{
 		Job[] jobs;
 		try
@@ -184,9 +211,9 @@ class MeasurementTree extends JTree
 		}
 		for(Job job : jobs)
 		{
-			if(job instanceof JobContainer)
+			if(job instanceof CompositeJob)
 			{
-				computeTreeRepresentationOfJobContainer(rootNode, (JobContainer)job);
+				computeTreeRepresentationOfJobContainer(rootNode, (CompositeJob)job);
 			}
 			if(job instanceof ImageProducer)
 			{
@@ -320,7 +347,7 @@ class MeasurementTree extends JTree
 		
 		rootNode.getChildren().clear();
 
-		MeasurementTask[] tasks;
+		Task[] tasks;
 		try
 		{
 			tasks = measurement.getTasks();
@@ -330,9 +357,9 @@ class MeasurementTree extends JTree
 			ClientSystem.err.println("Failure in construction of measurement tree representation", e);
 			return;
 		}
-		for(MeasurementTask task : tasks)
+		for(Task task : tasks)
 		{
-			computeTreeRepresentationOfJobContainer(rootNode, task);
+			computeTreeRepresentationOfTask(rootNode, task);
 		}
 		if(allImagingNodes.size() > 1)
 			rootNode.getChildren().add(new LastImageNode());

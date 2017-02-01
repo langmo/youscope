@@ -5,8 +5,8 @@ package org.youscope.common.job.basicjobs;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * @author langmo
@@ -38,9 +38,9 @@ public interface FocusingJob extends Job
 	 * Sets the focus adjustment time (the time the microscope is paused after the new focus position was set) in ms.
 	 * @param adjustmentTime Focus adjustment time.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFocusAdjustmentTime(int adjustmentTime) throws RemoteException, MeasurementRunningException;
+	void setFocusAdjustmentTime(int adjustmentTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the position/offset of the focus/autofocus device.
@@ -56,9 +56,9 @@ public interface FocusingJob extends Job
 	 * @param position The position.
 	 * @param relative True if position is relative to the current position, false if it is an absolute position.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setPosition(double position, boolean relative) throws RemoteException, MeasurementRunningException;
+	void setPosition(double position, boolean relative) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns true if the offset is relative to the current offset, false otherwise.
@@ -80,7 +80,7 @@ public interface FocusingJob extends Job
 	 * Initialized to be null.
 	 * @param focusDevice Focus device name, or null, if the currently active focus device should be changed.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFocusDevice(String focusDevice) throws RemoteException, MeasurementRunningException;
+	void setFocusDevice(String focusDevice) throws RemoteException, ComponentRunningException;
 }

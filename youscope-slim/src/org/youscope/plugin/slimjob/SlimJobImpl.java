@@ -6,6 +6,7 @@ package org.youscope.plugin.slimjob;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -13,10 +14,9 @@ import org.youscope.common.image.ImageAdapter;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.image.ImageProducer;
-import org.youscope.common.job.EditableJobContainerAdapter;
+import org.youscope.common.job.CompositeJobAdapter;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.Microscope;
@@ -24,7 +24,7 @@ import org.youscope.common.microscope.Microscope;
 /**
  * @author Moritz Lang
  */
-class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
+class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 {
 	
 	/**
@@ -189,7 +189,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 	
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "SLIM job";
 	}
@@ -216,7 +216,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setImageDescription(String description) throws MeasurementRunningException
+	public void setImageDescription(String description) throws ComponentRunningException
 	{
 		assertRunning();
 		imageDescription = description;
@@ -229,7 +229,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setMaskX(int maskX) throws MeasurementRunningException
+	public void setMaskX(int maskX) throws ComponentRunningException
 	{
 		assertRunning();
 		this.maskX = maskX;
@@ -242,7 +242,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setMaskY(int maskY) throws MeasurementRunningException
+	public void setMaskY(int maskY) throws ComponentRunningException
 	{
 		assertRunning();
 		this.maskY = maskY;
@@ -255,7 +255,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setInnerRadius(int innerRadius) throws MeasurementRunningException
+	public void setInnerRadius(int innerRadius) throws ComponentRunningException
 	{
 		assertRunning();
 		this.innerRadius = innerRadius;
@@ -268,7 +268,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setOuterRadius(int outerRadius) throws MeasurementRunningException
+	public void setOuterRadius(int outerRadius) throws ComponentRunningException
 	{
 		assertRunning();
 		this.outerRadius = outerRadius;
@@ -281,7 +281,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setPhaseShiftOutside(int phaseShiftOutside) throws MeasurementRunningException
+	public void setPhaseShiftOutside(int phaseShiftOutside) throws ComponentRunningException
 	{
 		assertRunning();
 		this.phaseShiftOutside = phaseShiftOutside;
@@ -300,7 +300,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setPhaseShiftMask(int maskID, int phaseShift) throws MeasurementRunningException
+	public void setPhaseShiftMask(int maskID, int phaseShift) throws ComponentRunningException
 	{
 		assertRunning();
 		phaseShiftsMask[maskID] = phaseShift;
@@ -313,7 +313,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setReflectorDevice(String reflectorDevice) throws MeasurementRunningException
+	public void setReflectorDevice(String reflectorDevice) throws ComponentRunningException
 	{
 		assertRunning();
 		this.reflector = reflectorDevice;
@@ -326,14 +326,14 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 	}
 
 	@Override
-	public void setSlimDelayMs(int delayMs) throws MeasurementRunningException
+	public void setSlimDelayMs(int delayMs) throws ComponentRunningException
 	{
 		assertRunning();
 		this.slimDelayMs = delayMs;
 	}
 
 	@Override
-	public void setMaskFileName(String maskFileName) throws MeasurementRunningException
+	public void setMaskFileName(String maskFileName) throws ComponentRunningException
 	{
 		assertRunning();
 		this.maskFileName = maskFileName;
@@ -350,7 +350,7 @@ class SlimJobImpl extends EditableJobContainerAdapter implements SlimJob
 		return attenuationFactor;
 	}
 	@Override
-	public void setAttenuationFactor(double attenuationFactor) throws MeasurementRunningException 
+	public void setAttenuationFactor(double attenuationFactor) throws ComponentRunningException 
 	{
 		assertRunning();
 		this.attenuationFactor=attenuationFactor;

@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.fluigent;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
@@ -16,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("fluigent-job")
-public class FluigentJobConfiguration extends JobConfiguration implements TableConsumerConfiguration, TableProducerConfiguration
+public class FluigentJobConfiguration implements JobConfiguration, TableConsumerConfiguration, TableProducerConfiguration
 {
 
 	/**
@@ -148,5 +149,11 @@ public class FluigentJobConfiguration extends JobConfiguration implements TableC
 	@Override
 	public TableDefinition getConsumedTableDefinition() {
 		return FluigentControlTable.getTableDefinition();
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing.
+		
 	}
 }

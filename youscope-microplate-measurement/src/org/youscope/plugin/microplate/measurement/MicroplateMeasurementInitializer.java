@@ -15,22 +15,24 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
 import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerResource;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
+import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.ChangePositionJob;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.FocusingJob;
 import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.resource.ResourceException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
+import org.youscope.common.task.TaskException;
 import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.plugin.changepositionjob.ChangePositionJobConfiguration;
 import org.youscope.plugin.focusingjob.FocusingJobConfiguration;
@@ -54,7 +56,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 		int wellTime = configuration.getTimePerWell();
 
 		// If iteration through wells should be AFAP, put everything in one task
-		MeasurementTask mainTask = null; 
+		Task mainTask = null; 
 		if(wellTime <= 0)
 		{
 			if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
@@ -64,7 +66,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 				{
 					mainTask = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
 				}
-				catch(MeasurementRunningException e)
+				catch(ComponentRunningException e)
 				{
 					throw new AddonException("Could not create measurement since it is already running.", e);
 				}
@@ -80,7 +82,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 				{
 					mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
 				}
-				catch(MeasurementRunningException e)
+				catch(ComponentRunningException e)
 				{
 					throw new AddonException("Could not create measurement since it is already running.", e);
 				}
@@ -171,7 +173,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							}
 						}
 					}
-					catch(MeasurementRunningException e)
+					catch(ComponentRunningException e)
 					{
 						throw new AddonException("Could not create measurement since it is already running.", e); 
 					}
@@ -183,7 +185,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 
 				String locationString = positionInformation.toString();
 	
-				MeasurementTask wellTask;
+				Task wellTask;
 				if(wellTime <= 0)
 				{
 					// Put everything in one job
@@ -208,7 +210,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						{
 							wellTask = measurement.addTask(mainPeriod, fixedTimes, startTime, period.getNumExecutions());
 						}
-						catch(MeasurementRunningException e)
+						catch(ComponentRunningException e)
 						{
 							throw new AddonException("Could not create measurement since it is already running.", e);
 						}
@@ -224,7 +226,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						{
 							wellTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), startTime, period.getNumExecutions());
 						}
-						catch(MeasurementRunningException e)
+						catch(ComponentRunningException e)
 						{
 							throw new AddonException("Could not create measurement since it is already running.", e);
 						}
@@ -242,15 +244,19 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 				try
 				{
 					// Create a job container in which all jobs at the given position are put into.
-					EditableJobContainer jobContainer;
+					CompositeJob jobContainer;
 					if(configuration.getStatisticsFileName() == null)
 					{
-						CompositeJob job;
+						SimpleCompositeJob job;
 						try 
 						{
-							job = jobInitializer.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+							job = jobInitializer.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 							job.setName("Job container for " + locationString);
-							wellTask.addJob(job);
+							try {
+								wellTask.addJob(job);
+							} catch (TaskException e) {
+								throw new AddonException("Could not add job to task.", e);
+							}
 						} 
 						catch (ComponentCreationException e) 
 						{
@@ -270,7 +276,11 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							job = jobInitializer.getComponentProvider().createJob(positionInformation, StatisticsJob.DEFAULT_TYPE_IDENTIFIER, StatisticsJob.class);
 							job.setName("Job container/analyzer for " + locationString);
 							job.addTableListener(jobInitializer.getMeasurementSaver().getSaveTableListener(configuration.getStatisticsFileName()));
-							wellTask.addJob(job);
+							try {
+								wellTask.addJob(job);
+							} catch (TaskException e) {
+								throw new AddonException("Could not add job to task.", e);
+							}
 							
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Microplate measurements need the statistic job plugin.",e);
@@ -293,6 +303,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							throw new AddonException("Could not create measurement due to remote exception.", e);
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Microplate measurements need live-modifiable job plugin.",e);
+						} catch (JobException e) {
+							throw new AddonException("Could not add child job to job.", e);
 						}
 						jobContainer = modJob;
 					}
@@ -315,6 +327,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 					catch (RemoteException e)
 					{
 						throw new AddonException("Could not create measurement due to remote exception.", e);
+					} catch (JobException e) {
+						throw new AddonException("Could not add child job to job.", e);
 					}
 					
 					// Set Focus
@@ -338,6 +352,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						catch (RemoteException e)
 						{
 							throw new AddonException("Could not create measurement due to remote exception.", e);
+						} catch (JobException e) {
+							throw new AddonException("Could not add child job to job.", e);
 						}
 						
 					}
@@ -356,6 +372,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						catch (RemoteException e)
 						{
 							throw new AddonException("Could not create measurement due to remote exception.", e);
+						} catch (JobException e) {
+							throw new AddonException("Could not add child job to job.", e);
 						}
 					}
 					
@@ -390,6 +408,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							catch (RemoteException e)
 							{
 								throw new AddonException("Could not create measurement due to remote exception.", e);
+							} catch (JobException e) {
+								throw new AddonException("Could not add child job to job.", e);
 							}
 						}
 						if(zeroPosition != null && configuration.getFocusConfiguration() != null && !Double.isNaN(zeroPosition.getFocus()))
@@ -411,6 +431,8 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 							catch (RemoteException e)
 							{
 								throw new AddonException("Could not create measurement due to remote exception.", e);
+							} catch (JobException e) {
+								throw new AddonException("Could not add child job to job.", e);
 							}
 							
 						}
@@ -425,14 +447,14 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						System.arraycopy(jobConfigurations, 0, allConfigs, focusingJobConfiguration == null ? 1 : 2, jobConfigurations.length);
 						try {
 							((LiveModifiableJob)jobContainer).setChildJobConfigurations(allConfigs);
-						} catch (RemoteException | CloneNotSupportedException e) {
+						} catch (RemoteException | ConfigurationException e) {
 							throw new AddonException("Could not initialize live modifications of jobs.", e);
 						}
 					}
 				}
-				catch(MeasurementRunningException e)
+				catch(ComponentRunningException e)
 				{
-					throw new ConfigurationException("Could not create measurement since it is already running.", e);
+					throw new AddonException("Could not create measurement since it is already running.", e);
 				}
 					
 		}

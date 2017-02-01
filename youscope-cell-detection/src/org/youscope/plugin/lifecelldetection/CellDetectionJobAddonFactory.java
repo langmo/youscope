@@ -13,12 +13,12 @@ import org.youscope.addon.celldetection.CellVisualizationConfiguration;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -121,7 +121,7 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 				throw new AddonException("Could not create job due to remote exception.", e);
 			} catch (ComponentCreationException e) {
 				throw new AddonException("Could not create all components of job.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}

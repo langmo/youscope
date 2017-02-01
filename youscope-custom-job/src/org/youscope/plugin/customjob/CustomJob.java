@@ -4,7 +4,7 @@
 package org.youscope.plugin.customjob;
 
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 
 
@@ -15,7 +15,7 @@ import org.youscope.common.job.Job;
  * 
  * @author Moritz Lang
  */
-public interface CustomJob extends Job, EditableJobContainer
+public interface CustomJob extends Job, CompositeJob
 {
 	// no extra members
 }

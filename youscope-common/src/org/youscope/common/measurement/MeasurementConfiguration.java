@@ -119,25 +119,6 @@ public abstract class MeasurementConfiguration implements Configuration
 	@XStreamAlias("end-device-settings")
 	private DeviceSetting[]		deviseSettingsOff	= new DeviceSetting[0];
 
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		MeasurementConfiguration clone = (MeasurementConfiguration)super.clone();
-		clone.deviseSettingsOff = new DeviceSetting[deviseSettingsOff.length];
-		for(int i = 0; i < deviseSettingsOff.length; i++)
-		{
-			clone.deviseSettingsOff[i] = deviseSettingsOff[i].clone();
-		}
-		clone.deviseSettingsOn = new DeviceSetting[deviseSettingsOn.length];
-		for(int i = 0; i < deviseSettingsOn.length; i++)
-		{
-			clone.deviseSettingsOn[i] = deviseSettingsOn[i].clone();
-		}
-		clone.saveSettings = (SaveSettingsConfiguration)saveSettings.clone();
-
-		return clone;
-	}
-
 	/**
 	 * Defines how the measurement should be saved. Set to null if the measurement should not be saved.
 	 * @param saveSettings Definition how the measurement should be saved.

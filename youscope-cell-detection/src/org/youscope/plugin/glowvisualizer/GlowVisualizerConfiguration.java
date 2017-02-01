@@ -34,12 +34,6 @@ public class GlowVisualizerConfiguration extends CellVisualizationConfiguration
 	{
 		// do nothing.
 	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 
 	@YSConfigAlias("Glow strength")
 	@XStreamAlias("glow-strength")

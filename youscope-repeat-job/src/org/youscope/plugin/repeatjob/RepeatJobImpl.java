@@ -5,20 +5,20 @@ package org.youscope.plugin.repeatjob;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.job.EditableJobContainerAdapter;
+import org.youscope.common.job.CompositeJobAdapter;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
  * Implementation of the repeat job.
  * @author Moritz Lang
  */
-class RepeatJobImpl extends EditableJobContainerAdapter implements RepeatJob
+class RepeatJobImpl extends CompositeJobAdapter implements RepeatJob
 {
 
 	/**
@@ -34,7 +34,7 @@ class RepeatJobImpl extends EditableJobContainerAdapter implements RepeatJob
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		String text = "Repeat Job(" + Integer.toString(numRepeats) + "times: ";
 		Job[] jobs = getJobs();
@@ -45,7 +45,11 @@ class RepeatJobImpl extends EditableJobContainerAdapter implements RepeatJob
 				first = false;
 			else
 				text += "; ";
-			text += job.getName();
+			try {
+				text += job.getName();
+			} catch (@SuppressWarnings("unused") RemoteException e) {
+				text+="UNKNOWN";
+			}
 		}
 		return text + ")";
 	}
@@ -75,7 +79,7 @@ class RepeatJobImpl extends EditableJobContainerAdapter implements RepeatJob
 	}
 
 	@Override
-	public void setNumRepeats(int numRepeats) throws MeasurementRunningException
+	public void setNumRepeats(int numRepeats) throws ComponentRunningException
 	{
 		assertRunning();
 		this.numRepeats = numRepeats > 0 ? numRepeats : 0;

@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -14,7 +15,6 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Microscope;
 
@@ -97,14 +97,14 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public void setImageDescription(String description) throws MeasurementRunningException
+	public void setImageDescription(String description) throws ComponentRunningException
 	{
 		assertRunning();
 		imageDescription = description;
 	}
 	
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String text = "Short Continuously imaging channel " + configGroup + "." + channel;
 		for(int i = 0; i < cameras.length && i < exposures.length; i++)
@@ -235,7 +235,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public synchronized void setExposure(double exposure) throws MeasurementRunningException
+	public synchronized void setExposure(double exposure) throws ComponentRunningException
 	{
 		assertRunning();
 		exposures = new double[cameras.length];
@@ -271,7 +271,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public synchronized void setChannel(String deviceGroup, String channel) throws MeasurementRunningException
+	public synchronized void setChannel(String deviceGroup, String channel) throws ComponentRunningException
 	{
 		assertRunning();
 		this.configGroup = deviceGroup;
@@ -285,13 +285,13 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public void setCamera(String camera) throws MeasurementRunningException
+	public void setCamera(String camera) throws ComponentRunningException
 	{
 		setCameras(new String[]{camera});
 	}
 	
 	@Override
-	public synchronized void setCameras(String[] cameras) throws MeasurementRunningException
+	public synchronized void setCameras(String[] cameras) throws ComponentRunningException
 	{
 		assertRunning();
 
@@ -321,7 +321,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public synchronized void setExposures(double[] exposures) throws MeasurementRunningException
+	public synchronized void setExposures(double[] exposures) throws ComponentRunningException
 	{
 		assertRunning();
 		this.exposures = exposures;
@@ -393,14 +393,14 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public synchronized void setBurstImaging(boolean burstMode) throws RemoteException, MeasurementRunningException
+	public synchronized void setBurstImaging(boolean burstMode) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.burstMode = burstMode;
 	}
 
 	@Override
-	public void setNumImages(int numImages) throws RemoteException, MeasurementRunningException
+	public void setNumImages(int numImages) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.numImages = numImages;
@@ -413,7 +413,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 	}
 
 	@Override
-	public void setImagingPeriod(int imagingPeriod) throws RemoteException, MeasurementRunningException
+	public void setImagingPeriod(int imagingPeriod) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.imagingPeriod = imagingPeriod;

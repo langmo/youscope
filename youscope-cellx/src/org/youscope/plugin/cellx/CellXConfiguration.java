@@ -31,12 +31,6 @@ public class CellXConfiguration extends CellDetectionConfiguration
 	{
 		// do nothing.
 	}
-	
-	@Override
-	public CellXConfiguration clone()
-	{
-		return (CellXConfiguration) super.clone();
-	}
 		
 	@XStreamAlias("generate-detection-image")
 	@XStreamAsAttribute

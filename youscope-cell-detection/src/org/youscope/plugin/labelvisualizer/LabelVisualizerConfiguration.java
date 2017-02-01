@@ -34,12 +34,6 @@ public class LabelVisualizerConfiguration extends CellVisualizationConfiguration
 	{
 		// do nothing.
 	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 
 	@YSConfigAlias("display properties next to cells")
 	private boolean drawCellInformation = true;

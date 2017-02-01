@@ -9,11 +9,12 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.job.JobException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -36,7 +37,7 @@ public class RepeatJobAddonFactory extends ComponentAddonFactoryAdapter
 				{
 					job.setNumRepeats(configuration.getNumRepeats());
 				}
-				catch(MeasurementRunningException e1)
+				catch(ComponentRunningException e1)
 				{
 					throw new AddonException("Newly created job already running.", e1);
 				}
@@ -48,7 +49,11 @@ public class RepeatJobAddonFactory extends ComponentAddonFactoryAdapter
 					} catch (ComponentCreationException e1) {
 						throw new AddonException("Could not create child job.", e1);
 					}
-					job.addJob(childJob);
+					try {
+						job.addJob(childJob);
+					} catch (JobException e) {
+						throw new AddonException("Could not add child job to job.", e);
+					}
 				}
 				return job;
 				
@@ -56,7 +61,7 @@ public class RepeatJobAddonFactory extends ComponentAddonFactoryAdapter
 			catch(RemoteException e)
 			{
 				throw new AddonException("Could not create job due to remote exception.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}

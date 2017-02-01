@@ -30,12 +30,6 @@ public class VarianceFocusScoreConfiguration extends FocusScoreConfiguration
 	{
 		// do nothing.
 	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
 
 	/**
 	 * The identifier for this configuration.

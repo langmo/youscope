@@ -5,19 +5,22 @@ package org.youscope.common.configuration;
 
 import java.io.Serializable;
 
+import org.youscope.common.util.ConfigurationTools;
+
 /**
- * Marker interface that a given object is a YouScope configuration file.
- * Configuration files in YouScope can be saved and loaded, exported and
- * imported to XML, and are serializable and cloneable. By implementing this
+ * Marker interface that a given object is a YouScope configuration.
+ * Configurations in YouScope can be saved and loaded, exported and
+ * imported to XML, and are serializable. By implementing this
  * interface, the respective class guarantees that it fulfills these
  * requirements. 
  * Any class implementing this interface should have a public no-arguments constructor.
  * Furthermore, it is expected to have meaningful XStream annotations.
+ * To create a clone of a configuration, see {@link ConfigurationTools#deepCopy(Configuration, Class)}.
  * 
  * @author Moritz Lang
  * 
  */
-public interface Configuration extends Cloneable, Serializable 
+public interface Configuration extends Serializable 
 {
 	/**
 	 * Returns a unique identifier for this configuration type.

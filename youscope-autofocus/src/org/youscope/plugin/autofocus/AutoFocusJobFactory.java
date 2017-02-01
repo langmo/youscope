@@ -11,11 +11,11 @@ import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.addon.focusscore.FocusScoreResource;
 import org.youscope.addon.focussearch.FocusSearchResource;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -114,7 +114,7 @@ public class AutoFocusJobFactory extends ComponentAddonFactoryAdapter
 				job.setFocusSearchAlgorithm(focusSearchAlgorithm);
 				
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create job, since newly created job is already running.", e);
 			}

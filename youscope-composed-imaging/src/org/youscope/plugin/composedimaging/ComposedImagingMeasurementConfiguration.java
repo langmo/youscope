@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.task.PeriodConfiguration;
+import org.youscope.common.util.ConfigurationTools;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -122,11 +123,11 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 		{
 			try
 			{
-				this.period = (PeriodConfiguration)period.clone();
+				this.period = ConfigurationTools.deepCopy(period, PeriodConfiguration.class);
 			}
-			catch(CloneNotSupportedException e)
+			catch(ConfigurationException e)
 			{
-				throw new IllegalArgumentException("Cloning not supported.", e);
+				throw new IllegalArgumentException("Could not copy argument.", e);
 			}
 		}
 	}
@@ -140,11 +141,11 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 			return null;
 		try
 		{
-			return (PeriodConfiguration)period.clone();
+			return ConfigurationTools.deepCopy(period, PeriodConfiguration.class);
 		}
-		catch(CloneNotSupportedException e)
+		catch(ConfigurationException e)
 		{
-			throw new IllegalArgumentException("Cloning not supported.", e);
+			throw new IllegalArgumentException("Could not copy argument.", e);
 		}
 	}
 	
@@ -363,16 +364,6 @@ public class ComposedImagingMeasurementConfiguration extends MeasurementConfigur
 	public String getCameraDevice()
 	{
 		return cameraDevice;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		ComposedImagingMeasurementConfiguration clone = (ComposedImagingMeasurementConfiguration)super.clone();
-		if(period != null)
-			clone.period = (PeriodConfiguration)period.clone();
-		clone.numPixels = (Dimension)numPixels.clone();
-		return clone;
 	}
 
 	@Override

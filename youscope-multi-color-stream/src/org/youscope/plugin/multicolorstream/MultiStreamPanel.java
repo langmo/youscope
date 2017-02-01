@@ -18,7 +18,8 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.basicjobs.ImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.measurement.MeasurementException;
+import org.youscope.common.task.Task;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.MeasurementProvider;
@@ -78,8 +79,8 @@ public class MultiStreamPanel extends JPanel
             {
                 try
                 {
-                    measurement.stopMeasurement();
-                } catch (RemoteException e)
+                    measurement.stopMeasurement(false);
+                } catch (RemoteException | MeasurementException e)
                 {
                     client.sendError("Could not stop measurement.", e);
                 }
@@ -87,26 +88,6 @@ public class MultiStreamPanel extends JPanel
         }
     }
     
-    /**
-     * Stops the measurement and waits until it is finished. 
-     */
-    public void stopMeasurementAndWait()
-    {
-    	synchronized (this)
-        {
-            if (measurement != null)
-            {
-                try
-                {
-                    measurement.stopMeasurement();
-                    measurement.waitForMeasurementFinish();
-                } catch (RemoteException e)
-                {
-                	client.sendError("Could not stop measurement.", e);
-                }
-            }
-        }
-    }
     /**
      * Sets the channel in which it is imaged.
      * @param channelNo The channel for which the exposure time should be set.
@@ -178,7 +159,7 @@ public class MultiStreamPanel extends JPanel
             MeasurementProvider measurementFactory =server.getMeasurementProvider();
             measurement = measurementFactory.createMeasurement();
             measurement.setName("Multi-Color Stream");
-            MeasurementTask task = measurement.addTask(imagingPeriod, false, 0);
+            Task task = measurement.addTask(imagingPeriod, false, 0);
             ImagingJob[] jobs = new ImagingJob[channels.length];
             for(int i=0; i<jobs.length; i++)
             {

@@ -6,7 +6,7 @@ package org.youscope.client;
 import java.io.Serializable;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
 class ScriptDefinition implements Cloneable, Serializable

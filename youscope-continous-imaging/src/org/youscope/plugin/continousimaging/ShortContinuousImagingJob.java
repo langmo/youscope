@@ -5,9 +5,9 @@ package org.youscope.plugin.continousimaging;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * @author Moritz Lang
@@ -21,9 +21,9 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * @param deviceGroup The device group where the channel is defined.
 	 * @param channel The channel.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setChannel(String deviceGroup, String channel) throws RemoteException, MeasurementRunningException;
+	void setChannel(String deviceGroup, String channel) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the channel.
@@ -47,9 +47,9 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposure The exposure.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setExposure(double exposure) throws RemoteException, MeasurementRunningException;
+	void setExposure(double exposure) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the exposure. If more than one camera is initialized, returns the exposure of the first camera.
@@ -66,10 +66,10 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * 
 	 * @param exposures The exposures.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws IllegalArgumentException Thrown if number of elements in exposure array is unequal to the number of cameras.
 	 */
-	void setExposures(double[] exposures) throws RemoteException, MeasurementRunningException, IllegalArgumentException;
+	void setExposures(double[] exposures) throws RemoteException, ComponentRunningException, IllegalArgumentException;
 
 	/**
 	 * Gets the exposures of the initialized cameras.
@@ -85,18 +85,18 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * 
 	 * @param cameras Device names of the cameras
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setCameras(String[] cameras) throws RemoteException, MeasurementRunningException;
+	void setCameras(String[] cameras) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Sets the camera with which it should be imaged. If set to null, the default (currently initialized) camera is used.
 	 * 
 	 * @param camera Device name of the camera, or null to use default camera.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setCamera(String camera) throws RemoteException, MeasurementRunningException;
+	void setCamera(String camera) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the cameras.
@@ -129,24 +129,24 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * 
 	 * @param burst True if burst imaging should be activated, false if not.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setBurstImaging(boolean burst) throws RemoteException, MeasurementRunningException;
+	void setBurstImaging(boolean burst) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Sets a short string describing the images which are made by this job.
 	 * @param description The description which should be returned for the images produced by this job, or null, to switch to the default description.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	void setImageDescription(String description) throws RemoteException, MeasurementRunningException;
+	void setImageDescription(String description) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * @param imagingPeriod The time between two successive images.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setImagingPeriod(int imagingPeriod) throws RemoteException, MeasurementRunningException;
+	public void setImagingPeriod(int imagingPeriod) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * @return The time between two successive images.
@@ -158,9 +158,9 @@ public interface ShortContinuousImagingJob extends Job, ImageProducer
 	 * Sets the number of images which should be taken.
 	 * @param numImages Number of images to be taken.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setNumImages(int numImages) throws RemoteException, MeasurementRunningException;
+	void setNumImages(int numImages) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns the number of images which should be taken.

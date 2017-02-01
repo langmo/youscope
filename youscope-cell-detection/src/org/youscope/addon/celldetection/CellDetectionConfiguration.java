@@ -24,16 +24,6 @@ public abstract class CellDetectionConfiguration extends ResourceConfiguration i
 	 * Serial Version UID.
 	 */
 	private static final long	serialVersionUID	= 1623512978102625712L;
-
-	@Override
-	public CellDetectionConfiguration clone()
-	{
-		try {
-			return (CellDetectionConfiguration) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not supported.", e);// will not happen.
-		}
-	}
 	
 	/**
 	 * Returns true if the detection algorithm with the current configuration generates a label image.

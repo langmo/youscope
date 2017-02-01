@@ -3,13 +3,14 @@
  */
 package org.youscope.plugin.lifecelldetection;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.youscope.addon.celldetection.CellDetectionConfiguration;
 import org.youscope.addon.celldetection.CellVisualizationConfiguration;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableProducerConfiguration;
 import org.youscope.plugin.quickdetect.QuickDetectConfiguration;
@@ -22,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("cell-detection-job")
-public class CellDetectionJobConfiguration extends JobConfiguration  implements TableProducerConfiguration, JobContainerConfiguration
+public class CellDetectionJobConfiguration implements TableProducerConfiguration, CompositeJobConfiguration
 {
 
 	/**
@@ -44,7 +45,7 @@ public class CellDetectionJobConfiguration extends JobConfiguration  implements 
 	private JobConfiguration detectionJob = null;
 	
 	@XStreamAlias("quantification-images")
-	private Vector<JobConfiguration> quantificationJobs = new Vector<JobConfiguration>();
+	private final ArrayList<JobConfiguration> quantificationJobs = new ArrayList<JobConfiguration>();
 	
 	@XStreamAlias("detection-algorithm-configuration")
 	private CellDetectionConfiguration detectionAlgorithmConfiguration = new QuickDetectConfiguration();
@@ -112,14 +113,14 @@ public class CellDetectionJobConfiguration extends JobConfiguration  implements 
 	@Override
 	public void removeJobAt(int index)
 	{
-		quantificationJobs.removeElementAt(index);
+		quantificationJobs.remove(index);
 	}
 
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
 		if(ImageProducerConfiguration.class.isAssignableFrom(job.getClass()))
-			quantificationJobs.insertElementAt(job, index);
+			quantificationJobs.add(index, job);
 	}
 	
 	/**
@@ -271,31 +272,6 @@ public class CellDetectionJobConfiguration extends JobConfiguration  implements 
 		return description;
 	}
 
-	@Override
-	public CellDetectionJobConfiguration clone()
-	{
-		CellDetectionJobConfiguration config;
-		try {
-			config = (CellDetectionJobConfiguration) super.clone();
-			
-			if(detectionAlgorithmConfiguration != null)
-				config.detectionAlgorithmConfiguration = detectionAlgorithmConfiguration.clone();
-			if(visualizationAlgorithmConfiguration != null)
-				config.visualizationAlgorithmConfiguration = (CellVisualizationConfiguration)visualizationAlgorithmConfiguration.clone();
-			
-			config.quantificationJobs = new Vector<JobConfiguration>();
-			for(int i = 0; i < quantificationJobs.size(); i++)
-			{
-				config.quantificationJobs.add((JobConfiguration)quantificationJobs.elementAt(i).clone());
-			}
-			if(detectionJob != null)
-				config.detectionJob = (JobConfiguration)detectionJob.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not supported.", e);//will not happen.
-		}
-		return config;
-	}
-
 	/**
 	 * Sets the minimal time (in ms) the execution of the job should take. If the execution of the job takes less, the rest of the time span will be waited.
 	 * This function is mainly ment for real-time applications.
@@ -319,5 +295,20 @@ public class CellDetectionJobConfiguration extends JobConfiguration  implements 
 	@Override
 	public TableDefinition getProducedTableDefinition() {
 		return detectionAlgorithmConfiguration.getProducedTableDefinition();
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob:quantificationJobs)
+		{
+			childJob.checkConfiguration();
+		}
+		if(detectionAlgorithmConfiguration != null)
+			detectionAlgorithmConfiguration.checkConfiguration();
+		if(detectionJob != null)
+			detectionJob.checkConfiguration();
+		if(visualizationAlgorithmConfiguration != null)
+			visualizationAlgorithmConfiguration.checkConfiguration();
+		
 	}
 }

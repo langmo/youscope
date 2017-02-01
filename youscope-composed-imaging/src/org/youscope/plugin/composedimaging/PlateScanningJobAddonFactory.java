@@ -10,12 +10,13 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.basicjobs.CompositeJob;
-import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.job.JobException;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -52,9 +53,9 @@ public class PlateScanningJobAddonFactory extends ComponentAddonFactoryAdapter
 					{
 						PositionInformation yPositionInformation = new PositionInformation(xPositionInformation, PositionInformation.POSITION_TYPE_YTILE, y);
 						
-						CompositeJob jobContainer;
+						SimpleCompositeJob jobContainer;
 						try {
-							jobContainer = constructionContext.getComponentProvider().createJob(yPositionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+							jobContainer = constructionContext.getComponentProvider().createJob(yPositionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Plate scanning jobs need the composite job plugin.", e);
 						}
@@ -69,7 +70,11 @@ public class PlateScanningJobAddonFactory extends ComponentAddonFactoryAdapter
 							} catch (ComponentCreationException e) {
 								throw new AddonException("Could not create child job.", e);
 							}
-							jobContainer.addJob(childJob);
+							try {
+								jobContainer.addJob(childJob);
+							} catch (JobException e) {
+								throw new AddonException("Could not add child job to job.", e);
+							}
 						}
 						
 						job.addJob(jobContainer);
@@ -78,7 +83,7 @@ public class PlateScanningJobAddonFactory extends ComponentAddonFactoryAdapter
 				
 				
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create job, since newly created job is already running.", e);
 			}

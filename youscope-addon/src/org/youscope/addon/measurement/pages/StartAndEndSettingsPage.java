@@ -100,7 +100,7 @@ public class StartAndEndSettingsPage extends MeasurementAddonUIPage<MeasurementC
 	{
 		setLayout(new GridLayout(2, 1));
 		deviceSettingsOn = new DeviceSettingsPanel(client, server, true);
-		deviceSettingsOff = new DeviceSettingsPanel(client, server);
+		deviceSettingsOff = new DeviceSettingsPanel(client, server, true);
 		
 		JPanel onPanel = new JPanel(new BorderLayout(2, 2));
 		onPanel.add(new JLabel("Device Settings when measurement starts:"),

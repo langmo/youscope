@@ -5,6 +5,7 @@ package org.youscope.plugin.continousimaging;
 
 import org.youscope.common.configuration.CameraConfiguration;
 import org.youscope.common.configuration.ChannelConfiguration;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.configuration.YSConfigClassification;
 import org.youscope.common.configuration.YSConfigConditional;
@@ -25,7 +26,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 @YSConfigAlias("Continuous imaging")
 @YSConfigClassification("imaging")
 @YSConfigIcon("icons/camcorder.png")
-public class ContinuousImagingJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class ContinuousImagingJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -208,5 +209,12 @@ public class ContinuousImagingJobConfiguration extends JobConfiguration implemen
 	 */
 	public void setBurstImaging(boolean burstImaging) {
 		this.burstImaging = burstImaging;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		if(exposure <= 0)
+			throw new ConfigurationException("Exposure must be bigger than zero.");
+		
 	}
 }

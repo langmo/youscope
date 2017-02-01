@@ -5,8 +5,8 @@ package org.youscope.plugin.waitsincelastaction;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
@@ -28,9 +28,9 @@ public interface WaitSinceLastActionJob extends Job
 	 * Sets the wait time in ms. Must be larger or equal 0.
 	 * @param waitTime Wait time in ms.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setWaitTime(long waitTime) throws RemoteException, MeasurementRunningException;
+	public void setWaitTime(long waitTime) throws RemoteException, ComponentRunningException;
 	
 	
 	/**
@@ -45,9 +45,9 @@ public interface WaitSinceLastActionJob extends Job
 	 * Sets the initial wait time in ms.
 	 * @param initialWaitTime the wait time at the first execution
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setInitialWaitTime(long initialWaitTime) throws RemoteException, MeasurementRunningException;
+	public void setInitialWaitTime(long initialWaitTime) throws RemoteException, ComponentRunningException;
 	
 
 	/**
@@ -62,9 +62,9 @@ public interface WaitSinceLastActionJob extends Job
 	 * Set to true to reset the wait timer after each iteration.
 	 * @param resetAfterIteration true to reset wait timer.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setResetAfterIteration(boolean resetAfterIteration) throws RemoteException, MeasurementRunningException;
+	public void setResetAfterIteration(boolean resetAfterIteration) throws RemoteException, ComponentRunningException;
 	
 
 	/**
@@ -79,8 +79,8 @@ public interface WaitSinceLastActionJob extends Job
 	 * Sets the ID of this action. The job waits with respect to the execution time of the last action with the same ID.
 	 * @param actionID ID of action.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setActionID(int actionID) throws RemoteException, MeasurementRunningException;
+	public void setActionID(int actionID) throws RemoteException, ComponentRunningException;
 	
 }

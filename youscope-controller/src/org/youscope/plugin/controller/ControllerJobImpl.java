@@ -17,13 +17,13 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.Well;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.table.ColumnDefinition;
@@ -134,7 +134,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	}
 
 	@Override
-	public void setControllerScriptEngine(String engine) throws RemoteException, MeasurementRunningException
+	public void setControllerScriptEngine(String engine) throws RemoteException, ComponentRunningException
 	{
 		if(engine == null)
 			this.controllerScriptEngine = "Mozilla Rhino";
@@ -149,7 +149,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	}
 
 	@Override
-	public void setControllerScript(String controllerScript) throws RemoteException, MeasurementRunningException
+	public void setControllerScript(String controllerScript) throws RemoteException, ComponentRunningException
 	{
 		if(controllerScript == null)
 			this.controllerScript = "";
@@ -170,7 +170,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	}
 
 	@Override
-	public void setInputJob(Job inputJob) throws NullPointerException, MeasurementRunningException, IllegalArgumentException
+	public void setInputJob(Job inputJob) throws NullPointerException, ComponentRunningException, IllegalArgumentException
 	{
 		assertRunning();
 		if(inputJob == null)
@@ -188,7 +188,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	}
 
 	@Override
-	public void setOutputJob(Job outputJob) throws NullPointerException, MeasurementRunningException, IllegalArgumentException
+	public void setOutputJob(Job outputJob) throws NullPointerException, ComponentRunningException, IllegalArgumentException
 	{
 		if(outputJob == null)
 			throw new NullPointerException("Output job must not be null.");
@@ -334,7 +334,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		return "Controller Job";
 	}
@@ -443,5 +443,27 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 	@Override
 	public Job getJob(int jobIndex) throws RemoteException, IndexOutOfBoundsException {
 		return getJobs()[jobIndex];
+	}
+
+	@Override
+	public void addJob(Job job) throws RemoteException, ComponentRunningException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void insertJob(Job job, int jobIndex)
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void removeJob(int jobIndex)
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void clearJobs() throws RemoteException, ComponentRunningException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
 	}
 }

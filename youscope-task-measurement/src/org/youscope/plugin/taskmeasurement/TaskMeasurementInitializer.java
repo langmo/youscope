@@ -8,15 +8,16 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.common.task.TaskConfiguration;
+import org.youscope.common.task.TaskException;
 import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
 
@@ -34,7 +35,7 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 		for(TaskConfiguration taskConfiguration : configuration.getTasks())
 		{
 			// Every job gets an associated own task
-			MeasurementTask task;
+			Task task;
 			if(taskConfiguration.getPeriod() == null)
 			{
 				// Set period to AFAP
@@ -52,7 +53,7 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 				{
 					task = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
 				}
-				catch(MeasurementRunningException e)
+				catch(ComponentRunningException e)
 				{
 					throw new AddonException("Could not create measurement since it is already running.", e);
 				}
@@ -68,7 +69,7 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 				{
 					task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
 				}
-				catch(MeasurementRunningException e)
+				catch(ComponentRunningException e)
 				{
 					throw new AddonException("Could not create measurement since it is already running.", e);
 				}
@@ -90,10 +91,14 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 					} catch (ComponentCreationException e) {
 						throw new AddonException("Could not create child job.", e);
 					}
-					task.addJob(job);
+					try {
+						task.addJob(job);
+					} catch (TaskException e) {
+						throw new AddonException("Could not add job to task.", e);
+					}
 				}
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create measurement since it is already running.", e);
 			}

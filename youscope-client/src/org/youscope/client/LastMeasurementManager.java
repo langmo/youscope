@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.youscope.addon.ConfigurationManagement;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.util.ConfigurationTools;
 
 class LastMeasurementManager
 {
@@ -59,6 +61,16 @@ class LastMeasurementManager
     }
     public void addMeasurement(MeasurementConfiguration configuration)
     {
+    	try 
+    	{
+    		// Make local copy.
+    		configuration = ConfigurationTools.deepCopy(configuration, MeasurementConfiguration.class);
+		} 
+    	catch (ConfigurationException e) 
+    	{
+			ClientSystem.err.println("Could not add measurement configuration to last measurements folder.", e);
+			return;
+		}
         synchronized(lastMeasurements)
         {
             lastMeasurements.add(configuration);
@@ -95,8 +107,8 @@ class LastMeasurementManager
             {
                 try
                 {
-                    returnVal[i] = (MeasurementConfiguration) lastMeasurements.get(i).clone();
-                } catch (@SuppressWarnings("unused") CloneNotSupportedException e)
+                    returnVal[i] = ConfigurationTools.deepCopy(lastMeasurements.get(i), MeasurementConfiguration.class);
+                } catch (@SuppressWarnings("unused") ConfigurationException e)
                 {
                     returnVal[i] = lastMeasurements.get(i);
                 }

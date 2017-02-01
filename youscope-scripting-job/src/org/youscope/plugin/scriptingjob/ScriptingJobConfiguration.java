@@ -3,13 +3,12 @@
  */
 package org.youscope.plugin.scriptingjob;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.common.job.basicjobs.ScriptingJob;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -18,10 +17,10 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  */
 @XStreamAlias("scripting-job")
-public class ScriptingJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class ScriptingJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -33,7 +32,7 @@ public class ScriptingJobConfiguration extends JobConfiguration implements JobCo
 	 * The jobs which can be called from the script.
 	 */
 	@XStreamAlias("jobs")
-	private Vector<JobConfiguration>	jobs					= new Vector<JobConfiguration>();
+	private final ArrayList<JobConfiguration>	jobs					= new ArrayList<JobConfiguration>();
 
 	/**
 	 * True, if a scriptEngine from the client side should be used, false otherwise.
@@ -61,29 +60,6 @@ public class ScriptingJobConfiguration extends JobConfiguration implements JobCo
 	public String getDescription()
 	{
 		return "<p>" + getScriptEngine() + ".evaluate(script)</p>";
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		ScriptingJobConfiguration clone = (ScriptingJobConfiguration)super.clone();
-		clone.jobs = new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		if(scriptFile != null)
-		{
-			try
-			{
-				clone.scriptFile = new URL(scriptFile.toExternalForm());
-			}
-			catch(MalformedURLException e)
-			{
-				throw new CloneNotSupportedException("Could not clone script file location ("+e.getMessage()+").");
-			}
-		}
-		return clone;
 	}
 
 	@Override
@@ -117,13 +93,13 @@ public class ScriptingJobConfiguration extends JobConfiguration implements JobCo
 	@Override
 	public void removeJobAt(int index)
 	{
-		jobs.removeElementAt(index);
+		jobs.remove(index);
 	}
 
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 
 	}
 
@@ -185,14 +161,11 @@ public class ScriptingJobConfiguration extends JobConfiguration implements JobCo
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
-		
+				
 		if(scriptFile == null || scriptFile.toString() == null || scriptFile.toString().length() == 0)
     	{
     		throw new ConfigurationException("No script file selected.");
     	}
-		if(jobs == null)
-			throw new ConfigurationException("Jobs are null.");
 		for(JobConfiguration job : jobs)
 			job.checkConfiguration();
 	}

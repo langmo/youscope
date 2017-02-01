@@ -83,15 +83,6 @@ public class VaryingPeriodConfiguration extends PeriodConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		VaryingPeriodConfiguration clone = (VaryingPeriodConfiguration)super.clone();
-		clone.periods = new int[periods.length];
-		System.arraycopy(periods, 0, clone.periods, 0, periods.length);
-		return clone;
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		super.checkConfiguration();
 		if(periods == null || periods.length == 0)

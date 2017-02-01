@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.onoffdevicejob;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.microscope.DeviceSetting;
 
@@ -14,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("device-settings-job")
-public class OnOffDeviceJobConfiguration extends JobConfiguration
+public class OnOffDeviceJobConfiguration implements JobConfiguration
 {
 
 	/**
@@ -70,23 +71,6 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 		if(description.length() <= 0)
 			description = "<p>Empty Device Job</p>";
 		return description;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		OnOffDeviceJobConfiguration clone = (OnOffDeviceJobConfiguration)super.clone();
-		clone.setDeviceSettingsOn(new DeviceSetting[getDeviceSettingsOn().length]);
-		clone.setDeviceSettingsOff(new DeviceSetting[getDeviceSettingsOff().length]);
-		for(int i = 0; i < getDeviceSettingsOn().length; i++)
-		{
-			clone.getDeviceSettingsOn()[i] = getDeviceSettingsOn()[i].clone();
-		}
-		for(int i = 0; i < getDeviceSettingsOff().length; i++)
-		{
-			clone.getDeviceSettingsOff()[i] = getDeviceSettingsOff()[i].clone();
-		}
-		return clone; 
 	}
 
 	/**
@@ -150,5 +134,11 @@ public class OnOffDeviceJobConfiguration extends JobConfiguration
 	public String getTypeIdentifier()
 	{
 		return TYPE_IDENTIFIER;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing
+		
 	}
 }

@@ -13,10 +13,10 @@ import org.youscope.addon.dropletmicrofluidics.DropletControllerConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverConfiguration;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResource;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackCreationException;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.plugin.autofocus.AutoFocusJob;
 import org.youscope.plugin.autofocus.AutoFocusJobConfiguration;
 import org.youscope.plugin.nemesys.NemesysJob;
@@ -82,7 +82,7 @@ public class DropletMicrofluidicJobAddonFactory extends ComponentAddonFactoryAda
 				throw new AddonException("Could not create droplet based microfluidics job due to remote exception.", e);
 			} catch (ComponentCreationException e) {
 				throw new AddonException("Could not create all components of droplet based microfluidics job.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created droplet based microfluidics job since job is already running.", e);
 			}
 		}

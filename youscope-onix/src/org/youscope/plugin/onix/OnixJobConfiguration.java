@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.onix;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.table.TableConsumerConfiguration;
 import org.youscope.common.table.TableDefinition;
@@ -17,7 +18,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("onix-job")
-public class OnixJobConfiguration extends JobConfiguration implements TableConsumerConfiguration
+public class OnixJobConfiguration implements JobConfiguration, TableConsumerConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -93,13 +94,13 @@ public class OnixJobConfiguration extends JobConfiguration implements TableConsu
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
+	public TableDefinition getConsumedTableDefinition() {
+		return OnixTable.getTableDefinition();
 	}
 
 	@Override
-	public TableDefinition getConsumedTableDefinition() {
-		return OnixTable.getTableDefinition();
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing.
+		
 	}
 }

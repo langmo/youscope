@@ -20,7 +20,8 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.measurement.MeasurementException;
+import org.youscope.common.task.Task;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -107,9 +108,9 @@ class MultiStreamPanel extends JPanel
 	        	{
 	        		try
 					{
-						stopMeasurement(false);
+						stopMeasurement();
 					}
-					catch(RemoteException e1)
+					catch(RemoteException | MeasurementException e1)
 					{
 						client.sendError("Measurement could not be stopped.", e1);
 					}
@@ -221,17 +222,14 @@ class MultiStreamPanel extends JPanel
     /**
      * Stops the measurement. Does nothing if measurement is not running.
      * The call immediately returns, even if the stopping of the measurement takes longer.
-     * @param waitUntilFinished TRUE if thread should be paused until measurement is finished.
      * @throws RemoteException 
+     * @throws MeasurementException 
      */
-    public synchronized void stopMeasurement(boolean waitUntilFinished) throws RemoteException
+    public synchronized void stopMeasurement() throws RemoteException, MeasurementException
 	{
 		if(measurement != null)
 		{
-			measurement.stopMeasurement();
-			if(waitUntilFinished)
-				measurement.waitForMeasurementFinish();
-			
+			measurement.stopMeasurement(false);			
 			measurement = null;
 		}
 		if(imageHandler != null)
@@ -312,8 +310,15 @@ class MultiStreamPanel extends JPanel
      */
     public synchronized void startMeasurement() throws RemoteException
     {
-    	stopMeasurement(true);
-		
+    	try
+		{
+    		stopMeasurement();
+		}
+		catch(Exception e)
+		{
+			client.sendError("Could not initialize multi-camera and -color measurement.", e);
+			return;
+		}
     	Vector<Integer> used = new Vector<Integer>();
 		for(int i=0; i<cameras.length; i++)
 		{
@@ -349,7 +354,7 @@ class MultiStreamPanel extends JPanel
 			job.setChannel(configGroup, channel);
 
 			// Add a task for the continuous pulling job.
-			MeasurementTask task = measurement.addTask(imagingPeriod, false, 0);
+			Task task = measurement.addTask(imagingPeriod, false, 0);
 			task.addJob(job);
 			
 			measurement.startMeasurement();

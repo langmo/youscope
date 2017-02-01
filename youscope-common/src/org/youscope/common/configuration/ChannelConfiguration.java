@@ -122,11 +122,6 @@ public final class ChannelConfiguration implements Configuration, Comparable<Cha
 		this.channelGroup = channelGroup;
 	}
 	
-	@Override
-	public ChannelConfiguration clone() 
-	{
-		return new ChannelConfiguration(this);
-	}
 
 	@Override
 	public int hashCode() {

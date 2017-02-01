@@ -10,7 +10,7 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.common.util.ConfigurationValidation;
+import org.youscope.common.util.ConfigurationTools;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.JobsDefinitionPanel;
 
@@ -45,7 +45,7 @@ class ImagingProtocolPage extends JobAddonUIPage<MicroplateJobConfiguration>
 	public boolean saveData(MicroplateJobConfiguration configuration)
 	{
 		configuration.setJobs(jobPanel.getJobs());		
-		String[] collisions = ConfigurationValidation.checkImageSaveNameCollision(configuration.getJobs());
+		String[] collisions = ConfigurationTools.checkImageSaveNameCollision(configuration.getJobs());
 		if(collisions.length <= 0)
 			return true;
 		

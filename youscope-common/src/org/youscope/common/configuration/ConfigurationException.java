@@ -4,7 +4,8 @@
 package org.youscope.common.configuration;
 
 /**
- * @author langmo
+ * Thrown by a {@link Configuration} to indicate that its current setting is invalid.
+ * @author Moritz Lang
  */
 public class ConfigurationException extends Exception
 {

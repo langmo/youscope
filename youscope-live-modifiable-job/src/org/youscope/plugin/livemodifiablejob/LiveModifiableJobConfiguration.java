@@ -3,10 +3,11 @@
  */
 package org.youscope.plugin.livemodifiablejob;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -17,13 +18,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Moritz Lang
  */
 @XStreamAlias("live-modifiable-job")
-public class LiveModifiableJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class LiveModifiableJobConfiguration implements CompositeJobConfiguration
 {
     /**
      * The jobs which should be run when the composite job starts.
      */
     @XStreamAlias("jobs")
-    private Vector<JobConfiguration> jobs = new Vector<JobConfiguration>();
+    private ArrayList<JobConfiguration> jobs = new ArrayList<JobConfiguration>();
 
     @Override
     public int hashCode()
@@ -89,18 +90,6 @@ public class LiveModifiableJobConfiguration extends JobConfiguration implements 
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException
-    {
-        LiveModifiableJobConfiguration clone = (LiveModifiableJobConfiguration) super.clone();
-        clone.jobs = new Vector<JobConfiguration>();
-        for (int i = 0; i < jobs.size(); i++)
-        {
-            clone.jobs.add((JobConfiguration) jobs.elementAt(i).clone());
-        }
-        return clone;
-    }
-
-    @Override
     public JobConfiguration[] getJobs()
     {
         return jobs.toArray(new JobConfiguration[jobs.size()]);
@@ -131,12 +120,21 @@ public class LiveModifiableJobConfiguration extends JobConfiguration implements 
     @Override
     public void removeJobAt(int index)
     {
-        jobs.removeElementAt(index);
+        jobs.remove(index);
     }
 
     @Override
     public void addJob(JobConfiguration job, int index)
     {
-        jobs.insertElementAt(job, index);
+        jobs.add(index, job);
     }
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
+		
+	}
 }

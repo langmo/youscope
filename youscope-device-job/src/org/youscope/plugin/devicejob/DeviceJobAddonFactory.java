@@ -8,10 +8,10 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.basicjobs.DeviceSettingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -41,7 +41,7 @@ public class DeviceJobAddonFactory extends ComponentAddonFactoryAdapter
 			catch (RemoteException e1) 
 			{
 				throw new AddonException("Could not create device job due to remote error.", e1);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not create device job since newly created job is already running.", e);
 			}
 			return job;

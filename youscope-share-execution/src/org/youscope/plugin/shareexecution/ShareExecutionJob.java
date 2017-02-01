@@ -5,9 +5,9 @@ package org.youscope.plugin.shareexecution;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
@@ -15,7 +15,7 @@ import org.youscope.common.measurement.MeasurementRunningException;
  * 
  * @author Moritz Lang
  */
-public interface ShareExecutionJob extends Job, EditableJobContainer
+public interface ShareExecutionJob extends Job, CompositeJob
 {
 	/**
 	 * Returns the number of times this job gets totally executed per iteration.
@@ -28,9 +28,9 @@ public interface ShareExecutionJob extends Job, EditableJobContainer
 	 * Sets the number of times this job gets totally executed per iteration.
 	 * @param numShare share of executions per iteration.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setNumShare(int numShare) throws RemoteException, MeasurementRunningException;
+	public void setNumShare(int numShare) throws RemoteException, ComponentRunningException;
 
 
 	/**
@@ -45,9 +45,9 @@ public interface ShareExecutionJob extends Job, EditableJobContainer
 	 * Sets the ID for this share job. Share jobs with different IDs act independently from one another.
 	 * @param shareID share ID of this job.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setShareID(int shareID) throws RemoteException, MeasurementRunningException;
+	public void setShareID(int shareID) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Returns true if for each well the share of the jobs which get executed is determined separately.
@@ -61,9 +61,9 @@ public interface ShareExecutionJob extends Job, EditableJobContainer
 	 * If set to true, for each well the share of the jobs which get executed is determined separately.
 	 * @param separateForEachWell True if different counting for each well.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setSeparateForEachWell(boolean separateForEachWell) throws RemoteException, MeasurementRunningException;
+	public void setSeparateForEachWell(boolean separateForEachWell) throws RemoteException, ComponentRunningException;
 	
 
 }

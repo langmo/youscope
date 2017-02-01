@@ -27,12 +27,6 @@ public abstract class CellVisualizationConfiguration extends ResourceConfigurati
 	private static final long	serialVersionUID	= 1123512978102625712L;
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		// do nothing.
 		

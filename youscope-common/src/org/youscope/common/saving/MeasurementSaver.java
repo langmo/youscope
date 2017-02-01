@@ -6,9 +6,9 @@ package org.youscope.common.saving;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.MeasurementConfiguration;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.table.TableListener;
 
 /**
@@ -39,10 +39,10 @@ public interface MeasurementSaver extends Remote
 	 * Sets the settings how the measurement should be saved to the disk (e.g. in which folder, ...).
 	 * Set to null if measurement should not be saved.
 	 * @param saveSettings Settings how the measurement should be saved.
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws RemoteException
 	 */
-	void setSaveSettings(SaveSettings saveSettings) throws MeasurementRunningException, RemoteException;
+	void setSaveSettings(SaveSettings saveSettings) throws ComponentRunningException, RemoteException;
 
 	/**
 	 * Returns the current settings how the measurement should be saved to the disk (e.g. in which folder, ...), or null if
@@ -72,8 +72,8 @@ public interface MeasurementSaver extends Remote
 	 * Sets the configuration of the measurement. The configuration should be such, that a new measurement should be possible to be created
 	 * with it which has the same properties as the current measurement.
 	 * @param configuration The configuration of the measurement, or null if the configuration should be set to unknown.
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws RemoteException
 	 */
-	void setConfiguration(MeasurementConfiguration configuration) throws MeasurementRunningException, RemoteException;
+	void setConfiguration(MeasurementConfiguration configuration) throws ComponentRunningException, RemoteException;
 }

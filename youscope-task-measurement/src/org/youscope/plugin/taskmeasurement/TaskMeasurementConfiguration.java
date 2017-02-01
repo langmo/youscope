@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.task.TaskConfiguration;
-import org.youscope.common.task.TaskContainerConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -18,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("task-measurement")
-public class TaskMeasurementConfiguration extends MeasurementConfiguration implements TaskContainerConfiguration
+public class TaskMeasurementConfiguration extends MeasurementConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -43,9 +42,10 @@ public class TaskMeasurementConfiguration extends MeasurementConfiguration imple
 	private ArrayList<TaskConfiguration>	tasks	= new ArrayList<TaskConfiguration>();
 
 	/**
-	 * @return the tasks
-	 */
-	@Override
+     * Returns the tasks in the measurement.
+     * 
+     * @return Tasks.
+     */
 	public TaskConfiguration[] getTasks()
 	{
 		return tasks.toArray(new TaskConfiguration[tasks.size()]);
@@ -62,18 +62,6 @@ public class TaskMeasurementConfiguration extends MeasurementConfiguration imple
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		TaskMeasurementConfiguration clone = (TaskMeasurementConfiguration)super.clone();
-		clone.tasks = new ArrayList<TaskConfiguration>();
-		for(int i = 0; i < tasks.size(); i++)
-		{
-			clone.tasks.add((TaskConfiguration)tasks.get(i).clone());
-		}
-		return clone;
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		super.checkConfiguration();
 		if(tasks == null)
@@ -83,27 +71,47 @@ public class TaskMeasurementConfiguration extends MeasurementConfiguration imple
 		
 	}
 
-	@Override
+	/**
+     * Returns the number of tasks in the measurement.
+     * @return number of tasks.
+     */
 	public int getNumTasks() {
 		return tasks.size();
 	}
 
-	@Override
+	/**
+     * Returns the task at the given position.
+     * @param taskID task position.
+     * @return task at given position.
+     * @throws IndexOutOfBoundsException thrown if task index is invalid.
+     */
 	public TaskConfiguration getTask(int taskID) throws IndexOutOfBoundsException {
 		return tasks.get(taskID);
 	}
 
-	@Override
+	/**
+     * Removes the task at the given index.
+     * @param taskID Task id to remove.
+     * @throws IndexOutOfBoundsException
+     */
 	public void removeTask(int taskID) throws IndexOutOfBoundsException {
 		tasks.remove(taskID);
 	}
 
-	@Override
+	/**
+     * Adds a new task at the end of the tasks.
+     * @param taskConfiguration Task to add.
+     */
 	public void addTask(TaskConfiguration taskConfiguration) {
 		tasks.add(taskConfiguration);
 	}
 
-	@Override
+	/**
+     * Inserts a task at the given position in the task list. The indices of the task having previously the given index and of all tasks with a higher index is increased by one.
+     * @param taskConfiguration Task to add.
+     * @param taskID Index where to insert the task.
+     * @throws IndexOutOfBoundsException
+     */
 	public void insertTask(TaskConfiguration taskConfiguration, int taskID) throws IndexOutOfBoundsException {
 		tasks.add(taskID, taskConfiguration);
 	}

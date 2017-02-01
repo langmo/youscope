@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author langmo
  */
 @XStreamAlias("plate-scanning-job")
-public class PlateScanningJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class PlateScanningJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -107,18 +107,6 @@ public class PlateScanningJobConfiguration extends JobConfiguration implements J
 	public String getTypeIdentifier()
 	{
 		return TYPE_IDENTIFIER;
-	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		PlateScanningJobConfiguration clone = (PlateScanningJobConfiguration)super.clone();
-		clone.jobs= new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		return clone;
 	}
 
 	@Override

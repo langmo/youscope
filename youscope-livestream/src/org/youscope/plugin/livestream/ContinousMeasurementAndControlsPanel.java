@@ -604,7 +604,7 @@ class ContinousMeasurementAndControlsPanel extends JPanel
 		lastChannelGroup = configGroup;
 		lastCamera = camera;
 
-		mainPanel.stopMeasurementAndWait();
+		mainPanel.stopMeasurement();
 		mainPanel.setCamera(camera);
 		mainPanel.setExposure(exposure);
 		mainPanel.setChannel(lastChannelGroup, lastChannel);
@@ -644,6 +644,6 @@ class ContinousMeasurementAndControlsPanel extends JPanel
 	 */
 	public void stopMeasurementAndWait()
 	{
-		getImagePanel().stopMeasurementAndWait();
+		getImagePanel().stopMeasurement();
 	}
 }

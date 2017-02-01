@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *
  */
 @XStreamAlias("droplet-based-microfluidics-job")
-public class DropletMicrofluidicJobConfiguration extends JobConfiguration implements TableProducerConfiguration
+public class DropletMicrofluidicJobConfiguration implements JobConfiguration, TableProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -207,7 +207,6 @@ public class DropletMicrofluidicJobConfiguration extends JobConfiguration implem
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
 		
 		if(autofocusConfiguration == null)
 			throw new ConfigurationException("Autofocus not configured.");

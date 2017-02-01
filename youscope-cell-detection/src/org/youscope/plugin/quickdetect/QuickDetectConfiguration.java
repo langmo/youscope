@@ -43,12 +43,6 @@ public class QuickDetectConfiguration extends CellDetectionConfiguration
 	{
 		// do nothing.
 	}
-	
-	@Override
-	public QuickDetectConfiguration clone()
-	{
-		return (QuickDetectConfiguration) super.clone();
-	}
 
 	@YSConfigAlias("Internal Binning")
 	@XStreamAlias("internal-binning")

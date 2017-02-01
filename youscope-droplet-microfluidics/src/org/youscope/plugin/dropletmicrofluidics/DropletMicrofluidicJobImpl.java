@@ -11,13 +11,13 @@ import org.youscope.addon.dropletmicrofluidics.DropletControllerResource;
 import org.youscope.addon.dropletmicrofluidics.DropletControllerResult;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResource;
 import org.youscope.addon.dropletmicrofluidics.DropletObserverResult;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.ColumnView;
@@ -99,7 +99,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public void setInputJob(AutoFocusJob inputJob) throws RemoteException, MeasurementRunningException
+	public void setInputJob(AutoFocusJob inputJob) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.inputJob = inputJob;
@@ -112,7 +112,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public void setOutputJob(NemesysJob outputJob) throws RemoteException, MeasurementRunningException
+	public void setOutputJob(NemesysJob outputJob) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.outputJob = outputJob;
@@ -254,7 +254,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		return "Droplet based microfluidic controller";
 	}
@@ -367,7 +367,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public void setController(DropletControllerResource controller) throws RemoteException, MeasurementRunningException {
+	public void setController(DropletControllerResource controller) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.controller = controller;
 	}
@@ -378,7 +378,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public void setObserver(DropletObserverResource observer) throws RemoteException, MeasurementRunningException {
+	public void setObserver(DropletObserverResource observer) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.observer = observer;
 	}
@@ -417,7 +417,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		return callback;
 	}
 
-	public void setCallback(DropletMicrofluidicJobCallback callback) throws MeasurementRunningException
+	public void setCallback(DropletMicrofluidicJobCallback callback) throws ComponentRunningException
 	{
 		assertRunning();
 		this.callback = callback;
@@ -429,14 +429,14 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 	}
 
 	@Override
-	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, MeasurementRunningException {
+	public void setMicrofluidicChipID(int microfluidicChipID) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.microfluidicChipID = microfluidicChipID;
 		
 	}
 
 	@Override
-	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, MeasurementRunningException {
+	public void setConnectedSyringes(int[] connectedSyringes) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		if(connectedSyringes == null)
 			connectedSyringes = new int[0];
@@ -450,5 +450,27 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		for(int i=0; i<connectedSyringes.length; i++)
 			copy[i] = connectedSyringes[i];
 		return copy;
+	}
+
+	@Override
+	public void addJob(Job job) throws RemoteException, ComponentRunningException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void insertJob(Job job, int jobIndex)
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void removeJob(int jobIndex)
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
+	}
+
+	@Override
+	public void clearJobs() throws RemoteException, ComponentRunningException, JobException {
+		throw new JobException("Use setInputJob() or setOutputJob() to edit child jobs.");
 	}
 }

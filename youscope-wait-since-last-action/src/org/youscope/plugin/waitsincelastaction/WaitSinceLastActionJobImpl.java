@@ -5,12 +5,12 @@ package org.youscope.plugin.waitsincelastaction;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 
@@ -62,7 +62,7 @@ class WaitSinceLastActionJobImpl  extends JobAdapter implements WaitSinceLastAct
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Wait since last iteration";
 	}
@@ -107,7 +107,7 @@ class WaitSinceLastActionJobImpl  extends JobAdapter implements WaitSinceLastAct
 
 
 	@Override
-	public void setWaitTime(long waitTime) throws RemoteException, MeasurementRunningException {
+	public void setWaitTime(long waitTime) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.waitTime = waitTime > 0 ? waitTime : 0;
 		
@@ -123,7 +123,7 @@ class WaitSinceLastActionJobImpl  extends JobAdapter implements WaitSinceLastAct
 
 
 	@Override
-	public void setInitialWaitTime(long initialWaitTime) throws RemoteException, MeasurementRunningException {
+	public void setInitialWaitTime(long initialWaitTime) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.initialWaitTime = initialWaitTime > 0 ? initialWaitTime : 0;
 	}
@@ -139,7 +139,7 @@ class WaitSinceLastActionJobImpl  extends JobAdapter implements WaitSinceLastAct
 
 	@Override
 	public void setResetAfterIteration(boolean resetAfterIteration)
-			throws RemoteException, MeasurementRunningException {
+			throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.resetAfterIteration = resetAfterIteration;
 	}
@@ -154,7 +154,7 @@ class WaitSinceLastActionJobImpl  extends JobAdapter implements WaitSinceLastAct
 
 
 	@Override
-	public void setActionID(int actionID) throws RemoteException, MeasurementRunningException {
+	public void setActionID(int actionID) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.actionID = actionID;
 	}

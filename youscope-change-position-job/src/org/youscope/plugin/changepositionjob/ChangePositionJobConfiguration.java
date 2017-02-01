@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  * @author Moritz Lang
  */
 @XStreamAlias("change-position-job")
-public class ChangePositionJobConfiguration extends JobConfiguration
+public class ChangePositionJobConfiguration implements JobConfiguration
 {
 	/**
 	 * Serial Version UID.
@@ -114,14 +114,8 @@ public class ChangePositionJobConfiguration extends JobConfiguration
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		// nothing to check.
+		// nothing to check, always valid.
 		
 	}
 

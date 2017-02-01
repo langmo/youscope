@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.waitforuser;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -14,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Moritz Lang
  */
 @XStreamAlias("wait-for-user")
-public class WaitForUserJobConfiguration extends JobConfiguration
+public class WaitForUserJobConfiguration implements JobConfiguration
 {
 	@XStreamAlias("message")
 	@XStreamAsAttribute
@@ -66,10 +67,12 @@ public class WaitForUserJobConfiguration extends JobConfiguration
 	{
 		return TYPE_IDENTIFIER;
 	}
-	
+
+
+
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
+	public void checkConfiguration() throws ConfigurationException {
+		// do nothing, always correct.
+		
 	}
 }

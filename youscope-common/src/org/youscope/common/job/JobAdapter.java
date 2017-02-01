@@ -10,11 +10,11 @@ import java.util.Iterator;
 import java.util.UUID;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -57,10 +57,10 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	 * Should be called at the beginning of every function which is manipulating the parameters of the job (i.e. all "set" methods).
 	 * @throws JobRunningException
 	 */
-	protected synchronized void assertRunning() throws MeasurementRunningException
+	protected synchronized void assertRunning() throws ComponentRunningException
 	{
 		if(isRunning())
-			throw new MeasurementRunningException();
+			throw new ComponentRunningException();
 	}
 
 	/**
@@ -130,7 +130,7 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	}
 
 	@Override
-	public void addJobListener(JobListener listener) throws RemoteException
+	public void addJobListener(JobListener listener)
 	{
 		if(listener == null)
 			return;
@@ -141,7 +141,7 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	}
 
 	@Override
-	public void removeJobListener(JobListener listener) throws RemoteException
+	public void removeJobListener(JobListener listener)
 	{
 		if(listener == null)
 			return;
@@ -222,7 +222,6 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	@Override
 	public void initializeJob(Microscope microscope, MeasurementContext measurementContext) throws JobException, InterruptedException, RemoteException
 	{
-		setRunning(true);
 		synchronized(jobListeners)
 		{
 			for(JobListener listener : jobListeners)
@@ -230,6 +229,7 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 				listener.jobInitialized();
 			}
 		}
+		setRunning(true);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	}
 
 	@Override
-	public String getName() throws RemoteException
+	public String getName()
 	{
 		if(jobName == null)
 			return getDefaultName();
@@ -257,8 +257,9 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	}
 
 	@Override
-	public synchronized void setName(String jobName) throws RemoteException
+	public synchronized void setName(String jobName) throws ComponentRunningException
 	{
+		assertRunning();
 		this.jobName = jobName;
 	}
 
@@ -267,10 +268,11 @@ public abstract class JobAdapter extends UnicastRemoteObject implements Job
 	 * @return Default job name. Should be short, but however informative.
 	 * @throws RemoteException
 	 */
-	public abstract String getDefaultName() throws RemoteException;
+	protected abstract String getDefaultName();
 
 	@Override
-	public UUID getUUID() throws RemoteException {
+	public UUID getUUID() 
+	{
 		return uniqueID;
 	}
 }

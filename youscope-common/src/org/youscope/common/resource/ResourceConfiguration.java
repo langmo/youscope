@@ -17,12 +17,6 @@ public abstract class ResourceConfiguration implements Configuration
 	private static final long serialVersionUID = -7383728961240600655L;
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
-	@Override
 	public void checkConfiguration() throws ConfigurationException {
 		// do nothing.
 		

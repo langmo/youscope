@@ -42,7 +42,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.configuration.FocusConfiguration;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -80,7 +80,7 @@ class ZSlidesJobConfigurationAddon extends ComponentAddonUIAdapter<ZSlidesJobCon
 	{
 		return new ComponentMetadataAdapter<ZSlidesJobConfiguration>(ZSlidesJobConfiguration.TYPE_IDENTIFIER, 
 				ZSlidesJobConfiguration.class, 
-				CompositeJob.class, 
+				SimpleCompositeJob.class, 
 				"Z-Stack", 
 				new String[]{"Containers"}, 
 				"Takes images at different focal positions, realizing a stack of images which might e.g. be used to generate 3D images.",

@@ -5,9 +5,9 @@ package org.youscope.plugin.repeatjob;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 
 /**
@@ -18,7 +18,7 @@ import org.youscope.common.measurement.MeasurementRunningException;
  * 
  * @author Moritz Lang
  */
-public interface RepeatJob extends Job, EditableJobContainer
+public interface RepeatJob extends Job, CompositeJob
 {
 	/**
 	 * Returns the number of times the sub-jobs should be repeated each time the repeat-job is executed.
@@ -31,7 +31,7 @@ public interface RepeatJob extends Job, EditableJobContainer
 	 * Sets the number of times the sub-jobs should be repeated each time the repeat-job is executed.
 	 * @param numRepeats number of times the job should be repeated. If smaller than 0, it is set to zero.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setNumRepeats(int numRepeats) throws RemoteException, MeasurementRunningException;
+	public void setNumRepeats(int numRepeats) throws RemoteException, ComponentRunningException;
 }

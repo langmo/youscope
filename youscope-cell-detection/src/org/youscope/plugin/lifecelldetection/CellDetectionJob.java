@@ -8,11 +8,11 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.celldetection.CellDetectionAddon;
 import org.youscope.addon.celldetection.CellVisualizationAddon;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.image.ImageProducer;
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.table.TableProducer;
 
 
@@ -21,7 +21,7 @@ import org.youscope.common.table.TableProducer;
  * it also produces an image in which the detected cells are highlighted to its image listeners.
  * @author Moritz Lang
  */
-public interface CellDetectionJob extends Job, ImageProducer, TableProducer, EditableJobContainer
+public interface CellDetectionJob extends Job, ImageProducer, TableProducer, CompositeJob
 {
 	/**
 	 * Adds a listener which is invoked if a new segmentation image was created.
@@ -62,10 +62,10 @@ public interface CellDetectionJob extends Job, ImageProducer, TableProducer, Edi
 	/**
 	 * Sets the algorithm which should be used for cell detection.
 	 * @param detectionAlgorithm
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws RemoteException 
 	 */
-	void setDetectionAlgorithm(CellDetectionAddon detectionAlgorithm) throws MeasurementRunningException, RemoteException;
+	void setDetectionAlgorithm(CellDetectionAddon detectionAlgorithm) throws ComponentRunningException, RemoteException;
 
 	/**
 	 * Returns the algorithm which should be used for cell detection, or null.
@@ -77,10 +77,10 @@ public interface CellDetectionJob extends Job, ImageProducer, TableProducer, Edi
 	/**
 	 * Sets the algorithm which should be used for cell visualization.
 	 * @param visualizationAlgorithm
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 * @throws RemoteException 
 	 */
-	void setVisualizationAlgorithm(CellVisualizationAddon visualizationAlgorithm) throws MeasurementRunningException, RemoteException;
+	void setVisualizationAlgorithm(CellVisualizationAddon visualizationAlgorithm) throws ComponentRunningException, RemoteException;
 
 	/**
 	 * Returns the algorithm which should be used for cell visualization, or null.
@@ -93,18 +93,18 @@ public interface CellDetectionJob extends Job, ImageProducer, TableProducer, Edi
 	 * Sets a short string describing the images which are made by this job.
 	 * @param description The description which should be returned for the images produced by this job, or null, to switch to the default description.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	void setImageDescription(String description) throws RemoteException, MeasurementRunningException;
+	void setImageDescription(String description) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Sets the minimal time (in ms) the execution of the job should take. If the execution of the job takes less, the rest of the time span will be waited.
 	 * This function is mainly ment for real-time applications.
 	 * @param minimalTimeMS The minimal time in ms the execution of the job has to take, or -1.
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 * @throws RemoteException 
 	 */
-	public void setMinimalTimeMS(long minimalTimeMS) throws MeasurementRunningException, RemoteException;
+	public void setMinimalTimeMS(long minimalTimeMS) throws ComponentRunningException, RemoteException;
 
 	/**
 	 * Returns the minimal time (in ms) the execution of the job should take. If the execution of the job takes less, the rest of the time span will be waited.

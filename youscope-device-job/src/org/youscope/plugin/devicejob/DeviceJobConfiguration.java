@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("simple-device-settings-job")
-public class DeviceJobConfiguration extends JobConfiguration implements TableConsumerConfiguration
+public class DeviceJobConfiguration implements JobConfiguration, TableConsumerConfiguration
 {
 
 	/**
@@ -48,19 +48,6 @@ public class DeviceJobConfiguration extends JobConfiguration implements TableCon
 		if(description.length() <= 0)
 			description = "<p>Empty Device Job</p>";
 		return description;
-	}
-
-	@Override
-	public DeviceJobConfiguration clone()
-	{
-		DeviceJobConfiguration clone;
-		try {
-			clone = (DeviceJobConfiguration)super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not supported.", e); // won't happen.
-		}
-		clone.setDeviceSettings(deviceSettings);
-		return clone;
 	}
 
 	/**
@@ -108,7 +95,6 @@ public class DeviceJobConfiguration extends JobConfiguration implements TableCon
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
 		if(deviceSettings == null)
 			throw new ConfigurationException("Device settings are null.");
 	}

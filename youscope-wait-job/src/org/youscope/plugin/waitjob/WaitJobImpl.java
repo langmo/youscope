@@ -6,6 +6,7 @@ package org.youscope.plugin.waitjob;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -13,7 +14,6 @@ import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.WaitJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -42,7 +42,7 @@ class WaitJobImpl extends JobAdapter implements WaitJob
 	}
 
 	@Override
-	public void setWaitTime(long waitTime) throws RemoteException, MeasurementRunningException
+	public void setWaitTime(long waitTime) throws RemoteException, ComponentRunningException
 	{
 		this.waitTime = waitTime > 0 ? waitTime : 0;
 	}
@@ -73,7 +73,7 @@ class WaitJobImpl extends JobAdapter implements WaitJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Wait job";
 	}
@@ -107,7 +107,7 @@ class WaitJobImpl extends JobAdapter implements WaitJob
 	}
 
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -117,17 +117,17 @@ class WaitJobImpl extends JobAdapter implements WaitJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -147,7 +147,7 @@ class WaitJobImpl extends JobAdapter implements WaitJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		jobs.add(jobIndex, job);
 	}
 

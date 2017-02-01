@@ -4,11 +4,11 @@
 package org.youscope.plugin.statistics;
 
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableProducerConfiguration;
@@ -22,13 +22,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author Moritz Lang
  */
 @XStreamAlias("statistics-job")
-public class StatisticsJobConfiguration extends JobConfiguration  implements JobContainerConfiguration, TableProducerConfiguration
+public class StatisticsJobConfiguration implements CompositeJobConfiguration, TableProducerConfiguration
 {
 	/**
 	 * The jobs which should be run when the composite job starts.
 	 */
 	@XStreamAlias("jobs")
-	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
+	private final ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
 	
 	@Override
 	public int hashCode()
@@ -109,18 +109,6 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 	{
 		return StatisticsJob.DEFAULT_TYPE_IDENTIFIER;
 	}
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		StatisticsJobConfiguration clone = (StatisticsJobConfiguration)super.clone();
-		clone.jobs = new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.elementAt(i).clone());
-		}
-		return clone;
-	}
 
 	@Override
 	public JobConfiguration[] getJobs()
@@ -153,13 +141,13 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 	@Override
 	public void removeJobAt(int index)
 	{
-		jobs.removeElementAt(index);
+		jobs.remove(index);
 	}
 
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 	}
 
 	@Override
@@ -169,9 +157,6 @@ public class StatisticsJobConfiguration extends JobConfiguration  implements Job
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
-		if(jobs == null)
-			throw new ConfigurationException("Jobs are null.");
 		for(JobConfiguration job : jobs)
 			job.checkConfiguration();
 	}

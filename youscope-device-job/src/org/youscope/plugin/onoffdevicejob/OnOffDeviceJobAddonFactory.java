@@ -8,7 +8,7 @@ import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.DeviceSettingJob;
 import org.youscope.common.job.basicjobs.WaitJob;
 import org.youscope.serverinterfaces.ConstructionContext;
@@ -26,16 +26,16 @@ public class OnOffDeviceJobAddonFactory extends ComponentAddonFactoryAdapter
 		super(OnOffDeviceJobConfigurationAddon.class, CREATOR, OnOffDeviceJobConfigurationAddon.getMetadata());
 	}
 	
-	private static final CustomAddonCreator<OnOffDeviceJobConfiguration, CompositeJob> CREATOR = new CustomAddonCreator<OnOffDeviceJobConfiguration,CompositeJob>()
+	private static final CustomAddonCreator<OnOffDeviceJobConfiguration, SimpleCompositeJob> CREATOR = new CustomAddonCreator<OnOffDeviceJobConfiguration,SimpleCompositeJob>()
 	{
 		@Override
-		public CompositeJob createCustom(PositionInformation positionInformation, OnOffDeviceJobConfiguration configuration,
+		public SimpleCompositeJob createCustom(PositionInformation positionInformation, OnOffDeviceJobConfiguration configuration,
 				ConstructionContext constructionContext) throws ConfigurationException, AddonException 
 		{
-			CompositeJob compositeJob;
+			SimpleCompositeJob compositeJob;
 			try
 			{
-				compositeJob = constructionContext.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+				compositeJob = constructionContext.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 			
 				if(configuration.getDeviceSettingsOn() != null && configuration.getDeviceSettingsOn().length > 0)
 				{
@@ -64,8 +64,8 @@ public class OnOffDeviceJobAddonFactory extends ComponentAddonFactoryAdapter
 		}
 
 		@Override
-		public Class<CompositeJob> getComponentInterface() {
-			return CompositeJob.class;
+		public Class<SimpleCompositeJob> getComponentInterface() {
+			return SimpleCompositeJob.class;
 		}
 	};
 }

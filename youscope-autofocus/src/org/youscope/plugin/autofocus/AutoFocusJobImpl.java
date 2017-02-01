@@ -11,6 +11,7 @@ import java.util.Iterator;
 import org.youscope.addon.focusscore.FocusScoreResource;
 import org.youscope.addon.focussearch.FocusSearchOracle;
 import org.youscope.addon.focussearch.FocusSearchResource;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -19,7 +20,6 @@ import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.Microscope;
@@ -85,14 +85,14 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public void setImageDescription(String description) throws RemoteException, MeasurementRunningException
+	public void setImageDescription(String description) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		imageDescription = description;
 	}
 	
 	@Override
-	public synchronized void setExposure(double exposure) throws MeasurementRunningException
+	public synchronized void setExposure(double exposure) throws ComponentRunningException
 	{
 		assertRunning();
 		this.exposure = exposure;
@@ -113,7 +113,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public synchronized void setChannel(String deviceGroup, String channel) throws MeasurementRunningException
+	public synchronized void setChannel(String deviceGroup, String channel) throws ComponentRunningException
 	{
 		assertRunning();
 		this.configGroup = deviceGroup;
@@ -528,7 +528,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String text = "Auto-Focus search in channel " + configGroup + "." + channel;
 		text += ", exposure " + Double.toString(exposure) + "ms";
@@ -559,7 +559,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	
 	
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -569,17 +569,17 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -604,7 +604,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public void setFocusDevice(String focusDevice) throws MeasurementRunningException
+	public void setFocusDevice(String focusDevice) throws ComponentRunningException
 	{
 		assertRunning();
 		this.focusDevice = focusDevice;
@@ -617,14 +617,14 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public void setFocusAdjustmentTime(int adjustmentTime) throws MeasurementRunningException
+	public void setFocusAdjustmentTime(int adjustmentTime) throws ComponentRunningException
 	{
 		assertRunning();
 		this.adjustmentTime = adjustmentTime;
 	}
 
 	@Override
-	public void setFocusScoreAlgorithm(FocusScoreResource focusScoreAlgorithm) throws RemoteException, MeasurementRunningException
+	public void setFocusScoreAlgorithm(FocusScoreResource focusScoreAlgorithm) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.focusScoreAlgorithm = focusScoreAlgorithm;
@@ -637,7 +637,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 
 	@Override
-	public void setResetFocusAfterSearch(boolean resetFocusAfterSearch) throws RemoteException, MeasurementRunningException
+	public void setResetFocusAfterSearch(boolean resetFocusAfterSearch) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.resetFocusAfterSearch = resetFocusAfterSearch;
@@ -679,7 +679,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 
 
 	@Override
-	public void setRememberFocus(boolean rememberFocus) throws MeasurementRunningException
+	public void setRememberFocus(boolean rememberFocus) throws ComponentRunningException
 	{
 		assertRunning();
 		this.rememberFocus = rememberFocus;
@@ -699,7 +699,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 
 	@Override
 	public void setFocusSearchAlgorithm(FocusSearchResource focusSearchAlgorithm)
-			throws MeasurementRunningException
+			throws ComponentRunningException
 	{
 		assertRunning();
 		this.focusSearchAlgorithm = focusSearchAlgorithm;
@@ -713,7 +713,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		jobs.add(jobIndex, job);
 	}
 

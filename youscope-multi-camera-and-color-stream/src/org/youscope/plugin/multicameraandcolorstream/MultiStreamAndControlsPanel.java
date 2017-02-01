@@ -24,6 +24,7 @@ import javax.swing.border.TitledBorder;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.image.ImageEvent;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.microscope.CameraDevice;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.MicroscopeException;
@@ -418,8 +419,7 @@ class MultiStreamAndControlsPanel extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			stopMeasurement(true);
-
+			stopMeasurement();
 			startMeasurement();
 		}
 	}
@@ -466,15 +466,14 @@ class MultiStreamAndControlsPanel extends JPanel
 	/**
 	 * Stops the measurement. Does nothing if measurement is not running.
 	 * The call immediately returns, even if the stopping of the measurement takes longer.
-	 * @param waitUntilFinished TRUE if thread should be paused until measurement is finished.
 	 */
-	public void stopMeasurement(boolean waitUntilFinished)
+	public void stopMeasurement()
 	{
 		try
 		{
-			getImagePanel().stopMeasurement(waitUntilFinished);
+			getImagePanel().stopMeasurement();
 		}
-		catch(RemoteException e)
+		catch(RemoteException | MeasurementException e)
 		{
 			client.sendError("Could not stop measurement.", e);
 		}

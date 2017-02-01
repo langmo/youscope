@@ -5,9 +5,9 @@ package org.youscope.common.job.basicjobs;
 
 import java.rmi.RemoteException;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * A job for waiting a given time. If this job has child job, it executes the child jobs first and then waits the given time minus the
@@ -15,7 +15,7 @@ import org.youscope.common.measurement.MeasurementRunningException;
  * @author Moritz Lang
  * 
  */
-public interface WaitJob extends Job, EditableJobContainer
+public interface WaitJob extends Job, CompositeJob
 {
 	/**
 	 * The type identifier of the default implementation of this job. 
@@ -45,8 +45,8 @@ public interface WaitJob extends Job, EditableJobContainer
 	 * 
 	 * @param waitTime Delay in ms.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setWaitTime(long waitTime) throws RemoteException, MeasurementRunningException;
+	void setWaitTime(long waitTime) throws RemoteException, ComponentRunningException;
 
 }

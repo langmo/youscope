@@ -19,6 +19,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
@@ -28,7 +29,6 @@ import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.ScriptingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.scripting.MicroscopeScriptException;
 import org.youscope.common.scripting.RemoteScriptEngine;
@@ -68,7 +68,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "script.execute(" + scriptFile.toString() + ")";
 	}
@@ -316,7 +316,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 			{
 				return new ScriptImageStorageImpl(job);
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				println("Could not produce image storage for script: " + e.getMessage());
 				return null;
@@ -332,21 +332,21 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 	}
 
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		jobs.add(job);
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
-		jobs.remove(job);
+		jobs.remove(jobIndex);
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		jobs.clear();
@@ -359,14 +359,14 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 	}
 
 	@Override
-	public void setScriptEngine(String engine) throws MeasurementRunningException
+	public void setScriptEngine(String engine) throws ComponentRunningException
 	{
 		assertRunning();
 		this.scriptEngineName = engine;
 	}
 
 	@Override
-	public void setScriptFile(URL scriptFile) throws MeasurementRunningException
+	public void setScriptFile(URL scriptFile) throws ComponentRunningException
 	{
 		assertRunning();
 		this.scriptFile = scriptFile;
@@ -387,7 +387,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		assertRunning();
 		jobs.add(jobIndex, job);
 	}
@@ -404,7 +404,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 
 	@Override
 	public void setRemoteScriptEngine(RemoteScriptEngine scriptEngine)
-			throws RemoteException, MeasurementRunningException {
+			throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.remoteEngine = scriptEngine;
 	}

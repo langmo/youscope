@@ -3,6 +3,7 @@
  */
 package org.youscope.plugin.outoffocus;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.image.ImageProducerConfiguration;
 import org.youscope.common.job.JobConfiguration;
@@ -17,7 +18,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  *
  */
 @XStreamAlias("out-of-focus-job")
-public class OutOfFocusJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class OutOfFocusJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -231,15 +232,6 @@ public class OutOfFocusJobConfiguration extends JobConfiguration implements Imag
 	{
 		this.imageSaveName = name;
 	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		OutOfFocusJobConfiguration clone = (OutOfFocusJobConfiguration)super.clone();
-		if(focusConfiguration != null)
-			clone.focusConfiguration = focusConfiguration.clone();
-		return clone;
-	}
 	
 	@Override
 	public String[] getImageSaveNames()
@@ -253,5 +245,12 @@ public class OutOfFocusJobConfiguration extends JobConfiguration implements Imag
 	public int getNumberOfImages()
 	{
 		return 1;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		if(exposure <= 0)
+			throw new ConfigurationException("Exposure must be positive.");
+		
 	}
 }

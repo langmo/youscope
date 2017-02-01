@@ -6,19 +6,18 @@ package org.youscope.server;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Date;
 import java.util.UUID;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.saving.MeasurementSaver;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 
 /**
  * @author Moritz Lang
@@ -65,25 +64,20 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void stopMeasurement() throws MeasurementException
+	public void stopMeasurement(boolean processJobQueue) throws MeasurementException
     {
-        measurement.stopMeasurement();
+        measurement.stopMeasurement(processJobQueue);
         measurementManager.removeMeasurement(measurement);
     }
 
     @Override
 	public void interruptMeasurement()
     {
-    	try {
-			measurement.stopMeasurement();
-		} catch (@SuppressWarnings("unused") MeasurementException e) {
-			// do nothing, only thrown if execution is not currently active.
-		}
     	measurementManager.interruptMeasurement(measurement);
     }
 
     @Override
-	public void setRuntime(int measurementRuntime) throws MeasurementRunningException
+	public void setRuntime(int measurementRuntime) throws ComponentRunningException
     {
         measurement.setRuntime(measurementRuntime);
     }
@@ -95,7 +89,7 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void setName(String name)
+	public void setName(String name) throws ComponentRunningException
     {
         measurement.setName(name);
     }
@@ -114,7 +108,7 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void setLockMicroscopeWhileRunning(boolean lock) throws MeasurementRunningException
+	public void setLockMicroscopeWhileRunning(boolean lock) throws ComponentRunningException
     {
         measurement.setLockMicroscopeWhileRunning(lock);
     }
@@ -126,7 +120,7 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void setTypeIdentifier(String type) throws MeasurementRunningException
+	public void setTypeIdentifier(String type) throws ComponentRunningException
     {
         measurement.setTypeIdentifier(type);
     }
@@ -150,49 +144,49 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public MeasurementTask addTask(int period, boolean fixedTimes, int startTime, int numExecutions)
-            throws MeasurementRunningException, RemoteException
+	public Task addTask(int period, boolean fixedTimes, int startTime, int numExecutions)
+            throws ComponentRunningException, RemoteException
     {
         return measurement.addTask(period, fixedTimes, startTime, numExecutions);
     }
 
     @Override
-	public MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime,
-            int numExecutions) throws MeasurementRunningException, RemoteException
+	public Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime,
+            int numExecutions) throws ComponentRunningException, RemoteException
     {
         return measurement.addMultiplePeriodTask(periods, breakTime, startTime, numExecutions);
     }
 
     @Override
-	public MeasurementTask addTask(int period, boolean fixedTimes, int startTime)
-            throws MeasurementRunningException, RemoteException
+	public Task addTask(int period, boolean fixedTimes, int startTime)
+            throws ComponentRunningException, RemoteException
     {
         return measurement.addTask(period, fixedTimes, startTime);
     }
 
     @Override
-	public MeasurementTask addMultiplePeriodTask(int[] periods, int breakTime, int startTime)
-            throws MeasurementRunningException, RemoteException
+	public Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime)
+            throws ComponentRunningException, RemoteException
     {
         return measurement.addMultiplePeriodTask(periods, breakTime, startTime);
     }
 
     @Override
 	public void setFinishDeviceSettings(DeviceSetting[] settings)
-            throws MeasurementRunningException
+            throws ComponentRunningException
     {
         measurement.setFinishDeviceSettings(settings);
     }
 
     @Override
 	public void setStartupDeviceSettings(DeviceSetting[] settings)
-            throws MeasurementRunningException
+            throws ComponentRunningException
     {
         measurement.setStartupDeviceSettings(settings);
     }
 
     @Override
-	public MeasurementTask[] getTasks()
+	public Task[] getTasks()
     {
         return measurement.getTasks();
     }
@@ -210,13 +204,13 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void addStartupDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
+	public void addStartupDeviceSetting(DeviceSetting setting) throws ComponentRunningException
     {
         measurement.addStartupDeviceSetting(setting);
     }
 
     @Override
-	public void addFinishDeviceSetting(DeviceSetting setting) throws MeasurementRunningException
+	public void addFinishDeviceSetting(DeviceSetting setting) throws ComponentRunningException
     {
         measurement.addFinishDeviceSetting(setting);
     }
@@ -240,14 +234,7 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 	}
 
 	@Override
-    public void quickStopMeasurement()
-    {
-        measurement.quickStopMeasurement();
-        measurementManager.quickStopMeasurement(measurement);
-    }
-
-	@Override
-    public void setInitialMeasurementContextProperty(String identifier, Serializable property) throws MeasurementRunningException
+    public void setInitialMeasurementContextProperty(String identifier, Serializable property) throws ComponentRunningException
     {
         measurement.setInitialMeasurementContextProperty(identifier, property);
     }

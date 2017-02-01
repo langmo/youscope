@@ -10,11 +10,12 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
+import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.DeviceSettingJob;
 import org.youscope.common.job.basicjobs.ScriptingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -71,7 +72,11 @@ public class OscillatingDeviceJobAddonFactory extends ComponentAddonFactoryAdapt
 				} catch (ComponentCreationException e) {
 					throw new AddonException("Oscillating device jobs need the device setting job plugin.", e);
 				}
-				job.addJob(devJob);
+				try {
+					job.addJob(devJob);
+				} catch (JobException e) {
+					throw new AddonException("Could not add child job to job.", e);
+				}
 				
 				return job;
 				
@@ -79,7 +84,7 @@ public class OscillatingDeviceJobAddonFactory extends ComponentAddonFactoryAdapt
 			catch(RemoteException e)
 			{
 				throw new AddonException("Could not create job due to remote exception.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}

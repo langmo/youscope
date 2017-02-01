@@ -14,7 +14,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.clientinterfaces.YouScopeClient;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.serverinterfaces.YouScopeServer;
 import org.youscope.uielements.DeviceSettingsPanel;
@@ -49,7 +49,7 @@ class OnOffDeviceJobConfigurationAddon extends ComponentAddonUIAdapter<OnOffDevi
 	{
 		return new ComponentMetadataAdapter<OnOffDeviceJobConfiguration>(OnOffDeviceJobConfiguration.TYPE_IDENTIFIER, 
 				OnOffDeviceJobConfiguration.class, 
-				CompositeJob.class, 
+				SimpleCompositeJob.class, 
 				"Set Device - Wait - Set Device", 
 				new String[]{"Misc"},
 				"Sets a set of device settings, that is, changes one or more hardware settings of the microscope. Then, the job waits for a given time, and applies another set of device settings. Useful e.g. to illuminate cells with light of certain wavelengths without taking an image.",

@@ -37,8 +37,9 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.job.basicjobs.ContinuousImagingJob;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.microscope.Channel;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -105,9 +106,9 @@ class MultiStreamFrame implements YouScopeFrameListener
 	        	{
 	        		try
 					{
-						stopMeasurement(false);
+						stopMeasurement();
 					}
-					catch(RemoteException e1)
+					catch(RemoteException | MeasurementException e1)
 					{
 						client.sendError("Measurement could not be stopped.", e1);
 					}
@@ -131,9 +132,9 @@ class MultiStreamFrame implements YouScopeFrameListener
 	        	// When we are here, we received an image from a camera which shouldn't be imaging...
 	        	try
 				{
-					stopMeasurement(false);
+					stopMeasurement();
 				}
-				catch(RemoteException e1)
+				catch(RemoteException | MeasurementException e1)
 				{
 					client.sendError("Measurement could not be stopped.", e1);
 				}
@@ -338,63 +339,11 @@ class MultiStreamFrame implements YouScopeFrameListener
 		}
 	}
 	
-	/*private class ImageProcessor implements Runnable
-    {
-        private ImageEvent event;
-
-        ImageProcessor(ImageEvent e)
-        {
-            this.event = e;
-        }
-
-        @Override
-        public void run()
-        {
-        	String camera = event.getCamera();
-        	if(camera == null || camera.compareToIgnoreCase("unknown") == 0)
-        	{
-        		try
-				{
-					stopMeasurement(false);
-				}
-				catch(RemoteException e)
-				{
-					client.sendError("Measurement could not be stopped.");
-				}
-				client.sendError("Stopped measurement since it was not detectable by which camera an image was taken. Check the camera drivers and ensure, that they set the \"Camera\" metadata tag correctly.");
-				return;
-        	}
-        	for(ImageFieldAndControl field : imageFields)
-        	{
-        		if(camera.compareToIgnoreCase(field.getImageField().getCamera()) == 0)
-    			{
-    				field.setImage(event);
-    				if (frame.isVisible())
-    					field.repaint();
-    				return;
-    			}
-        	}
-        	
-        	// When we are here, we received an image from a camera which shouldn't be imaging...
-        	try
-			{
-				stopMeasurement(false);
-			}
-			catch(RemoteException e)
-			{
-				client.sendError("Measurement could not be stopped.");
-			}
-        	client.sendError("Received an image from camera \"" + camera + "\", although it shouldn't be imaging. Check if all cameras which are not taking part in the parallel imaging stopped imaging, or if the device driver of the respective camera sets the \"Camera\" metadata tag correctly.");
-        }
-    }*/
-	
-	private synchronized void stopMeasurement(boolean waitUntilFinished) throws RemoteException
+	private synchronized void stopMeasurement() throws RemoteException, MeasurementException
 	{
 		if(measurement != null)
 		{
-			measurement.stopMeasurement();
-			if(waitUntilFinished)
-				measurement.waitForMeasurementFinish();
+			measurement.stopMeasurement(false);
 			
 			measurement = null;
 		}
@@ -407,7 +356,15 @@ class MultiStreamFrame implements YouScopeFrameListener
 	
 	private synchronized void startMeasurement() throws RemoteException
 	{
-		stopMeasurement(true);
+		try
+		{
+			stopMeasurement();
+		}
+		catch(Exception e)
+		{
+			client.sendError("Could not initialize parallel continuous measurement.", e);
+			return;
+		}
 		
 		measurement = server.getMeasurementProvider().createMeasurement();
 		imageHandler = new ImageHandler();
@@ -425,16 +382,15 @@ class MultiStreamFrame implements YouScopeFrameListener
 			job.setChannel(lastConfigGroup, lastChannel);
 
 			// Add a task for the continuous pulling job.
-			MeasurementTask task = measurement.addTask(lastPeriod, false, 0);
+			Task task = measurement.addTask(lastPeriod, false, 0);
 			task.addJob(job);
+			measurement.startMeasurement();
 		}
 		catch(Exception e)
 		{
 			client.sendError("Could not initialize parallel continuous measurement.", e);
 			return;
 		}
-		
-		measurement.startMeasurement();
 	}
 	
 	private void loadConfigGroupNames()
@@ -719,9 +675,9 @@ class MultiStreamFrame implements YouScopeFrameListener
 	{
 		try
 		{
-			stopMeasurement(false);
+			stopMeasurement();
 		}
-		catch (RemoteException e)
+		catch (RemoteException | MeasurementException e)
 		{
 			client.sendError("Could not finish streaming measurement.", e);
 		}

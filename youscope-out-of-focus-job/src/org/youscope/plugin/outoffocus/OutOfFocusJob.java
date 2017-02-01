@@ -5,9 +5,9 @@ package org.youscope.plugin.outoffocus;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageProducer;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 
 /**
  * A job which makes a microscope image in the defined channel with a defined focus offset.
@@ -22,9 +22,9 @@ public interface OutOfFocusJob extends Job, ImageProducer
 	 * @param deviceGroup The device group where the channel is defined.
 	 * @param channel The channel.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setChannel(String deviceGroup, String channel) throws RemoteException, MeasurementRunningException;
+	void setChannel(String deviceGroup, String channel) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the channel.
@@ -48,9 +48,9 @@ public interface OutOfFocusJob extends Job, ImageProducer
 	 * 
 	 * @param exposure The exposure.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	public void setExposure(double exposure) throws RemoteException, MeasurementRunningException;
+	public void setExposure(double exposure) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the exposure. If more than one camera is initialized, returns the exposure of the first camera.
@@ -71,9 +71,9 @@ public interface OutOfFocusJob extends Job, ImageProducer
 	 * Sets the focus adjustment time (the time the microscope is paused after the new focus position was set) in ms.
 	 * @param adjustmentTime Focus adjustment time.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFocusAdjustmentTime(int adjustmentTime) throws RemoteException, MeasurementRunningException;
+	void setFocusAdjustmentTime(int adjustmentTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Gets the offset of the focus device.
@@ -88,9 +88,9 @@ public interface OutOfFocusJob extends Job, ImageProducer
 	 * 
 	 * @param offset The focus offset, in muM.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setOffset(double offset) throws RemoteException, MeasurementRunningException;
+	void setOffset(double offset) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the focus device name for which the position should be changed.
@@ -104,15 +104,15 @@ public interface OutOfFocusJob extends Job, ImageProducer
 	 * Initialized to be null.
 	 * @param focusDevice Focus device name, or null, if the currently active focus device should be changed.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFocusDevice(String focusDevice) throws RemoteException, MeasurementRunningException;
+	void setFocusDevice(String focusDevice) throws RemoteException, ComponentRunningException;
 	
 	/**
 	 * Sets a short string describing the images which are made by this job.
 	 * @param description The description which should be returned for the images produced by this job, or null, to switch to the default description.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	void setImageDescription(String description) throws RemoteException, MeasurementRunningException;
+	void setImageDescription(String description) throws RemoteException, ComponentRunningException;
 }

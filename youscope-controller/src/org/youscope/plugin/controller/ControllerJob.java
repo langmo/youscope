@@ -5,9 +5,9 @@ package org.youscope.plugin.controller;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
-import org.youscope.common.job.JobContainer;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.table.TableConsumer;
 import org.youscope.common.table.TableProducer;
 
@@ -16,16 +16,16 @@ import org.youscope.common.table.TableProducer;
  * @author Moritz Lang
  *
  */
-public interface ControllerJob extends Job, JobContainer, TableProducer
+public interface ControllerJob extends CompositeJob, TableProducer
 {
 	/**
 	 * Sets the script engine with which the scripts should be evaluated. 
 	 * 
 	 * @param engine The script engine to use.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setControllerScriptEngine(String engine) throws RemoteException, MeasurementRunningException;
+	void setControllerScriptEngine(String engine) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the name of the script engine, or null, if script engine is not set.
@@ -38,9 +38,9 @@ public interface ControllerJob extends Job, JobContainer, TableProducer
 	 * Sets the script for the controller which gets evaluated by the script engine.
 	 * @param controllerScript Controller script to evaluate.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setControllerScript(String controllerScript) throws RemoteException, MeasurementRunningException;
+	void setControllerScript(String controllerScript) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the script of the controller which gets evaluated by the script engine.
@@ -62,11 +62,11 @@ public interface ControllerJob extends Job, JobContainer, TableProducer
 	 * The job must implement the {@link TableProducer}. If this is not given, an IllegalArgumentException will be thrown.
 	 * @param inputJob Table producing job for control algorithm.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 * @throws IllegalArgumentException If inputJob does not implement {@link TableProducer}.
 	 * @throws NullPointerException Thrown if inputJob is null.
 	 */
-	public void setInputJob(Job inputJob) throws RemoteException, MeasurementRunningException, IllegalArgumentException, NullPointerException;
+	public void setInputJob(Job inputJob) throws RemoteException, ComponentRunningException, IllegalArgumentException, NullPointerException;
 	
 	/**
 	 * Returns the job which is used to consume the output of the controller.
@@ -81,9 +81,9 @@ public interface ControllerJob extends Job, JobContainer, TableProducer
 	 * The job must implement the {@link TableProducer}. If this is not given, an IllegalArgumentException will be thrown.
 	 * @param outputJob output consumer job.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 * @throws IllegalArgumentException If outputJob does not implement {@link TableConsumer}.
 	 * @throws NullPointerException Thrown if outputJob is null,
 	 */
-	public void setOutputJob(Job outputJob) throws RemoteException, MeasurementRunningException, IllegalArgumentException, NullPointerException;
+	public void setOutputJob(Job outputJob) throws RemoteException, ComponentRunningException, IllegalArgumentException, NullPointerException;
 }

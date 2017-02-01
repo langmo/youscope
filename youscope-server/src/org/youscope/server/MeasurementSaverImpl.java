@@ -16,13 +16,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.youscope.addon.ConfigurationManagement;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementListener;
-import org.youscope.common.measurement.MeasurementRunningException;
+import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.saving.MeasurementFileLocations;
@@ -244,50 +245,28 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			}
 
 			@Override
-			public void measurementStarted() throws RemoteException
-			{
-				// Do nothing.
-			}
-
-			@Override
-			public void measurementFinished() throws RemoteException
-			{
-				setMeasurementRunning(false);
-			}
-
-			@Override
-			public void measurementQueued() throws RemoteException
-			{
-				// Do nothing.
-			}
-
-			@Override
-			public void errorOccured(Exception e) throws RemoteException
-			{
-				// Do nothing.
-			}
-
-			@Override
-			public void measurementUnqueued() throws RemoteException
-			{
-				// Do nothing.
-			}
-
-			@Override
-			public void measurementInitializing() throws RemoteException
-			{
-				setMeasurementRunning(true);
-			}
-
-			@Override
-			public void measurementUninitializing() throws RemoteException
-			{
-				// do nothing.
-			}
-
-			@Override
 			public void measurementStructureModified() throws RemoteException {
 				// do nothing.
+				
+			}
+
+			@Override
+			public void measurementStateChanged(MeasurementState oldState, MeasurementState newState)
+					throws RemoteException 
+			{
+				if(newState == MeasurementState.ERROR
+						|| newState == MeasurementState.QUEUED
+						|| newState == MeasurementState.READY
+						|| newState == MeasurementState.UNINITIALIZED)
+					setMeasurementRunning(false);
+				else
+					setMeasurementRunning(true);
+				
+			}
+
+			@Override
+			public void measurementError(Exception e) throws RemoteException {
+				// do nothing, notification will be sent again by state change to MeasurementState.ERROR.
 				
 			}
 		}
@@ -562,10 +541,10 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	}
 
 	@Override
-	public void setSaveSettings(SaveSettings saveSettings) throws MeasurementRunningException
+	public void setSaveSettings(SaveSettings saveSettings) throws ComponentRunningException
 	{
 		if(measurementRunning)
-			throw new MeasurementRunningException();
+			throw new ComponentRunningException();
 		this.saveSettings = saveSettings;
 	}
 
@@ -582,10 +561,10 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	}
 
 	@Override
-	public void setConfiguration(MeasurementConfiguration configuration) throws MeasurementRunningException
+	public void setConfiguration(MeasurementConfiguration configuration) throws ComponentRunningException
 	{
 		if(measurementRunning)
-			throw new MeasurementRunningException();
+			throw new ComponentRunningException();
 		this.configuration = configuration;
 	}
 

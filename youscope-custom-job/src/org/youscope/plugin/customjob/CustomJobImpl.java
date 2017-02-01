@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.job.EditableJobContainerAdapter;
+import org.youscope.common.job.CompositeJobAdapter;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobException;
 import org.youscope.common.microscope.Microscope;
@@ -16,7 +16,7 @@ import org.youscope.common.microscope.Microscope;
 /**
  * @author Moritz Lang
  */
-class CustomJobImpl extends EditableJobContainerAdapter implements CustomJob
+class CustomJobImpl extends CompositeJobAdapter implements CustomJob
 {
 
 	/**
@@ -30,7 +30,7 @@ class CustomJobImpl extends EditableJobContainerAdapter implements CustomJob
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		return "Custom job";
 	}

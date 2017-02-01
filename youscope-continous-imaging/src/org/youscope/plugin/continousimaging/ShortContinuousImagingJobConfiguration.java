@@ -5,6 +5,7 @@ package org.youscope.plugin.continousimaging;
 
 import org.youscope.common.configuration.CameraConfiguration;
 import org.youscope.common.configuration.ChannelConfiguration;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.configuration.YSConfigClassification;
 import org.youscope.common.configuration.YSConfigConditional;
@@ -24,7 +25,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
 @YSConfigAlias("short continuous imaging")
 @YSConfigClassification("imaging")
 @YSConfigIcon("icons/camcorder.png")
-public class ShortContinuousImagingJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class ShortContinuousImagingJobConfiguration implements JobConfiguration, ImageProducerConfiguration
 {
 	/**
 	 * Serial version UID.
@@ -239,5 +240,12 @@ public class ShortContinuousImagingJobConfiguration extends JobConfiguration imp
 	public int getNumberOfImages()
 	{
 		return numImages > 0 ? numImages:0;
+	}
+	
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		if(exposure <= 0)
+			throw new ConfigurationException("Exposure must be bigger than zero.");
+		
 	}
 }

@@ -9,13 +9,14 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.basicjobs.CompositeJob;
+import org.youscope.common.job.JobException;
+import org.youscope.common.job.basicjobs.SimpleCompositeJob;
 import org.youscope.common.job.basicjobs.FocusingJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -23,19 +24,19 @@ import org.youscope.serverinterfaces.ConstructionContext;
  */
 public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter 
 {
-	private static final CustomAddonCreator<ZSlidesJobConfiguration,CompositeJob> CREATOR = new CustomAddonCreator<ZSlidesJobConfiguration, CompositeJob>()
+	private static final CustomAddonCreator<ZSlidesJobConfiguration,SimpleCompositeJob> CREATOR = new CustomAddonCreator<ZSlidesJobConfiguration, SimpleCompositeJob>()
 	{
 
 		@Override
-		public CompositeJob createCustom(PositionInformation positionInformation,
+		public SimpleCompositeJob createCustom(PositionInformation positionInformation,
 				ZSlidesJobConfiguration configuration, ConstructionContext constructionContext)
 						throws ConfigurationException, AddonException 
 		{
 			try
 			{
-				CompositeJob overallJobContainer;
+				SimpleCompositeJob overallJobContainer;
 				try {
-					overallJobContainer = constructionContext.getComponentProvider().createJob(positionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+					overallJobContainer = constructionContext.getComponentProvider().createJob(positionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 				} catch (ComponentCreationException e1) {
 					throw new AddonException("Z-stack jobs need the composite job plugin.", e1);
 				}
@@ -46,9 +47,9 @@ public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 				{
 					PositionInformation jobPositionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_ZSTACK, i);
 					
-					CompositeJob jobContainer;
+					SimpleCompositeJob jobContainer;
 					try {
-						jobContainer = constructionContext.getComponentProvider().createJob(jobPositionInformation, CompositeJob.DEFAULT_TYPE_IDENTIFIER, CompositeJob.class);
+						jobContainer = constructionContext.getComponentProvider().createJob(jobPositionInformation, SimpleCompositeJob.DEFAULT_TYPE_IDENTIFIER, SimpleCompositeJob.class);
 					} catch (ComponentCreationException e) {
 						throw new AddonException("Z-stack jobs need the composite job plugin.", e);
 					}
@@ -72,7 +73,11 @@ public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 						focusJob.setFocusAdjustmentTime(0);
 					}
 					focusJob.setPosition(positions[i] - currentPosition, true);
-					jobContainer.addJob(focusJob);
+					try {
+						jobContainer.addJob(focusJob);
+					} catch (JobException e1) {
+						throw new AddonException("Could not add child job to job.", e1);
+					}
 					
 					// Add all child jobs
 					for(JobConfiguration childJobConfig : configuration.getJobs())
@@ -83,11 +88,19 @@ public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 						} catch (ComponentCreationException e) {
 							throw new AddonException("Could not create child job.", e);
 						}
-						jobContainer.addJob(childJob);
+						try {
+							jobContainer.addJob(childJob);
+						} catch (JobException e) {
+							throw new AddonException("Could not add child job to job.", e);
+						}
 					}
 					
 					currentPosition = positions[i];
-					overallJobContainer.addJob(jobContainer);
+					try {
+						overallJobContainer.addJob(jobContainer);
+					} catch (JobException e) {
+						throw new AddonException("Could not add child job to job.", e);
+					}
 				}
 				
 				// Reset focus
@@ -109,7 +122,11 @@ public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 					focusJob.setFocusAdjustmentTime(0);
 				}
 				focusJob.setPosition(- currentPosition, true);
-				overallJobContainer.addJob(focusJob);
+				try {
+					overallJobContainer.addJob(focusJob);
+				} catch (JobException e) {
+					throw new AddonException("Could not add child job to job.", e);
+				}
 				
 					
 				return overallJobContainer;
@@ -117,14 +134,14 @@ public class ZSlidesJobAddonFactory extends ComponentAddonFactoryAdapter
 			catch(RemoteException e)
 			{
 				throw new AddonException("Could not create job due to remote exception.", e);
-			} catch (MeasurementRunningException e) {
+			} catch (ComponentRunningException e) {
 				throw new AddonException("Could not initialize newly created job since job is already running.", e);
 			}
 		}
 
 		@Override
-		public Class<CompositeJob> getComponentInterface() {
-			return CompositeJob.class;
+		public Class<SimpleCompositeJob> getComponentInterface() {
+			return SimpleCompositeJob.class;
 		}
 		
 	};

@@ -6,16 +6,18 @@ package org.youscope.plugin.livemodifiablejob;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackException;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
+import org.youscope.common.util.ConfigurationTools;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -169,7 +171,7 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
     }
 
     @Override
-    public String getDefaultName()
+    protected String getDefaultName()
     {
         return "Modifiable Job";
     }
@@ -187,14 +189,14 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
     }
 
     @Override
-    public JobConfiguration[] getChildJobConfigurations() throws RemoteException, CloneNotSupportedException
+    public JobConfiguration[] getChildJobConfigurations() throws RemoteException, ConfigurationException
     {
         synchronized(childJobConfigurations)
         {
             JobConfiguration[] copiedChildJobs = new JobConfiguration[childJobConfigurations.size()];
             for(int i=0; i<childJobConfigurations.size(); i++)
             {
-                copiedChildJobs[i] = (JobConfiguration) childJobConfigurations.get(i).clone();
+                copiedChildJobs[i] = ConfigurationTools.deepCopy(childJobConfigurations.get(i), JobConfiguration.class);
             }
             return copiedChildJobs;
              
@@ -202,21 +204,21 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
     }
 
     @Override
-    public void setChildJobConfigurations(JobConfiguration[] newConfigurations) throws RemoteException, CloneNotSupportedException
+    public void setChildJobConfigurations(JobConfiguration[] newConfigurations) throws RemoteException, ConfigurationException
     {
         synchronized(childJobConfigurations)
         {
             childJobConfigurations.clear();
             for(JobConfiguration job:newConfigurations)
             {
-                childJobConfigurations.add((JobConfiguration) job.clone());
+                childJobConfigurations.add(ConfigurationTools.deepCopy(job, JobConfiguration.class));
             }
             childJobsModified = true;
         }
     }
     
     @Override
-	public synchronized void addJob(Job job) throws MeasurementRunningException
+	public synchronized void addJob(Job job) throws ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -226,17 +228,17 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws MeasurementRunningException
+	public synchronized void clearJobs() throws ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -264,7 +266,7 @@ class LiveModifiableJobImpl extends JobAdapter implements LiveModifiableJob
 	}
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		assertRunning();
 		jobs.add(jobIndex, job);
 	}

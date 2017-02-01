@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.converters.basic.BooleanConverter;
  * @author langmo
  */
 @XStreamAlias("composed-imaging-job")
-public class ComposedImagingJobConfiguration extends JobConfiguration implements ImageProducerConfiguration
+public class ComposedImagingJobConfiguration implements JobConfiguration,ImageProducerConfiguration
 {
 
 	/**
@@ -323,14 +323,6 @@ public class ComposedImagingJobConfiguration extends JobConfiguration implements
 	public String getCameraDevice()
 	{
 		return cameraDevice;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		ComposedImagingJobConfiguration clone = (ComposedImagingJobConfiguration)super.clone();
-		clone.numPixels = (Dimension)numPixels.clone();
-		return clone;
 	}
 
 	@Override

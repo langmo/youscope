@@ -3,10 +3,11 @@
  */
 package org.youscope.plugin.repeatjob;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -16,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("repeat-job")
-public class RepeatJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class RepeatJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -28,7 +29,7 @@ public class RepeatJobConfiguration extends JobConfiguration implements JobConta
 	 * The jobs which should be run several times when the repeat job executes.
 	 */
 	@XStreamAlias("jobs")
-	private Vector<JobConfiguration>	jobs				= new Vector<JobConfiguration>();
+	private final ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
 
 	@XStreamAlias("num-repeats")
 	private int numRepeats = 1;
@@ -46,18 +47,6 @@ public class RepeatJobConfiguration extends JobConfiguration implements JobConta
 		}
 		description += "</ul><p>end</p>";
 		return description;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		RepeatJobConfiguration clone = (RepeatJobConfiguration)super.clone();
-		clone.jobs= new Vector<JobConfiguration>();
-		for(int i = 0; i < jobs.size(); i++)
-		{
-			clone.jobs.add((JobConfiguration)jobs.get(i).clone());
-		}
-		return clone;
 	}
 
 	@Override
@@ -97,7 +86,7 @@ public class RepeatJobConfiguration extends JobConfiguration implements JobConta
 	@Override
 	public void addJob(JobConfiguration job, int index)
 	{
-		jobs.insertElementAt(job, index);
+		jobs.add(index, job);
 	}
 
 	/**
@@ -127,5 +116,14 @@ public class RepeatJobConfiguration extends JobConfiguration implements JobConta
 	public void setNumRepeats(int numRepeats)
 	{
 		this.numRepeats = numRepeats > 0 ? numRepeats : 0;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
+		
 	}
 }

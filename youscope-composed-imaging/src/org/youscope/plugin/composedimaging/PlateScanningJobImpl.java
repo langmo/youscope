@@ -10,13 +10,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -52,7 +52,7 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 	}
 
 	@Override
-	public void setDeltaX(double deltaX) throws MeasurementRunningException
+	public void setDeltaX(double deltaX) throws ComponentRunningException
 	{
 		assertRunning();
 		PlateScanningJobImpl.this.dx = deltaX;
@@ -65,7 +65,7 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 	}
 
 	@Override
-	public void setDeltaY(double deltaY) throws MeasurementRunningException
+	public void setDeltaY(double deltaY) throws ComponentRunningException
 	{
 		assertRunning();
 		PlateScanningJobImpl.this.dy = deltaY;
@@ -78,7 +78,7 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 	}
 
 	@Override
-	public void setNumTiles(Dimension imageNumbers) throws MeasurementRunningException
+	public void setNumTiles(Dimension imageNumbers) throws ComponentRunningException
 	{
 		assertRunning();
 		PlateScanningJobImpl.this.nx = imageNumbers.width;
@@ -212,13 +212,13 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Plate Scanning";
 	}
 
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -228,17 +228,17 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -258,7 +258,7 @@ class PlateScanningJobImpl  extends JobAdapter implements PlateScanningJob
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		assertRunning();
 		jobs.add(jobIndex, job);
 	}

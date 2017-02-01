@@ -8,9 +8,9 @@ import java.rmi.RemoteException;
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonFactoryAdapter;
 import org.youscope.addon.component.CustomAddonCreator;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.serverinterfaces.ConstructionContext;
 
 /**
@@ -41,7 +41,7 @@ public class WaitSinceLastActionJobFactory extends ComponentAddonFactoryAdapter
 				job.setResetAfterIteration(configuration.isResetAfterIteration());
 				job.setActionID(configuration.getActionID());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create wait since last action job since newly created job already running.", e);
 			} catch (RemoteException e) {

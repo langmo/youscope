@@ -5,13 +5,13 @@ package org.youscope.plugin.changepositionjob;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.basicjobs.ChangePositionJob;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.StageDevice;
 
@@ -55,7 +55,7 @@ class ChangePositionJobImpl extends JobAdapter implements ChangePositionJob
 	}
 
 	@Override
-	public synchronized void setPosition(double x, double y) throws MeasurementRunningException
+	public synchronized void setPosition(double x, double y) throws ComponentRunningException
 	{
 		assertRunning();
 		this.x = x;
@@ -64,7 +64,7 @@ class ChangePositionJobImpl extends JobAdapter implements ChangePositionJob
 	}
 
 	@Override
-	public synchronized void setRelativePosition(double dx, double dy) throws RemoteException, MeasurementRunningException
+	public synchronized void setRelativePosition(double dx, double dy) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		this.x = dx;
@@ -73,7 +73,7 @@ class ChangePositionJobImpl extends JobAdapter implements ChangePositionJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		String returnVal;
 		if(absolute)
@@ -111,7 +111,7 @@ class ChangePositionJobImpl extends JobAdapter implements ChangePositionJob
 	}
 
 	@Override
-	public synchronized void setStageDevice(String deviceID) throws RemoteException, MeasurementRunningException
+	public synchronized void setStageDevice(String deviceID) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		stageDeviceID = deviceID;

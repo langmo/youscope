@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author Moritz Lang
  */
 @XStreamAlias("nemesys-job")
-public class NemesysJobConfiguration extends JobConfiguration implements TableConsumerConfiguration, TableProducerConfiguration
+public class NemesysJobConfiguration implements JobConfiguration,TableConsumerConfiguration, TableProducerConfiguration
 {
 
 	/**
@@ -155,7 +155,6 @@ public class NemesysJobConfiguration extends JobConfiguration implements TableCo
 
 	@Override
 	public void checkConfiguration() throws ConfigurationException {
-		super.checkConfiguration();
 		if(nemesysDevice == null)
 			throw new ConfigurationException("No Nemesys device selected.");
 	}

@@ -34,12 +34,6 @@ public abstract class PeriodConfiguration implements Configuration
 	@XStreamAsAttribute
 	private int					numExecutions		= -1;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		return super.clone();
-	}
-
 	/**
 	 * @param numExecutions the numExecutions to set
 	 */

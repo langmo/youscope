@@ -11,14 +11,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobException;
 import org.youscope.common.job.JobListener;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.TaskException;
 import org.youscope.common.task.TaskListener;
 import org.youscope.common.task.TaskState;
@@ -26,7 +26,7 @@ import org.youscope.common.task.TaskState;
 /**
  * @author Moritz Lang
  */
-class MeasurementTaskImpl extends UnicastRemoteObject implements MeasurementTask
+class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 {
 
 	/**
@@ -396,16 +396,16 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements MeasurementTask
 		throw new TaskException(message.toString());
 	}
 	
-	private void assertEditable() throws MeasurementRunningException
+	private void assertEditable() throws ComponentRunningException
 	{
 		TaskState state = taskState;
 		if(state != TaskState.READY && state != TaskState.UNINITIALIZED)
-			throw new MeasurementRunningException();
+			throw new ComponentRunningException();
 	}
 
 	synchronized void initializeTask(Microscope microscope, MeasurementContext measurementContext) throws TaskException, InterruptedException
 	{
-		assertCorrectState("Cannot initialize task.", TaskState.READY, TaskState.INITIALIZED);
+		assertCorrectState("Cannot initialize task.", TaskState.READY, TaskState.UNINITIALIZED);
 		toState(TaskState.INITIALIZING);
 		// Initialize jobs
 		for(Job job : jobs)
@@ -442,21 +442,21 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements MeasurementTask
 	}	
 
 	@Override
-	public synchronized void addJob(Job job) throws MeasurementRunningException
+	public synchronized void addJob(Job job) throws ComponentRunningException
 	{
 		assertEditable();
 		jobs.add(job);
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertEditable();
-		jobs.remove(job);
+		jobs.remove(jobIndex);
 	}
 
 	@Override
-	public synchronized void clearJobs() throws MeasurementRunningException
+	public synchronized void clearJobs() throws ComponentRunningException
 	{
 		assertEditable();
 		jobs.clear();
@@ -471,7 +471,7 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements MeasurementTask
 
 	@Override
 	public synchronized void insertJob(Job job, int jobIndex)
-			throws MeasurementRunningException, IndexOutOfBoundsException {
+			throws ComponentRunningException, IndexOutOfBoundsException {
 		assertEditable();
 		jobs.add(jobIndex, job);
 	}

@@ -6,9 +6,10 @@ package org.youscope.plugin.zslides;
 import java.util.Arrays;
 import java.util.Formatter;
 
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
-import org.youscope.common.job.JobContainerConfiguration;
+import org.youscope.common.job.CompositeJobConfiguration;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -17,7 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author langmo
  */
 @XStreamAlias("z-slides-job")
-public class ZSlidesJobConfiguration extends JobConfiguration implements JobContainerConfiguration
+public class ZSlidesJobConfiguration implements CompositeJobConfiguration
 {
 
 	/**
@@ -95,22 +96,6 @@ public class ZSlidesJobConfiguration extends JobConfiguration implements JobCont
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException
-	{
-		ZSlidesJobConfiguration clone = (ZSlidesJobConfiguration)super.clone();
-		clone.jobs = new JobConfiguration[jobs.length];
-		for(int i = 0; i < jobs.length; i++)
-		{
-			clone.jobs[i] = (JobConfiguration)jobs[i].clone();
-		}
-
-		clone.slideZPositions = Arrays.copyOf(slideZPositions, slideZPositions.length);
-		if(focusConfiguration != null)
-			clone.focusConfiguration = focusConfiguration.clone();
-		return clone;
-	}
-
-	@Override
 	public JobConfiguration[] getJobs()
 	{
 		return jobs;
@@ -119,7 +104,10 @@ public class ZSlidesJobConfiguration extends JobConfiguration implements JobCont
 	@Override
 	public void setJobs(JobConfiguration[] jobs)
 	{
-		this.jobs = jobs;
+		if(jobs != null)
+			this.jobs = jobs;
+		else
+			this.jobs = new JobConfiguration[0];
 	}
 
 	@Override
@@ -194,5 +182,14 @@ public class ZSlidesJobConfiguration extends JobConfiguration implements JobCont
 	public double[] getSlideZPositions()
 	{
 		return slideZPositions;
+	}
+
+	@Override
+	public void checkConfiguration() throws ConfigurationException {
+		for(JobConfiguration childJob : jobs)
+		{
+			childJob.checkConfiguration();
+		}
+		
 	}
 }

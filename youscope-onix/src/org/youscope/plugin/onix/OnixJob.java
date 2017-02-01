@@ -5,8 +5,8 @@ package org.youscope.plugin.onix;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.table.TableConsumer;
 
 /**
@@ -19,9 +19,9 @@ public interface OnixJob extends Job, TableConsumer
 	 * Sets the protocol which gets evaluated on the onix device every time the job gets evaluated.
 	 * @param onixProtocol The onix protocol.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setOnixProtocol(String onixProtocol) throws RemoteException, MeasurementRunningException;
+	public void setOnixProtocol(String onixProtocol) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the onix protocol.
@@ -34,9 +34,9 @@ public interface OnixJob extends Job, TableConsumer
 	 * If true, the job waits when evaluating the onix protocol until the protocol is finished. If false, the onix protocol gets evaluated in parallel.
 	 * @param waitUntilFinished True if job should wait until end of onix protocol evaluation.
 	 * @throws RemoteException 
-	 * @throws MeasurementRunningException 
+	 * @throws ComponentRunningException 
 	 */
-	public void setWaitUntilFinished(boolean waitUntilFinished) throws RemoteException, MeasurementRunningException;
+	public void setWaitUntilFinished(boolean waitUntilFinished) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * If true, the job waits when evaluating the onix protocol until the protocol is finished. If false, the onix protocol gets evaluated in parallel.

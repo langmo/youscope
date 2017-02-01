@@ -20,6 +20,7 @@ import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
+import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.microscope.FloatProperty;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.util.ImageConvertException;
@@ -302,9 +303,9 @@ class YouPongField extends JPanel implements Runnable
 		{
 			try
 			{
-				measurement.stopMeasurement();
+				measurement.stopMeasurement(false);
 			}
-			catch(RemoteException e)
+			catch(RemoteException | MeasurementException e)
 			{
 				client.sendError("Could not stop continuous imaging.", e);
 			}

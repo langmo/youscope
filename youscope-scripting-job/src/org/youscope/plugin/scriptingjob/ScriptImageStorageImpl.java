@@ -6,10 +6,10 @@ package org.youscope.plugin.scriptingjob;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.image.ImageProducer;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.scripting.ScriptImageStorage;
 
 /**
@@ -27,7 +27,7 @@ class ScriptImageStorageImpl extends UnicastRemoteObject implements ScriptImageS
 
     private boolean newImageArrived = false;
 
-    ScriptImageStorageImpl(ImageProducer job) throws RemoteException, MeasurementRunningException
+    ScriptImageStorageImpl(ImageProducer job) throws RemoteException, ComponentRunningException
     {
         super();
         job.addImageListener(this);

@@ -359,7 +359,7 @@ class MultiStreamAndControlsPanel extends JPanel
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			stopMeasurementAndWait();
+			stopMeasurement();
 
 			startMeasurement();
 		}
@@ -402,13 +402,5 @@ class MultiStreamAndControlsPanel extends JPanel
 	public void stopMeasurement()
 	{
 		getImagePanel().stopMeasurement();
-	}
-
-	/**
-	 * Stops the measurement and waits until it is finished.
-	 */
-	public void stopMeasurementAndWait()
-	{
-		getImagePanel().stopMeasurementAndWait();
 	}
 }

@@ -10,13 +10,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobAdapter;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
@@ -58,7 +58,7 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public void setDeltaX(double deltaX) throws MeasurementRunningException
+	public void setDeltaX(double deltaX) throws ComponentRunningException
 	{
 		assertRunning();
 		StaggeringJobImpl.this.dx = deltaX;
@@ -71,7 +71,7 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public void setDeltaY(double deltaY) throws MeasurementRunningException
+	public void setDeltaY(double deltaY) throws ComponentRunningException
 	{
 		assertRunning();
 		StaggeringJobImpl.this.dy = deltaY;
@@ -84,7 +84,7 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public void setNumTiles(Dimension imageNumbers) throws MeasurementRunningException
+	public void setNumTiles(Dimension imageNumbers) throws ComponentRunningException
 	{
 		assertRunning();
 		StaggeringJobImpl.this.nx = imageNumbers.width;
@@ -235,13 +235,13 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public String getDefaultName()
+	protected String getDefaultName()
 	{
 		return "Staggering Job";
 	}
 
 	@Override
-	public synchronized void addJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void addJob(Job job) throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -251,17 +251,17 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public synchronized void removeJob(Job job) throws RemoteException, MeasurementRunningException
+	public synchronized void removeJob(int jobIndex) throws RemoteException, ComponentRunningException, IndexOutOfBoundsException
 	{
 		assertRunning();
 		synchronized(jobs)
 		{
-			jobs.remove(job);
+			jobs.remove(jobIndex);
 		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws RemoteException, MeasurementRunningException
+	public synchronized void clearJobs() throws RemoteException, ComponentRunningException
 	{
 		assertRunning();
 		synchronized(jobs)
@@ -280,20 +280,20 @@ class StaggeringJobImpl  extends JobAdapter implements StaggeringJob
 	}
 
 	@Override
-	public void setNumTilesPerIteration(int numTilesPerIteration) throws RemoteException, MeasurementRunningException
+	public void setNumTilesPerIteration(int numTilesPerIteration) throws RemoteException, ComponentRunningException
 	{
 		this.numTilesPerIteration = numTilesPerIteration >= 1 ? numTilesPerIteration : -1;
 	}
 
 	@Override
-	public void setNumIterationsBreak(int numTilesBreak) throws RemoteException, MeasurementRunningException
+	public void setNumIterationsBreak(int numTilesBreak) throws RemoteException, ComponentRunningException
 	{
 		this.numIterationsBreak = numTilesBreak > 0 ? numTilesBreak : 0;
 	}
 
 	@Override
 	public void insertJob(Job job, int jobIndex)
-			throws RemoteException, MeasurementRunningException, IndexOutOfBoundsException {
+			throws RemoteException, ComponentRunningException, IndexOutOfBoundsException {
 		assertRunning();
 		jobs.add(jobIndex, job);
 		

@@ -7,12 +7,12 @@ import java.rmi.RemoteException;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.measurement.MeasurementInitializer;
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.Job;
 import org.youscope.common.measurement.Measurement;
-import org.youscope.common.measurement.MeasurementRunningException;
-import org.youscope.common.task.MeasurementTask;
+import org.youscope.common.task.Task;
 import org.youscope.common.task.RegularPeriodConfiguration;
 import org.youscope.common.task.VaryingPeriodConfiguration;
 import org.youscope.serverinterfaces.ConstructionContext;
@@ -27,7 +27,7 @@ public class ComposedImagingMeasurementInitializer implements MeasurementInitial
 	@Override
 	public void initializeMeasurement(Measurement measurement, ComposedImagingMeasurementConfiguration configuration, ConstructionContext jobInitializer) throws ConfigurationException, AddonException
 	{
-		MeasurementTask task;
+		Task task;
 		if(configuration.getPeriod() instanceof RegularPeriodConfiguration)
 		{
 			RegularPeriodConfiguration period = (RegularPeriodConfiguration)configuration.getPeriod();
@@ -35,7 +35,7 @@ public class ComposedImagingMeasurementInitializer implements MeasurementInitial
 			{
 				task = measurement.addTask(period.getPeriod(), period.isFixedTimes(), period.getStartTime(), period.getNumExecutions());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create measurement since it is already running.", e);
 			}
@@ -51,7 +51,7 @@ public class ComposedImagingMeasurementInitializer implements MeasurementInitial
 			{
 				task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
 			}
-			catch(MeasurementRunningException e)
+			catch(ComponentRunningException e)
 			{
 				throw new AddonException("Could not create measurement since it is already running.", e);
 			}

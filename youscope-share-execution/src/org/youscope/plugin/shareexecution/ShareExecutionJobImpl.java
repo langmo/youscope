@@ -5,20 +5,20 @@ package org.youscope.plugin.shareexecution;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.job.EditableJobContainerAdapter;
+import org.youscope.common.job.CompositeJobAdapter;
 import org.youscope.common.job.Job;
 import org.youscope.common.job.JobException;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.microscope.Microscope;
 
 /**
  * Implementation of the share execution job.
  * @author Moritz Lang
  */
-class ShareExecutionJobImpl extends EditableJobContainerAdapter implements ShareExecutionJob
+class ShareExecutionJobImpl extends CompositeJobAdapter implements ShareExecutionJob
 {
 
 	/**
@@ -38,7 +38,7 @@ class ShareExecutionJobImpl extends EditableJobContainerAdapter implements Share
 	}
 
 	@Override
-	public String getDefaultName() throws RemoteException
+	protected String getDefaultName()
 	{
 		String text = "Share Execution Job(share=" + Integer.toString(numShare) + ")";
 		return text;
@@ -131,7 +131,7 @@ class ShareExecutionJobImpl extends EditableJobContainerAdapter implements Share
 	}
 
 	@Override
-	public void setNumShare(int numShare) throws RemoteException, MeasurementRunningException {
+	public void setNumShare(int numShare) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.numShare = numShare > 0 ? numShare : 0;
 	}
@@ -142,7 +142,7 @@ class ShareExecutionJobImpl extends EditableJobContainerAdapter implements Share
 	}
 
 	@Override
-	public void setShareID(int shareID) throws RemoteException, MeasurementRunningException {
+	public void setShareID(int shareID) throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.shareID = shareID;
 	}
@@ -154,7 +154,7 @@ class ShareExecutionJobImpl extends EditableJobContainerAdapter implements Share
 
 	@Override
 	public void setSeparateForEachWell(boolean separateForEachWell)
-			throws RemoteException, MeasurementRunningException {
+			throws RemoteException, ComponentRunningException {
 		assertRunning();
 		this.separateForEachWell = separateForEachWell;
 	}

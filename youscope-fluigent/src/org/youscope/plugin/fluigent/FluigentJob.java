@@ -5,8 +5,8 @@ package org.youscope.plugin.fluigent;
 
 import java.rmi.RemoteException;
 
+import org.youscope.common.ComponentRunningException;
 import org.youscope.common.job.Job;
-import org.youscope.common.measurement.MeasurementRunningException;
 import org.youscope.common.table.TableConsumer;
 import org.youscope.common.table.TableProducer;
 
@@ -22,9 +22,9 @@ public interface FluigentJob extends Job, TableConsumer, TableProducer
 	 * 
 	 * @param engine The script engine to use.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setScriptEngine(String engine) throws RemoteException, MeasurementRunningException;
+	void setScriptEngine(String engine) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the name of the script engine, or null, if script engine is not set.
@@ -37,9 +37,9 @@ public interface FluigentJob extends Job, TableConsumer, TableProducer
 	 * Sets the script which gets evaluated by the script engine every time the job runs.
 	 * @param script script to evaluate, following the rules of the chosen script engine.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setScript(String script) throws RemoteException, MeasurementRunningException;
+	void setScript(String script) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns the script which gets evaluated by the script engine every time the script runs.
@@ -59,7 +59,7 @@ public interface FluigentJob extends Job, TableConsumer, TableProducer
 	 * Sets the name of the Fluigent device. If the device is not a Fluigent device, an error is thrown during job initialization.
 	 * @param deviceName The name of the Fluigent device.
 	 * @throws RemoteException
-	 * @throws MeasurementRunningException
+	 * @throws ComponentRunningException
 	 */
-	void setFluigentDeviceName(String deviceName) throws RemoteException, MeasurementRunningException;	
+	void setFluigentDeviceName(String deviceName) throws RemoteException, ComponentRunningException;	
 }

@@ -3,7 +3,7 @@
  */
 package org.youscope.common.job.basicjobs;
 
-import org.youscope.common.job.EditableJobContainer;
+import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
 import org.youscope.common.table.TableProducer;
 
@@ -12,7 +12,7 @@ import org.youscope.common.table.TableProducer;
  * @author Moritz Lang
  * 
  */
-public interface StatisticsJob extends Job, EditableJobContainer, TableProducer
+public interface StatisticsJob extends Job, CompositeJob, TableProducer
 {
 	/**
 	 * The type identifier of the default implementation of this job. 
