@@ -58,6 +58,15 @@ public interface Measurement extends Component
 	 * @see #interruptMeasurement()
 	 */
 	void stopMeasurement(boolean processJobQueue) throws MeasurementException, RemoteException;
+	
+	/**
+	 * If measurement runs:
+	 * Pauses measurement. Measurement can be resumed with {@link #startMeasurement()}.
+	 * @throws MeasurementException 
+	 * @throws RemoteException
+	 * @see #interruptMeasurement()
+	 */
+	void pauseMeasurement() throws MeasurementException, RemoteException;
 
 	/**
 	 * Interrupts the execution of the measurement. All queued jobs are discarded.
@@ -83,22 +92,22 @@ public interface Measurement extends Component
 	void removeMeasurementListener(MeasurementListener listener) throws RemoteException;
 
 	/**
-	 * Sets the runtime of the measurement.
+	 * Sets the maximal runtime of the measurement after which it automatically stops.
 	 * 
 	 * @param measurementRuntime Runtime of the measurement in milliseconds. Set to -1 for an
 	 *            infinite runtime.
 	 * @throws RemoteException
 	 * @throws ComponentRunningException
 	 */
-	void setRuntime(int measurementRuntime) throws RemoteException, ComponentRunningException;
+	void setMaxRuntime(long measurementRuntime) throws RemoteException, ComponentRunningException;
 
 	/**
-	 * Returns the runtime of the measurement.
+	 * Returns the maximal runtime of the measurement after which it automatically stops.
 	 * 
-	 * @return Runtime of the measurement. A value of -1 corresponds to an infinite runtime.
+	 * @return Maximal runtime of the measurement. A value of -1 corresponds to an infinite runtime.
 	 * @throws RemoteException
 	 */
-	int getRuntime() throws RemoteException;
+	long getMaxRuntime() throws RemoteException;
 
 	/**
 	 * Returns the time when the last execution of this measurement started (as returned by {@link System#currentTimeMillis()}), or -1 if it did not yet start or if unknown.
@@ -112,7 +121,7 @@ public interface Measurement extends Component
 	 * @return Last measurement stop time.
 	 * @throws RemoteException
 	 */
-	long getEndTime() throws RemoteException;
+	long getStopTime() throws RemoteException;
 
 	/**
 	 * Sets if write access to the microscope is locked during the measurement.
@@ -168,7 +177,7 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws ComponentRunningException
 	 */
-	Task addTask(int period, boolean fixedTimes, int startTime) throws RemoteException, ComponentRunningException;
+	Task addTask(long period, boolean fixedTimes, long startTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times (<startTime> + i * <period>) ms, i =
@@ -184,41 +193,35 @@ public interface Measurement extends Component
 	 * @throws RemoteException
 	 * @throws ComponentRunningException
 	 */
-	Task addTask(int period, boolean fixedTimes, int startTime, int numExecutions) throws RemoteException, ComponentRunningException;
+	Task addTask(long period, boolean fixedTimes, long startTime, long numExecutions) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times {startTime, startTime + periods[0],
-	 * startTime + periods[0] + periods[1], ..., startTime + sum_{i=0:size-2}(periods[i]), startTime
-	 * + sum_{i=0:size-1}(periods[i]) + breakTime, startTime + sum_{i=0:size-1}(periods[i]) +
-	 * breakTime + periods[0]} the jobs of the task will be executed. Same as
-	 * addMultiplePeriodTask(periods, breakTime, startTime, -1).
+	 * startTime + periods[0] + periods[1], ..., startTime + sum_{i=0:size-2}(periods[i]), startTime + sum_{i=0:size-1}(periods[i]) +
+	 * periods[0]} the jobs of the task will be executed. Same as
+	 * addMultiplePeriodTask(periods, startTime, -1).
 	 * 
 	 * @param periods Times between single executions (in milliseconds).
-	 * @param breakTime After all periods are run through, the job will pause for <breakTime> ms and
-	 *            then start with periods[0] again.
 	 * @param startTime The time when the jobs should be started first (in ms).
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
 	 * @throws ComponentRunningException
 	 */
-	Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime) throws RemoteException, ComponentRunningException;
+	Task addMultiplePeriodTask(long[] periods, long startTime) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Adds a new task to the measurement so that at times {startTime, startTime + periods[0],
-	 * startTime + periods[0] + periods[1], ..., startTime + sum_{i=0:size-2}(periods[i]), startTime
-	 * + sum_{i=0:size-1}(periods[i]) + breakTime, startTime + sum_{i=0:size-1}(periods[i]) +
-	 * breakTime + periods[0]} the jobs of the task will be executed.
+	 * startTime + periods[0] + periods[1], ..., startTime + sum_{i=0:size-2}(periods[i]), startTime + sum_{i=0:size-1}(periods[i]) +
+	 * periods[0]} the jobs of the task will be executed. 
 	 * 
 	 * @param periods Times between single executions (in milliseconds).
-	 * @param breakTime After all periods are run through, the job will pause for <breakTime> ms and
-	 *            then start with periods[0] again.
 	 * @param startTime The time when the jobs should be started first (in ms).
 	 * @param numExecutions Maximal number of executions. -1 for an infinite amount.
 	 * @return The newly created task. If not successful, NULL is returned.
 	 * @throws RemoteException
 	 * @throws ComponentRunningException
 	 */
-	Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime, int numExecutions) throws RemoteException, ComponentRunningException;
+	Task addMultiplePeriodTask(long[] periods, long startTime, long numExecutions) throws RemoteException, ComponentRunningException;
 
 	/**
 	 * Returns a list of all tasks of this measurement.

@@ -357,26 +357,26 @@ public class FileNameMacroConverter
 		String string;
 		String string2;
 		
-		string = Integer.toString(executionInformation.getEvaluationNumber());
-		string2 = Integer.toString(executionInformation.getEvaluationNumber()+1);
+		string = Long.toString(executionInformation.getEvaluationNumber());
+		string2 = Long.toString(executionInformation.getEvaluationNumber()+1);
 		// add loop numbers
-		int[] loopNumbers = executionInformation == null ? new int[0] : executionInformation.getLoopNumbers();
+		long[] loopNumbers = executionInformation == null ? new long[0] : executionInformation.getLoopNumbers();
 		for(int i = 0; i < loopNumbers.length; i++)
 		{
 			if(loopNumbers[i] <= 8)
 			{
-				string += "-0" + Integer.toString(loopNumbers[i]);
-				string2 += "-0" + Integer.toString(loopNumbers[i]+1);
+				string += "-0" + Long.toString(loopNumbers[i]);
+				string2 += "-0" + Long.toString(loopNumbers[i]+1);
 			}
 			else if(loopNumbers[i] <= 9)
 			{
-				string += "-0" + Integer.toString(loopNumbers[i]);
-				string2 += "-" + Integer.toString(loopNumbers[i]+1);
+				string += "-0" + Long.toString(loopNumbers[i]);
+				string2 += "-" + Long.toString(loopNumbers[i]+1);
 			}
 			else
 			{
-				string += "-" + Integer.toString(loopNumbers[i]);
-				string2 += "-" + Integer.toString(loopNumbers[i]+1);
+				string += "-" + Long.toString(loopNumbers[i]);
+				string2 += "-" + Long.toString(loopNumbers[i]+1);
 			}
 		}
 		info.add(new ReplaceInformation(PATTERN_IMAGE_INDEX, string, string.length()));

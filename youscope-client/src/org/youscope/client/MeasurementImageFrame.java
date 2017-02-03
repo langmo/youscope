@@ -89,6 +89,7 @@ class MeasurementImageFrame extends ImagePanel
     MeasurementImageFrame(ImageProducer[] imageProducers, PositionInformation[] positionInformation) throws Exception
     {
     	super(new YouScopeClientConnectionImpl());
+    	setUserChoosesAutoAdjustContrast(true);
     	this.imageFrameListener = new ImageFrameListener[imageProducers.length];
     	for(int i=0; i<imageProducers.length; i++)
 		{

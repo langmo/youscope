@@ -16,14 +16,6 @@ import org.youscope.common.job.Job;
 public interface Task
 {
 	/**
-	 * Returns the current state of the task.
-	 * 
-	 * @return Current state.
-	 * @throws RemoteException
-	 */
-	TaskState getState() throws RemoteException;
-	
-	/**
 	 * Adds a listener which gets informed over the progress of the task.
 	 * @param listener
 	 * @throws RemoteException

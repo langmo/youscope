@@ -30,7 +30,7 @@ public enum MeasurementState
 	 */
 	RUNNING,
 	/**
-	 * The measurement is currently finishing/stopping (still running, but trying to finish).
+	 * The measurement is currently in the process to be stopped (still running, but trying to finish).
 	 */
 	STOPPING,
 	/**
@@ -45,6 +45,11 @@ public enum MeasurementState
 	 * The measurement uninitialized and can be initialized again. Functionally the same as {@link #READY}.
 	 */
 	UNINITIALIZED,
+	/**
+	 * The measurement is currently in the process to be paused (still running, but trying to pause).
+	 */
+	PAUSING,
+	
 	/**
 	 * The measurement is paused, and can be resumed again.
 	 */
@@ -71,12 +76,12 @@ public enum MeasurementState
 	}
 	/**
 	 * Returns true if the measurement is currently executed.
-	 * Currently, this is true if the state is either {@link #RUNNING} or {@link #STOPPING}.
+	 * Currently, this is true if the state is either {@link #RUNNING}, {@link #STOPPING}, or {@link #PAUSING}.
 	 * @return True if measurement is currently executed.
 	 */
 	public boolean isRunning()
 	{
-		return this == MeasurementState.RUNNING || this == MeasurementState.STOPPING;
+		return this == MeasurementState.RUNNING || this == MeasurementState.STOPPING || this == MeasurementState.PAUSING;
 	}
 	
 	/**

@@ -57,7 +57,7 @@ class SimpleMeasurementInitializer implements MeasurementInitializer<SimpleMeasu
 			VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 			try
 			{
-				mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
+				mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getStartTime(), period.getNumExecutions());
 			}
 			catch(ComponentRunningException e)
 			{

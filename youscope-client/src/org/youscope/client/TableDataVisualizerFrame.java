@@ -321,7 +321,7 @@ class TableDataVisualizerFrame
     		yColumns.add(table.getColumnView(yColumnHandler[i].getColumnName(), Number.class));
     	}
     	
-    	int evaluationNumber = table.getExecutionInformation() == null ? currentDataNum : table.getExecutionInformation().getEvaluationNumber();
+    	long evaluationNumber = table.getExecutionInformation() == null ? currentDataNum : table.getExecutionInformation().getEvaluationNumber();
     	double timeMin = (table.getExecutionInformation() == null) ? currentDataNum : ((double)(table.getCreationTime() - table.getExecutionInformation().getMeasurementStartTime())) / 60000;
     	
     	

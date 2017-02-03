@@ -12,10 +12,10 @@ import org.youscope.common.job.Job;
  */
 class JobExecutionQueueElement
 {
-	public final int			evaluationNumber;
+	public final long			evaluationNumber;
 	public final Job	job;
 
-	public JobExecutionQueueElement(Job job, int evaluationNumber)
+	public JobExecutionQueueElement(Job job, long evaluationNumber)
 	{
 		this.job = job;
 		this.evaluationNumber = evaluationNumber;

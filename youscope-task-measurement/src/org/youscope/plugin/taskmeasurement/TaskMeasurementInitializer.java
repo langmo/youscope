@@ -67,7 +67,7 @@ public class TaskMeasurementInitializer implements MeasurementInitializer<TaskMe
 				VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)taskConfiguration.getPeriod();
 				try
 				{
-					task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
+					task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getStartTime(), period.getNumExecutions());
 				}
 				catch(ComponentRunningException e)
 				{

@@ -49,7 +49,7 @@ public class ComposedImagingMeasurementInitializer implements MeasurementInitial
 			VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 			try
 			{
-				task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
+				task = measurement.addMultiplePeriodTask(period.getPeriods(), period.getStartTime(), period.getNumExecutions());
 			}
 			catch(ComponentRunningException e)
 			{

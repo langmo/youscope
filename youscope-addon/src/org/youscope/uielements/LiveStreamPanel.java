@@ -536,8 +536,8 @@ public class LiveStreamPanel extends ImagePanel {
 		final JButton snapImageButton = new JButton(SNAP_TEXT);
 		final JButton fullScreenButton = new JButton(START_FULLSCREEN_TEXT);
 		
-		final Icon startIcon = ImageLoadingTools.getResourceIcon("icons/film.png", "start stream");
-		final Icon stopIcon = ImageLoadingTools.getResourceIcon("icons/cross-button.png", "stop stream");
+		final Icon startIcon = ImageLoadingTools.getResourceIcon("icons/control.png", "start stream");
+		final Icon stopIcon = ImageLoadingTools.getResourceIcon("icons/control-stop.png", "stop stream");
 		final Icon snapIcon = ImageLoadingTools.getResourceIcon("icons/picture--plus.png", "snap image");
 		final Icon startFullScreenIcon = ImageLoadingTools.getResourceIcon("icons/monitor-image.png", "snap image");
 		final Icon stopFullScreenIcon = ImageLoadingTools.getResourceIcon("icons/monitor-window-3d.png", "snap image");

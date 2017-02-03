@@ -13,6 +13,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -41,26 +42,24 @@ public class PeriodVaryingPanel extends JPanel
 	 */
 	private static final long			serialVersionUID	= -5607845444555622850L;
 
-	protected Vector<int[]>				periodVaryingData	= new Vector<int[]>();
+	private ArrayList<long[]>				periodVaryingData	= new ArrayList<long[]>();
 
-	protected int						periodVaryingPause	= 0;
+	private PeriodVaryingDataModel	periodVaryingDataModel;
 
-	protected PeriodVaryingDataModel	periodVaryingDataModel;
+	private JTable					periodVaryingDataTable;
 
-	protected JTable					periodVaryingDataTable;
+	private static final String		addButtonFile		= "icons/block--plus.png";
 
-	protected static final String		addButtonFile		= "icons/block--plus.png";
+	private static final String		deleteButtonFile	= "icons/block--minus.png";
 
-	protected static final String		deleteButtonFile	= "icons/block--minus.png";
+	private static final String		upButtonFile		= "icons/arrow-090.png";
 
-	protected static final String		upButtonFile		= "icons/arrow-090.png";
+	private static final String		downButtonFile		= "icons/arrow-270.png";
 
-	protected static final String		downButtonFile		= "icons/arrow-270.png";
-
-	protected ImageIcon					addButtonIcon		= null;
-	protected ImageIcon					deleteButtonIcon	= null;
-	protected ImageIcon					upButtonIcon		= null;
-	protected ImageIcon					downButtonIcon		= null;
+	private ImageIcon					addButtonIcon		= null;
+	private ImageIcon					deleteButtonIcon	= null;
+	private ImageIcon					upButtonIcon		= null;
+	private ImageIcon					downButtonIcon		= null;
 
 	/**
 	 * Constructor.
@@ -106,7 +105,7 @@ public class PeriodVaryingPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				int[] datum = {5000, 1};
+				long[] datum = {5000, 1};
 				periodVaryingData.add(datum);
 				periodVaryingDataModel.fireTableDataChanged();
 				periodVaryingDataTable.setRowSelectionInterval(periodVaryingData.size() - 1, periodVaryingData.size() - 1);
@@ -121,7 +120,7 @@ public class PeriodVaryingPanel extends JPanel
 				int row = periodVaryingDataTable.getSelectedRow();
 				if(row >= 0 && row < periodVaryingData.size())
 				{
-					periodVaryingData.removeElementAt(row);
+					periodVaryingData.remove(row);
 					periodVaryingDataModel.fireTableDataChanged();
 				}
 			}
@@ -135,9 +134,9 @@ public class PeriodVaryingPanel extends JPanel
 				int row = periodVaryingDataTable.getSelectedRow();
 				if(row > 0 && row < periodVaryingData.size())
 				{
-					int[] datum = periodVaryingData.elementAt(row);
-					periodVaryingData.removeElementAt(row);
-					periodVaryingData.insertElementAt(datum, row - 1);
+					long[] datum = periodVaryingData.get(row);
+					periodVaryingData.remove(row);
+					periodVaryingData.add(row - 1, datum);
 					periodVaryingDataModel.fireTableDataChanged();
 					periodVaryingDataTable.setRowSelectionInterval(row - 1, row - 1);
 				}
@@ -152,9 +151,9 @@ public class PeriodVaryingPanel extends JPanel
 				int row = periodVaryingDataTable.getSelectedRow();
 				if(row >= 0 && row < periodVaryingData.size() - 1)
 				{
-					int[] datum = periodVaryingData.elementAt(row);
-					periodVaryingData.removeElementAt(row);
-					periodVaryingData.insertElementAt(datum, row + 1);
+					long[] datum = periodVaryingData.get(row);
+					periodVaryingData.remove(row);
+					periodVaryingData.add(row + 1, datum);
 					periodVaryingDataModel.fireTableDataChanged();
 					periodVaryingDataTable.setRowSelectionInterval(row + 1, row + 1);
 				}
@@ -174,13 +173,13 @@ public class PeriodVaryingPanel extends JPanel
 		add(new JScrollPane(periodVaryingDataTable), BorderLayout.CENTER);
 
 		// Preinitialize model with some example data.
-		int[] datum1 = {5000, 1};
-		int[] datum2 = {6000, 1};
+		long[] datum1 = {5000, 1};
+		long[] datum2 = {6000, 1};
 		periodVaryingData.add(datum1);
 		periodVaryingData.add(datum2);
 	}
 
-	protected void loadIcons()
+	private void loadIcons()
 	{
 		// Load icons
 		try
@@ -214,12 +213,12 @@ public class PeriodVaryingPanel extends JPanel
 	 */
 	public void setPeriod(VaryingPeriodConfiguration period)
 	{
-		int[] periods = period.getPeriods();
+		long[] periods = period.getPeriods();
 		periodVaryingData.clear();
 		for(int i = 0; i < periods.length; i++)
 		{
-			int periodLength = periods[i];
-			int numPeriods = 1;
+			long periodLength = periods[i];
+			long numPeriods = 1;
 			for(int j = i + 1; j < periods.length; j++)
 			{
 				if(periods[j] == periodLength)
@@ -230,10 +229,9 @@ public class PeriodVaryingPanel extends JPanel
 				else
 					break;
 			}
-			int[] datum = {periodLength, numPeriods};
+			long[] datum = {periodLength, numPeriods};
 			periodVaryingData.add(datum);
 		}
-		periodVaryingPause = period.getBreakTime();
 	}
 
 	/**
@@ -244,23 +242,22 @@ public class PeriodVaryingPanel extends JPanel
 	{
 		VaryingPeriodConfiguration period = new VaryingPeriodConfiguration();
 		period.setStartTime(0);
-		Vector<Integer> periodsTemp = new Vector<Integer>();
-		for(int[] datum : periodVaryingData)
+		Vector<Long> periodsTemp = new Vector<Long>();
+		for(long[] datum : periodVaryingData)
 		{
 			for(int i = 0; i < datum[1]; i++)
 			{
 				periodsTemp.add(datum[0]);
 			}
 		}
-		int[] periods = new int[periodsTemp.size()];
+		long[] periods = new long[periodsTemp.size()];
 		int i = 0;
-		for(int datum : periodsTemp)
+		for(long datum : periodsTemp)
 		{
 			periods[i++] = datum;
 		}
 		
 		period.setPeriods(periods);
-		period.setBreakTime(periodVaryingPause);
 		return period;
 	}
 
@@ -280,7 +277,7 @@ public class PeriodVaryingPanel extends JPanel
 		@Override
 		public int getRowCount()
 		{
-			return periodVaryingData.size() + 2;
+			return periodVaryingData.size() + 1;
 		}
 
 		@Override
@@ -290,7 +287,7 @@ public class PeriodVaryingPanel extends JPanel
 				return null;
 			else if(row < periodVaryingData.size())
 			{
-				int[] datum = periodVaryingData.elementAt(row);
+				long[] datum = periodVaryingData.get(row);
 				if(col == 0)
 				{
 					return "Period " + Integer.toString(row + 1) + ":";
@@ -304,16 +301,6 @@ public class PeriodVaryingPanel extends JPanel
 					return datum[0] * datum[1];
 				}
 			}
-			else if(row == periodVaryingData.size())
-			{
-				// "Pause" row
-				if(col == 0)
-					return "Pause:";
-				else if(col < 3)
-					return "";
-				else
-					return periodVaryingPause;
-			}
 			else
 			{
 				// Last row = sum of time
@@ -323,8 +310,8 @@ public class PeriodVaryingPanel extends JPanel
 					return "";
 				else
 				{
-					int time = periodVaryingPause;
-					for(int[] datum : periodVaryingData)
+					int time = 0;
+					for(long[] datum : periodVaryingData)
 					{
 						time += datum[0] * datum[1];
 					}
@@ -349,15 +336,22 @@ public class PeriodVaryingPanel extends JPanel
 		@Override
 		public boolean isCellEditable(int row, int col)
 		{
-			if((col < 3 && col > 0 && row < getRowCount() - 2) || (col == 3 && row == getRowCount() - 2))
+			if((col < 3 && col > 0 && row < getRowCount() - 1))
 				return true;
 			return false;
 		}
 
 		@Override
-		public Class<?> getColumnClass(int c)
+		public Class<?> getColumnClass(int col)
 		{
-			return getValueAt(0, c).getClass();
+			if(col == 0)
+				return String.class;
+			else if(col == 1)
+				return Long.class;
+			else if(col == 2)
+				return Long.class;
+			else
+				return Long.class;
 		}
 
 		@Override
@@ -365,19 +359,18 @@ public class PeriodVaryingPanel extends JPanel
 		{
 			if(row < periodVaryingData.size())
 			{
-				periodVaryingData.elementAt(row)[col - 1] = (Integer)value;
+				periodVaryingData.get(row)[col - 1] = ((Number)value).longValue();
 				fireTableCellUpdated(row, 3);
 			}
 			else
 			{
-				periodVaryingPause = (Integer)value;
+				return;
 			}
-			fireTableCellUpdated(row, col);
-			fireTableCellUpdated(getRowCount(), 3);
+			fireTableCellUpdated(getRowCount()-1, 3);
 		}
 	}
 
-	protected class PassiveCellRenderer extends JLabel implements TableCellRenderer
+	private class PassiveCellRenderer extends JLabel implements TableCellRenderer
 	{
 		/**
 		 * Serial Version UID.

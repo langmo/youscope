@@ -6,7 +6,6 @@ package org.youscope.common.task;
 import org.youscope.common.configuration.ConfigurationException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
@@ -25,24 +24,7 @@ public class VaryingPeriodConfiguration extends PeriodConfiguration
 	 * Times between single executions (in milliseconds).
 	 */
 	@XStreamImplicit(itemFieldName = "period")
-	private int[]				periods				= new int[0];
-
-	/**
-	 * After all periods are run through, the job will pause for <breakTime> ms and then start with
-	 * periods[0] again.
-	 */
-	@XStreamAlias("break")
-	@XStreamAsAttribute
-	private int					breakTime			= 0;
-
-	/**
-	 * Sets an additional time which should be waited after iterating through all periods. Default is 0.
-	 * @param breakTime Wait time in ms.
-	 */
-	public void setBreakTime(int breakTime)
-	{
-		this.breakTime = breakTime;
-	}
+	private long[]				periods				= new long[0];
 	
 	@Override
 	public String getTypeIdentifier() 
@@ -51,23 +33,14 @@ public class VaryingPeriodConfiguration extends PeriodConfiguration
 	}
 
 	/**
-	 * Returns the additional time which should be waited after iterating through all periods. Default is 0.
-	 * @return Wait time in ms.
-	 */
-	public int getBreakTime()
-	{
-		return breakTime;
-	}
-
-	/**
 	 * Sets the periods. Setting it to null has no effect.
 	 * @param periods the periods to set (in ms).
 	 */
-	public void setPeriods(int[] periods)
+	public void setPeriods(long[] periods)
 	{
 		if(periods == null)
 			return;
-		this.periods = new int[periods.length];
+		this.periods = new long[periods.length];
 		System.arraycopy(periods, 0, this.periods, 0, periods.length);
 	}
 
@@ -75,9 +48,9 @@ public class VaryingPeriodConfiguration extends PeriodConfiguration
 	 * Returns the periods.
 	 * @return the periods to set (in ms).
 	 */
-	public int[] getPeriods()
+	public long[] getPeriods()
 	{
-		int[] periods = new int[this.periods.length];
+		long[] periods = new long[this.periods.length];
 		System.arraycopy(this.periods, 0, periods, 0, this.periods.length);
 		return periods;
 	}

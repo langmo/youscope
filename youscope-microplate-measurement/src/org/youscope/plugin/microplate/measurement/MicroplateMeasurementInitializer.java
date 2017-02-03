@@ -80,7 +80,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 				VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 				try
 				{
-					mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), period.getStartTime(), period.getNumExecutions());
+					mainTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getStartTime(), period.getNumExecutions());
 				}
 				catch(ComponentRunningException e)
 				{
@@ -224,7 +224,7 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						VaryingPeriodConfiguration period = (VaryingPeriodConfiguration)configuration.getPeriod();
 						try
 						{
-							wellTask = measurement.addMultiplePeriodTask(period.getPeriods(), period.getBreakTime(), startTime, period.getNumExecutions());
+							wellTask = measurement.addMultiplePeriodTask(period.getPeriods(), startTime, period.getNumExecutions());
 						}
 						catch(ComponentRunningException e)
 						{

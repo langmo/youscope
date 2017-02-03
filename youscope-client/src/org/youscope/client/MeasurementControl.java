@@ -16,6 +16,7 @@ import java.util.EventListener;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
@@ -41,6 +43,7 @@ import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.saving.MeasurementFileLocations;
+import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.LinkLabel;
 import org.youscope.uielements.StandardFormats;
 
@@ -58,6 +61,8 @@ class MeasurementControl
 	private MeasurementStateField					stateField;
 	
 	private JTextField runTimeField = new JTextField("0d 0h 0m 0s"); 
+	
+	private final MeasurementListenerImpl measurementListener = new MeasurementListenerImpl();
 	private final Timer			runTimeTimer				= new Timer(1000, new ActionListener()
 	{
 		@Override
@@ -84,20 +89,38 @@ class MeasurementControl
 		}
 	});
 
-	private final JButton						processMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">View<br>Results</p></body></html>");
+	private final static Icon START_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/control.png", "start measurement");
+	private final static String START_MEASUREMENT_TEXT = "Start";
+	private final JButton startMeasurementButton;
 	
-	private final JButton						startMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#008800\">Start<br>Measurement</p></body></html>");
-
-	private final JButton						stopMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Stop<br>Measurement</p></body></html>");
-
-	private final JButton						quickStopMeasurementButton	= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#555500\">Quick Stop<br>Measurement</p></body></html>");
-
-	private final JButton						emergencyStopButton			= new JButton("<html><head></head><body><p style=\"text-align:center;font-weight:bold;color:#AA0000\">Emergency<br>Stop</p></body></html>");
-
-	private final JButton						saveMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Save<br>Measurement</p></body></html>");
-
-	private final JButton						editMeasurementButton		= new JButton("<html><head></head><body><p style=\"text-align:center\">Edit<br>Measurement</p></body></html>");
-
+	private final static Icon STOP_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/control-stop.png", "stop measurement");
+	private final static String STOP_MEASUREMENT_TEXT = "Stop";
+	private final JButton stopMeasurementButton;
+	
+	private final static Icon QUICK_STOP_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/control-skip.png", "quick stop measurement");
+	private final static String QUICK_STOP_MEASUREMENT_TEXT = "Quick Stop";
+	private final JButton quickStopMeasurementButton;
+	
+	private final static Icon SAVE_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/disk.png", "save measurement");
+	private final static String SAVE_MEASUREMENT_TEXT = "Save";
+	private final JButton saveMeasurementButton;
+	
+	private final static Icon EDIT_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/block--pencil.png", "edit measurement");
+	private final static String EDIT_MEASUREMENT_TEXT = "Edit";
+	private final JButton editMeasurementButton;
+	
+	private final static Icon PAUSE_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/control-pause.png", "pause measurement");
+	private final static String PAUSE_MEASUREMENT_TEXT = "Pause";
+	private final JButton pauseMeasurementButton;
+	
+	private final static Icon PROCESS_MEASUREMENT_ICON = ImageLoadingTools.getResourceIcon("icons/images-stack.png", "view measurement results");
+	private final static String PROCESS_MEASUREMENT_TEXT = "View Results";
+	private final JButton processMeasurementButton;
+	
+	private final static Icon EMERGENCY_STOP_ICON = ImageLoadingTools.getResourceIcon("icons/cross-button.png", "emergency stop");
+	private final static String EMERGENCY_STOP_TEXT = "Emergency Stop";
+	private final JButton emergencyStopButton;
+	
 	private volatile MeasurementState				state						= MeasurementState.READY;
 
 	private MeasurementTree measurementTree = new MeasurementTree(this);
@@ -117,12 +140,43 @@ class MeasurementControl
 
 	MeasurementControl(MeasurementControlListener controlListener, Measurement measurement) throws RemoteException
 	{
+		startMeasurementButton = START_MEASUREMENT_ICON == null ? new JButton(START_MEASUREMENT_TEXT) : new JButton(START_MEASUREMENT_TEXT, START_MEASUREMENT_ICON);
+		startMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		startMeasurementButton.setOpaque(false);
+		
+		stopMeasurementButton = STOP_MEASUREMENT_ICON == null ? new JButton(STOP_MEASUREMENT_TEXT) : new JButton(STOP_MEASUREMENT_TEXT, STOP_MEASUREMENT_ICON);
+		stopMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		stopMeasurementButton.setOpaque(false);
+		
+		quickStopMeasurementButton = QUICK_STOP_MEASUREMENT_ICON == null ? new JButton(QUICK_STOP_MEASUREMENT_TEXT) : new JButton(QUICK_STOP_MEASUREMENT_TEXT, QUICK_STOP_MEASUREMENT_ICON);
+		quickStopMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		quickStopMeasurementButton.setOpaque(false);
+		
+		saveMeasurementButton = SAVE_MEASUREMENT_ICON == null ? new JButton(SAVE_MEASUREMENT_TEXT) : new JButton(SAVE_MEASUREMENT_TEXT, SAVE_MEASUREMENT_ICON);
+		saveMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		saveMeasurementButton.setOpaque(false);
+		
+		editMeasurementButton = EDIT_MEASUREMENT_ICON == null ? new JButton(EDIT_MEASUREMENT_TEXT) : new JButton(EDIT_MEASUREMENT_TEXT, EDIT_MEASUREMENT_ICON);
+		editMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		editMeasurementButton.setOpaque(false);
+		
+		processMeasurementButton = PROCESS_MEASUREMENT_ICON == null ? new JButton(PROCESS_MEASUREMENT_TEXT) : new JButton(PROCESS_MEASUREMENT_TEXT, PROCESS_MEASUREMENT_ICON);
+		processMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		processMeasurementButton.setOpaque(false);
+		
+		pauseMeasurementButton = PAUSE_MEASUREMENT_ICON == null ? new JButton(PAUSE_MEASUREMENT_TEXT) : new JButton(PAUSE_MEASUREMENT_TEXT, PAUSE_MEASUREMENT_ICON);
+		pauseMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		emergencyStopButton = EMERGENCY_STOP_ICON == null ? new JButton(EMERGENCY_STOP_TEXT) : new JButton(EMERGENCY_STOP_TEXT, EMERGENCY_STOP_ICON);
+		emergencyStopButton.setHorizontalAlignment(SwingConstants.LEFT);
+		emergencyStopButton.setOpaque(false);
+		
 		this.measurement = measurement;
 		this.configuration = measurement.getSaver().getConfiguration();
 		this.controlListener = controlListener;
 		
 		// Add measurement listener
-		measurement.addMeasurementListener(new MeasurementListenerImpl());
+		measurement.addMeasurementListener(measurementListener);
 		// Setup appearance
 		setupUIElements();
 	}
@@ -202,6 +256,11 @@ class MeasurementControl
 		}
 		if(controlListener != null)
 			controlListener.measurementControlClosed();
+		try {
+			measurement.removeMeasurementListener(measurementListener);
+		} catch (@SuppressWarnings("unused") RemoteException e) {
+			// do nothing, just more work for the garbage collector...
+		}
 	}
 	public interface MeasurementControlListener extends EventListener
 	{
@@ -343,15 +402,7 @@ class MeasurementControl
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				switch(state)
-				{
-					case READY:
-					case UNINITIALIZED:
-						startMeasurement();
-						break;
-					default:
-						break;
-				}
+				startMeasurement();
 			}
 		});
 		
@@ -389,6 +440,15 @@ class MeasurementControl
 				stopMeasurement(true);
 			}
 		});
+		
+		pauseMeasurementButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				pauseMeasurement();
+			}
+		});
 		quickStopMeasurementButton.addActionListener(new ActionListener()
 		{
 			@Override
@@ -405,26 +465,20 @@ class MeasurementControl
 				emergencyStop();
 			}
 		});
-
-		startMeasurementButton.setOpaque(false);
-		processMeasurementButton.setOpaque(false);
-		stopMeasurementButton.setOpaque(false);
-		quickStopMeasurementButton.setOpaque(false);
-		editMeasurementButton.setOpaque(false);
-		saveMeasurementButton.setOpaque(false);
-		emergencyStopButton.setOpaque(false);
 		
 		GridBagLayout buttonsLayout = new GridBagLayout();
 		controlPanel = new JPanel(buttonsLayout);
 		controlPanel.setBorder(new TitledBorder("Measurement Control"));
 		controlPanel.setOpaque(false);
 		StandardFormats.addGridBagElement(startMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
+		StandardFormats.addGridBagElement(pauseMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(stopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(quickStopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(processMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
+		
 		JPanel emptyPanel1 = new JPanel();
 		emptyPanel1.setOpaque(false);
 		StandardFormats.addGridBagElement(emptyPanel1, buttonsLayout, newLineConstr, controlPanel);
+		StandardFormats.addGridBagElement(processMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(editMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		StandardFormats.addGridBagElement(saveMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
 		JPanel emptyPanel2 = new JPanel();
@@ -483,6 +537,8 @@ class MeasurementControl
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(false);
 				quickStopMeasurementButton.setVisible(false);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(true);
 				break;
 			case READY:
 				processMeasurementButton.setVisible(false);
@@ -490,6 +546,8 @@ class MeasurementControl
 				editMeasurementButton.setVisible(true);
 				stopMeasurementButton.setVisible(false);
 				quickStopMeasurementButton.setVisible(false);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(true);
 				break;
 			case PAUSED:
 				if(showMeasurementProcessors())
@@ -500,14 +558,24 @@ class MeasurementControl
 				editMeasurementButton.setVisible(false);
 				stopMeasurementButton.setVisible(true);
 				quickStopMeasurementButton.setVisible(true);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(false);
 				break;
 			case QUEUED:
 			case INITIALIZING:
 			case INITIALIZED:
-			case RUNNING:
 			case STOPPING:
 			case STOPPED:
 			case UNINITIALIZING:
+				processMeasurementButton.setVisible(false);
+				startMeasurementButton.setVisible(false);
+				editMeasurementButton.setVisible(false);
+				stopMeasurementButton.setVisible(true);
+				quickStopMeasurementButton.setVisible(true);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(false);
+				break;
+			case RUNNING:
 				if(showMeasurementProcessors())
 					processMeasurementButton.setVisible(true);
 				else
@@ -516,13 +584,17 @@ class MeasurementControl
 				editMeasurementButton.setVisible(false);
 				stopMeasurementButton.setVisible(true);
 				quickStopMeasurementButton.setVisible(true);
+				pauseMeasurementButton.setVisible(true);
+				saveMeasurementButton.setVisible(false);
 				break;
 			case ERROR:
 				processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(false);
 				editMeasurementButton.setVisible(true);
-				stopMeasurementButton.setVisible(true);
-				quickStopMeasurementButton.setVisible(true);
+				stopMeasurementButton.setVisible(false);
+				quickStopMeasurementButton.setVisible(false);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(true);
 				break;
 			default:
 				// do nothing.
@@ -544,7 +616,7 @@ class MeasurementControl
 				final long startTime = measurement.getStartTime();
 				if(startTime >= 0)
 				{
-					long endTime = measurement.getEndTime();
+					long endTime = measurement.getStopTime();
 					if(endTime < 0)
 						endTime = System.currentTimeMillis();
 					long duration = endTime - startTime;
@@ -582,6 +654,22 @@ class MeasurementControl
 		catch(RemoteException | MeasurementException e)
 		{
 			ClientSystem.err.println("Could not stop measurement.", e);
+			setState(MeasurementState.ERROR);
+		}
+	
+	}
+	
+	private void pauseMeasurement()
+	{
+		setState(MeasurementState.PAUSING);
+		
+		try
+		{
+			measurement.pauseMeasurement();
+		}
+		catch(RemoteException | MeasurementException e)
+		{
+			ClientSystem.err.println("Could not pause measurement.", e);
 			setState(MeasurementState.ERROR);
 		}
 	

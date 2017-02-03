@@ -6,10 +6,8 @@ package org.youscope.server;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
 
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
@@ -21,10 +19,10 @@ import org.youscope.common.microscope.Microscope;
 import org.youscope.common.task.Task;
 import org.youscope.common.task.TaskException;
 import org.youscope.common.task.TaskListener;
-import org.youscope.common.task.TaskState;
 
 /**
  * @author Moritz Lang
+ * 
  */
 class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 {
@@ -34,117 +32,184 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	 */
 	private static final long					serialVersionUID		= -8056744778146696141L;
 
-	private final int									numExecutions;
+	private final long maxExecutionNumber;
+	
+	// All times in milleseconds
+	private final boolean fixedTimes;
+	private final long startTime;
+	private final long[] periods;
+	
+	private volatile long nextExecutionNumber = 0;
 
-	private final boolean								fixedTimes;
+	private final ArrayList<Job> jobs = new ArrayList<Job>();
 
-	private final int[]								startTimes;
-
-	private final int									period;
-
-	private final ArrayList<Job>			jobs					= new ArrayList<Job>();
-
-	private volatile Timer timer = null;
-	private volatile MeasurementJobQueue measurementJobQueue = null;
 	private final LastJobFinishListener lastJobFinishListener = new LastJobFinishListener();
-	private int	evaluationNo = 0;
-	private volatile TaskState taskState = TaskState.READY;
+	private final FirstJobStartedListener firstJobStartedListener = new FirstJobStartedListener();
+	
 	private final ArrayList<TaskListener>		taskListeners			= new ArrayList<TaskListener>();
 	
-
+	private final TaskStateManager stateManager = new TaskStateManager();
+	
+	private volatile TaskExecutor taskExecutor = null;
+	/**
+	 * Current state of the task.
+	 * @author Moritz Lang
+	 *
+	 */
+	private static enum TaskState
+	{
+		READY,
+		INITIALIZING,
+		RUNNING,
+		UNINITIALIZING
+	}
+	static interface TaskExecutor
+	{
+		/**
+		 * Returns the current measurement runtime.
+		 * @return runtime in ms.
+		 */
+		long getRuntime();
+		/**
+		 * Schedules a task.
+		 * @param task task to schedule
+		 * @param runtime runtime when to schedule the task, in ms.
+		 */
+		void scheduleTask(MeasurementTaskImpl task, long runtime);
+		/**
+		 * Tells the task executor that this task is finished, i.e. will not schedule itself anymore, and is not scheduled anymore. 
+		 */
+		void taskFinished();
+	}
+	private static final class TaskStateManager
+	{
+		
+		private TaskState taskState = TaskState.READY;
+				
+		synchronized void assertEditable() throws ComponentRunningException
+		{
+			if(taskState != TaskState.READY)
+				throw new ComponentRunningException();
+		}
+		
+		/**
+		 * Sets the state of the task, if the current state is in one of the allowed states.
+		 * If not, an error is thrown and the state is not changed.
+		 * @param state New state of the measurement.
+		 * @return the old state of the task, before changing.
+		 */
+		TaskState toState(TaskState newState, String errorMessage, TaskState... allowedStates) throws TaskException
+		{
+			TaskState currentState;
+			synchronized(this)
+			{
+				currentState = this.taskState;
+				for(TaskState allowedState : allowedStates)
+				{
+					if(currentState == allowedState)
+					{
+						this.taskState = newState;
+						return currentState;
+					}
+				}
+			}
+			// if we are here, we were not in one of the allowed states.
+			StringBuilder message = new StringBuilder(errorMessage);
+			message.append(" Expected state: ");
+			for(int i=0; i<allowedStates.length; i++)
+			{
+				if(i>0 && i==allowedStates.length-1)
+					message.append(" or ");
+				else if(i>0)
+					message.append(", ");
+				message.append(allowedStates[i].toString());
+			}
+			message.append(". Current state: "+currentState.toString()+".");
+			throw new TaskException(message.toString());
+		}
+	}
+	
 	/**
 	 * @throws RemoteException
 	 */
-	MeasurementTaskImpl(int period, boolean fixedTimes, int startTime, int numExecutions) throws RemoteException
+	MeasurementTaskImpl(long period, boolean fixedTimes, long startTime, long numExecutions) throws RemoteException
 	{
-		this.period = period;
+		this.periods = new long[]{period};
 		this.fixedTimes = fixedTimes;
-		this.startTimes = new int[] {startTime};
-		this.numExecutions = numExecutions;
+		this.startTime = startTime;
+		this.maxExecutionNumber = numExecutions;
 	}
 
-	MeasurementTaskImpl(int period, boolean fixedTimes, int startTime) throws RemoteException
+	MeasurementTaskImpl(long period, boolean fixedTimes, long startTime) throws RemoteException
 	{
 		this(period, fixedTimes, startTime, -1);
 	}
 
-	MeasurementTaskImpl(int[] periods, int breakTime, int startTime) throws RemoteException
+	MeasurementTaskImpl(long[] periods, long startTime) throws RemoteException
 	{
-		this(periods, breakTime, startTime, -1);
+		this(periods, startTime, -1);
 	}
 
-	MeasurementTaskImpl(int[] periods, int breakTime, int startTime, int numExecutions) throws RemoteException
+	MeasurementTaskImpl(long[] periods, long startTime, long numExecutions) throws RemoteException
 	{
-		// Calculate main period (when sequence is run through totally).
-		int totalPeriod = breakTime;
-		for(int aPeriod : periods)
-		{
-			totalPeriod += aPeriod;
-		}
-		this.period = totalPeriod;
-		Vector<Integer> startTimes = new Vector<Integer>();
-		int start = startTime;
-		for(int aPeriod : periods)
-		{
-			startTimes.add(start);
-			start += aPeriod;
-		}
-		// Add a final evaluation if and only if the break time is larger zero.
-		if(breakTime > 0)
-			startTimes.add(start);
-		this.startTimes = new int[startTimes.size()];
-		for(int i = 0; i < startTimes.size(); i++)
-		{
-			this.startTimes[i] = startTimes.elementAt(i);
-		}
-
+		this.startTime = startTime;
+		this.periods = periods;
 		fixedTimes = true;
-		this.numExecutions = numExecutions;
+		this.maxExecutionNumber = numExecutions;
 	}
 	
-	@Override
-	public TaskState getState()
+	boolean isFinished()
 	{
-		return taskState;
+		return maxExecutionNumber >= 0 && nextExecutionNumber >= maxExecutionNumber;
 	}
 	
-	private class TaskTimerTask extends TimerTask
+	/**
+	 * Schedules the task for execution.
+	 */
+	private void scheduleTask()
 	{
-		@Override
-		public void run()
+		if(maxExecutionNumber>= 0 && nextExecutionNumber >= maxExecutionNumber)
 		{
-			synchronized(MeasurementTaskImpl.this)
-			{
-				// If task did already stop, or did not start, yet, or is in error state, ignore commands from timers...
-				if(taskState != TaskState.RUNNING && taskState != TaskState.PAUSED)
-					return;
-				for(Job job : jobs)
-				{
-					measurementJobQueue.queueJob(new JobExecutionQueueElement(job, evaluationNo));
-				}
-	
-				evaluationNo++;
-				if(numExecutions >= 0 && evaluationNo >= numExecutions)
-				{
-					try {
-						stopTask();
-					} 
-					catch (TaskException e) 
-					{
-						// not too bad: the task is still stopped, however, cannot be started again...
-						ServerSystem.err.println("Error while stopping task since its execution limit was reached.", e);
-					}
-				}
-			}
-
-			// Inform listeners that task executed.
-			notifyTaskExecuted(evaluationNo);
+			taskExecutor.taskFinished();
+			return;
 		}
+		long currentRuntime = taskExecutor.getRuntime();
+		long majorLoop = nextExecutionNumber / periods.length;
+		int minorLoop = (int) (nextExecutionNumber % periods.length);
+		long scheduleTime;
+		if(fixedTimes)
+		{
+			scheduleTime = startTime;
+			for(int i=0; i<periods.length; i++)
+			{
+				scheduleTime += (majorLoop+(i<minorLoop ? 1 : 0))*periods[i];
+			}
+		}
+		// two cases for fixed time = false.
+		else if(nextExecutionNumber == 0)
+			scheduleTime = currentRuntime + startTime;
+		else 
+			scheduleTime = currentRuntime + periods[(minorLoop-1+periods.length) % periods.length];
+		taskExecutor.scheduleTask(this, scheduleTime);
 	}
 	/**
-	 * Listener which gets added for non-fixed evaluation tasks to the last job of the task to determine when the job was finished execution and, thus, when to schedule it again.
+	 * Returns the jobs which should be executed, and increases the execution number.
+	 * @return Jobs which should be executed.
+	 */
+	Collection<JobExecutionQueueElement> executeTask()
+	{
+		ArrayList<JobExecutionQueueElement> result = new ArrayList<>(jobs.size());
+		for(Job job : jobs)
+		{
+			result.add(new JobExecutionQueueElement(job, nextExecutionNumber));
+		}
+		nextExecutionNumber++;
+		return result;
+	}
+	
+	/**
+	 * Listener which gets added to the last job of the task to determine when the task has finished execution.
 	 * @author Moritz Lang
-	 *
 	 */
 	private final class LastJobFinishListener extends UnicastRemoteObject implements JobListener
 	{
@@ -164,13 +229,8 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 		@Override
 		public void jobFinished(ExecutionInformation executionInformation) throws RemoteException
 		{
-			// Called when fixedTimes = false when last job of task was executed.
-			synchronized(MeasurementTaskImpl.this)
-			{
-				if(taskState != TaskState.RUNNING)
-					return;
-				timer.schedule(new TaskTimerTask(), period);
-			}
+			scheduleTask();
+			notifyTaskFinished(executionInformation.getEvaluationNumber());
 		}
 
 		@Override
@@ -192,79 +252,50 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 		}
 	}
 	
-	synchronized void startTask(MeasurementJobQueue measurementJobQueue) throws TaskException
+	/**
+	 * Listener which gets added to the first job of the task to determine when the task started execution.
+	 * @author Moritz Lang
+	 */
+	private final class FirstJobStartedListener extends UnicastRemoteObject implements JobListener
 	{
-		assertCorrectState("Cannot start task.", TaskState.INITIALIZED);
-		evaluationNo = 0;
-		this.measurementJobQueue = measurementJobQueue;
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long	serialVersionUID	= -6159221333656969538L;
+
+		/**
+		 * @throws RemoteException
+		 */
+		protected FirstJobStartedListener() throws RemoteException
+		{
+			super();
+		}
+
+		@Override
+		public void jobFinished(ExecutionInformation executionInformation) throws RemoteException
+		{
+			// do nothing.
+		}
+
+		@Override
+		public void jobInitialized() throws RemoteException
+		{
+			// Do nothing.
+		}
+
+		@Override
+		public void jobUninitialized() throws RemoteException
+		{
+			// Do nothing.
+		}
+
+		@Override
+		public void jobStarted(ExecutionInformation executionInformation) throws RemoteException
+		{
+			notifyTaskStarted(executionInformation.getEvaluationNumber());
+		}
+	}
 		
-		if(getNumJobs() <= 0)
-		{
-			toState(TaskState.RUNNING);
-			ServerSystem.out.println("Task will finish immedeately since it is empty.");
-			toState(TaskState.STOPPED);
-			return;
-		}
-		timer = new Timer("Measurement Task", true);
-			
-		if(fixedTimes)
-		{
-			for(int i = 0; i < startTimes.length; i++)
-			{
-				timer.scheduleAtFixedRate(new TaskTimerTask(), startTimes[i], period);
-			}
-		}
-		else
-		{
-			// Add a finish listener to the last job in the task, which schedules the next execution of the task when the last job of the task is finished.
-			try {
-				getJob(getNumJobs()-1).addJobListener(lastJobFinishListener);
-			} 
-			catch (Exception e) 
-			{
-				throw toErrorState(new TaskException("Tried to start task, but could not add listener to last job of task to signal when job execution finished, and, thus, when to schedule the next execution of the task.", e));
-			} 
-			timer.schedule(new TaskTimerTask(), startTimes[0]);
-		}
-		toState(TaskState.RUNNING);
-	}
-	
-	synchronized void stopTask() throws TaskException
-	{
-		assertCorrectState("Cannot stop task.", TaskState.STOPPED, TaskState.INITIALIZED, TaskState.RUNNING, TaskState.PAUSED);
-		if(taskState == TaskState.STOPPED)
-		{
-			// do nothing, already finished!
-			return;
-		}
-		else if(taskState == TaskState.INITIALIZED)
-		{
-			// finish the task without starting it. Well, just switch states...
-			toState(TaskState.STOPPED);
-			return;
-		}
-		else
-		{
-			if(timer!=null)
-			{
-				timer.cancel();
-				timer = null;
-			}
-			if(!fixedTimes && getNumJobs() > 0)
-			{
-				// remove the finish listener from last job.
-				try {
-					getJob(getNumJobs()-1).removeJobListener(lastJobFinishListener);
-				} 
-				catch (Exception e) 
-				{
-					throw toErrorState(new TaskException("Tried to stop task, but could not remove listener from last job of task signaling when job execution finished, and, thus, when to schedule the next execution of the task.", e));
-				} 
-			}
-			toState(TaskState.STOPPED);
-		}
-	}
-	
 	@Override
 	public void addTaskListener(TaskListener listener)
 	{
@@ -284,38 +315,18 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	}
 	
 	/**
-	 * Calls {@link TaskListener#taskError(Exception)} on all task listeners.
+	 * Calls {@link TaskListener#taskStarted(long)} on all task listeners.
+	 * @param executionNumber
 	 */
-	private void notifyTaskError(Exception e)
-    {
+	private void notifyTaskStarted(long executionNumber)
+	{
 		synchronized(taskListeners)
 		{
 			for (Iterator<TaskListener> iterator = taskListeners.iterator(); iterator.hasNext();) 
 			{
 				try
 	            {
-	            	iterator.next().taskError(e);
-	            } 
-				catch (RemoteException e1)
-	            {
-	                ServerSystem.err.println("Task listener not answering. Removing him from the queue.", e1);
-	                iterator.remove();
-	            }
-	        }
-		}
-    }
-	/**
-	 * Calls {@link TaskListener#taskStateChanged(TaskState, TaskState)} on all task listeners.
-	 */
-	private void notifyTaskStateChanged(TaskState oldState, TaskState newState)
-    {
-		synchronized(taskListeners)
-		{
-			for (Iterator<TaskListener> iterator = taskListeners.iterator(); iterator.hasNext();) 
-			{
-				try
-	            {
-	            	iterator.next().taskStateChanged(oldState, newState);
+	            	iterator.next().taskStarted(executionNumber);
 	            } 
 				catch (RemoteException e)
 	            {
@@ -324,12 +335,13 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	            }
 	        }
 		}
-    }
+	}	
+	
 	/**
-	 * Calls {@link TaskListener#taskExecuted(int)} on all task listeners.
+	 * Calls {@link TaskListener#taskFinished(long)} on all task listeners.
 	 * @param executionNumber
 	 */
-	private void notifyTaskExecuted(int executionNumber)
+	private void notifyTaskFinished(long executionNumber)
 	{
 		synchronized(taskListeners)
 		{
@@ -337,7 +349,7 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 			{
 				try
 	            {
-	            	iterator.next().taskExecuted(executionNumber);
+	            	iterator.next().taskFinished(executionNumber);
 	            } 
 				catch (RemoteException e)
 	            {
@@ -349,64 +361,18 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	}	
 
 	/**
-	 * Sets the state of the task and notifies all listeners.
-	 * @param state New state of the task.
+	 * Schould only be called by {@link MeasurementImpl}.
+	 * @param microscope
+	 * @param measurementContext
+	 * @throws TaskException
+	 * @throws InterruptedException
 	 */
-	private void toState(TaskState state)
+	void initializeTask(Microscope microscope, MeasurementContext measurementContext, TaskExecutor taskExecutor) throws TaskException, InterruptedException
 	{
-		TaskState oldState;
-		synchronized(this)
-		{
-			oldState = this.taskState;
-			this.taskState = state;
-		}
-		notifyTaskStateChanged(oldState, state);
-	}
-	/**
-	 * Sets the task state to {@link TaskState#ERROR}, notifies all listeners of the state change, notifies all listeners of the error, and returns the exception (e.g. to be used in throws).
-	 * @param e Exception which occurred.
-	 * @return The exception gotten as a parameter.
-	 */
-	private <T extends Exception> T toErrorState(T e)
-	{
-		toState(TaskState.ERROR);
-		notifyTaskError(e);
-		return e;
-	}
-	
-	private void assertCorrectState(String errorMessage, TaskState... allowedStates) throws TaskException
-	{
-		TaskState state = this.taskState;
-		for(TaskState allowedState : allowedStates)
-		{
-			if(state == allowedState)
-				return;
-		}
-		StringBuilder message = new StringBuilder(errorMessage);
-		message.append(" Expected state: ");
-		for(int i=0; i<allowedStates.length; i++)
-		{
-			if(i>0 && i==allowedStates.length-1)
-				message.append(" or ");
-			else if(i>0)
-				message.append(", ");
-			message.append(allowedStates[i].toString());
-		}
-		message.append(". Current state: "+state.toString()+".");
-		throw new TaskException(message.toString());
-	}
-	
-	private void assertEditable() throws ComponentRunningException
-	{
-		TaskState state = taskState;
-		if(state != TaskState.READY && state != TaskState.UNINITIALIZED)
-			throw new ComponentRunningException();
-	}
-
-	synchronized void initializeTask(Microscope microscope, MeasurementContext measurementContext) throws TaskException, InterruptedException
-	{
-		assertCorrectState("Cannot initialize task.", TaskState.READY, TaskState.UNINITIALIZED);
-		toState(TaskState.INITIALIZING);
+		stateManager.toState(TaskState.INITIALIZING, "Cannot initialize task,", TaskState.READY);
+		nextExecutionNumber = 0;
+		this.taskExecutor = taskExecutor;
+		scheduleTask();
 		// Initialize jobs
 		for(Job job : jobs)
 		{
@@ -415,18 +381,38 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 			} 
 			catch (JobException | RemoteException e) 
 			{
-				throw toErrorState(new TaskException("Failed to initialize a job of the task.", e));
+				throw new TaskException("Failed to initialize a job of the task.", e);
 			}
 		}
-		toState(TaskState.INITIALIZED);
+		if(jobs.size() > 0)
+		{
+			// Add listeners to the first and last job in the task to determine when task execution started and finished.
+			try 
+			{
+				jobs.get(0).addJobListener(firstJobStartedListener);
+			} 
+			catch (Exception e) 
+			{
+				throw new TaskException("Could not add listener to first job of the task.", e);
+			}
+			try 
+			{
+				jobs.get(jobs.size()-1).addJobListener(lastJobFinishListener);
+			} 
+			catch (Exception e) 
+			{
+				throw new TaskException("Could not add listener to last job of the task.", e);
+			}
+		}
+		stateManager.toState(TaskState.RUNNING, "Cannot finish task initialization,", TaskState.INITIALIZING);
 	}
 
-	synchronized void uninitializeTask(Microscope microscope, MeasurementContext measurementContext) throws TaskException, InterruptedException
+	void uninitializeTask(Microscope microscope, MeasurementContext measurementContext) throws TaskException, InterruptedException
 	{
-		assertCorrectState("Cannot uninitialize task", TaskState.INITIALIZED, TaskState.READY, TaskState.STOPPED, TaskState.UNINITIALIZED);
-		if(taskState == TaskState.READY || taskState == TaskState.UNINITIALIZED)
+		TaskState oldState = stateManager.toState(TaskState.UNINITIALIZING, "Cannot finish task initialization,", TaskState.RUNNING, TaskState.READY);
+		if(oldState == TaskState.READY)
 			return;
-		toState(TaskState.UNINITIALIZING);
+		this.taskExecutor = null;
 		// Uninitialize jobs
 		for(Job job : jobs)
 		{
@@ -435,55 +421,97 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 			} 
 			catch (JobException | RemoteException e) 
 			{
-				throw toErrorState(new TaskException("Failed to uninitialize a job of the task.", e));
+				throw new TaskException("Failed to uninitialize a job of the task.", e);
 			}
 		}
-		toState(TaskState.UNINITIALIZED);
+		if(jobs.size() > 0)
+		{
+			// Remove listeners from the first and last job in the task added to determine when task execution started and finished.
+			try 
+			{
+				jobs.get(0).removeJobListener(firstJobStartedListener);
+			} 
+			catch (Exception e) 
+			{
+				throw new TaskException("Could not remove listener from first job of the task.", e);
+			}
+			try 
+			{
+				jobs.get(jobs.size()-1).removeJobListener(lastJobFinishListener);
+			} 
+			catch (Exception e) 
+			{
+				throw new TaskException("Could not remove listener from last job of the task.", e);
+			}
+		}
+		stateManager.toState(TaskState.READY, "Cannot finish task initialization,", TaskState.UNINITIALIZING);
 	}	
 
 	@Override
-	public synchronized void addJob(Job job) throws ComponentRunningException
+	public void addJob(Job job) throws ComponentRunningException
 	{
-		assertEditable();
-		jobs.add(job);
+		synchronized(stateManager)
+		{
+			stateManager.assertEditable();
+			jobs.add(job);
+		}
 	}
 
 	@Override
-	public synchronized void removeJob(int jobIndex) throws ComponentRunningException, IndexOutOfBoundsException
+	public void removeJob(int jobIndex) throws ComponentRunningException, IndexOutOfBoundsException
 	{
-		assertEditable();
-		jobs.remove(jobIndex);
+		synchronized(stateManager)
+		{
+			stateManager.assertEditable();
+			jobs.remove(jobIndex);
+		}
 	}
 
 	@Override
-	public synchronized void clearJobs() throws ComponentRunningException
+	public void clearJobs() throws ComponentRunningException
 	{
-		assertEditable();
-		jobs.clear();
+		synchronized(stateManager)
+		{
+			stateManager.assertEditable();
+			jobs.clear();
+		}
 	}
 
 	@Override
 	public Job[] getJobs()
 	{
-		ArrayList<?> jobs = this.jobs;
-		return jobs.toArray(new Job[jobs.size()]);
+		synchronized(stateManager)
+		{
+			return jobs.toArray(new Job[jobs.size()]);
+		}
 	}
 
 	@Override
-	public synchronized void insertJob(Job job, int jobIndex)
-			throws ComponentRunningException, IndexOutOfBoundsException {
-		assertEditable();
-		jobs.add(jobIndex, job);
+	public void insertJob(Job job, int jobIndex)
+			throws ComponentRunningException, IndexOutOfBoundsException 
+	{
+		synchronized(stateManager)
+		{
+			stateManager.assertEditable();
+			jobs.add(jobIndex, job);
+		}
 	}
 
 	@Override
 	public int getNumJobs() 
 	{
-		return jobs.size();
+		synchronized(stateManager)
+		{
+			return jobs.size();
+		}
 	}
 
 	@Override
-	public Job getJob(int jobIndex) throws IndexOutOfBoundsException {
-		return jobs.get(jobIndex);
+	public Job getJob(int jobIndex) throws IndexOutOfBoundsException 
+	{
+		synchronized(stateManager)
+		{
+			return jobs.get(jobIndex);
+		}
 	}
 }

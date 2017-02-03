@@ -30,9 +30,9 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
      */
     private static final long serialVersionUID = -8611665286420613463L;
 
-    protected final MeasurementImpl measurement;
+    private final MeasurementImpl measurement;
 
-    protected final MeasurementManager measurementManager;
+    private final MeasurementManager measurementManager;
 
     private final MeasurementSaver measurementSaver;
 
@@ -58,8 +58,8 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 	public void startMeasurement() throws MeasurementException
     {
     	MeasurementState state = measurement.getState();
-    	if(state != MeasurementState.READY && state != MeasurementState.UNINITIALIZED)
-    		throw new MeasurementException("Measurement must be in state Ready or Uninitialized to be started. Current state: "+state.toString()+".");
+    	if(state != MeasurementState.READY && state != MeasurementState.UNINITIALIZED && state != MeasurementState.PAUSED)
+    		throw new MeasurementException("Measurement must be in state Ready, Uninitialized or Paused to be started. Current state: "+state.toString()+".");
         measurementManager.addMeasurement(measurement);
     }
 
@@ -67,6 +67,13 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 	public void stopMeasurement(boolean processJobQueue) throws MeasurementException
     {
         measurement.stopMeasurement(processJobQueue);
+        measurementManager.removeMeasurement(measurement);
+    }
+    
+    @Override
+	public void pauseMeasurement() throws MeasurementException
+    {
+        measurement.pauseMeasurement();
         measurementManager.removeMeasurement(measurement);
     }
 
@@ -77,9 +84,9 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public void setRuntime(int measurementRuntime) throws ComponentRunningException
+	public void setMaxRuntime(long measurementRuntime) throws ComponentRunningException
     {
-        measurement.setRuntime(measurementRuntime);
+        measurement.setMaxRuntime(measurementRuntime);
     }
 
     @Override
@@ -102,9 +109,9 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public int getRuntime()
+	public long getMaxRuntime()
     {
-        return measurement.getRuntime();
+        return measurement.getMaxRuntime();
     }
 
     @Override
@@ -144,31 +151,31 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public Task addTask(int period, boolean fixedTimes, int startTime, int numExecutions)
+	public Task addTask(long period, boolean fixedTimes, long startTime, long numExecutions)
             throws ComponentRunningException, RemoteException
     {
         return measurement.addTask(period, fixedTimes, startTime, numExecutions);
     }
 
     @Override
-	public Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime,
-            int numExecutions) throws ComponentRunningException, RemoteException
+	public Task addMultiplePeriodTask(long[] periods, long startTime,
+            long numExecutions) throws ComponentRunningException, RemoteException
     {
-        return measurement.addMultiplePeriodTask(periods, breakTime, startTime, numExecutions);
+        return measurement.addMultiplePeriodTask(periods, startTime, numExecutions);
     }
 
     @Override
-	public Task addTask(int period, boolean fixedTimes, int startTime)
+	public Task addTask(long period, boolean fixedTimes, long startTime)
             throws ComponentRunningException, RemoteException
     {
         return measurement.addTask(period, fixedTimes, startTime);
     }
 
     @Override
-	public Task addMultiplePeriodTask(int[] periods, int breakTime, int startTime)
+	public Task addMultiplePeriodTask(long[] periods, long startTime)
             throws ComponentRunningException, RemoteException
     {
-        return measurement.addMultiplePeriodTask(periods, breakTime, startTime);
+        return measurement.addMultiplePeriodTask(periods, startTime);
     }
 
     @Override
@@ -198,9 +205,9 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
     }
 
     @Override
-	public long getEndTime()
+	public long getStopTime()
     {
-        return measurement.getEndTime();
+        return measurement.getStopTime();
     }
 
     @Override

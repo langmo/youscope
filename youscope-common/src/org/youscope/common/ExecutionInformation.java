@@ -20,20 +20,20 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 * Serial Version UID.
 	 */
 	private static final long	serialVersionUID	= -8699056656518664004L;
-	private final int			evaluationNumber;
+	private final long			evaluationNumber;
 	private final long			measurementStartTime;
-	private final int[]			loopNumbers;
+	private final long[]			loopNumbers;
 
 	/**
 	 * Creates an execution information initialized with the given evaluation number, starting at 0.
 	 * @param measurementStartTime The time when the measurement was started, in number of milliseconds since January 1, 1970, 00:00:00 GMT.
 	 * @param evaluationNumber The main evaluation number.
 	 */
-	public ExecutionInformation(long measurementStartTime, int evaluationNumber)
+	public ExecutionInformation(long measurementStartTime, long evaluationNumber)
 	{
 		this.measurementStartTime = measurementStartTime;
 		this.evaluationNumber = evaluationNumber;
-		this.loopNumbers = new int[0];
+		this.loopNumbers = new long[0];
 	}
 
 	/**
@@ -42,12 +42,12 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 * @param loopNumber The evaluation number of the loop, starting at 0.
 	 * 
 	 */
-	public ExecutionInformation(ExecutionInformation parentInformation, int loopNumber)
+	public ExecutionInformation(ExecutionInformation parentInformation, long loopNumber)
 	{
 		this.evaluationNumber = parentInformation.getEvaluationNumber();
 		this.measurementStartTime = parentInformation.getMeasurementStartTime();
-		int[] parentLoopNo = parentInformation.getLoopNumbers();
-		this.loopNumbers = new int[parentLoopNo.length + 1];
+		long[] parentLoopNo = parentInformation.getLoopNumbers();
+		this.loopNumbers = new long[parentLoopNo.length + 1];
 		System.arraycopy(parentLoopNo, 0, this.loopNumbers, 0, parentLoopNo.length);
 		this.loopNumbers[this.loopNumbers.length - 1] = loopNumber;
 
@@ -57,7 +57,7 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 * Returns the main evaluation number, i.e. how often the task containing this job has already be executed, starting at 0.
 	 * @return The number of times the corresponding task has been executed.
 	 */
-	public int getEvaluationNumber()
+	public long getEvaluationNumber()
 	{
 		return evaluationNumber;
 	}
@@ -70,10 +70,10 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 */
 	public String getEvaluationString()
 	{
-		String returnVal = Integer.toString(evaluationNumber + 1);
+		String returnVal = Long.toString(evaluationNumber + 1);
 		for(int j = 0; j < loopNumbers.length; j++)
 		{
-			returnVal += "." + Integer.toString(loopNumbers[j] + 1);
+			returnVal += "." + Long.toString(loopNumbers[j] + 1);
 		}
 		return returnVal;
 	}
@@ -108,9 +108,9 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 * Since loops can be in loops, the returned value can contain more than one loop number. The outer loop numbers are stored at the beginning, and the inner at the end of the array.
 	 * @return an array indicating the number of times the loops surrounding this job have been executed. Can have the length zero, but is never null.
 	 */
-	public int[] getLoopNumbers()
+	public long[] getLoopNumbers()
 	{
-		int[] returnValue = new int[loopNumbers.length];
+		long[] returnValue = new long[loopNumbers.length];
 		System.arraycopy(loopNumbers, 0, returnValue, 0, loopNumbers.length);
 		return returnValue;
 	}
@@ -135,7 +135,7 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + evaluationNumber;
+		result = prime * result + (int) (evaluationNumber ^ (evaluationNumber >>> 32));
 		result = prime * result + Arrays.hashCode(loopNumbers);
 		result = prime * result + (int) (measurementStartTime ^ (measurementStartTime >>> 32));
 		return result;

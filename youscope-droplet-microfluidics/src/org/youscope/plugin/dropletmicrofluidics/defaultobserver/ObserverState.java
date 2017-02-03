@@ -17,7 +17,7 @@ class ObserverState implements Serializable
 	 */
 	private static final long serialVersionUID = -5670488844311377425L;
 
-	private int currentEvaluation = 0;
+	private long currentEvaluation = 0;
 	private int nextDroplet = 0;
 	private int numDroplets = 0;
 	private double[] estimatedOffsets = null;
@@ -76,7 +76,7 @@ class ObserverState implements Serializable
 			throw new ResourceException("No droplet registered");
 		if(executionInformation.getEvaluationNumber() < currentEvaluation)
 		{
-			throw new ResourceException("Current droplet iteration is "+Integer.toString(currentEvaluation+1)+", however, got droplet height report corresponding to evaluation "+Integer.toString(executionInformation.getEvaluationNumber()+1)+". All droplets must be scanned equally often and in the same order.");
+			throw new ResourceException("Current droplet iteration is "+Long.toString(currentEvaluation+1)+", however, got droplet height report corresponding to evaluation "+Long.toString(executionInformation.getEvaluationNumber()+1)+". All droplets must be scanned equally often and in the same order.");
 		}
 		else if(executionInformation.getEvaluationNumber() == currentEvaluation)
 		{
@@ -90,7 +90,7 @@ class ObserverState implements Serializable
 		{
 			if(nextDroplet != numDroplets)
 			{
-				throw new ResourceException("Number of registered droplets is " + Integer.toString(numDroplets)+", however, only " + Integer.toString(nextDroplet) + " droplet heights were reported in evaluation "+ Integer.toString(currentEvaluation+1)+".");
+				throw new ResourceException("Number of registered droplets is " + Integer.toString(numDroplets)+", however, only " + Integer.toString(nextDroplet) + " droplet heights were reported in evaluation "+ Long.toString(currentEvaluation+1)+".");
 			}
 			currentEvaluation = executionInformation.getEvaluationNumber();
 			nextDroplet=1;

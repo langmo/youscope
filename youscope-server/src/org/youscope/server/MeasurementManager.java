@@ -8,12 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.youscope.common.ExecutionInformation;
-import org.youscope.common.MeasurementContext;
 import org.youscope.common.job.JobException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementException;
-import org.youscope.common.measurement.MeasurementListener;
-import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.MeasurementProcessingListener;
@@ -47,7 +44,7 @@ class MeasurementManager
 	/**
 	 * The currently running measurement.
 	 */
-	private volatile MeasurementSupervision currentMeasurement = null;
+	private volatile MeasurementImpl currentMeasurement = null;
 	
 	/**
 	 * All listener which get notified if there is a change in the current measurement or in the
@@ -251,9 +248,9 @@ class MeasurementManager
 					break;
 
 				// Set current measurement to newly arrived measurement
-				currentMeasurement = new MeasurementSupervision(measurementQueue.remove(0));
+				currentMeasurement = measurementQueue.remove(0);
 			}
-			ServerSystem.out.println("Starting measurement \"" + currentMeasurement.getName() + "\".");
+			ServerSystem.out.println("Starting measurement " + currentMeasurement.getName() + ".");
 			notifyQueueChanged();
 			notifyCurrentMeasurementChanged();
 			
@@ -293,42 +290,22 @@ class MeasurementManager
 				while(true)
 				{
 					// Get a new job if one is in the queue.
-					JobExecutionQueueElement currentJob = null;
-					synchronized(this)
+					JobExecutionQueueElement currentJob =currentMeasurement.waitForNextJob();
+					if(currentJob == null)
+						break;
+				
+					currentJob.job.executeJob(new ExecutionInformation(currentMeasurement.getStartTime(), currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
+
+					// Check if thread got interrupted.
+					if(Thread.interrupted())
 					{
-						// Wait until new job arrives or measurement is finished.
-						while(!shouldStop && currentMeasurement.isJobQueueEmpty() && currentMeasurement.isRunning())
-						{
-							wait();
-						}
-						if(!currentMeasurement.isRunning())
-						{
-							// Current measurement finished regularly.
-							currentMeasurement.shutdownMeasurement(microscope);
-							break;
-						}
-						else if(shouldStop)
-						{
-							System.out.println("Stopping measurement "+currentMeasurement.getName()+" because measurement processing should stop in general.");
-							break;
-						}
-
-						// Set current job to newly arrived job
-						currentJob = currentMeasurement.unqueueJob();
+						throw new InterruptedException();
 					}
-
-					if(currentJob != null)
-					{
-						currentJob.job.executeJob(new ExecutionInformation(currentMeasurement.getMeasurementStartTime(), currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
-
-						// Check if thread got interrupted.
-						if(Thread.interrupted())
-						{
-							throw new InterruptedException();
-						}
-					}
+					
 				}
 				
+				// run uninitialization or pause tasks of measurement
+				currentMeasurement.shutdownMeasurement(microscope);
 
 				// Measurement finished normally.
 				ServerSystem.out.println("Finished measurement " + currentMeasurement.getName() + ".");
@@ -375,106 +352,6 @@ class MeasurementManager
 	}
 
 	/**
-	 * Helper class to simplify access to {@link MeasurementImpl} during measurement processing.
-	 * 
-	 * @author Moritz Lang
-	 */
-	private class MeasurementSupervision implements MeasurementJobQueue.JobQueueListener, MeasurementListener
-	{
-		private final MeasurementImpl	measurement;
-		private MeasurementJobQueue jobQueue = null;
-		MeasurementSupervision(MeasurementImpl measurement)
-		{
-			this.measurement = measurement;
-		}
-
-		public MeasurementContext getMeasurementContext() {
-			return measurement.getMeasurementContext();
-		}
-
-		public long getMeasurementStartTime() {
-			return measurement.getStartTime();
-		}
-
-		boolean isMeasurement(MeasurementImpl measurement)
-		{
-			return this.measurement == measurement;
-		}
-
-		boolean isRunning()
-		{
-			MeasurementState state = measurement.getState();
-			return state == MeasurementState.RUNNING || state == MeasurementState.STOPPING;
-		}
-		boolean isLockMicroscopeWhileRunning()
-		{
-			return measurement.isLockMicroscopeWhileRunning();
-		}
-		String getName()
-		{
-			return measurement.getName();
-		}
-		void startupMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
-		{
-			jobQueue = measurement.startupMeasurement(microscope);
-			measurement.addMeasurementListener(this);
-			jobQueue.addJobQueueListener(this);
-		}
-		void shutdownMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
-		{
-			measurement.shutdownMeasurement(microscope);
-			measurement.removeMeasurementListener(this);
-			if(jobQueue != null)
-				jobQueue.removeJobQueueListener(this);
-		}
-		public void failMeasurement(Exception e) 
-		{
-			measurement.failMeasurement(e);
-			measurement.removeMeasurementListener(this);
-			if(jobQueue != null)
-				jobQueue.removeJobQueueListener(this);
-		}
-		boolean isJobQueueEmpty()
-		{
-			return jobQueue == null || jobQueue.isEmpty();
-		}
-		JobExecutionQueueElement unqueueJob()
-		{
-			return jobQueue == null ? null : jobQueue.unqueueJob();
-		}
-
-		@Override
-		public void jobQueued() 
-		{
-			synchronized(MeasurementManager.this)
-			{
-				MeasurementManager.this.notifyAll();
-			}
-		}
-
-		@Override
-		public void measurementStateChanged(MeasurementState oldState, MeasurementState newState)
-				throws RemoteException {
-			synchronized(MeasurementManager.this)
-			{
-				MeasurementManager.this.notifyAll();
-			}
-			
-		}
-
-		@Override
-		public void measurementError(Exception e) throws RemoteException {
-			// do nothing
-			
-		}
-
-		@Override
-		public void measurementStructureModified() throws RemoteException {
-			// do nothing
-		}
-	}
-
-	/**
 	 * Interrupts a running measurement. If the measurement is currently not running, it tries to
 	 * remove it from the measurement queue.
 	 * 
@@ -485,9 +362,9 @@ class MeasurementManager
 		if(measurement == null)
 			throw new NullPointerException();
 		// Interruption shouldn't wait for synchronization. Thus, make local copies.
-		MeasurementSupervision currentMeasurement = this.currentMeasurement;
+		MeasurementImpl currentMeasurement = this.currentMeasurement;
 		
-		if(currentMeasurement == null || !currentMeasurement.isMeasurement(measurement))
+		if(currentMeasurement == null || currentMeasurement != measurement)
 		{
 			// Measurement is not currently running. Just remove it from the queue.
 			try {
@@ -537,10 +414,10 @@ class MeasurementManager
 	 */
 	Measurement getCurrentMeasurement() throws RemoteException
 	{
-		MeasurementSupervision measurement = currentMeasurement;
+		MeasurementImpl measurement = currentMeasurement;
 		if(measurement == null)
 			return null;
-		return new MeasurementRMI(measurement.measurement, this);
+		return new MeasurementRMI(measurement, this);
 	}
 
 	/**
