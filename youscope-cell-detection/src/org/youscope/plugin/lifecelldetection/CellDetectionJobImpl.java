@@ -231,11 +231,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		if(result != null)
 		{
 			// get data
-			Table table = result.getCellTable();
-			table.setExecutionInformation(executionInformation);
-			table.setPositionInformation(getPositionInformation());
-			table.setCreationTime(startJobTime);
-			
+			Table table = result.getCellTable();	
 			synchronized(tableDataListeners)
 			{
 				for(TableListener listener : tableDataListeners)

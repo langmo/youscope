@@ -271,8 +271,8 @@ class DocumentationFrame
 					catch (IOException e1)
 					{
 						ClientSystem.err.println(
-								"Could not navigate to page \"" + page.toString()
-										+ "\".", e1);
+								"Could not navigate to page " + page.toString()
+										+ ".", e1);
 						page = null;
 					}
 				}

@@ -294,7 +294,7 @@ class MeasurementManager
 					if(currentJob == null)
 						break;
 				
-					currentJob.job.executeJob(new ExecutionInformation(currentMeasurement.getStartTime(), currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
+					currentJob.job.executeJob(new ExecutionInformation(currentMeasurement.getStartTime(), currentMeasurement.getPauseDuration(), currentJob.evaluationNumber), microscope, currentMeasurement.getMeasurementContext());
 
 					// Check if thread got interrupted.
 					if(Thread.interrupted())

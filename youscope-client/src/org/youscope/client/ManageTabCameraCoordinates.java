@@ -155,7 +155,7 @@ class ManageTabCameraCoordinates extends ManageTabElement
 		DescriptionPanel descriptionPanel = new DescriptionPanel("Description", 
 				"Depending on the specific camera and the optics, images taken by the camera might be transposed or rotated. "
 				+ "For several taks, like image stitching, it is necessary that the camera coordinates are alligned to the stage.\n"
-				+ "To get to know the coordinates used by your camera, startn the \"YouScope LiveStream\" tool and manually move the stage. The image shown by the camera should move accordingly, e.g. when slowly moving the stage from well A1 to A2 of a microplate, the image should move to the left, and accordingly to the top when moving from A1 to B1.\n"
+				+ "To get to know the coordinates used by your camera, start the YouScope LiveStream and manually move the stage. The image shown by the camera should move accordingly, e.g. when slowly moving the stage from well A1 to A2 of a microplate, the image should move to the left, and accordingly to the top when moving from A1 to B1.\n"
 				+ "If the images move to the wrong direction, transpose the respective axis. If the image moves vertically when moving the stage horizontally and vice versa, switch the axes.\n"
 				+ "Note that this configuration should be done AFTER the coordinate axis of the stage are configured.");
 		JScrollPane scrollPane = new JScrollPane(descriptionPanel);

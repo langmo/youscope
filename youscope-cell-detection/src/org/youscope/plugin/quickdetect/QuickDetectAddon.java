@@ -72,7 +72,7 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 		}
 		if(theFactory == null)
 		{
-			String message = "No local script engine with name \"Matlab Scripting\" is registered. Registered engines:\n";
+			String message = "No local script engine with name Matlab Scripting is registered. Registered engines:\n";
 			boolean first = true;
 			for(ScriptEngineFactory factory : factories)
 			{
@@ -87,7 +87,7 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 		
 		scriptEngine = theFactory.getScriptEngine();
 		if(scriptEngine == null)
-			throw new CellDetectionException("Could not create local script engine with name \"Matlab Scripting\".");
+			throw new CellDetectionException("Could not create local script engine with name Matlab Scripting.");
 		// Set output writer of engine
 		scriptEngine.getContext().setWriter(outputListener);
 		try
@@ -123,8 +123,10 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 	{
 		if(!isInitialized())
 			throw new CellDetectionException("Addon not yet initialized.");
-		if(detectionImage == null)
+		else if(detectionImage == null)
 			throw new CellDetectionException("Image in which cells should be detected is null.");
+		else if(detectionImage.getExecutionInformation() == null || detectionImage.getPositionInformation() == null)
+			throw new CellDetectionException("Metadata (position or execution information) of image in which cells should be detected is not initialized.");
 		
 		QuickDetectConfiguration configuration = getConfiguration();
 		
@@ -142,7 +144,7 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 			}
 			
 		}
-		TableSinkImpl tableSink = new TableSinkImpl();
+		TableSinkImpl tableSink = new TableSinkImpl(detectionImage.getCreationTime(), detectionImage.getPositionInformation(), detectionImage.getExecutionInformation());
 		
 		// Send variables to matlab.
 		scriptEngine.put("tableSink", tableSink);

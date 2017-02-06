@@ -1388,7 +1388,7 @@ public class ImagePanel extends JPanel
             Iterator<ImageWriter> imageIterator = ImageIO.getImageWritersBySuffix(fileSuffix);
             if(!imageIterator.hasNext())
             {
-            	JOptionPane.showMessageDialog(null, "YouScope does not have a plug-in installed to support saving images with file type \"" + fileSuffix + "\".", "Image file type not supported", JOptionPane.ERROR_MESSAGE);
+            	JOptionPane.showMessageDialog(null, "YouScope does not have a plug-in installed to support saving images with file type " + fileSuffix + ".", "Image file type not supported", JOptionPane.ERROR_MESSAGE);
         		continue;
             }
             imageWriter = imageIterator.next();

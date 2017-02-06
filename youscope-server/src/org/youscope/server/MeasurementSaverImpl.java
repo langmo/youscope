@@ -255,7 +255,6 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 					throws RemoteException 
 			{
 				if(newState == MeasurementState.ERROR
-						|| newState == MeasurementState.QUEUED
 						|| newState == MeasurementState.READY
 						|| newState == MeasurementState.UNINITIALIZED)
 					setMeasurementRunning(false);

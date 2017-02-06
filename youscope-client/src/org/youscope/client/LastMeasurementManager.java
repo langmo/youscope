@@ -151,7 +151,7 @@ class LastMeasurementManager
             }
             catch(Exception e)
             {
-                ClientSystem.err.println("Could not delete last measurement file \""+file.getAbsolutePath()+"\".", e);
+                ClientSystem.err.println("Could not delete last measurement file ("+file.getAbsolutePath()+").", e);
             }
         }
     }

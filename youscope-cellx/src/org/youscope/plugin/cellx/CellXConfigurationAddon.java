@@ -207,7 +207,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
 		}
 		if(visualizationAlgorithm == null)
 		{
-			throw new SettingException("Cell visualization algorithm with ID \""+LabelVisualizerConfiguration.CONFIGURATION_ID + "\" could not be found.");
+			throw new SettingException("Cell visualization algorithm with ID "+LabelVisualizerConfiguration.CONFIGURATION_ID + " could not be found.");
 		}
 		
 		// Initialize algorithms

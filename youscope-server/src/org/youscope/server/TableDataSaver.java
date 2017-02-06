@@ -80,7 +80,7 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 				// append default information (well, time, etc.)
 				String[] saveEntry = new String[rowView.getNumColumns() + defaultColumns.length];
 				saveEntry[0] = table.getExecutionInformation() == null ? "" : table.getExecutionInformation().getEvaluationString();
-				saveEntry[1] = (table.getExecutionInformation() == null) ? "" : Long.toString(table.getCreationTime() - table.getExecutionInformation().getMeasurementStartTime());
+				saveEntry[1] = (table.getExecutionInformation() == null) ? "" : Long.toString(table.getExecutionInformation().getMeasurementRuntime(table.getCreationTime()));
 				saveEntry[2] = Long.toString(table.getCreationTime());
 				saveEntry[3] = new Date(table.getCreationTime()).toString();
 				saveEntry[4] = (table.getPositionInformation() != null && table.getPositionInformation().getWell() != null) ? table.getPositionInformation().getWell().getWellName() : "";

@@ -70,12 +70,6 @@ class MeasurementImpl implements TaskExecutor
 	 */
 	private volatile long startTime = -1;
 	/**
-	 * Virtual start in ms, or -1 if not yet started.
-	 * This time is equal to {@link #realStartTime} plus the duration of all pauses added.
-	 * Should only be modified by {@link #scheduledTasksQueueExecutor}.
-	 */
-	private volatile long correctedStartTime = -1;
-	/**
 	 * Time when the measurement was paused the last time, or -1 if yet not paused.
 	 * Should only be modified by {@link #scheduledTasksQueueExecutor}.
 	 */
@@ -85,6 +79,12 @@ class MeasurementImpl implements TaskExecutor
 	 * Should only be modified by {@link #scheduledTasksQueueExecutor}.
 	 */
 	private volatile long stopTime = -1;
+	
+	/**
+	 * Complete duration of all pauses of the measurement, in ms.
+	 * Should only be modified by {@link #shutdownMeasurement(Microscope)}.
+	 */
+	private volatile long pauseDuration = 0;
 	/**
 	 * All times are given in milliseconds.
 	 */
@@ -127,18 +127,24 @@ class MeasurementImpl implements TaskExecutor
 		{
 			this.scheduledRuntime = scheduledRuntime;
 			this.task = task;
-			scheduledTaskID = nextScheduledTaskID++;
+			scheduledTaskID = task==null ? Long.MAX_VALUE : nextScheduledTaskID++;
 		}
 		@Override
-		public int compareTo(Delayed other) 
+		public int compareTo(Delayed otherRaw) 
 		{
-			if(!(other instanceof ScheduledTask))
+			if(!(otherRaw instanceof ScheduledTask))
 				throw new ClassCastException("Only expecting elements of class ScheduledTask in scheduledTasksQueue.");
-		
-			long delta = scheduledRuntime - ((ScheduledTask)other).scheduledRuntime;
-			if(delta == 0)
-				delta = scheduledTaskID - ((ScheduledTask)other).scheduledTaskID;
-			return delta > 0 ? 1 : (delta < 0 ? -1 : 0);
+			ScheduledTask other = (ScheduledTask)otherRaw;
+			if(scheduledRuntime < other.scheduledRuntime)
+				return -1;
+			else if(scheduledRuntime > other.scheduledRuntime)
+				return 1;
+			else if(scheduledTaskID < other.scheduledTaskID)
+				return -1;
+			else if(scheduledTaskID > other.scheduledTaskID)
+				return 1;
+			else
+				return 0;
 		}
 
 		@Override
@@ -162,22 +168,20 @@ class MeasurementImpl implements TaskExecutor
 		private boolean shouldBlockQueue = false;
 		synchronized void stop(boolean shouldBlockQueue)
 		{
-			this.shouldPause = false;
+			if(shouldPause)
+				return;
 			this.shouldStop = true;
 			this.shouldBlockQueue = shouldBlockQueue;
-			if(measurementState == MeasurementState.RUNNING)
-			{
-				try {
-					toState(MeasurementState.STOPPING);
-				} catch (@SuppressWarnings("unused") MeasurementException e) {
-					// do nothing: means we are already in error state, which we aren't, because we just checked...
-				}
-			}
 		}
 		synchronized void restart()
 		{
 			this.shouldPause = false;
 			this.shouldStop = false;
+			this.shouldBlockQueue = false;
+		}
+		synchronized void resume()
+		{
+			this.shouldPause = false;
 			this.shouldBlockQueue = false;
 		}
 		synchronized void pause()
@@ -186,14 +190,6 @@ class MeasurementImpl implements TaskExecutor
 				return;
 			this.shouldPause = true;
 			this.shouldBlockQueue = true;
-			if(measurementState == MeasurementState.RUNNING)
-			{
-				try {
-					toState(MeasurementState.PAUSING);
-				} catch (@SuppressWarnings("unused") MeasurementException e) {
-					// do nothing: means we are already in error state, which we aren't, because we just checked...
-				}
-			}
 		}
 		synchronized boolean isShouldPause()
 		{
@@ -301,10 +297,11 @@ class MeasurementImpl implements TaskExecutor
 	public long getRuntime()
 	{
 		long currentTime = System.currentTimeMillis();
-		long correctedStartTime = this.correctedStartTime;
+		long startTime = this.startTime;
+		long pauseDuration = this.pauseDuration;
 		long pauseTime = this.pauseTime;
 		long stopTime = this.stopTime;
-		return stopTime>=0 ? stopTime-correctedStartTime : (pauseTime >= 0 ? pauseTime - correctedStartTime :  currentTime - correctedStartTime);
+		return startTime<0 ? -1 : (stopTime>=0 ? stopTime-startTime -pauseDuration: (pauseTime >= 0 ? pauseTime - startTime-pauseDuration :  currentTime - startTime-pauseDuration));
 	}
 	
 	/**
@@ -460,7 +457,7 @@ class MeasurementImpl implements TaskExecutor
 				pendingJobsQueueLock.unlock();
 			}
 			startTime = -1;
-			correctedStartTime = -1;
+			pauseDuration = 0;
 			pauseTime = -1;
 			stopTime = -1;
 						
@@ -642,9 +639,10 @@ class MeasurementImpl implements TaskExecutor
 		startStopLock.lock();
 		try
 		{
-			if(runState.getState() == MeasurementState.PAUSED)
+			if(runState.isShouldPause())
 			{
-				runState.restart();
+				runState.toState(MeasurementState.INITIALIZED, "Cannot resume measurement.", MeasurementState.PAUSED, MeasurementState.QUEUED);
+				runState.resume();
 			}
 			else
 			{
@@ -667,11 +665,21 @@ class MeasurementImpl implements TaskExecutor
 	 */
 	void shutdownMeasurement(Microscope microscope) throws MeasurementException, InterruptedException
 	{
+		long currentTime = System.currentTimeMillis();
 		startStopLock.lock();
 		try
 		{
-			if(runState.getState() != MeasurementState.PAUSED)
+			if(runState.isShouldPause())
+			{
+				runState.toState(MeasurementState.PAUSED, "Cannot pause measurement.", MeasurementState.PAUSING);
+				pauseTime = currentTime;
+			}
+			else
+			{
+				runState.toState(MeasurementState.STOPPED, "Cannot pause measurement.", MeasurementState.STOPPING);
+				stopTime = currentTime;
 				uninitializeMeasurement(microscope);
+			}
 		}
 		finally
 		{
@@ -720,15 +728,14 @@ class MeasurementImpl implements TaskExecutor
 		{
 			// First run, not yet paused.
 			startTime = currentTime;
-			correctedStartTime = currentTime;
+			pauseDuration = 0;
 			pauseTime = -1;
 			stopTime = -1;
 		}
 		else
 		{
 			// We paused the measurement. Let's continue it.
-			// Adjust start time such that runtime will continue correctly.
-			correctedStartTime += currentTime - pauseTime;
+			pauseDuration += currentTime - pauseTime;
 			pauseTime = -1;
 			stopTime = -1;
 		}
@@ -754,38 +761,30 @@ class MeasurementImpl implements TaskExecutor
 				{
 					// otherwise: should stop!
 					shouldPause = runState.isShouldPause();
-					if(shouldPause)
+					try
 					{
-						pauseTime = currentTime;
+						if(shouldPause)
+						{
+							runState.toState(MeasurementState.PAUSING, "Cannot pause measurement.", MeasurementState.RUNNING);
+							sendMessage("Pausing measurement...");
+						}
+						else
+						{
+							runState.toState(MeasurementState.STOPPING, "Cannot stop measurement.", MeasurementState.RUNNING);
+							sendMessage("Stopping measurement...");
+						}
 					}
-					else
+					catch(MeasurementException e2)
 					{
-						stopTime = currentTime;
-						pauseTime = -1;
+						// we are probably anyways in error state, but set it again to be on the safe side...
+						runState.toErrorState(e2);
 					}
-					
-					// get all tasks which should already be executed.
-					ArrayList<ScheduledTask> expiredTasks = new ArrayList<ScheduledTask>();
-					scheduledTasksQueue.drainTo(expiredTasks);
-					for(ScheduledTask expiredTask : expiredTasks)
-					{
-						executeTask(expiredTask.task);
-					}
-					scheduledTasksQueueExecutor = null;
-					
-					sendMessage("Paused measurement.");
 					
 					pendingJobsQueueLock.lock();
 					try
 					{
-						if(shouldPause)
-							runState.toState(MeasurementState.PAUSED);
-						else
-							runState.toState(MeasurementState.STOPPED);
+						scheduledTasksQueueExecutor = null;
 						jobsAvailable.signalAll();
-					}
-					catch (@SuppressWarnings("unused") MeasurementException e1) {
-						// do nothing, means we are already in error state...
 					}
 					finally
 					{
@@ -829,17 +828,17 @@ class MeasurementImpl implements TaskExecutor
 		{
 			while(true)
 			{
-				if(runState.getState().isRunning())
+				if(!runState.isShouldBlockQueue())
 				{
-					if(!runState.isShouldBlockQueue())
-					{
-						JobExecutionQueueElement job= pendingJobsQueue.poll();
-						if(job != null)
-							return job;
-					}
+					JobExecutionQueueElement job= pendingJobsQueue.poll();
+					if(job != null)
+						return job;
 				}
-				else
+				// if the thread has finished, no new jobs will arrive... 
+				if(scheduledTasksQueueExecutor == null)
+				{
 					return null;
+				}
 				jobsAvailable.await();
 			}
 		}
@@ -1115,5 +1114,13 @@ class MeasurementImpl implements TaskExecutor
 				return;
 		}
 		stopMeasurement(true);
+	}
+
+	public long getPauseTime() {
+		return pauseTime;
+	}
+
+	public long getPauseDuration() {
+		return pauseDuration;
 	}
 }

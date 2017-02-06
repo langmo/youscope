@@ -78,7 +78,7 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		}
 		if(theFactory == null)
 		{
-			String message = "No local script engine with name \"Matlab Scripting\" is registered. Registered engines:\n";
+			String message = "No local script engine with name Matlab Scripting is registered. Registered engines:\n";
 			boolean first = true;
 			for(ScriptEngineFactory factory : factories)
 			{
@@ -93,7 +93,7 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		
 		scriptEngine = theFactory.getScriptEngine();
 		if(scriptEngine == null)
-			throw new CellDetectionException("Could not create local script engine with name \"Matlab Scripting\".");
+			throw new CellDetectionException("Could not create local script engine with name Matlab Scripting.");
 		// Set output writer of engine
 		scriptEngine.getContext().setWriter(outputListener);
 		Object returnVal;
@@ -177,7 +177,7 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		
 		File scriptsFolder = new File("cellx/");
 		if(!scriptsFolder.exists() || !scriptsFolder.isDirectory())
-			throw new CellDetectionException("CellX folder \"cellx/\" does not exist. Check your installation.");			
+			throw new CellDetectionException("CellX folder ("+scriptsFolder.getAbsolutePath()+") does not exist. Check your installation.");			
 		scriptEngine.put("scriptsFolder", scriptsFolder.getAbsolutePath());
 		
 		// Open & eval matlab file

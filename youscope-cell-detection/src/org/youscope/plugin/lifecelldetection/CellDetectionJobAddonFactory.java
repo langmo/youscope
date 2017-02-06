@@ -65,9 +65,9 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 					throw new ConfigurationException("No image producing job defined to take the image used for detection.");
 				Job detectionImageProducer = constructionContext.getComponentProvider().createJob(positionInformation, configuration.getDetectionJob());
 				if(detectionImageProducer == null)
-					throw new ConfigurationException("Type of job defined to take the image used for detection (\"" + detectionImageProducerConfig.getTypeIdentifier() + "\") unknown.");
+					throw new ConfigurationException("Type of job defined to take the image used for detection (" + detectionImageProducerConfig.getTypeIdentifier() + ") unknown.");
 				if(!(detectionImageProducer instanceof ImageProducer))
-						throw new ConfigurationException("Job defined to take the image used for detection (\"" + detectionImageProducerConfig.getTypeIdentifier() + "\") does not implement interface ImageProducer.");
+						throw new ConfigurationException("Job defined to take the image used for detection (" + detectionImageProducerConfig.getTypeIdentifier() + ") does not implement interface ImageProducer.");
 				
 				// Add image save listeners
 				if(configuration.getSegmentationImageSaveName() != null)
@@ -108,7 +108,7 @@ public class CellDetectionJobAddonFactory extends ComponentAddonFactoryAdapter
 				{
 					Job childJob = constructionContext.getComponentProvider().createJob(positionInformation, childJobConfig);
 					if(!(childJob instanceof ImageProducer))
-						throw new ConfigurationException("Job defined to take the image used for quantification (\"" + childJobConfig.getTypeIdentifier() + "\") does not implement interface ImageProducer.");
+						throw new ConfigurationException("Job defined to take the image used for quantification (" + childJobConfig.getTypeIdentifier() + ") does not implement interface ImageProducer.");
 				
 					cellDetectionJob.addJob(childJob);
 				}

@@ -59,7 +59,7 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 		this.height = height;
 		this.bytesPerPixel = bytesPerPixel;
 		this.bitDepth = bitDepth;
-		this.creationTime = new Date().getTime();
+		this.creationTime = System.currentTimeMillis();
 	}
 	
 	/**

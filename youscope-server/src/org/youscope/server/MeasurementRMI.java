@@ -251,4 +251,22 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 {
 		return measurement.getUUID();
 	}
+
+	@Override
+	public long getPauseTime()
+	{
+		return measurement.getPauseTime();
+	}
+
+	@Override
+	public long getPauseDuration()
+	{
+		return measurement.getPauseDuration();
+	}
+
+	@Override
+	public long getRuntime()
+	{
+		return measurement.getRuntime();
+	}
 }

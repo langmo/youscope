@@ -1238,8 +1238,8 @@ final class YouScopeFrameImpl extends JInternalFrame
                 if (getFirstModalChild() != null)
                 {
                         setGlassPane(new GlassPane(
-                            "<html><center><span style=\"color:#000000\"><b>Modal child frame is active.</b><br />Close frame \""
-                                    + getFirstModalChild().frame.getTitle() + "\" to be able to access this frame again.</span></center></html>", false));
+                            "<html><center><span style=\"color:#000000\"><b>Modal child frame is active.</b><br />Close frame ("
+                                    + getFirstModalChild().frame.getTitle() + ") to be able to access this frame again.</span></center></html>", false));
                     getGlassPane().setVisible(true);
                 }
                 else

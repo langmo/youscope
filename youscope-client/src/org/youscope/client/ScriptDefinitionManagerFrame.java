@@ -73,7 +73,7 @@ class ScriptDefinitionManagerFrame implements ActionListener
                 	ScriptDefinition scriptDefinition = scriptList.getSelectedValue();
                     if (scriptDefinition == null)
                         return;
-                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the script shortcut \"" + scriptDefinition.getName() + "\" really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
+                    int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the script shortcut (" + scriptDefinition.getName() + ") really be deleted?", "Delete Shortcut", JOptionPane.YES_NO_OPTION);
 					if(shouldDelete != JOptionPane.YES_OPTION)
 						return;
 					ScriptDefinitionManager.deleteScriptDefinition(scriptDefinition);

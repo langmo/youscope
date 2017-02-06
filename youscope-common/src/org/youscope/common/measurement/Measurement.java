@@ -117,11 +117,36 @@ public interface Measurement extends Component
 	long getStartTime() throws RemoteException;
 
 	/**
-	 * Returns the time when the last execution of this measurement stopped  (as returned by {@link System#currentTimeMillis()}), or -1 if it did not yet stop or if unknown.
+	 * Returns the time when the last execution of this measurement stopped (as returned by {@link System#currentTimeMillis()}), or -1 if it did not yet stop or if unknown.
 	 * @return Last measurement stop time.
 	 * @throws RemoteException
 	 */
 	long getStopTime() throws RemoteException;
+	
+	/**
+	 * Returns the time when the measurement was last paused (as returned by {@link System#currentTimeMillis()}), given that it is currently paused. Returns -1 if measurement was not yet paused, or if measurement was resumed after pause.
+	 * @return Time when measurement was paused.
+	 * @throws RemoteException
+	 */
+	long getPauseTime() throws RemoteException;
+	
+	/**
+	 * Returns the time duration, in ms, during which the measurement was paused. If measurement was not paused, yet, returns 0.
+	 * Note, that if the measurement is currently paused, this time will not be updated; only the pauses which got resumed count to the pause duration.
+	 * @return Pause duration in ms.
+	 * @throws RemoteException
+	 */
+	long getPauseDuration() throws RemoteException;
+	
+	/**
+	 * Returns the time duration this measurement is/was already running. Returns -1 if measurement was not started, yet.
+	 * If {@link #getState()}=={@link MeasurementState#RUNNING}, returns {@link System#currentTimeMillis()}-{@link #getStartTime()}-{@link #getPauseDuration()}.
+	 * If {@link #getState()}=={@link MeasurementState#STOPPED}, returns {@link #getStopTime()}-{@link #getStartTime()}-{@link #getPauseDuration()}.
+	 * If {@link #getState()}=={@link MeasurementState#PAUSED}, returns {@link #getPauseTime()}-{@link #getStartTime()}-{@link #getPauseDuration()}.
+	 * @return Measurement runtime in ms.
+	 * @throws RemoteException
+	 */
+	long getRuntime() throws RemoteException;
 
 	/**
 	 * Sets if write access to the microscope is locked during the measurement.

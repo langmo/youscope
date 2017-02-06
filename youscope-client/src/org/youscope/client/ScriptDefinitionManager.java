@@ -68,7 +68,7 @@ class ScriptDefinitionManager
 		File file = new File(scriptDefinitionFolder, scriptDefinition.getShortCutFile());
 		if(!file.exists())
 		{
-			ClientSystem.err.println("Script definition \"" + scriptDefinition.getShortCutFile() + "\" does not exist on file system and could thus not be deleted.");
+			ClientSystem.err.println("Script definition " + scriptDefinition.getShortCutFile() + " does not exist on file system and could thus not be deleted.");
 			return false;
 		}
 		
@@ -171,7 +171,7 @@ class ScriptDefinitionManager
 		}
 		catch(Exception e)
 		{
-			ClientSystem.err.println("Could not open or parse script file \"" + xmlFile.getAbsolutePath() + "\".", e);
+			ClientSystem.err.println("Could not open or parse script file (" + xmlFile.getAbsolutePath() + ").", e);
 			return null;
 		}
 		Element rootNode = document.getDocumentElement();
@@ -182,7 +182,7 @@ class ScriptDefinitionManager
 		String file = getAttributeOfNode(rootNode, FILE_NODE, VALUE_ATTRIBUTE);
 		if(name == null || engine == null || file == null)
 		{
-			ClientSystem.err.println("Script file \"" + xmlFile.getAbsolutePath() + "\" is not valid since at least one node or its value attribute is missing.");
+			ClientSystem.err.println("Script file (" + xmlFile.getAbsolutePath() + ") is not valid since at least one node or its value attribute is missing.");
 			return null;
 		}
 		ScriptDefinition scriptDefinition = new ScriptDefinition(name, engine, file);
@@ -245,11 +245,11 @@ class ScriptDefinitionManager
 		}
 		catch (ScriptException e1)
 		{
-			ClientSystem.err.println("Script \"" + scriptDefinition.getName() + "\" could not be evaluated correctly.", e1);
+			ClientSystem.err.println("Script file (" + scriptDefinition.getName() + ") could not be evaluated correctly.", e1);
 		}
 		catch(FileNotFoundException e1)
 		{
-			ClientSystem.err.println("Script file \"" + scriptDefinition.getScriptFile() + "\" of script \"" + scriptDefinition.getName() + "\" could not be found.", e1);
+			ClientSystem.err.println("Script file (" + scriptDefinition.getScriptFile() + ") of script (" + scriptDefinition.getName() + ") could not be found.", e1);
 		} catch (IOException e) {
 			ClientSystem.err.println("Could not close script file reader.", e);
 		}

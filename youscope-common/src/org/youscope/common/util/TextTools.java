@@ -217,9 +217,7 @@ public class TextTools {
 	public static String convertToFileName(String string)
 	{
 		string = string.replaceAll("[\"\\*/:<>\\?\\\\\\|]", "_");
-		
-		//string = string.replace(' ', '-').replaceAll("[^a-zA-Z0-9_\\-\\+\\.]", "_");
-		// File names starting with a point not permitted always in Windows
+		// File names starting with a point not permitted in Windows
 		if(string.charAt(0)=='.')
 			return "_"+string;
 		return string;

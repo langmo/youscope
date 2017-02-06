@@ -61,7 +61,7 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 		}
 		if(theFactory == null)
 		{
-			String message = "No local script engine with name \"Matlab Scripting\" is registered. Registered engines:\n";
+			String message = "No local script engine with name Matlab Scripting is registered. Registered engines:\n";
 			boolean first = true;
 			for(ScriptEngineFactory factory : factories)
 			{
@@ -76,7 +76,7 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 		
 		scriptEngine = theFactory.getScriptEngine();
 		if(scriptEngine == null)
-			throw new ResourceException("Could not create local script engine with name \"Matlab Scripting\".");
+			throw new ResourceException("Could not create local script engine with name Matlab Scripting.");
 		// Set output writer of engine
 		scriptEngine.getContext().setWriter(ENGINE_WRITER);
 		try

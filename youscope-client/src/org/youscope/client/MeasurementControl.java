@@ -63,27 +63,16 @@ class MeasurementControl
 	private JTextField runTimeField = new JTextField("0d 0h 0m 0s"); 
 	
 	private final MeasurementListenerImpl measurementListener = new MeasurementListenerImpl();
+	private volatile long measurementStartTime = -1;
+	private volatile long measurementPauseDuration = 0;
+	
 	private final Timer			runTimeTimer				= new Timer(1000, new ActionListener()
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			if(getState() == MeasurementState.RUNNING)
-			{
-				long startTime;
-				try {
-					startTime = measurement.getStartTime();
-				} 
-				catch (RemoteException e) {
-					runTimeTimer.stop();
-					ClientSystem.err.println("Could not get measurement start time for measurement duration display. Stopping duration updates.", e);
-					return;
-				}
-				if(startTime < 0)
-					return;
-				long duration = System.currentTimeMillis() - startTime;
-				setDuration(duration);
-			}
+			if(getState() == MeasurementState.RUNNING && measurementStartTime>=0 && measurementPauseDuration>=0)
+				setDuration(System.currentTimeMillis() - measurementStartTime - measurementPauseDuration);
 			else
 				runTimeTimer.stop();
 		}
@@ -556,22 +545,8 @@ class MeasurementControl
 					processMeasurementButton.setVisible(false);
 				startMeasurementButton.setVisible(true);
 				editMeasurementButton.setVisible(false);
-				stopMeasurementButton.setVisible(true);
-				quickStopMeasurementButton.setVisible(true);
-				pauseMeasurementButton.setVisible(false);
-				saveMeasurementButton.setVisible(false);
-				break;
-			case QUEUED:
-			case INITIALIZING:
-			case INITIALIZED:
-			case STOPPING:
-			case STOPPED:
-			case UNINITIALIZING:
-				processMeasurementButton.setVisible(false);
-				startMeasurementButton.setVisible(false);
-				editMeasurementButton.setVisible(false);
-				stopMeasurementButton.setVisible(true);
-				quickStopMeasurementButton.setVisible(true);
+				stopMeasurementButton.setVisible(false);
+				quickStopMeasurementButton.setVisible(false);
 				pauseMeasurementButton.setVisible(false);
 				saveMeasurementButton.setVisible(false);
 				break;
@@ -596,8 +571,24 @@ class MeasurementControl
 				pauseMeasurementButton.setVisible(false);
 				saveMeasurementButton.setVisible(true);
 				break;
+			case QUEUED:
+				processMeasurementButton.setVisible(false);
+				startMeasurementButton.setVisible(false);
+				editMeasurementButton.setVisible(false);
+				stopMeasurementButton.setVisible(true);
+				quickStopMeasurementButton.setVisible(false);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(false);
+				break;
 			default:
-				// do nothing.
+				// INITIALIZING, INITIALIZED, STOPPING, STOPPED, UNINITIALIZING
+				processMeasurementButton.setVisible(false);
+				startMeasurementButton.setVisible(false);
+				editMeasurementButton.setVisible(false);
+				stopMeasurementButton.setVisible(false);
+				quickStopMeasurementButton.setVisible(false);
+				pauseMeasurementButton.setVisible(false);
+				saveMeasurementButton.setVisible(false);
 				break;
 		}
 		// Set state information field.
@@ -606,22 +597,28 @@ class MeasurementControl
 		// Set duration updating
 		if(state == MeasurementState.RUNNING)
 		{
-			runTimeTimer.restart();
+			try
+			{
+				measurementStartTime = measurement.getStartTime();
+				measurementPauseDuration = measurement.getPauseDuration();
+				if(measurementStartTime >= 0)
+					runTimeTimer.restart();
+				else
+					ClientSystem.err.println("Could not get measurement start time. Won't update measurement runtime.");
+			}
+			catch(RemoteException e)
+			{
+				ClientSystem.err.println("Could not get measurement start time and pause duration. Won't update measurement runtime.", e);
+			}
 		}
 		else
 		{
 			try
 			{
 				runTimeTimer.stop();
-				final long startTime = measurement.getStartTime();
-				if(startTime >= 0)
-				{
-					long endTime = measurement.getStopTime();
-					if(endTime < 0)
-						endTime = System.currentTimeMillis();
-					long duration = endTime - startTime;
-					setDuration(duration);
-				}
+				long runtime =measurement.getRuntime();
+				if(runtime >= 0)
+					setDuration(runtime);
 			}
 			catch(RemoteException e)
 			{
@@ -737,7 +734,7 @@ class MeasurementControl
 
 		@Override
 		public void measurementError(Exception e) throws RemoteException {
-			ClientSystem.err.println("Error in measurement \"" + measurement.getName() + "\" occured.", e);
+			ClientSystem.err.println("Error in measurement " + measurement.getName() + " occured.", e);
 			
 		}
 	}

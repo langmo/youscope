@@ -173,7 +173,7 @@ class ScriptDefinitionConfigurationFrame
                 	}
 					if(!(new File(file)).exists())
 					{
-						JOptionPane.showMessageDialog(null, "Script file \"" + file + "\" does not exist.", "Could not initialize scripting shortcut", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Script file (" + file + ") does not exist.", "Could not initialize scripting shortcut", JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
                 	if(ScriptDefinitionConfigurationFrame.this.scriptDefinition != null)

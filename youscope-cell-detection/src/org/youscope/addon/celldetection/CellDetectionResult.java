@@ -20,8 +20,8 @@ public class CellDetectionResult implements Serializable, Cloneable
 	 */
 	private static final long	serialVersionUID	= 8995560180318058006L;
 
-	private Table cellTable;
-	private ImageEvent<?> labelImage;
+	private final Table cellTable;
+	private final ImageEvent<?> labelImage;
 	
 	/**
 	 * Constructor.
@@ -49,16 +49,9 @@ public class CellDetectionResult implements Serializable, Cloneable
 	@Override
 	public CellDetectionResult clone()
 	{
-		CellDetectionResult result;
-		try {
-			result = (CellDetectionResult)super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("Clone not supported.", e); // will not happen.
-		}
-		result.cellTable = cellTable.clone();
-		if(labelImage != null)
-			result.labelImage = labelImage.clone();
-		return result;
+		Table cellTableCopy = cellTable.clone();
+		ImageEvent<?> labelImageCopy = labelImage != null ? labelImage.clone() : null;
+		return new CellDetectionResult(cellTableCopy, labelImageCopy);
 	}
 
 	/**

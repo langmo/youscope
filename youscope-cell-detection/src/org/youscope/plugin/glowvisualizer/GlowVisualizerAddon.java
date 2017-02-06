@@ -64,7 +64,7 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 		}
 		if(theFactory == null)
 		{
-			String message = "No local script engine with name \"Matlab Scripting\" is registered. Registered engines:\n";
+			String message = "No local script engine with name Matlab Scripting is registered. Registered engines:\n";
 			boolean first = true;
 			for(ScriptEngineFactory factory : factories)
 			{
@@ -79,7 +79,7 @@ class GlowVisualizerAddon extends ResourceAdapter<GlowVisualizerConfiguration> i
 		
 		scriptEngine = theFactory.getScriptEngine();
 		if(scriptEngine == null)
-			throw new CellVisualizationException("Could not create local script engine with name \"Matlab Scripting\".");
+			throw new CellVisualizationException("Could not create local script engine with name Matlab Scripting.");
 		// Set output writer of engine
 		scriptEngine.getContext().setWriter(outputListener);
 		try

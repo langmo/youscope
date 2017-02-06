@@ -7,7 +7,6 @@ import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.ExecutionInformation;
@@ -41,7 +40,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	private String stageDevice = null;
 	private double stageTolerance = 10;
 	
-	private volatile int imageNumber = -1;
+	private volatile long imageNumber = -1;
 
 	private volatile boolean channelChanged = true;
 	
@@ -293,7 +292,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		imageNumber++;
 		image.setChannel(channel);
 		image.setChannelGroup(channelGroup);
-		image.setExecutionInformation(new ExecutionInformation(new Date().getTime(), imageNumber));
+		image.setExecutionInformation(new ExecutionInformation(System.currentTimeMillis(), 0, imageNumber));
 		image.setPositionInformation(new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_MAIN_POSITION, currentPositionInformation));
 		
 		// save image

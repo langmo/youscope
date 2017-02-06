@@ -5,7 +5,6 @@ package org.youscope.plugin.continousimaging;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Date;
 import java.util.Vector;
 
 import org.youscope.common.ComponentRunningException;
@@ -65,7 +64,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			
 			if(burstMode)
 			{
-				image.setExecutionInformation(new ExecutionInformation(new Date().getTime(), evaluationNumber++));
+				image.setExecutionInformation(new ExecutionInformation(System.currentTimeMillis(), 0, evaluationNumber++));
 				sendImageToListeners(image);
 			}
 			else

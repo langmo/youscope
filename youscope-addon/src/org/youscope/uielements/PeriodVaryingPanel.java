@@ -4,10 +4,8 @@
 package org.youscope.uielements;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -79,17 +77,24 @@ public class PeriodVaryingPanel extends JPanel
 			 * Serializable Version UID.
 			 */
 			private static final long	serialVersionUID	= 5624975353082301719L;
-
-			private PassiveCellRenderer	passiveRenderer		= new PassiveCellRenderer();
-
 			@Override
 			public TableCellRenderer getCellRenderer(int row, int column)
 			{
-				if(isCellEditable(row, column))
+				final TableCellRenderer cellRenderer = super.getCellRenderer(row, column);// passiveRenderer;
+				return new TableCellRenderer()
 				{
-					return super.getCellRenderer(row, column);
-				}
-				return passiveRenderer;
+
+					@Override
+					public Component getTableCellRendererComponent(JTable table, Object value,
+							boolean isSelected, boolean hasFocus, int row, int column) 
+					{
+						Component component = cellRenderer.getTableCellRendererComponent(table, value,
+								isSelected, hasFocus, row, column);
+						component.setEnabled(isCellEditable(row, column));
+						return component;
+					}
+			
+				};
 			}
 		};
 
@@ -186,11 +191,11 @@ public class PeriodVaryingPanel extends JPanel
 		{
 			URL addButtonURL = getClass().getClassLoader().getResource(addButtonFile);
 			if(addButtonURL != null)
-				addButtonIcon = new ImageIcon(addButtonURL, "Add Job");
+				addButtonIcon = new ImageIcon(addButtonURL, "Add Duration");
 
 			URL deleteButtonURL = getClass().getClassLoader().getResource(deleteButtonFile);
 			if(deleteButtonURL != null)
-				deleteButtonIcon = new ImageIcon(deleteButtonURL, "Delete Job");
+				deleteButtonIcon = new ImageIcon(deleteButtonURL, "Delete Duration");
 
 			URL upButtonURL = getClass().getClassLoader().getResource(upButtonFile);
 			if(upButtonURL != null)
@@ -307,7 +312,7 @@ public class PeriodVaryingPanel extends JPanel
 				if(col == 0)
 					return "Total:";
 				else if(col < 3)
-					return "";
+					return "—";
 				else
 				{
 					int time = 0;
@@ -367,33 +372,6 @@ public class PeriodVaryingPanel extends JPanel
 				return;
 			}
 			fireTableCellUpdated(getRowCount()-1, 3);
-		}
-	}
-
-	private class PassiveCellRenderer extends JLabel implements TableCellRenderer
-	{
-		/**
-		 * Serial Version UID.
-		 */
-		private static final long	serialVersionUID	= 5045544589881926980L;
-
-		public PassiveCellRenderer()
-		{
-			setOpaque(true);
-		}
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column)
-		{
-			setBackground(Color.LIGHT_GRAY);
-			setBorder(new EmptyBorder(2, 2, 2, 2));
-			setText(table.getValueAt(row, column).toString());
-			setFont(getFont().deriveFont(Font.BOLD));
-			if(column == 3)
-				setHorizontalAlignment(SwingConstants.RIGHT);
-			else
-				setHorizontalAlignment(SwingConstants.LEFT);
-			return this;
 		}
 	}
 }
