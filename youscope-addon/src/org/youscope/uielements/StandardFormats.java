@@ -11,13 +11,18 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import javax.swing.JFormattedTextField;
+
 /**
- * @author langmo
+ * Helper class to simplify working with {@link GridBagLayout}, as well as to restrict {@link JFormattedTextField} to certain input types.
+ * While not yet marked as deprecated, use {@link DynamicPanel}, {@link IntegerTextField}, or {@link DoubleTextField} instead when possible.
+ * @author Moritz Lang
  */
 public class StandardFormats
 {
 	/**
 	 * Returns the standard format for doubles (e.g. for FormattedTextFields).
+	 * Use {@link DoubleTextField} instead.
 	 * 
 	 * @return Standard format for double values.
 	 */
@@ -36,6 +41,7 @@ public class StandardFormats
 
 	/**
 	 * Returns the standard format for integers (e.g. for FormattedTextFields).
+	 * Use {@link IntegerTextField} instead.
 	 * 
 	 * @return Standard format for integer values.
 	 */
@@ -51,6 +57,7 @@ public class StandardFormats
 	/**
 	 * Returns a constraint which can be e.g. used in a GridBagLayout. An element added with this
 	 * constraint will fill its current line.
+	 * Use {@link DynamicPanel} instead.
 	 * 
 	 * @return Standard constraint for GridBagLayout elements.
 	 */
@@ -68,6 +75,7 @@ public class StandardFormats
 	/**
 	 * Returns a constraint which can be e.g. used in a GridBagLayout. An element added with this
 	 * constraint will fill the entire rest of the layout.
+	 * Use {@link DynamicPanel} instead.
 	 * @return Standard constraint for GridBagLayout elements.
 	 */
 	public static GridBagConstraints getBottomContstraint()
@@ -82,6 +90,7 @@ public class StandardFormats
 
 	/**
 	 * Adds the given component to the container using the given layout and constraints.
+	 * Use {@link DynamicPanel} instead.
 	 * @param component the component to add.
 	 * @param layout the respective layout of the container.
 	 * @param constr the constraints with which the component should be added.

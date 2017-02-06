@@ -6,8 +6,6 @@ package org.youscope.client;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -43,9 +41,9 @@ import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.saving.MeasurementFileLocations;
+import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.LinkLabel;
-import org.youscope.uielements.StandardFormats;
 
 /**
  * @author Moritz Lang
@@ -117,8 +115,8 @@ class MeasurementControl
 	private Vector<YouScopeFrame>		childFrames			= new Vector<YouScopeFrame>();
 	private final MeasurementControlListener controlListener;
 	
-	private JPanel controlPanel;
-	private JPanel informationPanel;
+	private final DynamicPanel controlPanel = new DynamicPanel();
+	private final DynamicPanel  informationPanel = new DynamicPanel();
 	private JPanel imagingJobsPanel;
 	
 	private JPopupMenu measurementProcessorChooser;
@@ -132,33 +130,42 @@ class MeasurementControl
 		startMeasurementButton = START_MEASUREMENT_ICON == null ? new JButton(START_MEASUREMENT_TEXT) : new JButton(START_MEASUREMENT_TEXT, START_MEASUREMENT_ICON);
 		startMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		startMeasurementButton.setOpaque(false);
+		startMeasurementButton.setToolTipText("Starts the measurement. If another measurement is already running, the measurement is queued and started as soon as the other measurement finished.");
 		
 		stopMeasurementButton = STOP_MEASUREMENT_ICON == null ? new JButton(STOP_MEASUREMENT_TEXT) : new JButton(STOP_MEASUREMENT_TEXT, STOP_MEASUREMENT_ICON);
 		stopMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		stopMeasurementButton.setOpaque(false);
+		stopMeasurementButton.setToolTipText("Stops the measurement. All jobs which are already due are executed before the measurement stops.");
 		
 		quickStopMeasurementButton = QUICK_STOP_MEASUREMENT_ICON == null ? new JButton(QUICK_STOP_MEASUREMENT_TEXT) : new JButton(QUICK_STOP_MEASUREMENT_TEXT, QUICK_STOP_MEASUREMENT_ICON);
 		quickStopMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		quickStopMeasurementButton.setOpaque(false);
+		quickStopMeasurementButton.setToolTipText("Stops the measurement. Only the currently executed job is finished. All other jobs which are due but not yet executed are discarded.");
 		
 		saveMeasurementButton = SAVE_MEASUREMENT_ICON == null ? new JButton(SAVE_MEASUREMENT_TEXT) : new JButton(SAVE_MEASUREMENT_TEXT, SAVE_MEASUREMENT_ICON);
 		saveMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		saveMeasurementButton.setOpaque(false);
+		saveMeasurementButton.setToolTipText("Saves the measurement configuration to the file system.");
 		
 		editMeasurementButton = EDIT_MEASUREMENT_ICON == null ? new JButton(EDIT_MEASUREMENT_TEXT) : new JButton(EDIT_MEASUREMENT_TEXT, EDIT_MEASUREMENT_ICON);
 		editMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		editMeasurementButton.setOpaque(false);
+		editMeasurementButton.setToolTipText("Edits the measurement configuration. The control for this measurement is closed when editing.");
 		
 		processMeasurementButton = PROCESS_MEASUREMENT_ICON == null ? new JButton(PROCESS_MEASUREMENT_TEXT) : new JButton(PROCESS_MEASUREMENT_TEXT, PROCESS_MEASUREMENT_ICON);
 		processMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
 		processMeasurementButton.setOpaque(false);
+		processMeasurementButton.setToolTipText("Allows to view or edit the images made during the current or the last execution of the measurement.");
 		
 		pauseMeasurementButton = PAUSE_MEASUREMENT_ICON == null ? new JButton(PAUSE_MEASUREMENT_TEXT) : new JButton(PAUSE_MEASUREMENT_TEXT, PAUSE_MEASUREMENT_ICON);
 		pauseMeasurementButton.setHorizontalAlignment(SwingConstants.LEFT);
+		pauseMeasurementButton.setOpaque(false);
+		pauseMeasurementButton.setToolTipText("Pauses the current measurement. The currently running job is executed before pause. After pausing, the measurement can be resumed.");
 		
 		emergencyStopButton = EMERGENCY_STOP_ICON == null ? new JButton(EMERGENCY_STOP_TEXT) : new JButton(EMERGENCY_STOP_TEXT, EMERGENCY_STOP_ICON);
 		emergencyStopButton.setHorizontalAlignment(SwingConstants.LEFT);
 		emergencyStopButton.setOpaque(false);
+		emergencyStopButton.setToolTipText("Tries to interrupt the measurement as quick as possible without caring about finishing jobs or applying shutdown settings. Furthermore, locks the microscope such that all attempts to control it via YouScope fail until the emergency stop is manually resetted.");
 		
 		this.measurement = measurement;
 		this.configuration = measurement.getSaver().getConfiguration();
@@ -218,16 +225,14 @@ class MeasurementControl
 			});
 		undockLabelPanel.add(undockLabel, BorderLayout.EAST);
 		
-		GridBagLayout containerLayout = new GridBagLayout();
-		container.setLayout(containerLayout);
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
+		DynamicPanel mainPanel = new DynamicPanel();
+		mainPanel.add(informationPanel);
+		mainPanel.add(controlPanel);
+		mainPanel.addFill(imagingJobsPanel);
 		
-		StandardFormats.addGridBagElement(undockLabelPanel, containerLayout, newLineConstr, container);
-		StandardFormats.addGridBagElement(informationPanel, containerLayout, newLineConstr, container);
-		StandardFormats.addGridBagElement(controlPanel, containerLayout, newLineConstr, container);
-		StandardFormats.addGridBagElement(imagingJobsPanel, containerLayout, bottomConstr, container);
-		
+		container.setLayout(new BorderLayout());
+		container.add(undockLabelPanel, BorderLayout.NORTH);
+		container.add(mainPanel, BorderLayout.CENTER);
 		container.setPreferredSize(new Dimension(200, 200));
 		
 		isDocked = true;
@@ -300,18 +305,6 @@ class MeasurementControl
 
 	private void setupUIElements() throws RemoteException
 	{
-		GridBagLayout informationLayout = new GridBagLayout();
-		informationPanel = new JPanel(informationLayout);
-		informationPanel.setBorder(new TitledBorder("Measurement Information"));
-		informationPanel.setOpaque(false);
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
-		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
-		
-		name = measurement.getName();
-		
-		StandardFormats.addGridBagElement(new JLabel("Name:"), informationLayout, newLineConstr, informationPanel);
-		measurementField = new JTextField(name);
-		measurementField.setEditable(false);
 		if(configuration != null)
 		{
 			saveMeasurementButton.addActionListener(new ActionListener()
@@ -372,18 +365,22 @@ class MeasurementControl
 			editMeasurementButton.setEnabled(false);
 			saveMeasurementButton.setEnabled(false);
 		}
-		StandardFormats.addGridBagElement(measurementField, informationLayout, newLineConstr, informationPanel);
-
-		// Initialize status field
-		StandardFormats.addGridBagElement(new JLabel("Status:"), informationLayout, newLineConstr, informationPanel);
+		
+		informationPanel.setBorder(new TitledBorder("Measurement Information"));
+		informationPanel.setOpaque(false);
+		name = measurement.getName();
+		informationPanel.add(new JLabel("Name:"));
+		measurementField = new JTextField(name);
+		measurementField.setEditable(false);
+		informationPanel.add(measurementField);
+		informationPanel.add(new JLabel("Status:"));
 		stateField = new MeasurementStateField();
 		this.state = measurement.getState();
 		actualizeStateInternal();
-		StandardFormats.addGridBagElement(stateField, informationLayout, newLineConstr, informationPanel);
-		
-		StandardFormats.addGridBagElement(new JLabel("Duration:"), informationLayout, newLineConstr, informationPanel);
+		informationPanel.add(stateField);
+		informationPanel.add(new JLabel("Duration:"));
 		runTimeField.setEditable(false);
-		StandardFormats.addGridBagElement(runTimeField, informationLayout, newLineConstr, informationPanel);
+		informationPanel.add(runTimeField);
 
 		// Initialize Buttons
 		startMeasurementButton.addActionListener(new ActionListener()
@@ -455,26 +452,19 @@ class MeasurementControl
 			}
 		});
 		
-		GridBagLayout buttonsLayout = new GridBagLayout();
-		controlPanel = new JPanel(buttonsLayout);
 		controlPanel.setBorder(new TitledBorder("Measurement Control"));
 		controlPanel.setOpaque(false);
-		StandardFormats.addGridBagElement(startMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(pauseMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(stopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(quickStopMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		
-		JPanel emptyPanel1 = new JPanel();
-		emptyPanel1.setOpaque(false);
-		StandardFormats.addGridBagElement(emptyPanel1, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(processMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(editMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		StandardFormats.addGridBagElement(saveMeasurementButton, buttonsLayout, newLineConstr, controlPanel);
-		JPanel emptyPanel2 = new JPanel();
-		emptyPanel2.setOpaque(false);
-		StandardFormats.addGridBagElement(emptyPanel2, buttonsLayout, bottomConstr, controlPanel);
-		StandardFormats.addGridBagElement(emergencyStopButton, buttonsLayout, newLineConstr, controlPanel);
-		
+		controlPanel.add(startMeasurementButton);
+		controlPanel.add(pauseMeasurementButton);
+		controlPanel.add(stopMeasurementButton);
+		controlPanel.add(quickStopMeasurementButton);
+		controlPanel.addEmpty();
+		controlPanel.add(processMeasurementButton);
+		controlPanel.add(editMeasurementButton);
+		controlPanel.add(saveMeasurementButton);
+		controlPanel.addEmpty();
+		controlPanel.add(emergencyStopButton);		
+		controlPanel.addFillEmpty();
 
 		// Initialize imaging jobs / measurement tree
 		imagingJobsPanel = new JPanel(new BorderLayout());

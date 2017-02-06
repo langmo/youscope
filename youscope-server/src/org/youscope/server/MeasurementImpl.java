@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
@@ -62,7 +63,13 @@ class MeasurementImpl implements TaskExecutor
 	
 	private final UUID uniqueIdentifier = UUID.randomUUID();
 	
+	/*
+	 * Tasks are first submitted into the scheduledTasksQueue. When they are due, they are moved into the 
+	 * pendingTasksQueue. The measurement manager unpacks the jobs of the most pending task into the pendingJobsQueue, and processes them
+	 * one by one, until the pendingJobsQueue is empty.
+	 */
 	private final LinkedList<JobExecutionQueueElement> pendingJobsQueue = new LinkedList<>();
+	private final PriorityQueue<ScheduledTask> pendingTasksQueue = new PriorityQueue<>();
 	private final DelayQueue<ScheduledTask> scheduledTasksQueue = new DelayQueue<>();
 	/**
 	 * Time in ms when the measurement was started, or -1 if not yet started.
@@ -97,8 +104,8 @@ class MeasurementImpl implements TaskExecutor
 	private volatile Thread scheduledTasksQueueExecutor = null;
 	private final ReentrantLock startStopLock = new ReentrantLock();
 	
-	private final ReentrantLock pendingJobsQueueLock = new ReentrantLock();
-	private final Condition jobsAvailable = pendingJobsQueueLock.newCondition();
+	private final ReentrantLock pendingQueuesLock = new ReentrantLock();
+	private final Condition jobsAvailable = pendingQueuesLock.newCondition();
 	/**
 	 * Contains a task and information when the task should be executed. Wrapper is necessary for {@link DelayQueue}.
 	 * @author Moritz Lang
@@ -446,15 +453,16 @@ class MeasurementImpl implements TaskExecutor
 			sendMessage("Initializing measurement...");
 				
 			scheduledTasksQueue.clear();
-			pendingJobsQueueLock.lock();
+			pendingQueuesLock.lock();
 			try
 			{
+				pendingTasksQueue.clear();
 				pendingJobsQueue.clear();
 				jobsAvailable.signalAll();
 			}
 			finally
 			{
-				pendingJobsQueueLock.unlock();
+				pendingQueuesLock.unlock();
 			}
 			startTime = -1;
 			pauseDuration = 0;
@@ -575,15 +583,16 @@ class MeasurementImpl implements TaskExecutor
 			sendMessage("Uninitializing measurement...");
 	
 			scheduledTasksQueue.clear();
-			pendingJobsQueueLock.lock();
+			pendingQueuesLock.lock();
 			try
 			{
+				pendingTasksQueue.clear();
 				pendingJobsQueue.clear();
 				jobsAvailable.signalAll();
 			}
 			finally
 			{
-				pendingJobsQueueLock.unlock();
+				pendingQueuesLock.unlock();
 			}
 			
 			// Uninitialize tasks and their jobs
@@ -745,7 +754,21 @@ class MeasurementImpl implements TaskExecutor
 			{
 				ScheduledTask scheduledTask = scheduledTasksQueue.take();
 				if(scheduledTask != null)
-					executeTask(scheduledTask.task);
+				{
+					// the null task is a special task, intended to signal that the measurement should stop.
+					if(scheduledTask.task == null)
+						stopMeasurement(true);
+					pendingQueuesLock.lock();
+					try
+					{
+						pendingTasksQueue.add(scheduledTask);
+						jobsAvailable.signalAll();
+					}
+					finally
+					{
+						pendingQueuesLock.unlock();
+					}
+				}
 				if(Thread.interrupted())
 					throw new InterruptedException();
 			} 
@@ -780,7 +803,7 @@ class MeasurementImpl implements TaskExecutor
 						runState.toErrorState(e2);
 					}
 					
-					pendingJobsQueueLock.lock();
+					pendingQueuesLock.lock();
 					try
 					{
 						scheduledTasksQueueExecutor = null;
@@ -788,7 +811,7 @@ class MeasurementImpl implements TaskExecutor
 					}
 					finally
 					{
-						pendingJobsQueueLock.unlock();
+						pendingQueuesLock.unlock();
 					}
 				}
 				finally
@@ -804,26 +827,9 @@ class MeasurementImpl implements TaskExecutor
 		}
 	}
 	
-	private void executeTask(MeasurementTaskImpl task)
-	{
-		// the null task is a special task, intended to signal that the measurement should stop.
-		if(task == null)
-			stopMeasurement(true);
-		pendingJobsQueueLock.lock();
-		try
-		{
-			pendingJobsQueue.addAll(task.executeTask());
-			jobsAvailable.signalAll();
-		}
-		finally
-		{
-			pendingJobsQueueLock.unlock();
-		}
-	}
-	
 	public JobExecutionQueueElement waitForNextJob() throws InterruptedException
 	{
-		pendingJobsQueueLock.lock();
+		pendingQueuesLock.lock();
 		try
 		{
 			while(true)
@@ -833,6 +839,14 @@ class MeasurementImpl implements TaskExecutor
 					JobExecutionQueueElement job= pendingJobsQueue.poll();
 					if(job != null)
 						return job;
+					ScheduledTask nextScheduledTask = pendingTasksQueue.poll();
+					if(nextScheduledTask != null)
+					{
+						pendingJobsQueue.addAll(nextScheduledTask.task.executeTask());
+						job= pendingJobsQueue.poll();
+						if(job != null)
+							return job;
+					}
 				}
 				// if the thread has finished, no new jobs will arrive... 
 				if(scheduledTasksQueueExecutor == null)
@@ -844,7 +858,7 @@ class MeasurementImpl implements TaskExecutor
 		}
 		finally
 		{
-			pendingJobsQueueLock.unlock();
+			pendingQueuesLock.unlock();
 		}
 	}
 

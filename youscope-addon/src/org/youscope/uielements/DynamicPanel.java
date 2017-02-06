@@ -147,14 +147,27 @@ public class DynamicPanel extends JPanel
 	}
 	
 	/**
-	 * Adds an empty document, setting its layout such that it fills empty vertical space if available.
-	 * @return The added empty document.
+	 * Adds an empty {@link JPanel}, setting its layout such that it fills empty vertical space if available.
+	 * Useful to consume additional space in a layout, if all other components should not be bigger than their preferred size.
+	 * @return The added empty JPanel.
 	 */
 	public Component addFillEmpty()
 	{
 		JPanel emptyPanel = new JPanel();
 		emptyPanel.setOpaque(false);
 		return addFill(emptyPanel);
+	}
+	
+	/**
+	 * Adds an empty {@link JPanel}.
+	 * Useful to implement a spacer.
+	 * @return The added empty JPanel.
+	 */
+	public Component addEmpty()
+	{
+		JPanel emptyPanel = new JPanel();
+		emptyPanel.setOpaque(false);
+		return add(emptyPanel);
 	}
 	
 	/**
