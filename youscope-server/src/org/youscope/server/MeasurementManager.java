@@ -173,11 +173,11 @@ class MeasurementManager
 			notifyAll();
 		}
 		if(currentlyRunningMeasurement!=null)
-			ServerSystem.out.println("Queued measurement \"" + measurement.getName() + "\" for execution (Currently running measurement "+currentlyRunningMeasurement+", "+Integer.toString(queueLength)+" other mesurement scheduled before).");
-		else if(queueLength <=0)
-			ServerSystem.out.println("Queued measurement \"" + measurement.getName() + "\" for execution ("+Integer.toString(queueLength)+" other mesurement scheduled before).");
+			ServerSystem.out.println("Queued measurement " + measurement.getName() + " for execution (Currently running measurement "+currentlyRunningMeasurement+", "+Integer.toString(queueLength)+" other mesurement queued before).");
+		else if(queueLength >0)
+			ServerSystem.out.println("Queued measurement " + measurement.getName() + " for execution ("+Integer.toString(queueLength)+" other mesurement queued before).");
 		else
-			ServerSystem.out.println("Queued measurement \"" + measurement.getName() + "\" for immediate execution.");
+			ServerSystem.out.println("Queued measurement " + measurement.getName() + " for immediate execution.");
 		notifyQueueChanged();
 	}
 
@@ -200,7 +200,7 @@ class MeasurementManager
 			queueLength = measurementQueue.size();
 			notifyAll();
 		}
-		ServerSystem.out.println("Unqueued measurement \"" + measurement.getName() + "\" (" + Integer.toString(queueLength) + " measurements remain in the queue).");
+		ServerSystem.out.println("Unqueued measurement " + measurement.getName() + " (" + Integer.toString(queueLength) + " measurements still queued).");
 		notifyQueueChanged();
 	}
 
@@ -308,7 +308,10 @@ class MeasurementManager
 				currentMeasurement.shutdownMeasurement(microscope);
 
 				// Measurement finished normally.
-				ServerSystem.out.println("Finished measurement " + currentMeasurement.getName() + ".");
+				if(currentMeasurement.getPauseTime() >= 0)
+					ServerSystem.out.println("Paused measurement " + currentMeasurement.getName() + ".");
+				else
+					ServerSystem.out.println("Finished measurement " + currentMeasurement.getName() + ".");
 			}
 			catch(InterruptedException e)
 			{
@@ -322,7 +325,7 @@ class MeasurementManager
 			catch(JobException | MeasurementException | RemoteException | RuntimeException e)
 			{
 				currentMeasurement.failMeasurement(e);
-				ServerSystem.err.println("Measurement \"" + currentMeasurement.getName() + "\" produced an error and was interrupted.", e);
+				ServerSystem.err.println("Measurement " + currentMeasurement.getName() + " produced an error and was interrupted.", e);
 			}
 			finally
 			{
