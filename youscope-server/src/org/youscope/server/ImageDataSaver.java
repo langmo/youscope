@@ -2,12 +2,16 @@ package org.youscope.server;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
@@ -112,16 +116,29 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 		{
 			if(!folder.exists())
 				folder.mkdirs();
-			if(ImageIO.write(image, fileType, file))
+			Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersBySuffix(fileType);
+			if(imageWriters.hasNext())
 			{
+				ImageOutputStream outputStream = ImageIO.createImageOutputStream(file);
+				ImageWriter imageWriter = imageWriters.next();
+				imageWriter.setOutput(outputStream);
+				try {
+					imageWriter.write(image);
+		        } finally {
+		        	imageWriter.dispose();
+		        	outputStream.flush();
+		        	outputStream.close();
+		        }
 				ServerSystem.out.println("Image of type " + imageSaveName + " saved to " + filePath + ".");
 			}
 			else
-				ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ". Format \"" + fileType + "\" not supported!", null);
+			{
+				ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ". Image format " + fileType + " not supported!", new IOException());
+			}
 		}
 		catch(Exception e)
 		{
-			ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ".", e);
+			ServerSystem.err.println("Image of type " + imageSaveName + " cannot be saved to " + filePath + ". Check if the image format supports the bit depth with which the image was taken, and eventually decrease the bit depth (respectively the bytes per pixel) or change the image format.", e);
 		}
 		reusableImages.offer(image);
 		// Save image metadata

@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -42,10 +43,16 @@ class ServerConfigurationImpl extends UnicastRemoteObject implements YouScopeSer
     @Override
 	public String[] getSupportedImageFormats()
     {
-        String[] result = ImageIO.getWriterFormatNames();
-        Arrays.sort(result);
-
-        return result;
+    	String[] fileSuffixes = ImageIO.getWriterFileSuffixes();
+    	HashSet<String> uniqueSuffixes = new HashSet<>(fileSuffixes.length);
+    	for(String fileSuffix : fileSuffixes)
+    	{
+    		if(fileSuffix!= null && fileSuffix.length() >= 1)
+    			uniqueSuffixes.add(fileSuffix.toLowerCase());
+    	}
+    	fileSuffixes = uniqueSuffixes.toArray(new String[uniqueSuffixes.size()]);
+    	Arrays.sort(fileSuffixes);
+        return fileSuffixes;
     }
 
     @Override

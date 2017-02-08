@@ -1413,7 +1413,9 @@ public class ImagePanel extends JPanel
         	{
             	try
 				{
+            		ios.flush();
 					ios.close();
+					imageWriter.dispose();
 				}
 				catch(@SuppressWarnings("unused") IOException e)
 				{

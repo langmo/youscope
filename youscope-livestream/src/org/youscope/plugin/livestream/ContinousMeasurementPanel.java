@@ -607,10 +607,12 @@ class ContinousMeasurementPanel extends JPanel
 					}
                     finally
                     {
+                    	imageWriter.dispose();
                     	if(ios != null)
                     	{
 	                    	try
 							{
+	                    		ios.flush();
 								ios.close();
 							}
 							catch(IOException e)

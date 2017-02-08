@@ -216,10 +216,12 @@ class AttenuationFactorWizard
         		}
         		if(image == null)
         		{
-        			String[] supportedImageTypes = ImageIO.getWriterFormatNames();
+        			String[] supportedImageTypes = ImageIO.getReaderFileSuffixes();
         			String imageTypesString = "";
         			for(String supportedImageType : supportedImageTypes)
         			{
+        				if(supportedImageType == null || supportedImageType.length() < 1)
+        					continue;
         				if(imageTypesString.length() > 0)
         					imageTypesString += ", ";
         				imageTypesString += supportedImageType;

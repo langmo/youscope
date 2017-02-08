@@ -644,7 +644,7 @@ public class ImageTools
 		int imageType = bufferedImage.getType();
 		int dataType = bufferedImage.getRaster().getTransferType();
 		int numElementsPerPixel = bufferedImage.getRaster().getNumDataElements();
-		if(dataType==DataBuffer.TYPE_BYTE && imageType == BufferedImage.TYPE_BYTE_GRAY && numElementsPerPixel==1)
+		if(dataType==DataBuffer.TYPE_BYTE && (imageType == BufferedImage.TYPE_BYTE_GRAY || imageType == BufferedImage.TYPE_BYTE_INDEXED) && numElementsPerPixel==1)
 		{
 			int bands = 1;
 			int[][] bins = new int[bands][numBins];
@@ -731,7 +731,7 @@ public class ImageTools
 			}
 			return bins;
 		}
-		else if(imageType == BufferedImage.TYPE_CUSTOM && dataType==DataBuffer.TYPE_BYTE && numElementsPerPixel >= 3)
+		else if((imageType == BufferedImage.TYPE_CUSTOM )&& dataType==DataBuffer.TYPE_BYTE && numElementsPerPixel >= 3)
 		{
 			
 			int bands = 3;
@@ -764,7 +764,7 @@ public class ImageTools
 		}
 		else 
 		{
-			throw new ImageConvertException("Can only interpret grayscale images with 1 or 2 byte per pixel and RGBA images with 4 bytes. This image type id was "+ imageType+" and data buffer transfer type "+dataType+".");
+			throw new ImageConvertException("Can only interpret grayscale images with 1 or 2 byte per pixel and RGBA images with 4 bytes. This image type id was "+ Integer.toString(imageType)+", data buffer transfer type "+Integer.toString(dataType)+", and elements per pixel "+Integer.toString(numElementsPerPixel)+".");
 		}
 	}
 	
