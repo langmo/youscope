@@ -7,10 +7,10 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.clientinterfaces.ClientAddonProvider;
-import org.youscope.clientinterfaces.StandardProperty;
+import org.youscope.clientinterfaces.MetadataDefinitionProvider;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementConfiguration;
@@ -19,7 +19,7 @@ import org.youscope.common.measurement.MeasurementConfiguration;
  * @author Moritz Lang
  *
  */
-class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
+class YouScopeClientConnectionImpl implements YouScopeClient
 {
 	
 	
@@ -42,69 +42,15 @@ class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
     }
 
     @Override
-    public String getProperty(String name, String defaultValue)
-    {
-        return ConfigurationSettings.getProperty(name, defaultValue);
-    }
-
-    @Override
-    public int getProperty(String name, int defaultValue)
-    {
-        return ConfigurationSettings.getProperty(name, defaultValue);
-    }
-
-    @Override
-    public double getProperty(String name, double defaultValue)
-    {
-        return ConfigurationSettings.getProperty(name, defaultValue);
-    }
-
-    @Override
-    public boolean getProperty(String name, boolean defaultValue)
-    {
-        return ConfigurationSettings.getProperty(name, defaultValue);
-    }
-
-    @Override
-    public String[] getProperty(String name, String[] defaultValue)
-    {
-        return ConfigurationSettings.getProperty(name, defaultValue);
-    }
-    
-    @Override
-    public void setProperty(String name, String value)
-    {
-        ConfigurationSettings.setProperty(name, value);
-    }
-
-    @Override
-    public void setProperty(String name, int value)
-    {
-        ConfigurationSettings.setProperty(name, value);
-    }
-
-    @Override
-    public void setProperty(String name, double value)
-    {
-        ConfigurationSettings.setProperty(name, value);
-    }
-
-    @Override
-    public void setProperty(String name, boolean value)
-    {
-        ConfigurationSettings.setProperty(name, value);
-    }
-
-    @Override
     public boolean isLocalServer()
     {
         return ClientSystem.isLocalServer();
     }
 
     @Override
-    public YouScopeProperties getProperties()
+    public PropertyProvider getPropertyProvider()
     {
-        return this;
+        return PropertyProviderImpl.getInstance();
     }
 
     @Override
@@ -174,13 +120,8 @@ class YouScopeClientConnectionImpl implements YouScopeClient, YouScopeProperties
 	}
 
 	@Override
-	public void setProperty(StandardProperty property, Object value) {
-		ConfigurationSettings.setProperty(property, value);
-	}
-
-	@Override
-	public Object getProperty(StandardProperty property) {
-		return ConfigurationSettings.getProperty(property);
+	public MetadataDefinitionProvider getMeasurementMetadataProvider() {
+		return new MeasurementMetadataProviderImpl();
 	}
 
    

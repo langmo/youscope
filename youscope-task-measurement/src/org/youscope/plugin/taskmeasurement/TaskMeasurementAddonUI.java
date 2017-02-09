@@ -10,6 +10,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.GeneralSettingsPage;
+import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
@@ -41,6 +42,7 @@ class TaskMeasurementAddonUI  extends MeasurementAddonUIAdapter<TaskMeasurementC
 		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/taskmeasurement/images/taskMeasurement.jpg", "Task Measurement");
 		String imageLegend = "Flowchart of a task measurement.";
 		addPage(new DescriptionPage(null, description, image, imageLegend));
+		addPage(new MetadataPage<>(client));
 		addPage(new GeneralSettingsPage<TaskMeasurementConfiguration>(client, TaskMeasurementConfiguration.class));
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new TaskDefinitionPage(client, server));

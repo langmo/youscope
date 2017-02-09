@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageListener;
-import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.table.TableListener;
 
 /**
@@ -60,20 +59,4 @@ public interface MeasurementSaver extends Remote
 	 * @throws RemoteException
 	 */
 	MeasurementFileLocations getLastMeasurementFileLocations() throws RemoteException;
-
-	/**
-	 * Returns the configuration of the measurement, or null if the configuration is unknown.
-	 * @return Configuration of the measurement.
-	 * @throws RemoteException
-	 */
-	MeasurementConfiguration getConfiguration() throws RemoteException;
-
-	/**
-	 * Sets the configuration of the measurement. The configuration should be such, that a new measurement should be possible to be created
-	 * with it which has the same properties as the current measurement.
-	 * @param configuration The configuration of the measurement, or null if the configuration should be set to unknown.
-	 * @throws ComponentRunningException
-	 * @throws RemoteException
-	 */
-	void setConfiguration(MeasurementConfiguration configuration) throws ComponentRunningException, RemoteException;
 }

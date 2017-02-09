@@ -37,7 +37,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.common.Well;
 import org.youscope.common.microplate.WellLayout;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -295,7 +295,7 @@ class WellTable extends JPanel
 			});
 			add(addButton);
 			
-			YouScopeProperties properties = client.getProperties();
+			PropertyProvider properties = client.getPropertyProvider();
 			wellXComboBox.setSelectedIndex(properties.getProperty(PROPERTY_WELL_X, 0));
 			wellYComboBox.setSelectedIndex(properties.getProperty(PROPERTY_WELL_Y, 0));
 			leftTextField.setValue(properties.getProperty(PROPERTY_LEFT, 0.0));
@@ -339,7 +339,7 @@ class WellTable extends JPanel
 			notifyLayoutChanged();
 			frame.setVisible(false);
 			
-			YouScopeProperties properties = client.getProperties();
+			PropertyProvider properties = client.getPropertyProvider();
 			properties.setProperty(PROPERTY_WELL_X, well.getWellX());
 			properties.setProperty(PROPERTY_WELL_Y, well.getWellY());
 			properties.setProperty(PROPERTY_LEFT, x);
@@ -507,7 +507,7 @@ class WellTable extends JPanel
 			});
 			add(addButton);
 			
-			YouScopeProperties properties = client.getProperties();
+			PropertyProvider properties = client.getPropertyProvider();
 			wellXComboBox.setSelectedIndex(properties.getProperty(PROPERTY_WELL_X, 0));
 			wellYComboBox.setSelectedIndex(properties.getProperty(PROPERTY_WELL_Y, 0));
 			wellXStepComboBox.setSelectedIndex(properties.getProperty(PROPERTY_WELL_X_STEP, 1)-1);
@@ -572,7 +572,7 @@ class WellTable extends JPanel
 			notifyLayoutChanged();
 			frame.setVisible(false);
 			
-			YouScopeProperties properties = client.getProperties();
+			PropertyProvider properties = client.getPropertyProvider();
 			properties.setProperty(PROPERTY_WELL_X, wellX0);
 			properties.setProperty(PROPERTY_WELL_Y, wellY0);
 			properties.setProperty(PROPERTY_WELL_X_STEP, wellXStep);

@@ -126,7 +126,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
                 public void actionPerformed(ActionEvent arg0)
                 {
                     JFileChooser fileChooser =
-                            new JFileChooser((String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
+                            new JFileChooser((String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
                     
                     String engineName = (String) engineNamesField.getSelectedItem();
                     if(engineName == null)
@@ -186,7 +186,7 @@ class ScriptingJobConfigurationAddon extends ComponentAddonUIAdapter<ScriptingJo
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
+                    getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
                             .getCurrentDirectory().getAbsolutePath());
 
                     scriptFileField.setText(file.toString());

@@ -309,7 +309,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
+			configGroup = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < channelGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(channelGroupField.getItemAt(i).toString()) == 0)
@@ -370,7 +370,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 
     	configuration.setJobs(jobPanel.getJobs());
     	
-		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroupField.getSelectedItem());
+		getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroupField.getSelectedItem());
     }
     
     private void loadFocusDevices()

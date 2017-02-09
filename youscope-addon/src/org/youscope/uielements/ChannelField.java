@@ -46,7 +46,7 @@ public class ChannelField extends JPanel
      */
     public ChannelField(YouScopeClient client, YouScopeServer server)
     {
-    	this((String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP), (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL), client, server);
+    	this((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP), (String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL), client, server);
     }
     
     /**
@@ -57,8 +57,8 @@ public class ChannelField extends JPanel
      */
     public ChannelField(ChannelConfiguration channelConfiguration, YouScopeClient client, YouScopeServer server)
     {
-    	this(channelConfiguration == null ? (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP) : channelConfiguration.getChannelGroup(),
-    			channelConfiguration == null ? (String)client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL) : channelConfiguration.getChannel(),
+    	this(channelConfiguration == null ? (String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP) : channelConfiguration.getChannelGroup(),
+    			channelConfiguration == null ? (String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL) : channelConfiguration.getChannel(),
     					client, server);
     }
     
@@ -133,24 +133,24 @@ public class ChannelField extends JPanel
     
     private String getLastChannelGroup()
     {
-    	return (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
+    	return (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
     }
     
     private String getLastChannel()
     {
-    	return (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL);
+    	return (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL);
     }
     
     private void setLastChannel(String channel)
     {
     	if(channel != null)
-    		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL, channel);
+    		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL, channel);
     }
     
     private void setLastChannelGroup(String channelGroup)
     {
     	if(channelGroup != null)
-    		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
+    		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, channelGroup);
     }
     
     /**

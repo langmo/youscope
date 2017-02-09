@@ -73,6 +73,7 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
 			imageTypes = new String[0];
 		}
 		imageTypeField = new JComboBox<String>(imageTypes);
+		imageTypeField.setToolTipText("All images made during the measurement will be saved under this file type. Note, that not all file types are compatible with all camera settings. Some file types might e.g. only support 8bit pixels, or similar. An error is thrown if the chosen file type is incompatible with the camera settings. Recommended file type is tif.");
 		
 		folderField.setText(configuration.getBaseFolder());
 		imageFolderTypeField.setSelectedItem(configuration.getFolderStructureType());
@@ -122,17 +123,17 @@ class StandardSaveSettingsUI extends ComponentAddonUIAdapter<StandardSaveSetting
     	configuration.setImageFileType((String) imageTypeField.getSelectedItem());
     	configuration.setFolderStructureType((FolderStructureType) imageFolderTypeField.getSelectedItem());
     	
-    	getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, configuration.getBaseFolder());
+    	getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, configuration.getBaseFolder());
     }
 
 	@Override
 	protected void initializeDefaultConfiguration(StandardSaveSettingsConfiguration configuration) throws AddonException 
 	{
-		String lastFolder = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+		String lastFolder = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
 		configuration.setBaseFolder(lastFolder == null ? "" : lastFolder);		
 		configuration.setFolderStructureType(FolderStructureType.ALL_IN_ONE_FOLDER);
 		
-		String imageType = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE);
+		String imageType = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE);
 		configuration.setImageFileType(imageType != null ? imageType : "tif");
 	}
 }

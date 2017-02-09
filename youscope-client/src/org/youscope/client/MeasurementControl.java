@@ -35,6 +35,7 @@ import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.measurement.MeasurementException;
@@ -168,7 +169,11 @@ class MeasurementControl
 		emergencyStopButton.setToolTipText("Tries to interrupt the measurement as quick as possible without caring about finishing jobs or applying shutdown settings. Furthermore, locks the microscope such that all attempts to control it via YouScope fail until the emergency stop is manually resetted.");
 		
 		this.measurement = measurement;
-		this.configuration = measurement.getSaver().getConfiguration();
+		try {
+			this.configuration = measurement.getMetadata().getConfiguration();
+		} catch (@SuppressWarnings("unused") ConfigurationException e) {
+			this.configuration = null;
+		}
 		this.controlListener = controlListener;
 		
 		// Add measurement listener

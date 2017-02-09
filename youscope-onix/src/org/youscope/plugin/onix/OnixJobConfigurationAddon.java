@@ -90,7 +90,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
                 @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                	String lastProtocol = getClient().getProperties().getProperty(OnixController.PROPERTY_PROTOCOL, "onix/protocol.onix");
+                	String lastProtocol = getClient().getPropertyProvider().getProperty(OnixController.PROPERTY_PROTOCOL, "onix/protocol.onix");
                     JFileChooser fileChooser = new JFileChooser(lastProtocol);
                     
                     String filterDesc = "ONIX Protocol (.onix)";
@@ -114,7 +114,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(OnixController.PROPERTY_PROTOCOL, file.toString());
+                    getClient().getPropertyProvider().setProperty(OnixController.PROPERTY_PROTOCOL, file.toString());
                     
                     BufferedReader reader = null;
                     String protocol = "";
@@ -161,7 +161,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-            	String lastProtocol = getClient().getProperties().getProperty(OnixController.PROPERTY_PROTOCOL, "onix/protocol.onix");
+            	String lastProtocol = getClient().getPropertyProvider().getProperty(OnixController.PROPERTY_PROTOCOL, "onix/protocol.onix");
                 JFileChooser fileChooser = new JFileChooser(lastProtocol);
                 String filterDesc = "ONIX Protocol (.onix)";
                 fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(filterDesc, new String[]{".onix"}));
@@ -186,7 +186,7 @@ class OnixJobConfigurationAddon  extends ComponentAddonUIAdapter<OnixJobConfigur
                 		break;
                 }
                 
-                getClient().getProperties().setProperty(OnixController.PROPERTY_PROTOCOL, file.toString());
+                getClient().getPropertyProvider().setProperty(OnixController.PROPERTY_PROTOCOL, file.toString());
                 
                 String text = protocolArea.getText();
         		try

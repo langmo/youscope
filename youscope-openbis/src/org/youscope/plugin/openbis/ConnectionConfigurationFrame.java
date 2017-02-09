@@ -100,9 +100,9 @@ class ConnectionConfigurationFrame
 	
 	private void saveConfiguration()
 	{
-		client.getProperties().setProperty(SSH_USER_PROPERTY, sshUserField.getText());
-		client.getProperties().setProperty(SSH_SERVER_PROPERTY, sshServerField.getText());
-		client.getProperties().setProperty(SSH_PATH_PROPERTY, sshDirectoryField.getText());
+		client.getPropertyProvider().setProperty(SSH_USER_PROPERTY, sshUserField.getText());
+		client.getPropertyProvider().setProperty(SSH_SERVER_PROPERTY, sshServerField.getText());
+		client.getPropertyProvider().setProperty(SSH_PATH_PROPERTY, sshDirectoryField.getText());
 		
 		synchronized(configurationChangeListeners)
 		{
@@ -115,9 +115,9 @@ class ConnectionConfigurationFrame
 	
 	private void loadConfiguration()
 	{
-		sshUserField.setText(client.getProperties().getProperty(SSH_USER_PROPERTY, ""));
-		sshServerField.setText(client.getProperties().getProperty(SSH_SERVER_PROPERTY, ""));
-		sshDirectoryField.setText(client.getProperties().getProperty(SSH_PATH_PROPERTY, ""));
+		sshUserField.setText(client.getPropertyProvider().getProperty(SSH_USER_PROPERTY, ""));
+		sshServerField.setText(client.getPropertyProvider().getProperty(SSH_SERVER_PROPERTY, ""));
+		sshDirectoryField.setText(client.getPropertyProvider().getProperty(SSH_PATH_PROPERTY, ""));
 	}
 	
 	public void addConfigurationChangeListener(ActionListener listener)

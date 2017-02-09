@@ -10,6 +10,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.GeneralSettingsPage;
+import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
@@ -38,6 +39,7 @@ class ContinousImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Conti
 		
 		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/continousimaging/images/continous-imaging.jpg", "Continuous Measurement");
 		addPage(new DescriptionPage(null, DESCRIPTION, image, null));
+		addPage(new MetadataPage<>(client));
 		addPage(new GeneralSettingsPage<ContinousImagingMeasurementConfiguration>(client, ContinousImagingMeasurementConfiguration.class)); 
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingDefinitionPage(client, server));

@@ -170,7 +170,7 @@ class ScriptEditorFrame implements UndoRedoListener
 	 {
 		 if(file == null)
 		 {
-		 	String folderToOpen = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH);
+		 	String folderToOpen = (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH);
 			JFileChooser fileChooser = new JFileChooser(folderToOpen);
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			if(fileExtensions != null && fileExtensions.length > 0)
@@ -240,7 +240,7 @@ class ScriptEditorFrame implements UndoRedoListener
                 }
             }
         }
-        client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, file.getParent());
+        client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, file.getParent());
         lastFile = file; 
         //scriptPane.setFileNameExtension(file.)
         frame.setTitle(lastFile.toString() + " - Script Editor");
@@ -250,7 +250,7 @@ class ScriptEditorFrame implements UndoRedoListener
 	{
 		if(file == null)
 		{
-			String folderToOpen = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH);
+			String folderToOpen = (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH);
 			JFileChooser fileChooser = new JFileChooser(folderToOpen);
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			if(fileExtensions != null && fileExtensions.length > 0)
@@ -287,7 +287,7 @@ class ScriptEditorFrame implements UndoRedoListener
 			client.sendError("Could not save file.", e);
 			return;
 		}
-		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, file.getParent());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, file.getParent());
 		lastFile = file;
 		frame.setTitle(lastFile.toString() + " - Script Editor");
 		openFile(file);

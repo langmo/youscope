@@ -14,6 +14,7 @@ import org.youscope.common.PositionInformation;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
+import org.youscope.common.measurement.MeasurementMetadata;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.saving.MeasurementSaver;
@@ -268,5 +269,10 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 	public long getRuntime()
 	{
 		return measurement.getRuntime();
+	}
+
+	@Override
+	public MeasurementMetadata getMetadata() throws RemoteException {
+		return measurement.getMetadata();
 	}
 }

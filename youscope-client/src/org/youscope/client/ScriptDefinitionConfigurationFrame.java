@@ -77,7 +77,7 @@ class ScriptDefinitionConfigurationFrame
                 public void actionPerformed(ActionEvent arg0)
                 {
                     JFileChooser fileChooser =
-                            new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
+                            new JFileChooser((String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH));
                     
                     String engineName = (String) engineNamesField.getSelectedItem();
                     if(engineName == null)
@@ -137,7 +137,7 @@ class ScriptDefinitionConfigurationFrame
                     		break;
                     }
                     
-                    ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
+                    PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, fileChooser
                             .getCurrentDirectory().getAbsolutePath());
                     String relative = new File(".").toURI().relativize(file.toURI()).getPath();
                     scriptFileField.setText(relative);

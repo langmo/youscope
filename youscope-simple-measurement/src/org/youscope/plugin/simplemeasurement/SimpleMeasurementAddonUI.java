@@ -11,6 +11,7 @@ import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.addon.measurement.pages.GeneralSettingsPage;
+import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -39,7 +40,7 @@ class SimpleMeasurementAddonUI extends MeasurementAddonUIAdapter<SimpleMeasureme
 				"One job thereby corresponds to a single step of the imaging protocol, like taking a bright-field or a green fluorescence image.";
 		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/simplemeasurement/images/simpleMeasurement.jpg", "Simple Measurement");
 		addPage(new DescriptionPage(null, description, image, null)); 
-		
+		addPage(new MetadataPage<SimpleMeasurementConfiguration>(client));
 		addPage(new GeneralSettingsPage<SimpleMeasurementConfiguration>(client, SimpleMeasurementConfiguration.class));
 		addPage(new StartAndEndSettingsPage(client, server));
 		addPage(new ImagingProtocolPage(client, server));

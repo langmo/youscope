@@ -116,8 +116,8 @@ class OpenBISUploader extends ToolAddonUIAdapter
 				settings.userID = userIDField.getText();
 				
 				// Save settings
-				getClient().getProperties().setProperty(OPEN_BIS_USER_PROPERTY, settings.userID);
-				getClient().getProperties().setProperty(OPEN_BIS_PROJECT_PROPERTY, settings.projectID);
+				getClient().getPropertyProvider().setProperty(OPEN_BIS_USER_PROPERTY, settings.userID);
+				getClient().getPropertyProvider().setProperty(OPEN_BIS_PROJECT_PROPERTY, settings.projectID);
 				
 				// Start up transfer and show waitbar frame
 				YouScopeFrame childFrame = getContainingFrame().createModalChildFrame();
@@ -160,8 +160,8 @@ class OpenBISUploader extends ToolAddonUIAdapter
 		loadSSHSettings();
 		
 		// Load last settings
-		userIDField.setText(getClient().getProperties().getProperty(OPEN_BIS_USER_PROPERTY, ""));
-		projectIDField.setText(getClient().getProperties().getProperty(OPEN_BIS_PROJECT_PROPERTY, ""));
+		userIDField.setText(getClient().getPropertyProvider().getProperty(OPEN_BIS_USER_PROPERTY, ""));
+		projectIDField.setText(getClient().getPropertyProvider().getProperty(OPEN_BIS_PROJECT_PROPERTY, ""));
 		
 		// Create content pane
 		JPanel contentPane = new JPanel(new BorderLayout());
@@ -173,9 +173,9 @@ class OpenBISUploader extends ToolAddonUIAdapter
 	}
 	private void loadSSHSettings()
 	{
-		settings.sshUser = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_USER_PROPERTY, "");
-		settings.sshServer = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_SERVER_PROPERTY, "");
-		settings.sshDirectory = getClient().getProperties().getProperty(ConnectionConfigurationFrame.SSH_PATH_PROPERTY, "");
+		settings.sshUser = getClient().getPropertyProvider().getProperty(ConnectionConfigurationFrame.SSH_USER_PROPERTY, "");
+		settings.sshServer = getClient().getPropertyProvider().getProperty(ConnectionConfigurationFrame.SSH_SERVER_PROPERTY, "");
+		settings.sshDirectory = getClient().getPropertyProvider().getProperty(ConnectionConfigurationFrame.SSH_PATH_PROPERTY, "");
 		
 		if(settings.sshDirectory.length() > 0 && settings.sshUser.length() > 0  && settings.sshServer.length() > 0)
 		{

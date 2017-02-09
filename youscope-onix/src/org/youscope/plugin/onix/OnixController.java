@@ -756,7 +756,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
                 @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                	String lastProtocol = getClient().getProperties().getProperty(PROPERTY_PROTOCOL, "onix/protocol.onix");
+                	String lastProtocol = getClient().getPropertyProvider().getProperty(PROPERTY_PROTOCOL, "onix/protocol.onix");
                     JFileChooser fileChooser = new JFileChooser(lastProtocol);
                     
                     String filterDesc = "ONIX Protocol (.onix)";
@@ -780,7 +780,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(PROPERTY_PROTOCOL, file.toString());
+                    getClient().getPropertyProvider().setProperty(PROPERTY_PROTOCOL, file.toString());
                     
                     BufferedReader reader = null;
                     String protocol = "";
@@ -827,7 +827,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-            	String lastProtocol = getClient().getProperties().getProperty(PROPERTY_PROTOCOL, "onix/protocol.onix");
+            	String lastProtocol = getClient().getPropertyProvider().getProperty(PROPERTY_PROTOCOL, "onix/protocol.onix");
                 JFileChooser fileChooser = new JFileChooser(lastProtocol);
                 String filterDesc = "ONIX Protocol (.onix)";
                 fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(filterDesc, new String[]{".onix"}));
@@ -852,7 +852,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
                 		break;
                 }
                 
-                getClient().getProperties().setProperty(PROPERTY_PROTOCOL, file.toString());
+                getClient().getPropertyProvider().setProperty(PROPERTY_PROTOCOL, file.toString());
                 
                 String text = protocolArea.getText();
         		try

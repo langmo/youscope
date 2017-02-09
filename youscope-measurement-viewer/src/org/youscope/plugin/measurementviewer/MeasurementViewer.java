@@ -286,7 +286,7 @@ class MeasurementViewer extends ToolAddonUIAdapter
 	
 	private void loadMeasurement()
 	{
-		JFileChooser fileChooser = new JFileChooser((String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
+		JFileChooser fileChooser = new JFileChooser((String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image Table Files (.csv)", "csv"));
 		fileChooser.addChoosableFileFilter(fileChooser.getAcceptAllFileFilter());

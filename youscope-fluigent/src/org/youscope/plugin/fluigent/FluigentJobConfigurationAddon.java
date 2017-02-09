@@ -182,7 +182,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
                 @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                	String lastProtocol = getClient().getProperties().getProperty(PROPERTY_LAST_FILE_, "");
+                	String lastProtocol = getClient().getPropertyProvider().getProperty(PROPERTY_LAST_FILE_, "");
                     JFileChooser fileChooser = new JFileChooser(lastProtocol);
                     fileChooser.setSelectedFile(new File(lastProtocol)); 
                     
@@ -203,7 +203,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(PROPERTY_LAST_FILE_, file.toString());
+                    getClient().getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                     
                     BufferedReader reader = null;
                     String protocol = "";
@@ -250,7 +250,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-            	String lastProtocol = getClient().getProperties().getProperty(PROPERTY_LAST_FILE_, "");
+            	String lastProtocol = getClient().getPropertyProvider().getProperty(PROPERTY_LAST_FILE_, "");
                 JFileChooser fileChooser = new JFileChooser(lastProtocol);
                 fileChooser.setSelectedFile(new File(lastProtocol)); 
                                    
@@ -273,7 +273,7 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
                 		break;
                 }
                 
-                getClient().getProperties().setProperty(PROPERTY_LAST_FILE_, file.toString());
+                getClient().getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                 
                 String text = scriptField.getText();
         		try

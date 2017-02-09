@@ -108,10 +108,10 @@ class MultiStreamAndControlsPanel extends JPanel
 		
 		for(int i=0;i<NUM_COLORS; i++)
 		{
-			lastDeltaXs[i] = client.getProperties().getProperty(PROPERTY_LAST_DELTA_X + Integer.toString(i), 0.0); 
-			lastDeltaYs[i] = client.getProperties().getProperty(PROPERTY_LAST_DELTA_Y + Integer.toString(i), 0.0);
-			lastDeltaPhis[i] = client.getProperties().getProperty(PROPERTY_LAST_DELTA_PHIS + Integer.toString(i), 0.0);
-			lastCameras[i] = client.getProperties().getProperty(PROPERTY_LAST_CAMERAS + Integer.toString(i), (String)null);
+			lastDeltaXs[i] = client.getPropertyProvider().getProperty(PROPERTY_LAST_DELTA_X + Integer.toString(i), 0.0); 
+			lastDeltaYs[i] = client.getPropertyProvider().getProperty(PROPERTY_LAST_DELTA_Y + Integer.toString(i), 0.0);
+			lastDeltaPhis[i] = client.getPropertyProvider().getProperty(PROPERTY_LAST_DELTA_PHIS + Integer.toString(i), 0.0);
+			lastCameras[i] = client.getPropertyProvider().getProperty(PROPERTY_LAST_CAMERAS + Integer.toString(i), (String)null);
 		}
 
 		setLayout(new BorderLayout());
@@ -480,10 +480,10 @@ class MultiStreamAndControlsPanel extends JPanel
 		
 		for(int i=0;i<NUM_COLORS; i++)
 		{
-			client.getProperties().setProperty(PROPERTY_LAST_DELTA_X + Integer.toString(i), lastDeltaXs[i]); 
-			client.getProperties().setProperty(PROPERTY_LAST_DELTA_Y + Integer.toString(i), lastDeltaYs[i]);
-			client.getProperties().setProperty(PROPERTY_LAST_DELTA_PHIS + Integer.toString(i), lastDeltaPhis[i]);
-			client.getProperties().setProperty(PROPERTY_LAST_CAMERAS + Integer.toString(i), lastCameras[i]);
+			client.getPropertyProvider().setProperty(PROPERTY_LAST_DELTA_X + Integer.toString(i), lastDeltaXs[i]); 
+			client.getPropertyProvider().setProperty(PROPERTY_LAST_DELTA_Y + Integer.toString(i), lastDeltaYs[i]);
+			client.getPropertyProvider().setProperty(PROPERTY_LAST_DELTA_PHIS + Integer.toString(i), lastDeltaPhis[i]);
+			client.getPropertyProvider().setProperty(PROPERTY_LAST_CAMERAS + Integer.toString(i), lastCameras[i]);
 		}
 	}
 }

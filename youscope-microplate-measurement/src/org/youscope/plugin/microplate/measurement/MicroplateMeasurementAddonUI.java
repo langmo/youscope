@@ -10,6 +10,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
+import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.addon.measurement.pages.StartAndEndSettingsPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
@@ -41,6 +42,7 @@ class MicroplateMeasurementAddonUI extends MeasurementAddonUIAdapter<MicroplateM
 		Icon microplateMeasurementIcon = ImageLoadingTools.getResourceIcon("org/youscope/plugin/microplate/measurement/images/microplate-measurement.jpg", "Microplate Measurement");
 		String imageLegend = "Flowchart of a microplate measurement.";
 		addPage(new DescriptionPage(null, description, microplateMeasurementIcon, imageLegend));
+		addPage(new MetadataPage<>(client));
 		addPage(new GeneralSettingsPage(client));
 		addPage(new MicroplatePage(client));
 		addPage(new WellSelectionPage(client, server));  

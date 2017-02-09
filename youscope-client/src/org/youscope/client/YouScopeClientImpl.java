@@ -150,7 +150,7 @@ public class YouScopeClientImpl extends JFrame
 	private static void initializeSkin()
 	{
 		// Set skin
-		String skinID = (String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_SKIN);
+		String skinID = (String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_SKIN);
 		if(skinID == null)
 			skinID = DEFAULT_SKIN;
 		Skin skin = null;
@@ -202,7 +202,7 @@ public class YouScopeClientImpl extends JFrame
 		{
 			try {
 				skin.applySkin();
-				ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());		
+				PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());		
 			} catch (AddonException e) {
 				ClientSystem.err.println("Could not set skin.", e);
 			}
@@ -989,8 +989,8 @@ public class YouScopeClientImpl extends JFrame
 	 */
 	public void connectToServer()
 	{
-		String lastIP = ConfigurationSettings.getProperty(PROPERTY_LAST_SERVER_URL, "127.000.000.001");
-		int lastPort = Integer.parseInt(ConfigurationSettings.getProperty(PROPERTY_LAST_SERVER_PORT, Integer.toString(YouScopeClientImpl.REGISTRY_PORT)));
+		String lastIP = PropertyProviderImpl.getInstance().getProperty(PROPERTY_LAST_SERVER_URL, "127.000.000.001");
+		int lastPort = Integer.parseInt(PropertyProviderImpl.getInstance().getProperty(PROPERTY_LAST_SERVER_PORT, Integer.toString(YouScopeClientImpl.REGISTRY_PORT)));
 
 		ServerChooserFrame serverChooser = new ServerChooserFrame(lastIP, lastPort, null);
 		serverChooser.selectURL();
@@ -1066,8 +1066,8 @@ public class YouScopeClientImpl extends JFrame
 				password = serverChooser.getPassword();
 			}
 		}
-		ConfigurationSettings.setProperty(PROPERTY_LAST_SERVER_URL, ip);
-		ConfigurationSettings.setProperty(PROPERTY_LAST_SERVER_PORT, Integer.toString(port));
+		PropertyProviderImpl.getInstance().setProperty(PROPERTY_LAST_SERVER_URL, ip);
+		PropertyProviderImpl.getInstance().setProperty(PROPERTY_LAST_SERVER_PORT, Integer.toString(port));
 
 		connectToServer(manager);
 	}
@@ -1100,14 +1100,7 @@ public class YouScopeClientImpl extends JFrame
 
 	private static String[] getAutoStartIDs()
     {
-        final String autoStartIDs = ConfigurationSettings.getProperty("auto-start", "");
-
-        if (autoStartIDs.length() > 0)
-        {
-            return autoStartIDs.split(",");
-        }
-
-        return new String[0];
+        return PropertyProviderImpl.getInstance().getProperty("auto-start", new String[0]);
     }
 	
 	/**
@@ -1207,7 +1200,9 @@ public class YouScopeClientImpl extends JFrame
 	
 	boolean saveMicroscopeConfiguration()
 	{
-		String fileToOpen = ConfigurationSettings.getProperty(ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_0, "YSMicroscopeConfiguration.cfg");
+		PropertyProviderImpl settings = PropertyProviderImpl.getInstance();
+		
+		String fileToOpen = settings.getProperty(PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_0, "YSMicroscopeConfiguration.cfg");
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setSelectedFile(new File(fileToOpen));
@@ -1252,19 +1247,19 @@ public class YouScopeClientImpl extends JFrame
 		
 		// Add file to list of last configurations
 		// Remove item from list if its already in.
-		String[]		settingsList		= {ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_0, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_1, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_2, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_3};
+		String[]		settingsList		= {PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_0, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_1, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_2, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_3};
 		for(int i = 0; i < settingsList.length; i++)
 		{
-			if(filePath.equals(ConfigurationSettings.getProperty(settingsList[i], (String)null)))
+			if(filePath.equals(settings.getProperty(settingsList[i], (String)null)))
 			{
-				ConfigurationSettings.deleteProperty(settingsList[i]);
+				settings.deleteProperty(settingsList[i]);
 			}
 		}
 		// Insert item in list at first position, move everything downwards.
 		for(int i = 0; i < settingsList.length; i++)
 		{
-			String tempItem = ConfigurationSettings.getProperty(settingsList[i], (String)null);
-			ConfigurationSettings.setProperty(settingsList[i], filePath);
+			String tempItem = settings.getProperty(settingsList[i], (String)null);
+			settings.setProperty(settingsList[i], filePath);
 			if(tempItem == null)
 				break;
 			filePath = tempItem;
@@ -1276,7 +1271,7 @@ public class YouScopeClientImpl extends JFrame
 	void setSkin(Skin skin)
 	{
 		JOptionPane.showMessageDialog(this, "The change of the skin will have effect only after restarting YouScope.", "Change Requires Restart", JOptionPane.INFORMATION_MESSAGE);
-		ConfigurationSettings.setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
+		PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_SKIN, skin.getMetadata().getTypeIdentifier());
 	}
 	
 	static boolean addMeasurement(Measurement measurement)
@@ -1457,7 +1452,7 @@ public class YouScopeClientImpl extends JFrame
 
 	static void loadMeasurement()
 	{
-		JFileChooser fileChooser = new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
+		JFileChooser fileChooser = new JFileChooser((String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Measurement Configuration Files (.csb)", "csb"));
 		int returnVal = fileChooser.showDialog(null, "Load Measurement Configuration");
 		String fileName;
@@ -1472,7 +1467,7 @@ public class YouScopeClientImpl extends JFrame
 				{
 					folder = folder.getParentFile();
 					if(folder != null)
-						ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
+						PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
 				}
 			}
 			
@@ -1500,7 +1495,7 @@ public class YouScopeClientImpl extends JFrame
 	{
 		if(measurement == null)
 			return;
-		JFileChooser fileChooser = new JFileChooser((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
+		JFileChooser fileChooser = new JFileChooser((String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER));
 		fileChooser.setSelectedFile(new File(measurement.getName() + ".csb"));
 		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Measurement Configuration Files (.csb)", "csb"));
 		int returnVal = fileChooser.showDialog(null, "Save Measurement Configuration");
@@ -1518,7 +1513,7 @@ public class YouScopeClientImpl extends JFrame
 				{
 					folder = folder.getParentFile();
 					if(folder != null)
-						ConfigurationSettings.setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
+						PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folder.getAbsolutePath());
 				}
 			}
 		}

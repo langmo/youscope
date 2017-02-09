@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
-import org.youscope.common.measurement.MeasurementConfiguration;
 import org.youscope.common.saving.MeasurementFileLocations;
 import org.youscope.common.saving.MeasurementSaver;
 import org.youscope.common.saving.SaveSettings;
@@ -39,18 +38,6 @@ class MeasurementSaverImpl implements MeasurementSaver, ImageListener, TableList
 	public SaveSettings getSaveSettings()
 	{
 		return null;
-	}
-
-	@Override
-	public MeasurementConfiguration getConfiguration()
-	{
-		return null;
-	}
-
-	@Override
-	public void setConfiguration(MeasurementConfiguration configuration) throws ComponentRunningException
-	{
-		// Do nothing.
 	}
 
 	@Override

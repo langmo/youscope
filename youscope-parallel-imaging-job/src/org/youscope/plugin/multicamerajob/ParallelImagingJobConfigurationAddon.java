@@ -194,7 +194,7 @@ class ParallelImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Paral
 		// Load state
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
+			configGroup = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)

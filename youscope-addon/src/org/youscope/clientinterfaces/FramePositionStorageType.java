@@ -92,7 +92,7 @@ public enum FramePositionStorageType
     }
     /**
      * Returns the identifier of this storage type.
-     * @return identifier of this storage type. See {@link YouScopeProperties#setProperty(String, String)}.
+     * @return identifier of this storage type. See {@link PropertyProvider#setProperty(String, String)}.
      */
     public String getIdentifier()
     {

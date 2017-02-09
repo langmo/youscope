@@ -10,7 +10,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
@@ -48,31 +47,29 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 
 	private final JLabel					fixedPeriodLabel		= new JLabel("Fixed period length:");
 
-	private JTextField						nameField				= new JTextField("unnamed");
+	private final JRadioButton					stopByUser				= new JRadioButton("When stopped manually.", false);
 
-	private JRadioButton					stopByUser				= new JRadioButton("When stopped manually.", false);
+	private final JRadioButton					stopByExecutions		= new JRadioButton("After a given number of executions.", false);
 
-	private JRadioButton					stopByExecutions		= new JRadioButton("After a given number of executions.", false);
+	private final JRadioButton					stopByRuntime			= new JRadioButton("After a given time.", false);
 
-	private JRadioButton					stopByRuntime			= new JRadioButton("After a given time.", false);
+	private final JLabel							runtimeFieldLabel		= new JLabel("Measurement Total Runtime:");
 
-	private JLabel							runtimeFieldLabel		= new JLabel("Measurement Total Runtime:");
+	private final JLabel							numExecutionsFieldLabel	= new JLabel("Number of Executions:");
 
-	private JLabel							numExecutionsFieldLabel	= new JLabel("Number of Executions:");
+	private final PeriodField				runtimeField			= new PeriodField();
 
-	private PeriodField				runtimeField			= new PeriodField();
+	private final JFormattedTextField				numExecutionsField		= new JFormattedTextField(StandardFormats.getIntegerFormat());
 
-	private JFormattedTextField				numExecutionsField		= new JFormattedTextField(StandardFormats.getIntegerFormat());
+	private final PeriodField				periodField				= new PeriodField();
 
-	private PeriodField				periodField				= new PeriodField();
+	private final JRadioButton					periodAFAP				= new JRadioButton("As fast as possible.", false);
 
-	private JRadioButton					periodAFAP				= new JRadioButton("As fast as possible.", false);
+	private final JRadioButton					periodFixed				= new JRadioButton("Every fixed period.", false);
 
-	private JRadioButton					periodFixed				= new JRadioButton("Every fixed period.", false);
+	private final JRadioButton					periodVarying			= new JRadioButton("Varying periods.", false);
 
-	private JRadioButton					periodVarying			= new JRadioButton("Varying periods.", false);
-
-	private PeriodVaryingPanel				periodVaryingDataPanel	= new PeriodVaryingPanel();
+	private final PeriodVaryingPanel				periodVaryingDataPanel	= new PeriodVaryingPanel();
 
 	private SubConfigurationPanel<SaveSettingsConfiguration> saveSettingPanel = null;
 	
@@ -135,13 +132,12 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 	@Override
 	public void loadData(MeasurementConfiguration configuration)
 	{
-		nameField.setText(configuration.getName());
-		if(configuration.getMeasurementRuntime() >= 0)
-			runtimeField.setDuration(configuration.getMeasurementRuntime());
+		if(configuration.getMaxRuntime() >= 0)
+			runtimeField.setDuration(configuration.getMaxRuntime());
 		else
 			runtimeField.setDuration(60*60*1000);
 		if(configuration.getSaveSettings() == null)
-			saveSettingPanel.setConfiguration(client.getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
+			saveSettingPanel.setConfiguration(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
 		else
 			saveSettingPanel.setConfiguration(configuration.getSaveSettings());
 		PeriodConfiguration period;
@@ -177,7 +173,7 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 		}
 		else
 			period = null;
-		if(configuration.getMeasurementRuntime() >= 0)
+		if(configuration.getMaxRuntime() >= 0)
 		{
 			stopByRuntime.doClick();
 		}
@@ -225,11 +221,10 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 				period.setNumExecutions(-1);
 			setPeriod(configuration, period);
 		}
-		configuration.setName(nameField.getText());
 		if(stopByRuntime.isSelected())
-			configuration.setMeasurementRuntime(runtimeField.getDuration());
+			configuration.setMaxRuntime(runtimeField.getDuration());
 		else
-			configuration.setMeasurementRuntime(-1);
+			configuration.setMaxRuntime(-1);
 		
 		
 		configuration.setSaveSettings(saveSettingPanel.getConfiguration());
@@ -254,9 +249,6 @@ public class GeneralSettingsPage<T extends MeasurementConfiguration> extends Mea
 	{
 		DynamicPanel mainPanel = new DynamicPanel();
 		
-		mainPanel.add(new JLabel("Name:"));
-		mainPanel.add(nameField);
-
 		mainPanel.add(new JLabel("Measurement finishes:"));
 		ButtonGroup stopConditionGroup = new ButtonGroup();
 		stopConditionGroup.add(stopByUser);

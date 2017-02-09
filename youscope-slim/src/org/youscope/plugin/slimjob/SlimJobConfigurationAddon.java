@@ -320,7 +320,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 			public void actionPerformed(ActionEvent arg0)
 			{
 				JFileChooser fileChooser =
-                    new JFileChooser(getClient().getProperties().getProperty(LAST_SLIM_PATH_PROPERTY, "/"));
+                    new JFileChooser(getClient().getPropertyProvider().getProperty(LAST_SLIM_PATH_PROPERTY, "/"));
 	            File file;
 	            while(true)
 	            {
@@ -338,7 +338,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 					break;
 	            }
             
-	            getClient().getProperties().setProperty(LAST_SLIM_PATH_PROPERTY, fileChooser
+	            getClient().getPropertyProvider().setProperty(LAST_SLIM_PATH_PROPERTY, fileChooser
 	            		.getCurrentDirectory().getAbsolutePath());
 	            maskFileField.setText(fileChooser.getSelectedFile().getAbsolutePath());
 			}
@@ -376,7 +376,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
             public void actionPerformed(ActionEvent arg0)
             {
                 JFileChooser fileChooser =
-                        new JFileChooser(getClient().getProperties().getProperty(LAST_SLIM_PATH_PROPERTY, "/"));
+                        new JFileChooser(getClient().getPropertyProvider().getProperty(LAST_SLIM_PATH_PROPERTY, "/"));
                 File file;
                 while(true)
                 {
@@ -394,7 +394,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 					break;
                 }
                 
-                getClient().getProperties().setProperty(LAST_SLIM_PATH_PROPERTY, fileChooser
+                getClient().getPropertyProvider().setProperty(LAST_SLIM_PATH_PROPERTY, fileChooser
                         .getCurrentDirectory().getAbsolutePath());
                 
                 BufferedReader reader = null;
@@ -489,7 +489,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP).toString();
+			configGroup = getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP).toString();
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -790,7 +790,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		else
 			configuration.setMaskFileName(maskFileField.getText());
 		
-		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
+		getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
 		
 	}
 

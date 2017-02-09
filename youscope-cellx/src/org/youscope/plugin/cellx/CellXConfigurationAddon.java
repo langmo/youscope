@@ -72,7 +72,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
         // CellX configuration file
         JPanel configFilePanel = new JPanel(new BorderLayout());
         configFilePanel.setOpaque(false);
-        configFileField.setText(getClient().getProperties().getProperty(PROPERTY_LAST_CELLX_CONFIGFILE, ""));
+        configFileField.setText(getClient().getPropertyProvider().getProperty(PROPERTY_LAST_CELLX_CONFIGFILE, ""));
         configFilePanel.add(configFileField, BorderLayout.CENTER);
 		JButton selectConfigButton = new JButton("Select File");
 		selectConfigButton.addActionListener(new ActionListener()
@@ -80,7 +80,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
                 @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                    JFileChooser fileChooser = new JFileChooser(getClient().getProperties().getProperty(PROPERTY_LAST_CELLX_CONFIGFILE, ""));
+                    JFileChooser fileChooser = new JFileChooser(getClient().getPropertyProvider().getProperty(PROPERTY_LAST_CELLX_CONFIGFILE, ""));
                     fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CellX configuration (.xml)", "xml"));
                                        
                     File file;
@@ -100,7 +100,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
                     		break;
                     }
                     
-                    getClient().getProperties().setProperty(PROPERTY_LAST_CELLX_CONFIGFILE, file.getAbsolutePath());
+                    getClient().getPropertyProvider().setProperty(PROPERTY_LAST_CELLX_CONFIGFILE, file.getAbsolutePath());
 
                     configFileField.setText(file.toString());
                 }

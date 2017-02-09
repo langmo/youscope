@@ -89,7 +89,7 @@ class CustomizationFrame
         tabAppearance.storeContent();
         tabMeasurement.storeContent();
         tabLiveStream.storeContent();
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_IS_CONFIGURED, true);
+        PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_IS_CONFIGURED, true);
 
     }
     

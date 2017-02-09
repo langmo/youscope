@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.measurementviewer.standalone;
+package org.youscope.client;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,21 +10,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Properties;
-import java.util.TreeSet;
 
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.clientinterfaces.StandardProperty;
-import org.youscope.clientinterfaces.YouScopeProperties;
+
 
 /**
+ * Class to query and store properties, which are still available when YouScope is restarted.
  * @author Moritz Lang
- *
  */
-class MinimalPropertiesImpl implements YouScopeProperties
+class PropertyProviderImpl implements PropertyProvider
 {
-	protected final static String propertiesFile = "youscope_properties.prop";
+    // Property loading and saving
+    private static final String PROPERTIES_FILE = "youscope_properties.prop";
 
     public static final String SETTINGS_CONFIG_FILE_LAST_0 = "YouScope.configFileLast0";
 
@@ -34,75 +33,70 @@ class MinimalPropertiesImpl implements YouScopeProperties
 
     public static final String SETTINGS_CONFIG_FILE_LAST_3 = "YouScope.configFileLast3";
 
-    private Properties properties = new Properties();  
+    private final Properties properties = new Properties();
+    
+    private boolean initialized = false;
 
-    private Object ioLock = new Object();
+    private static final PropertyProviderImpl INSTANCE = new PropertyProviderImpl();
+    
+    private final Object ioLock = new Object();
 
-    MinimalPropertiesImpl()
+    /**
+     * Singleton constructor.
+     */
+    private PropertyProviderImpl()
     {
-    	loadProperties();
+    	// do nothing.
+    }
+    
+    public static PropertyProviderImpl getInstance()
+    {
+    	return INSTANCE;
     }
     
     private Properties loadProperties()
     {
         synchronized (ioLock)
         {
+        	if(initialized)
+        		return properties;
             // Get saved properties
-            Reader in;
-            try
+        	
+            try(Reader in = new InputStreamReader(new FileInputStream(PROPERTIES_FILE), "UTF-8");)
             {
-                in = new InputStreamReader(new FileInputStream(propertiesFile), "UTF-8");
                 properties.load(in);
-                in.close();
-            } catch (IOException e)
+            } 
+            catch (IOException e)
             {
-                System.err.println("Could not load last settings. New settings might be generated:" + e.getMessage());
+                ClientSystem.err.println("Could not load last settings. New settings might be generated.", e);
             }
-        }
-        
-        return properties;
+            initialized = true;
+            return properties;
+        }        
     }
 
     synchronized void deleteProperty(String name)
     {
         Properties properties = loadProperties();
-        if (properties == null || name == null)
+        if (name == null)
             return;
         properties.remove(name);
         saveProperties();
     }
 
-    protected void saveProperties()
+    private void saveProperties()
     {
         synchronized (ioLock)
         {
-            if (properties == null) 
-                return;
-
             // Save properties
-            Writer out;
-            try
+            
+            try(Writer out = new OutputStreamWriter(new FileOutputStream(PROPERTIES_FILE), "UTF-8");)
             {
-                out = new OutputStreamWriter(new FileOutputStream(propertiesFile), "UTF-8");
-                
-                Properties tmp = new Properties() {
-                    /**
-                     * Serial Version UID
-                     */
-                    private static final long serialVersionUID = 3118991856807806224L;
-
-                    @Override
-                    public synchronized Enumeration<Object> keys() {
-                        return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-                    }
-                };
-                tmp.putAll(properties);
-                
-                tmp.store(out, "Configuration Settings");
-                out.close();
-            } catch (IOException e)
+                properties.store(out, "YouScope Settings");
+            } 
+            catch (IOException e)
             {
-                System.err.println("Configuration properties could not be saved: " + e.getMessage());
+                ClientSystem.err.println("Configuration properties could not be saved.", e);
             }
         }
     }
@@ -111,8 +105,6 @@ class MinimalPropertiesImpl implements YouScopeProperties
 	public synchronized String getProperty(String name, String defaultValue)
     {
         Properties properties = loadProperties();
-        if (properties == null)
-            return defaultValue;
         return properties.getProperty(name, defaultValue);
     }
 
@@ -120,8 +112,6 @@ class MinimalPropertiesImpl implements YouScopeProperties
 	public synchronized void setProperty(String name, String value)
     {
         Properties properties = loadProperties();
-        if (properties == null)
-            return;
         properties.setProperty(name, value);
         saveProperties();
     }
@@ -132,7 +122,8 @@ class MinimalPropertiesImpl implements YouScopeProperties
         try
         {
             return Integer.parseInt(getProperty(name, Integer.toString(defaultValue)));
-        } catch (@SuppressWarnings("unused") NumberFormatException e)
+        } 
+        catch (@SuppressWarnings("unused") NumberFormatException e)
         {
             return defaultValue;
         }
@@ -144,7 +135,8 @@ class MinimalPropertiesImpl implements YouScopeProperties
         try
         {
             return Double.parseDouble(getProperty(name, Double.toString(defaultValue)));
-        } catch (@SuppressWarnings("unused") NumberFormatException e)
+        } 
+        catch (@SuppressWarnings("unused") NumberFormatException e)
         {
             return defaultValue;
         }
@@ -229,7 +221,7 @@ class MinimalPropertiesImpl implements YouScopeProperties
             return defaultValue;
         }
 
-        String[] splits = list.split(",");
+        String[] splits = list.split("(?<!\\\\),");
         String[] result = new String[splits.length];
         
         for (int i = 0; i < splits.length; i++)
@@ -258,5 +250,4 @@ class MinimalPropertiesImpl implements YouScopeProperties
     {
         setProperty(name, Boolean.toString(value));
     }
-   
 }

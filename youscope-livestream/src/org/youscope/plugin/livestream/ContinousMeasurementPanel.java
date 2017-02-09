@@ -526,7 +526,7 @@ class ContinousMeasurementPanel extends JPanel
 			        	return;
 			        
 			        // Let user select file to save to
-			        String lastFile = client.getProperties().getProperty(LAST_IMAGE_FILE_PROPERTY, "image.tif");
+			        String lastFile = client.getPropertyProvider().getProperty(LAST_IMAGE_FILE_PROPERTY, "image.tif");
                     JFileChooser fileChooser = new JFileChooser(lastFile);
                     //Thread.currentThread().setContextClassLoader(ContinousMeasurementPanel.class.getClassLoader());
                     String[] imageFormats = ImageIO.getWriterFileSuffixes();
@@ -592,7 +592,7 @@ class ContinousMeasurementPanel extends JPanel
                         break;
                     }
                     
-                    client.getProperties().setProperty(LAST_IMAGE_FILE_PROPERTY, file.toString());
+                    client.getPropertyProvider().setProperty(LAST_IMAGE_FILE_PROPERTY, file.toString());
 			        
                     ImageOutputStream ios = null;
                     try

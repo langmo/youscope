@@ -10,6 +10,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
 import org.youscope.addon.measurement.MeasurementAddonFactory;
 import org.youscope.common.ComponentRunningException;
+import org.youscope.common.MetadataProperty;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.callback.CallbackProvider;
 import org.youscope.common.configuration.ConfigurationException;
@@ -65,11 +66,15 @@ class MeasurementProviderImpl extends UnicastRemoteObject implements Measurement
 		// make local copy.
 		configuration = ConfigurationTools.deepCopy(configuration, MeasurementConfiguration.class);
 		// Initialize measurement
-		Measurement measurement = createMeasurement(configuration.getMeasurementRuntime());
+		Measurement measurement = createMeasurement(configuration.getMaxRuntime());
 		ConstructionContextImpl constructionContext = new ConstructionContextImpl(measurement.getSaver(), callbackProvider);
 		try
 		{
-			measurement.getSaver().setConfiguration(configuration);
+			measurement.getMetadata().setConfiguration(configuration);
+			measurement.setName(configuration.getName());
+			measurement.getMetadata().setDescription(configuration.getDescription());
+			measurement.getMetadata().setMetadataProperties(configuration.getMetadataProperties().toArray(new MetadataProperty[0]));
+			
 			SaveSettings saveSettings;
 			SaveSettingsConfiguration saveSettingsConfiguration = configuration.getSaveSettings();
 			if(saveSettingsConfiguration != null)
@@ -79,7 +84,6 @@ class MeasurementProviderImpl extends UnicastRemoteObject implements Measurement
 			else
 				saveSettings = null;
 			measurement.getSaver().setSaveSettings(saveSettings);
-			measurement.setName(configuration.getName());
 			measurement.setTypeIdentifier(configuration.getTypeIdentifier());
 
 			// Add startup and shutdown device settings

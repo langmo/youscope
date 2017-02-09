@@ -63,7 +63,7 @@ public class StartAndEndSettingsPage extends MeasurementAddonUIPage<MeasurementC
 	@Override
 	public void setToDefault(MeasurementConfiguration configuration)
 	{
-		if ((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS))
+		if ((Boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS))
 		{
 			try
 			{

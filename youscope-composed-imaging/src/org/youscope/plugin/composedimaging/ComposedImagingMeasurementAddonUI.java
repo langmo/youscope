@@ -10,6 +10,7 @@ import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
 import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.GeneralSettingsPage;
+import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.serverinterfaces.YouScopeServer;
@@ -35,8 +36,8 @@ class ComposedImagingMeasurementAddonUI extends MeasurementAddonUIAdapter<Compos
 		String description = "A composed imaging measurement is used to to take pictures in a two dimensional spatial array.</p><p style=\"font-size:small;margin-top:4px;margin-bottom:0px\">The pictures are taken with a given overlap such that they can be composed afterwards.\n\nThis measurement type only takes the images, the stitching has to be done by an appropriate external program.";
 		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/composedimaging/images/composed-imaging.jpg", "Composed Measurement");
 		addPage(new DescriptionPage(null, description, image, null));
-		
 		addPage(new GeneralSettingsPage<ComposedImagingMeasurementConfiguration>(client, ComposedImagingMeasurementConfiguration.class));
+		addPage(new MetadataPage<>(client));
 		addPage(new StartAndEndConfigurationPage(client, server));
 		addPage(new ImagingConfigurationPage(client, server));
 		addPage(new AreaConfigurationPage(client, server));

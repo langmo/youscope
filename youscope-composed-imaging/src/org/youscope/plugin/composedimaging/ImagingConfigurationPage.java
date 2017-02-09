@@ -136,7 +136,7 @@ class ImagingConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMea
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
+			configGroup = (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -172,7 +172,7 @@ class ImagingConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMea
 		configuration.setSaveImages(saveImagesField.isSelected());
 		configuration.setImageSaveName(imageNameField.getText());
 		
-		client.getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
 		return true;
 	}
 

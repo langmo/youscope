@@ -219,7 +219,7 @@ class MeasurementControlManager extends JPanel
 		public MeasurementControlHolder(Measurement measurement) throws RemoteException
 		{
 			control = new MeasurementControl(this, measurement);
-			if((Boolean) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL))
+			if((Boolean) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL))
 			{
 				setToDocked();
 			}

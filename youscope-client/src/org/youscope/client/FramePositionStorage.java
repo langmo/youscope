@@ -287,7 +287,7 @@ class FramePositionStorage
     
     private synchronized void initialize()
     {
-        setStorageType(FramePositionStorageType.getType((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
+        setStorageType(FramePositionStorageType.getType((String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
         loadProperties();
     }
 }

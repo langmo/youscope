@@ -129,19 +129,19 @@ class AttenuationFactorWizard
 			exposureField.setMinimalValue(0);
 			
 			// Load settings
-			if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+			if((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
 			{
-				exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
-				cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
-				channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
-						(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
+				exposureField.setValue(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
+				cameraField.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
+				channelField.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
+						(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
 			}
 			else
 			{
-				exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
-				cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
-				channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
-						(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
+				exposureField.setValue(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
+				cameraField.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
+				channelField.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
+						(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
 			}
 			
 			JLabel label;
@@ -187,7 +187,7 @@ class AttenuationFactorWizard
 		private void loadImage()
 		{
 			JFileChooser fileChooser =
-                    new JFileChooser(client.getProperties().getProperty(LAST_SLIM_IMAGE_PROPERTY, "/"));
+                    new JFileChooser(client.getPropertyProvider().getProperty(LAST_SLIM_IMAGE_PROPERTY, "/"));
             BufferedImage image;
             while(true)
             {
@@ -234,7 +234,7 @@ class AttenuationFactorWizard
 				break;
             }
             
-            client.getProperties().setProperty(LAST_SLIM_IMAGE_PROPERTY, fileChooser
+            client.getPropertyProvider().setProperty(LAST_SLIM_IMAGE_PROPERTY, fileChooser
                     .getCurrentDirectory().getAbsolutePath());
             synchronized(imageLock)
             {

@@ -58,7 +58,7 @@ import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.util.ImageConvertException;
 import org.youscope.common.util.ImageTools;
@@ -1405,17 +1405,16 @@ public class ImagePanel extends JPanel
 		catch(IOException e)
 		{
 			client.sendError("Image " + file.getPath() + " could not be saved.",e);
-			return;
 		}
         finally
         {
+        	imageWriter.dispose();
         	if(ios != null)
         	{
             	try
 				{
             		ios.flush();
 					ios.close();
-					imageWriter.dispose();
 				}
 				catch(@SuppressWarnings("unused") IOException e)
 				{
@@ -1523,7 +1522,7 @@ public class ImagePanel extends JPanel
 	 * Call this function such that the current settings are saved in the YouScope properties, and reloaded the next time started.
 	 * @param properties The properties of YouScope to save settings in.
 	 */
-	public void saveSettings(YouScopeProperties properties) {
+	public void saveSettings(PropertyProvider properties) {
 		boolean autocontrast = isAutoAdjustContrast();
     	properties.setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST, autocontrast);
     	
@@ -1537,11 +1536,11 @@ public class ImagePanel extends JPanel
 	 * Call this function the current settings from the YouScope properties.
 	 * @param properties The properties of YouScope the settings are saved in.
 	 */
-	public void loadSettings(YouScopeProperties properties) {
-		if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
-			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
+	public void loadSettings(PropertyProvider properties) {
+		if((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+			setAutoAdjustContrast((Boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
 		else
-			setAutoAdjustContrast((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST));
+			setAutoAdjustContrast((Boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LAST_AUTO_CONTRAST));
 		
 		histogramPanel.setAutoAdjustmentCutoffPercentages((double)properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_LOWER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE),
 				(double)properties.getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_UPPER_AUTO_ADJUSTMENT_CUTOFF_PERCENTAGE));

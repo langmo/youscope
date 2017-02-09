@@ -257,7 +257,7 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 					if(fluigentDevice == null)
 						sendErrorMessage("No Fluigent device selected", null);
 
-					String lastIdentFile = getClient().getProperties().getProperty(PROPERTY_LAST_IDENTIFICATION_FILE, "");
+					String lastIdentFile = getClient().getPropertyProvider().getProperty(PROPERTY_LAST_IDENTIFICATION_FILE, "");
                     JFileChooser fileChooser = new JFileChooser(lastIdentFile);
                     fileChooser.setSelectedFile(new File(lastIdentFile)); 
                     
@@ -283,7 +283,7 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 					} catch (@SuppressWarnings("unused") IOException e) {
 						path = file.getAbsolutePath();
 					}
-					getClient().getProperties().setProperty(PROPERTY_LAST_IDENTIFICATION_FILE, path);
+					getClient().getPropertyProvider().setProperty(PROPERTY_LAST_IDENTIFICATION_FILE, path);
                     
                     try {
 						fluigentDevice.getProperty("IdentificationFilePath").setValue(path);

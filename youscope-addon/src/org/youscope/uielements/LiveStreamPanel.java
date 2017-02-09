@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrameListener;
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.Measurement;
@@ -85,7 +85,7 @@ public class LiveStreamPanel extends ImagePanel {
 		insertControl("Imaging", channelControl, 0);
 		addControl("Control", startStopControl);
 		
-		loadSettings(client.getProperties());
+		loadSettings(client.getPropertyProvider());
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class LiveStreamPanel extends ImagePanel {
 	
 	
 	@Override
-	public void saveSettings(YouScopeProperties properties)
+	public void saveSettings(PropertyProvider properties)
 	{
 		super.saveSettings(properties);
 		String camera = channelControl.getCamera();
@@ -178,26 +178,26 @@ public class LiveStreamPanel extends ImagePanel {
     	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD, imagingPeriod);
 	}
 	@Override
-	public void loadSettings(YouScopeProperties properties)
+	public void loadSettings(PropertyProvider properties)
 	{
 		super.loadSettings(properties);
-		setAutoStartStream((Boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
+		setAutoStartStream((Boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
 		
-		if((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+		if((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
 		{
-			channelControl.setExposure((double)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
-			channelControl.setImagingPeriod((int)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
-			channelControl.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
-			channelControl.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
-					(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
+			channelControl.setExposure((double)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
+			channelControl.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
+			channelControl.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
+					(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
 		}
 		else
 		{
-			channelControl.setExposure((double)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
-			channelControl.setImagingPeriod((int)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD));
-			channelControl.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
-			channelControl.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
-					(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
+			channelControl.setExposure((double)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD));
+			channelControl.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
+			channelControl.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
+					(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class LiveStreamPanel extends ImagePanel {
 			@Override
 			public void frameClosed() {
 				stopLiveStream();
-				saveSettings(client.getProperties());
+				saveSettings(client.getPropertyProvider());
 				superListener.frameClosed();
 			}
 		};

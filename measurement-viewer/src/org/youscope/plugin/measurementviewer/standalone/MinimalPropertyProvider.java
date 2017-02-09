@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.client;
+package org.youscope.plugin.measurementviewer.standalone;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,15 +16,15 @@ import java.util.Properties;
 import java.util.TreeSet;
 
 import org.youscope.clientinterfaces.StandardProperty;
-
+import org.youscope.clientinterfaces.PropertyProvider;
 
 /**
- * @author langmo
+ * @author Moritz Lang
+ *
  */
-class ConfigurationSettings
+class MinimalPropertyProvider implements PropertyProvider
 {
-    // Property loading and saving
-    protected final static String propertiesFile = "youscope_properties.prop";
+	protected final static String propertiesFile = "youscope_properties.prop";
 
     public static final String SETTINGS_CONFIG_FILE_LAST_0 = "YouScope.configFileLast0";
 
@@ -34,13 +34,16 @@ class ConfigurationSettings
 
     public static final String SETTINGS_CONFIG_FILE_LAST_3 = "YouScope.configFileLast3";
 
-    private volatile Properties properties = new Properties();
+    private Properties properties = new Properties();  
 
-    private static volatile ConfigurationSettings instance = new ConfigurationSettings();
+    private Object ioLock = new Object();
+
+    MinimalPropertyProvider()
+    {
+    	loadProperties();
+    }
     
-    private static Object ioLock = new Object();
-
-    protected Properties loadProperties()
+    private Properties loadProperties()
     {
         synchronized (ioLock)
         {
@@ -53,27 +56,27 @@ class ConfigurationSettings
                 in.close();
             } catch (IOException e)
             {
-                ClientSystem.err.println("Could not load last settings. New settings might be generated.", e);
+                System.err.println("Could not load last settings. New settings might be generated:" + e.getMessage());
             }
         }
         
         return properties;
     }
 
-    static synchronized void deleteProperty(String name)
+    synchronized void deleteProperty(String name)
     {
-        Properties properties = instance.loadProperties();
+        Properties properties = loadProperties();
         if (properties == null || name == null)
             return;
         properties.remove(name);
-        instance.saveProperties();
+        saveProperties();
     }
 
     protected void saveProperties()
     {
         synchronized (ioLock)
         {
-            if (properties == null)
+            if (properties == null) 
                 return;
 
             // Save properties
@@ -99,29 +102,32 @@ class ConfigurationSettings
                 out.close();
             } catch (IOException e)
             {
-                ClientSystem.err.println("Configuration properties could not be saved: " + e.getMessage());
+                System.err.println("Configuration properties could not be saved: " + e.getMessage());
             }
         }
     }
 
-    static synchronized String getProperty(String name, String defaultValue)
+    @Override
+	public synchronized String getProperty(String name, String defaultValue)
     {
-        Properties properties = instance.loadProperties();
+        Properties properties = loadProperties();
         if (properties == null)
             return defaultValue;
         return properties.getProperty(name, defaultValue);
     }
 
-    static synchronized void setProperty(String name, String value)
+    @Override
+	public synchronized void setProperty(String name, String value)
     {
-        Properties properties = instance.loadProperties();
+        Properties properties = loadProperties();
         if (properties == null)
             return;
         properties.setProperty(name, value);
-        instance.saveProperties();
+        saveProperties();
     }
 
-    static int getProperty(String name, int defaultValue)
+    @Override
+	public int getProperty(String name, int defaultValue)
     {
         try
         {
@@ -132,7 +138,8 @@ class ConfigurationSettings
         }
     }
 
-    static double getProperty(String name, double defaultValue)
+    @Override
+	public double getProperty(String name, double defaultValue)
     {
         try
         {
@@ -143,11 +150,13 @@ class ConfigurationSettings
         }
     }
 
-    static boolean getProperty(String name, boolean defaultValue)
+    @Override
+	public boolean getProperty(String name, boolean defaultValue)
     {
         return Boolean.parseBoolean(getProperty(name, Boolean.toString(defaultValue)));
     }
-    static Object getProperty(StandardProperty property)
+    @Override
+	public Object getProperty(StandardProperty property)
     {
     	if(property.isBooleanProperty())
     		return getProperty(property.getPropertyName(), property.getDefaultAsBoolean());
@@ -158,7 +167,8 @@ class ConfigurationSettings
     	else
     		return getProperty(property.getPropertyName(), property.getDefaultAsString());
     }
-    static void setProperty(StandardProperty property, Object value)
+    @Override
+	public void setProperty(StandardProperty property, Object value)
     {
     	if(property.isBooleanProperty())
     	{
@@ -211,7 +221,8 @@ class ConfigurationSettings
     	}
     }
     
-    public static String[] getProperty(String name, String[] defaultValue)
+    @Override
+	public String[] getProperty(String name, String[] defaultValue)
     {
         String list = getProperty(name, (String)null);
         if (list == null || list.length() <=0) {
@@ -230,18 +241,22 @@ class ConfigurationSettings
     }
     
 
-    static void setProperty(String name, int value)
+    @Override
+	public void setProperty(String name, int value)
     {
         setProperty(name, Integer.toString(value));
     }
 
-    static void setProperty(String name, double value)
+    @Override
+	public void setProperty(String name, double value)
     {
         setProperty(name, Double.toString(value));
     }
 
-    static void setProperty(String name, boolean value)
+    @Override
+	public void setProperty(String name, boolean value)
     {
         setProperty(name, Boolean.toString(value));
     }
+   
 }

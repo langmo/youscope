@@ -6,9 +6,9 @@ package org.youscope.clientinterfaces;
 /**
  * Interface through which an addon can save properties as well as access the properties of the YouScope client.
  * 
- * @author langmo
+ * @author Moritz Lang
  */
-public interface YouScopeProperties 
+public interface PropertyProvider 
 {
     /**
      * Returns the property with the given name, or default value if the property is not yet set or set invalidly. Properties are saved permanently,

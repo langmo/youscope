@@ -66,22 +66,22 @@ class CustomizationTabMeasurement extends ManageTabElement
     @Override
     public void initializeContent()
     {
-        cameraStartupField.setSelected((Boolean) ConfigurationSettings.getProperty(
+        cameraStartupField.setSelected((Boolean) PropertyProviderImpl.getInstance().getProperty(
         		StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS));
-        imageTypeField.setSelectedItem(ConfigurationSettings.getProperty(
+        imageTypeField.setSelectedItem(PropertyProviderImpl.getInstance().getProperty(
         		StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE));
-        saveSettingsBox.setSelectedElement(ConfigurationSettings.getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
+        saveSettingsBox.setSelectedElement(PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
         
     }
 
     @Override
     public boolean storeContent()
     {
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, cameraStartupField.isSelected());
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE, saveSettingsBox.getSelectedTypeIdentifier());
+        PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_PREINITIALIZE_CAMERA_SETTINGS, cameraStartupField.isSelected());
+        PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE, saveSettingsBox.getSelectedTypeIdentifier());
         Object selectedItem = imageTypeField.getSelectedItem();
         if(selectedItem != null)
-        	ConfigurationSettings.setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE, selectedItem.toString());
+        	PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_IMAGE_FILE_TYPE, selectedItem.toString());
         return false;
     }
 

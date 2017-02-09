@@ -39,6 +39,12 @@ public interface Measurement extends Component
 	MeasurementState getState() throws RemoteException;
 
 	/**
+	 * Returns the metadata of this measurement.
+	 * @return Metadata of this measurement.
+	 * @throws RemoteException
+	 */
+	MeasurementMetadata getMetadata() throws RemoteException;
+	/**
 	 * Starts the execution of the measurement. Note: If other measurements are already running, the
 	 * measurement gets queued.
 	 * @throws MeasurementException 

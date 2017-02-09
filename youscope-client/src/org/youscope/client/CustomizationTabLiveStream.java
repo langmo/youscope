@@ -82,30 +82,30 @@ class CustomizationTabLiveStream extends ManageTabElement
     @Override
     public void initializeContent()
     {
-    	boolean defaultSettings = (boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS);
+    	boolean defaultSettings = (boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS);
     	defaultField.setSelected(defaultSettings);
     	defaultPanel.setVisible(defaultSettings);
     	
-    	autoStartField.setSelected((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
-    	exposureField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
-		imagingPeriodField.setValue(client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
-		cameraField.setCamera((String) client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
-		channelField.setChannel((String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
-				(String)client.getProperties().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
-		increaseContrastField.setSelected((boolean) client.getProperties().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
+    	autoStartField.setSelected((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART));
+    	exposureField.setValue(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
+		imagingPeriodField.setValue(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
+		cameraField.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
+		channelField.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
+				(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
+		increaseContrastField.setSelected((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST));
     }
 
     @Override
     public boolean storeContent()
     {
-    	client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS, defaultField.isSelected());
-    	client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART, autoStartField.isSelected());
-    	client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE, exposureField.getValue().doubleValue());
-		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD, imagingPeriodField.getValue().intValue());
-		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA, cameraField.getCameraDevice());
-		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP, channelField.getChannelGroup()); 
-		client.getProperties().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL, channelField.getChannel());
-		client.getProperties().setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST, increaseContrastField.isSelected());
+    	client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS, defaultField.isSelected());
+    	client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_AUTOSTART, autoStartField.isSelected());
+    	client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE, exposureField.getValue().doubleValue());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD, imagingPeriodField.getValue().intValue());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA, cameraField.getCameraDevice());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP, channelField.getChannelGroup()); 
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL, channelField.getChannel());
+		client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_IMAGE_PANEL_DEFAULT_AUTO_CONTRAST, increaseContrastField.isSelected());
         return false;
     }
 

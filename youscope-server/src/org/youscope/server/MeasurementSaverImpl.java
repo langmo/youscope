@@ -19,6 +19,7 @@ import org.youscope.addon.ConfigurationManagement;
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
+import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.image.ImageListener;
 import org.youscope.common.measurement.MeasurementConfiguration;
@@ -35,7 +36,7 @@ import org.youscope.common.util.RMIWriter;
 
 /**
  * Class which saves information of a measurement together with the images made to the file system.
- * @author langmo
+ * @author Moritz Lang
  */
 class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSaver
 {
@@ -43,7 +44,6 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	 * Serial Version UID.
 	 */
 	private static final long								serialVersionUID		= 7096169973018880421L;
-	private MeasurementConfiguration						configuration			= null;
 	private volatile boolean								measurementRunning		= false;
 	private SaveSettings							saveSettings			= null;
 	private final MeasurementImpl							measurement;
@@ -338,19 +338,17 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		catch (Exception e1) {
 			ServerSystem.err.println("Could not get information where the image table should be stored.", e1);
 		}
-		if(configuration != null)
-		{
-			try {
-				 scopeSettingsPath = saverInformation.getFullScopeSettingsFilePath();
-			} catch (Exception e1) {
-				ServerSystem.err.println("Could not get information where to store scope settings. Not storing scope settings.", e1);
-			} 
-			try {
-				 measurementConfigurationFilePath = saverInformation.getFullMeasurementConfigurationFilePath();
-			} catch (Exception e1) {
-				ServerSystem.err.println("Could not get information where to store measurement configuration. Not storing measurement configuration.", e1);
-			} 
-		}
+		try {
+			 scopeSettingsPath = saverInformation.getFullScopeSettingsFilePath();
+		} catch (Exception e1) {
+			ServerSystem.err.println("Could not get information where to store scope settings. Not storing scope settings.", e1);
+		} 
+		try {
+			 measurementConfigurationFilePath = saverInformation.getFullMeasurementConfigurationFilePath();
+		} catch (Exception e1) {
+			ServerSystem.err.println("Could not get information where to store measurement configuration. Not storing measurement configuration.", e1);
+		} 
+	
 		try {
 			microscopeConfigurationFilePath = saverInformation.getFullMicroscopeConfigurationFilePath();
 		} catch (Exception e1) {
@@ -372,11 +370,21 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		
 		// Save measurement configuration as XML file.
 		if(scopeSettingsPath != null)
-			XMLMeasurementDescription.saveDescription(configuration, microscope, scopeSettingsPath);
+			XMLMeasurementDescription.saveDescription(measurement, microscope, scopeSettingsPath);
 
 		// Save measurement configuration as loadable file.
 		if(measurementConfigurationFilePath != null)
-			saveMeasurement(configuration, measurementConfigurationFilePath);
+		{
+			MeasurementConfiguration configuration;
+			try {
+				configuration = measurement.getMetadata().getConfiguration();
+			} catch (ConfigurationException| RemoteException e) {
+				configuration = null;
+				ServerSystem.err.println("Cannot get measurement configuration to save it.", e);
+			}
+			if(configuration != null)
+				saveMeasurement(configuration, measurementConfigurationFilePath);
+		}
 
 		// Save current microscope configuration
 		if(microscopeConfigurationFilePath != null)
@@ -551,20 +559,6 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	public SaveSettings getSaveSettings()
 	{
 		return saveSettings;
-	}
-
-	@Override
-	public MeasurementConfiguration getConfiguration()
-	{
-		return configuration;
-	}
-
-	@Override
-	public void setConfiguration(MeasurementConfiguration configuration) throws ComponentRunningException
-	{
-		if(measurementRunning)
-			throw new ComponentRunningException();
-		this.configuration = configuration;
 	}
 
 	@Override

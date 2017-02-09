@@ -396,7 +396,7 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		loadConfigGroupNames();
 		String configGroup = configuration.getChannelGroup();
 		if(configGroup == null || configGroup.length() < 1)
-			configGroup = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
+			configGroup = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP);
 		for(int i = 0; i < configGroupField.getItemCount(); i++)
 		{
 			if(configGroup.compareTo(configGroupField.getItemAt(i).toString()) == 0)
@@ -593,9 +593,9 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 	public void initializeConfiguration()
 	{
 		ComposedImagingJobConfiguration configuration = getConfiguration();
-		double overlap = getClient().getProperties().getProperty(PROPERTY_OVERLAP, configuration.getOverlap());
-		int nx = getClient().getProperties().getProperty(PROPERTY_NX, configuration.getNx());
-		int ny = getClient().getProperties().getProperty(PROPERTY_NY, configuration.getNy());
+		double overlap = getClient().getPropertyProvider().getProperty(PROPERTY_OVERLAP, configuration.getOverlap());
+		int nx = getClient().getPropertyProvider().getProperty(PROPERTY_NX, configuration.getNx());
+		int ny = getClient().getPropertyProvider().getProperty(PROPERTY_NY, configuration.getNy());
 		
 		// Get current values for parameters where the user expects that they correspond to the current microscope settings.
 		String cameraName = null;
@@ -680,10 +680,10 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		else
 			configuration.setCameraDevice(null);
 
-		getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
-		getClient().getProperties().setProperty(PROPERTY_OVERLAP, overlap);
-		getClient().getProperties().setProperty(PROPERTY_NX, nx);
-		getClient().getProperties().setProperty(PROPERTY_NY, ny);
+		getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_CHANNEL_GROUP, configGroupField.getSelectedItem());
+		getClient().getPropertyProvider().setProperty(PROPERTY_OVERLAP, overlap);
+		getClient().getPropertyProvider().setProperty(PROPERTY_NX, nx);
+		getClient().getPropertyProvider().setProperty(PROPERTY_NY, ny);
 		
 	}
 

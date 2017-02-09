@@ -28,6 +28,7 @@ import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
+import org.youscope.common.measurement.MeasurementMetadata;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
@@ -62,6 +63,8 @@ class MeasurementImpl implements TaskExecutor
 	private final ArrayList<MessageListener> messageWriters = new ArrayList<MessageListener>();
 	
 	private final UUID uniqueIdentifier = UUID.randomUUID();
+	
+	private final MeasurementMetadataImpl metadata;
 	
 	/*
 	 * Tasks are first submitted into the scheduledTasksQueue. When they are due, they are moved into the 
@@ -330,18 +333,21 @@ class MeasurementImpl implements TaskExecutor
 	
 	/**
 	 * Measurement with infinite runtime.
+	 * @throws RemoteException 
 	 */
-	MeasurementImpl()
+	MeasurementImpl() throws RemoteException
 	{
 		this(-1);
 	}
 	/**
 	 * Measurement which stops after a certain runtime. Set runtime to negative values for infinite runtime.
 	 * @param measurementRuntime time, in ms, after which measurement should stop.
+	 * @throws RemoteException 
 	 */
-	MeasurementImpl(int measurementRuntime)
+	MeasurementImpl(int measurementRuntime) throws RemoteException
 	{
 		this.maxRuntime = measurementRuntime;
+		metadata = new MeasurementMetadataImpl();
 	}
 	MeasurementContext getMeasurementContext()
     {
@@ -1136,5 +1142,9 @@ class MeasurementImpl implements TaskExecutor
 
 	public long getPauseDuration() {
 		return pauseDuration;
+	}
+
+	public MeasurementMetadata getMetadata() {
+		return metadata;
 	}
 }

@@ -19,7 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.MetadataProperty;
 import org.youscope.common.microscope.Channel;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceSetting;
@@ -34,6 +34,14 @@ import org.youscope.common.microscope.SettingException;
 class XMLMeasurementDescription
 {
 	public static final String	ROOT_NAME					= "measurement";
+	
+	public static final String	INFORMATION					= "information";
+	
+	public static final String	MEASUREMENT_NAME			= "name";
+	
+	public static final String	MEASUREMENT_DESCRIPTION		= "description";
+	
+	public static final String	METADATA			= "metadata";
 
 	public static final String	SCOPE_SETTINGS				= "scope-settings";
 
@@ -53,34 +61,6 @@ class XMLMeasurementDescription
 
 	public static final String	ATTR_CONFIG_GROUP_NAME		= "name";
 
-	public static final String	IMAGING						= "imaging";
-
-	public static final String	IMAGES						= "images";
-
-	public static final String	IMAGE						= "image";
-
-	public static final String	IMAGING_PERIOD				= "imaging-period";
-
-	public static final String	ATTR_PERIOD_PERIOD			= "period";
-
-	public static final String	ATTR_PERIOD_UNIT			= "unit";
-
-	public static final String	ATTR_CHANNEL				= "channel";
-
-	public static final String	ATTR_EXPOSURE				= "exposure";
-
-	public static final String	ATTR_EXPOSURE_UNIT			= "exposure-unit";
-
-	public static final String	ATTR_PERIOD_TYPE			= "type";
-
-	public static final String	ATTRVAL_PERIOD_BURST		= "burst";
-
-	public static final String	ATTRVAL_PERIOD_TIME_LAPS	= "time-laps";
-
-	public static final String	ATTRVAL_PERIOD_UNKNOWN		= "unknown";
-
-	public static final String	ATTRVAL_MS					= "ms";
-
 	public static final String	ATTR_DEVICE					= "device";
 
 	public static final String	ATTR_PROPERTY				= "property";
@@ -89,7 +69,7 @@ class XMLMeasurementDescription
 
 	/**
 	 * Creates description for measurement.
-	 * @param measurementConfiguration
+	 * @param measurement 
 	 * @param microscope
 	 * @return XML document containing description.
 	 * @throws ParserConfigurationException
@@ -99,7 +79,7 @@ class XMLMeasurementDescription
 	 * @throws InterruptedException
 	 * @throws SettingException
 	 */
-	public static Document createDescription(MeasurementConfiguration measurementConfiguration, Microscope microscope) throws ParserConfigurationException, RemoteException, DOMException, MicroscopeException, InterruptedException, SettingException
+	public static Document createDescription(MeasurementImpl measurement, Microscope microscope) throws ParserConfigurationException, RemoteException, DOMException, MicroscopeException, InterruptedException, SettingException
 	{
 		// Create new XML Document
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -110,6 +90,23 @@ class XMLMeasurementDescription
 		Element rootElement = document.createElement(ROOT_NAME);
 		document.appendChild(rootElement);
 
+		// write metadata
+		Element informationElement = document.createElement(INFORMATION);
+		rootElement.appendChild(informationElement);
+		Element nameElement = document.createElement(MEASUREMENT_NAME);
+		informationElement.appendChild(nameElement);
+		nameElement.setAttribute(ATTR_VALUE, measurement.getName());
+		Element descriptionElement = document.createElement(MEASUREMENT_DESCRIPTION);
+		informationElement.appendChild(descriptionElement);
+		descriptionElement.setTextContent(measurement.getMetadata().getDescription());
+		for(MetadataProperty metadataProperty : measurement.getMetadata().getMetadataProperties())
+		{
+			Element metadataElement = document.createElement(METADATA);
+			metadataElement.setAttribute(ATTR_PROPERTY, metadataProperty.getName());
+			metadataElement.setAttribute(ATTR_VALUE, metadataProperty.getValue());
+			informationElement.appendChild(metadataElement);
+		}
+		
 		// Write scope settings
 		Element scopeSettingsElement = document.createElement(SCOPE_SETTINGS);
 		rootElement.appendChild(scopeSettingsElement);
@@ -165,12 +162,6 @@ class XMLMeasurementDescription
 			}
 		}
 
-		// Write measurement
-		Element imagingElement = document.createElement(IMAGING);
-		rootElement.appendChild(imagingElement);
-		Element imagesElement = document.createElement(IMAGES);
-		imagingElement.appendChild(imagesElement);
-
 		return document;
 	}
 
@@ -203,12 +194,12 @@ class XMLMeasurementDescription
 		
 	}
 
-	public static boolean saveDescription(MeasurementConfiguration microtiterConfiguration, Microscope microscope, String file)
+	public static boolean saveDescription(MeasurementImpl measurement, Microscope microscope, String file)
 	{
 		Document document;
 		try
 		{
-			document = createDescription(microtiterConfiguration, microscope);
+			document = createDescription(measurement, microscope);
 			writeDocumentToFile(document, file);
 		}
 		catch(Exception e)

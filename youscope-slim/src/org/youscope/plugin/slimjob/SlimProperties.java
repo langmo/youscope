@@ -25,7 +25,7 @@ public class SlimProperties
 	 */
 	public double getAttenuationFactor()
 	{
-		return client.getProperties().getProperty(ATTENUATION_FACTOR_PROPERTY, 1.0);
+		return client.getPropertyProvider().getProperty(ATTENUATION_FACTOR_PROPERTY, 1.0);
 	}
 	/**
 	 * Sets the attenuation factor.
@@ -33,6 +33,6 @@ public class SlimProperties
 	 */
 	public void setAttenuationFactor(double attenuationFactor)
 	{
-		client.getProperties().setProperty(ATTENUATION_FACTOR_PROPERTY, attenuationFactor);
+		client.getPropertyProvider().setProperty(ATTENUATION_FACTOR_PROPERTY, attenuationFactor);
 	}
 }

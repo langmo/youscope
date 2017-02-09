@@ -165,7 +165,7 @@ class ConfigFileChooserFrame
 		private final static String	EMPTY_CONFIGURATION	= "Empty Configuration";
 		private final static String	DEFINE_LOCATION		= "<Define location>";
 
-		private final String[]		settingsList		= {ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_0, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_1, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_2, ConfigurationSettings.SETTINGS_CONFIG_FILE_LAST_3
+		private final String[]		settingsList		= {PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_0, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_1, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_2, PropertyProviderImpl.SETTINGS_CONFIG_FILE_LAST_3
 
 														};
 
@@ -177,7 +177,7 @@ class ConfigFileChooserFrame
 
 			for(String setting : settingsList)
 			{
-				String conf = ConfigurationSettings.getProperty(setting, (String)null);
+				String conf = PropertyProviderImpl.getInstance().getProperty(setting, (String)null);
 				if(conf != null)
 				{
 					File file = new File(conf);
@@ -209,18 +209,19 @@ class ConfigFileChooserFrame
 			if(value == null)
 				return;
 			// Remove item from list if its already in.
+			PropertyProviderImpl settings = PropertyProviderImpl.getInstance();
 			for(int i = 0; i < settingsList.length; i++)
 			{
-				if(value.equals(ConfigurationSettings.getProperty(settingsList[i], (String)null)))
+				if(value.equals(settings.getProperty(settingsList[i], (String)null)))
 				{
-					ConfigurationSettings.deleteProperty(settingsList[i]);
+					settings.deleteProperty(settingsList[i]);
 				}
 			}
 			// Insert item in list at first position, move everything downwards.
 			for(int i = 0; i < settingsList.length; i++)
 			{
-				String tempItem = ConfigurationSettings.getProperty(settingsList[i], (String)null);
-				ConfigurationSettings.setProperty(settingsList[i], value);
+				String tempItem = settings.getProperty(settingsList[i], (String)null);
+				settings.setProperty(settingsList[i], value);
 				if(tempItem == null)
 					break;
 				value = tempItem;

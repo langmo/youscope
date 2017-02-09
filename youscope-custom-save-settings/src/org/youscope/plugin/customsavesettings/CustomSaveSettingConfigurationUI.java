@@ -67,7 +67,7 @@ class CustomSaveSettingConfigurationUI extends ComponentAddonUIAdapter<CustomSav
 			String folderName = configuration.getBaseFolder();
 			if(folderName == null)
 			{
-				folderName = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+				folderName = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
 			}
 			folderField.setText(folderName==null ? "" : folderName);
 			elementsPanel.add(new JLabel("Measurement Base Folder:"));
@@ -105,7 +105,7 @@ class CustomSaveSettingConfigurationUI extends ComponentAddonUIAdapter<CustomSav
 		if(type.getBaseFolder() == null)
 		{
 			configuration.setBaseFolder(folderField.getText());
-			getClient().getProperties().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folderField.getText());
+			getClient().getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER, folderField.getText());
 		}
 		else
 			configuration.setBaseFolder(null);
@@ -117,7 +117,7 @@ class CustomSaveSettingConfigurationUI extends ComponentAddonUIAdapter<CustomSav
 	{
 		if(type.getBaseFolder() == null)
 		{
-			String lastFolder = (String) getClient().getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+			String lastFolder = (String) getClient().getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
 			configuration.setBaseFolder(lastFolder == null ? "" : lastFolder);
 		}
 		configuration.setCustomSaveSettingTypeName(type.getSaveSettingName());

@@ -435,9 +435,9 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		else
 			configuration.setCameraDevice(null);
 		
-		client.getProperties().setProperty(PROPERTY_OVERLAP, overlap);
-		client.getProperties().setProperty(PROPERTY_NX, nx);
-		client.getProperties().setProperty(PROPERTY_NY, ny);
+		client.getPropertyProvider().setProperty(PROPERTY_OVERLAP, overlap);
+		client.getPropertyProvider().setProperty(PROPERTY_NX, nx);
+		client.getPropertyProvider().setProperty(PROPERTY_NY, ny);
 		return true;
 	}
 
@@ -445,9 +445,9 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 	public void setToDefault(ComposedImagingMeasurementConfiguration configuration)
 	{
 		// Get last values for parameters where the user expects that they are the same as last time.
-		double overlap = client.getProperties().getProperty(PROPERTY_OVERLAP, configuration.getOverlap());
-		int nx = client.getProperties().getProperty(PROPERTY_NX, configuration.getNx());
-		int ny = client.getProperties().getProperty(PROPERTY_NY, configuration.getNy());
+		double overlap = client.getPropertyProvider().getProperty(PROPERTY_OVERLAP, configuration.getOverlap());
+		int nx = client.getPropertyProvider().getProperty(PROPERTY_NX, configuration.getNx());
+		int ny = client.getPropertyProvider().getProperty(PROPERTY_NY, configuration.getNy());
 		
 		// Get current values for parameters where the user expects that they correspond to the current microscope settings.
 		String cameraName = null;

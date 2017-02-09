@@ -88,7 +88,7 @@ class AlgorithmConfigurationPanel extends JPanel
                 @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                	String lastProtocol = client.getProperties().getProperty(PROPERTY_LAST_FILE_, "");
+                	String lastProtocol = client.getPropertyProvider().getProperty(PROPERTY_LAST_FILE_, "");
                     JFileChooser fileChooser = new JFileChooser(lastProtocol);
                     fileChooser.setSelectedFile(new File(lastProtocol)); 
                     
@@ -109,7 +109,7 @@ class AlgorithmConfigurationPanel extends JPanel
                     		break;
                     }
                     
-                    client.getProperties().setProperty(PROPERTY_LAST_FILE_, file.toString());
+                    client.getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                     
                     BufferedReader reader = null;
                     String protocol = "";
@@ -156,7 +156,7 @@ class AlgorithmConfigurationPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent arg0)
             {
-            	String lastProtocol = client.getProperties().getProperty(PROPERTY_LAST_FILE_, "");
+            	String lastProtocol = client.getPropertyProvider().getProperty(PROPERTY_LAST_FILE_, "");
                 JFileChooser fileChooser = new JFileChooser(lastProtocol);
                 fileChooser.setSelectedFile(new File(lastProtocol)); 
                                    
@@ -179,7 +179,7 @@ class AlgorithmConfigurationPanel extends JPanel
                 		break;
                 }
                 
-                client.getProperties().setProperty(PROPERTY_LAST_FILE_, file.toString());
+                client.getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                 
                 String text = controllerScript.getText();
         		try

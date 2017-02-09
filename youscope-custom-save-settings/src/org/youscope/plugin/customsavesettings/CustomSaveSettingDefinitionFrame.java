@@ -237,7 +237,7 @@ class CustomSaveSettingDefinitionFrame
 		String folderName = customSaveSettingType.getBaseFolder();
 		if(folderName == null)
 		{
-			folderName = (String) client.getProperties().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
+			folderName = (String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_LAST_MEASUREMENT_SAVE_FOLDER);
 			baseFolderByUser.doClick();
 		}
 		else

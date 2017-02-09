@@ -1,15 +1,16 @@
 package org.youscope.plugin.measurementviewer.standalone;
 
 import org.youscope.clientinterfaces.ClientAddonProvider;
+import org.youscope.clientinterfaces.MetadataDefinitionProvider;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
-import org.youscope.clientinterfaces.YouScopeProperties;
+import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.MeasurementConfiguration;
 
 class MinimalClientImpl implements YouScopeClient { 
 
-	private final MinimalPropertiesImpl properties = new MinimalPropertiesImpl();
+	private final MinimalPropertyProvider properties = new MinimalPropertyProvider();
 	
 	void close()
 	{
@@ -17,7 +18,7 @@ class MinimalClientImpl implements YouScopeClient {
 	}
  
 	@Override
-	public YouScopeProperties getProperties() {
+	public PropertyProvider getPropertyProvider() {
 		return properties;
 	}
 
@@ -70,6 +71,11 @@ class MinimalClientImpl implements YouScopeClient {
 	@Override
 	public ClientAddonProvider getAddonProvider() {
 		return null;
+	}
+
+	@Override
+	public MetadataDefinitionProvider getMeasurementMetadataProvider() {
+		return new MinimalMeasurementMetadataProvider();
 	}
 
 }

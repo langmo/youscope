@@ -40,17 +40,17 @@ class CustomizationTabAppearance extends ManageTabElement
     @Override
     public void initializeContent()
     {
-        dockingField.setSelectedIndex((Boolean) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL) ? 0 : 1);
-        frameField.setSelectedItem(FramePositionStorageType.getType((String) ConfigurationSettings.getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
+        dockingField.setSelectedIndex((Boolean) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL) ? 0 : 1);
+        frameField.setSelectedItem(FramePositionStorageType.getType((String) PropertyProviderImpl.getInstance().getProperty(StandardProperty.PROPERTY_POSITION_STORAGE)));
     }
 
     @Override
     public boolean storeContent()
     {
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL, dockingField.getSelectedIndex() == 0);
+        PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_DOCK_MEASUREMENT_CONTROL, dockingField.getSelectedIndex() == 0);
         FramePositionStorageType storageType = (FramePositionStorageType)frameField.getSelectedItem();
         FramePositionStorage.getInstance().setStorageType(storageType);
-        ConfigurationSettings.setProperty(StandardProperty.PROPERTY_POSITION_STORAGE, storageType.getIdentifier());
+        PropertyProviderImpl.getInstance().setProperty(StandardProperty.PROPERTY_POSITION_STORAGE, storageType.getIdentifier());
         return false;
     }
 

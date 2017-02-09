@@ -9,7 +9,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
@@ -37,8 +36,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	private final JLabel					fixedPeriodLabel		= new JLabel("Fixed period length:");
 
 	private final JLabel					fixedWellTimeLabel		= new JLabel("Fixed Runtime per Well:");
-
-	private JTextField						nameField				= new JTextField("unnamed");
 
 	private JRadioButton					stopByUser				= new JRadioButton("When stopped manually.", false);
 
@@ -80,13 +77,12 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 	@Override
 	public void loadData(MicroplateMeasurementConfiguration configuration)
 	{
-		nameField.setText(configuration.getName());
-		if(configuration.getMeasurementRuntime() >= 0)
-			runtimeField.setDuration(configuration.getMeasurementRuntime());
+		if(configuration.getMaxRuntime() >= 0)
+			runtimeField.setDuration(configuration.getMaxRuntime());
 		else
 			runtimeField.setDuration(60*60*1000);
 		if(configuration.getSaveSettings() == null)
-			saveSettingPanel.setConfiguration(client.getProperties().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
+			saveSettingPanel.setConfiguration(client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_MEASUREMENT_STANDARD_SAVE_SETTINGS_TYPE).toString());
 		else
 			saveSettingPanel.setConfiguration(configuration.getSaveSettings());
 		
@@ -126,7 +122,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 			wellTimeFixed.doClick();
 		}
 		
-		if(configuration.getMeasurementRuntime() >= 0)
+		if(configuration.getMaxRuntime() >= 0)
 		{
 			stopByRuntime.doClick();
 		}
@@ -168,11 +164,10 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 			configuration.setTimePerWell(-1);
 		else
 			configuration.setTimePerWell(wellTimeField.getDuration());
-		configuration.setName(nameField.getText());
 		if(stopByRuntime.isSelected())
-			configuration.setMeasurementRuntime(runtimeField.getDuration());
+			configuration.setMaxRuntime(runtimeField.getDuration());
 		else
-			configuration.setMeasurementRuntime(-1);
+			configuration.setMaxRuntime(-1);
 		if(stopByExecutions.isSelected())
 			configuration.getPeriod().setNumExecutions(((Number)numExecutionsField.getValue()).intValue());
 		else
@@ -205,9 +200,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<MicroplateMeasurementCo
 		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
 		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
 		
-		StandardFormats.addGridBagElement(new JLabel("Name:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(nameField, layout, newLineConstr, this);
-
 		StandardFormats.addGridBagElement(new JLabel("Measurement finishes:"), layout, newLineConstr, this);
 		ButtonGroup stopConditionGroup = new ButtonGroup();
 		stopConditionGroup.add(stopByUser);
