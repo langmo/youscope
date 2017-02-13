@@ -7,7 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  */
 public interface YouScopeLogin extends Remote
 {

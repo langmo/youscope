@@ -1,7 +1,7 @@
 package org.youscope.plugin.measurementviewer.standalone;
 
 import org.youscope.clientinterfaces.ClientAddonProvider;
-import org.youscope.clientinterfaces.MetadataDefinitionProvider;
+import org.youscope.clientinterfaces.MetadataDefinitionManager;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.PropertyProvider;
@@ -74,7 +74,7 @@ class MinimalClientImpl implements YouScopeClient {
 	}
 
 	@Override
-	public MetadataDefinitionProvider getMeasurementMetadataProvider() {
+	public MetadataDefinitionManager getMeasurementMetadataProvider() {
 		return new MinimalMeasurementMetadataProvider();
 	}
 

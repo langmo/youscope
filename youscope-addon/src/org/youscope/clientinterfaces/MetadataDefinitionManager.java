@@ -7,7 +7,7 @@ import java.util.Collection;
  * 
  * @author Moritz Lang
  */
-public interface MetadataDefinitionProvider extends Iterable<MetadataDefinition>
+public interface MetadataDefinitionManager extends Iterable<MetadataDefinition>
 {
 	/**
 	 * Returns true if user is allowed to define custom properties not defined in {@link #getMetadataDefinitions()}.
@@ -50,19 +50,15 @@ public interface MetadataDefinitionProvider extends Iterable<MetadataDefinition>
 	/**
 	 * Adds the property to the list of defined properties. If a property with the same name is already present, it overwrites this property.
 	 * @param property property to add.
+	 * @throws YouScopeClientException 
 	 */
-	void setMetadataDefinition(MetadataDefinition property);
-	
-	/**
-	 * Adds the properties to the list of defined properties. If a property with the same name as one property in the list is already present, it overwrites this property.
-	 * @param properties properties to add.
-	 */
-	void setMetadataDefinitions(Collection<MetadataDefinition> properties);
+	void setMetadataDefinition(MetadataDefinition property) throws YouScopeClientException;
 	
 	/**
 	 * Deletes the property with the given name. Does nothing if no property with the given name is defined.
 	 * @param name Name of the property to be deleted.
 	 * @return true if property was deleted, false if property with the given name was not defined.
+	 * @throws YouScopeClientException 
 	 */
-	boolean deleteMetadataDefinition(String name);
+	boolean deleteMetadataDefinition(String name) throws YouScopeClientException;
 }

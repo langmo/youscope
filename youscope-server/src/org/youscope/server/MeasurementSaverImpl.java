@@ -15,6 +15,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
 import org.youscope.addon.ConfigurationManagement;
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.MeasurementContext;
@@ -200,11 +204,17 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 				return null;
 			return baseFolder + File.separator + saveSettings.getMicroscopeConfigurationFilePath(saveInformation);
 		}
-		public String getFullScopeSettingsFilePath() throws ResourceException, RemoteException
+		public String getFullXMLInformationFilePath() throws ResourceException, RemoteException
 		{
 			if(!isReady())
 				return null;
-			return baseFolder + File.separator + saveSettings.getScopeSettingsFilePath(saveInformation);
+			return baseFolder + File.separator + saveSettings.getXMLInformationFilePath(saveInformation);
+		}
+		public String getFullHTMLInformationFilePath() throws ResourceException, RemoteException
+		{
+			if(!isReady())
+				return null;
+			return baseFolder + File.separator + saveSettings.getHTMLInformationFilePath(saveInformation);
 		}
 	}
 	private final SaverInformation saverInformation;
@@ -319,7 +329,8 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		}
 		
 		String measurementBaseFolder = null;
-		String scopeSettingsPath = null;
+		String xmlInformationFilePath = null;
+		String htmlInformationFilePath = null;
 		String measurementConfigurationFilePath = null;
 		String microscopeConfigurationFilePath = null;
 		String logOutFilePath = null;
@@ -339,10 +350,15 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			ServerSystem.err.println("Could not get information where the image table should be stored.", e1);
 		}
 		try {
-			 scopeSettingsPath = saverInformation.getFullScopeSettingsFilePath();
+			xmlInformationFilePath = saverInformation.getFullXMLInformationFilePath();
 		} catch (Exception e1) {
-			ServerSystem.err.println("Could not get information where to store scope settings. Not storing scope settings.", e1);
-		} 
+			ServerSystem.err.println("Could not get information where to store measurement metadata, channels, and initial scope settings as XML. Not storing information.", e1);
+		}
+		try {
+			htmlInformationFilePath = saverInformation.getFullHTMLInformationFilePath();
+		} catch (Exception e1) {
+			ServerSystem.err.println("Could not get information where to store measurement metadata, channels, and initial scope settings as HTML. Not storing information.", e1);
+		}
 		try {
 			 measurementConfigurationFilePath = saverInformation.getFullMeasurementConfigurationFilePath();
 		} catch (Exception e1) {
@@ -369,8 +385,25 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 
 		
 		// Save measurement configuration as XML file.
-		if(scopeSettingsPath != null)
-			XMLMeasurementDescription.saveDescription(measurement, microscope, scopeSettingsPath);
+		if(xmlInformationFilePath != null)
+		{
+			InformationSaver informationSaver = new InformationSaver();
+			try {
+				informationSaver.saveXMLInformation(measurement, microscope, xmlInformationFilePath);
+			} catch (IOException e) {
+				ServerSystem.err.println("Could not save information about measurement to "+xmlInformationFilePath+".", e);
+				informationSaver = null;
+			}
+			if(informationSaver != null && htmlInformationFilePath != null)
+			{
+				try {
+					informationSaver.saveHTMLInformation(xmlInformationFilePath, htmlInformationFilePath);
+				} catch (IOException | SAXException | TransformerException | ParserConfigurationException e) {
+					ServerSystem.err.println("Could not save information about measurement to "+htmlInformationFilePath+".", e);
+					informationSaver = null;
+				}
+			}
+		}
 
 		// Save measurement configuration as loadable file.
 		if(measurementConfigurationFilePath != null)
@@ -378,9 +411,9 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			MeasurementConfiguration configuration;
 			try {
 				configuration = measurement.getMetadata().getConfiguration();
-			} catch (ConfigurationException| RemoteException e) {
+			} catch (ConfigurationException e) {
 				configuration = null;
-				ServerSystem.err.println("Cannot get measurement configuration to save it.", e);
+				ServerSystem.err.println("Cannot get measurement configuration to save it to "+measurementConfigurationFilePath+".", e);
 			}
 			if(configuration != null)
 				saveMeasurement(configuration, measurementConfigurationFilePath);

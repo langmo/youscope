@@ -1,6 +1,7 @@
 package org.youscope.addon.measurement.pages;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -80,7 +81,10 @@ public class MetadataPage<T extends MeasurementConfiguration> extends Measuremen
 		mainPanel.add(new JLabel("Metadata:"));
 		mainPanel.add(metadataPanel);
 		mainPanel.add(new JLabel("Description:"));
-		mainPanel.addFill(new JScrollPane(descriptionField));
+		JScrollPane descriptionScrollPane = new JScrollPane(descriptionField);
+		descriptionScrollPane.setPreferredSize(new Dimension(600, 200));
+		descriptionScrollPane.setMinimumSize(new Dimension(100, 75));
+		mainPanel.addFill(descriptionScrollPane);
 		setLayout(new BorderLayout());
 		add(mainPanel, BorderLayout.CENTER);
 		setBorder(new TitledBorder("Measurement Metadata"));

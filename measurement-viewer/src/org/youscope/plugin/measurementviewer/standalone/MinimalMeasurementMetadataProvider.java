@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.youscope.clientinterfaces.MetadataDefinition;
-import org.youscope.clientinterfaces.MetadataDefinitionProvider;
+import org.youscope.clientinterfaces.MetadataDefinitionManager;
+import org.youscope.clientinterfaces.YouScopeClientException;
 
-class MinimalMeasurementMetadataProvider implements MetadataDefinitionProvider
+class MinimalMeasurementMetadataProvider implements MetadataDefinitionManager
 {
 
 	@Override
@@ -36,13 +37,9 @@ class MinimalMeasurementMetadataProvider implements MetadataDefinitionProvider
 	}
 
 	@Override
-	public void setMetadataDefinition(MetadataDefinition property) {
-		// do nothing.
-	}
-
-	@Override
-	public void setMetadataDefinitions(Collection<MetadataDefinition> properties) {
-		// do nothing.
+	public void setMetadataDefinition(MetadataDefinition property) throws YouScopeClientException
+	{
+		throw new YouScopeClientException("Operation not supported.");
 	}
 
 	@Override

@@ -96,26 +96,6 @@ public class CustomSaveSettingType implements Configuration
 		this.baseFolderExtension = baseFolderExtension;
 	}
     
-    
-    private String scopeSettingsFilePath = "scope_settings.xml";
-    /**
-     * Path of the XML file (with extension) where the scope and channel settings are saved into. Typically "scope_settings.xml".
-     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
-     * @return Scope settings file path
-     */
-	public String getScopeSettingsFilePath() {
-		return scopeSettingsFilePath;
-	}
-	/**
-     * Path of the XML file (with extension) where the scope and channel settings are saved into. Typically "scope_settings.xml".
-     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
-	 * @param scopeSettingsFilePath Scope settings file path
-     */
-	public void setScopeSettingsFilePath(String scopeSettingsFilePath) 
-	{
-		this.scopeSettingsFilePath = scopeSettingsFilePath;
-	}
-
 	private String measurementConfigurationFilePath = "configuration.csb"; 
 	/**
      * Path of the file (with extension) where the measurement configuration should be saved into. Typically "configuration.csb". Note: by
@@ -276,5 +256,44 @@ public class CustomSaveSettingType implements Configuration
      */
 	public void setImageExtension(String imageExtension) {
 		this.imageExtension = imageExtension;
+	}
+
+	private String xmlInformationFilePath = "information.xml";
+	/**
+     * Path of the XML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.xml".
+     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
+     * @return Measurement XML information file path
+     */
+	public String getXMLInformationFilePath() {
+		return xmlInformationFilePath;
+	}
+	
+	/**
+     * Path of the XML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.xml".
+     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
+	 * @param xmlInformationFilePath Measurement XML information file path
+     */
+	public void setXMLInformationFilePath(String xmlInformationFilePath) 
+	{
+		this.xmlInformationFilePath = xmlInformationFilePath;
+	}
+
+	private String htmlInformationFilePath = "information.html";
+	/**
+     * Path of the HTML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.html".
+     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
+     * @return Measurement HTML information file path
+     */
+	public String getHTMLInformationFilePath() {
+		return htmlInformationFilePath;
+	}
+	/**
+     * Path of the HTML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.html".
+     * The path is relative to {@link #getBaseFolder()}/{@link #getBaseFolderExtension()}.
+	 * @param htmlInformationFilePath Measurement HTML information file path
+     */
+	public void setHTMLInformationFilePath(String htmlInformationFilePath) 
+	{
+		this.htmlInformationFilePath = htmlInformationFilePath;
 	}
 }

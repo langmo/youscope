@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  * @author Moritz Lang
  * 
  */
-public interface Callback extends Remote
+public interface Callback extends Remote  
 {
 	/**
 	 * Checks the connection to the callback. The implementation should be empty, i.e. return immediately without any action.

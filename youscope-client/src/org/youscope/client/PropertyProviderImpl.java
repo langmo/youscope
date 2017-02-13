@@ -6,10 +6,6 @@ package org.youscope.client;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.Properties;
 
 import org.youscope.clientinterfaces.PropertyProvider;
@@ -61,8 +57,7 @@ class PropertyProviderImpl implements PropertyProvider
         	if(initialized)
         		return properties;
             // Get saved properties
-        	
-            try(Reader in = new InputStreamReader(new FileInputStream(PROPERTIES_FILE), "UTF-8");)
+        	try(FileInputStream in = new FileInputStream(PROPERTIES_FILE))
             {
                 properties.load(in);
             } 
@@ -89,8 +84,7 @@ class PropertyProviderImpl implements PropertyProvider
         synchronized (ioLock)
         {
             // Save properties
-            
-            try(Writer out = new OutputStreamWriter(new FileOutputStream(PROPERTIES_FILE), "UTF-8");)
+            try(FileOutputStream out = new FileOutputStream(PROPERTIES_FILE))
             {
                 properties.store(out, "YouScope Settings");
             } 

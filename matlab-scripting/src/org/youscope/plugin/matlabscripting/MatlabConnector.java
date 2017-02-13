@@ -73,7 +73,7 @@ public class MatlabConnector
      * @throws MatlabConnectionException
      */
     public static void connectFromMatlab(String bindValue) throws MatlabConnectionException
-    {
+    { 
         /*
          * if(System.getSecurityManager() == null) { // If not security manager is installed,
          * install one for RMI remote class loading which is allowing everything. // It is necessary

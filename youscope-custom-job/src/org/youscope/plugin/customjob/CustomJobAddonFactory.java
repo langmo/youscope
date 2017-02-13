@@ -23,7 +23,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
  */
 public class CustomJobAddonFactory implements ComponentAddonFactory
 {
-	@Override
+	@Override 
 	public ComponentAddonUI<?> createComponentUI(String typeIdentifier, YouScopeClient client,
 			YouScopeServer server) throws AddonException 
 	{

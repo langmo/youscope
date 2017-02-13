@@ -25,7 +25,7 @@ public interface YouScopeClient
 	 * Returns an interface through which an addon can querry and set default and mandatory metadata for measurements
 	 * @return Interface to get and set measurement metadata.
 	 */
-	MetadataDefinitionProvider getMeasurementMetadataProvider();
+	MetadataDefinitionManager getMeasurementMetadataProvider();
 	/**
 	 * Creates a new content window. The content window is usually
 	 * either a frame or an internal frame (default).  

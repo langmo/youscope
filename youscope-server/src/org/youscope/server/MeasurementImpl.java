@@ -28,7 +28,6 @@ import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.measurement.MeasurementException;
 import org.youscope.common.measurement.MeasurementListener;
-import org.youscope.common.measurement.MeasurementMetadata;
 import org.youscope.common.measurement.MeasurementState;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
@@ -1144,7 +1143,7 @@ class MeasurementImpl implements TaskExecutor
 		return pauseDuration;
 	}
 
-	public MeasurementMetadata getMetadata() {
+	public MeasurementMetadataImpl getMetadata() {
 		return metadata;
 	}
 }

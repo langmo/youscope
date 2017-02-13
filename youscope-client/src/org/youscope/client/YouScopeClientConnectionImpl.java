@@ -7,7 +7,7 @@ import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
 import org.youscope.addon.component.ComponentAddonUIListener;
 import org.youscope.clientinterfaces.ClientAddonProvider;
-import org.youscope.clientinterfaces.MetadataDefinitionProvider;
+import org.youscope.clientinterfaces.MetadataDefinitionManager;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.clientinterfaces.PropertyProvider;
@@ -120,8 +120,8 @@ class YouScopeClientConnectionImpl implements YouScopeClient
 	}
 
 	@Override
-	public MetadataDefinitionProvider getMeasurementMetadataProvider() {
-		return new MeasurementMetadataProviderImpl();
+	public MetadataDefinitionManager getMeasurementMetadataProvider() {
+		return MetadataManagerImpl.getInstance();
 	}
 
    

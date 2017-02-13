@@ -28,6 +28,7 @@ import org.youscope.common.configuration.Configuration;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.MetadataProperty;
 import org.youscope.common.Well;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.saving.SaveSettingsConfiguration;
@@ -92,6 +93,7 @@ public class ConfigurationManagement
 			fos = new FileOutputStream(new File(fileName));
 			writer = new OutputStreamWriter(fos, "UTF-8");
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+			writer.flush();
 			xstream.toXML(configuration, writer);
 		}
 		finally
@@ -112,7 +114,7 @@ public class ConfigurationManagement
 		xstream.aliasSystemAttribute("type", "class");
 
 		// First, process the annotations of the classes in this package.
-		xstream.processAnnotations(new Class<?>[] {SaveSettingsConfiguration.class, Well.class, FocusConfiguration.class, JobConfiguration.class, MeasurementConfiguration.class, PeriodConfiguration.class, RegularPeriodConfiguration.class, TaskConfiguration.class, VaryingPeriodConfiguration.class, DeviceSetting.class});
+		xstream.processAnnotations(new Class<?>[] {SaveSettingsConfiguration.class, Well.class, FocusConfiguration.class, JobConfiguration.class, MeasurementConfiguration.class, PeriodConfiguration.class, RegularPeriodConfiguration.class, TaskConfiguration.class, VaryingPeriodConfiguration.class, DeviceSetting.class, MetadataProperty.class});
 
 		// Now, process all classes provided by the service providers
 		ServiceLoader<ComponentAddonFactory> componentAddonFactories = ServiceLoader.load(ComponentAddonFactory.class, ConfigurationManagement.class.getClassLoader());

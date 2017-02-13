@@ -46,12 +46,6 @@ public class CustomSaveSetting extends ResourceAdapter<CustomSaveSettingConfigur
 	}
 
 	@Override
-	public String getScopeSettingsFilePath(SaveInformation saveInformation) throws ResourceException, RemoteException {
-		assertInitialized();
-		return FileNameMacroConverter.convertGeneralPath(saveSettingType.getScopeSettingsFilePath(), saveInformation);
-	}
-
-	@Override
 	public String getMeasurementConfigurationFilePath(SaveInformation saveInformation) throws ResourceException {
 		assertInitialized();
 		return FileNameMacroConverter.convertGeneralPath(saveSettingType.getMeasurementConfigurationFilePath(), saveInformation);
@@ -127,6 +121,19 @@ public class CustomSaveSetting extends ResourceAdapter<CustomSaveSettingConfigur
 		if(isInitialized())
 			throw new ResourceException("Uninitialize resource before modifying it.");
 		this.saveSettingType = saveSettingType;
+	}
+
+	@Override
+	public String getXMLInformationFilePath(SaveInformation saveInformation) throws ResourceException, RemoteException {
+		assertInitialized();
+		return FileNameMacroConverter.convertGeneralPath(saveSettingType.getXMLInformationFilePath(), saveInformation);
+	}
+
+	@Override
+	public String getHTMLInformationFilePath(SaveInformation saveInformation)
+			throws ResourceException, RemoteException {
+		assertInitialized();
+		return FileNameMacroConverter.convertGeneralPath(saveSettingType.getHTMLInformationFilePath(), saveInformation);
 	}
 	
 }

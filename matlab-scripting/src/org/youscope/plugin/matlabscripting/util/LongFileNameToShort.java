@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author langmo
+ * Helper class to convert normal filenames to their (old style) 8.3 representation.
+ * Matlab, at least in some versions, has problems with Java classpath elements containing spaces. This is a workaround therefore...
+ * @author Moritz Lang
  */
 public class LongFileNameToShort
 {

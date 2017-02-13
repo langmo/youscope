@@ -11,6 +11,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
 import org.youscope.common.Well;
 import org.youscope.common.resource.ResourceAdapter;
+import org.youscope.common.resource.ResourceException;
 import org.youscope.common.saving.FileNameMacroConverter;
 import org.youscope.common.saving.SaveInformation;
 import org.youscope.common.saving.SaveSettings;
@@ -40,11 +41,6 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	public StandardSaveSettings(PositionInformation positionInformation, StandardSaveSettingsConfiguration configuration)
 					throws ConfigurationException, RemoteException {
 		super(positionInformation, configuration, StandardSaveSettingsConfiguration.TYPE_IDENTIFIER, StandardSaveSettingsConfiguration.class, "standard save settings");
-	}
-
-	@Override
-	public String getScopeSettingsFilePath(SaveInformation saveInformation) {
-		return "scope_settings.xml";
 	}
 
 	@Override
@@ -133,6 +129,17 @@ public class StandardSaveSettings extends ResourceAdapter<StandardSaveSettingsCo
 	@Override
 	public String getImageExtension(SaveInformation saveInformation, ImageEvent<?> event, String imageName) {
 		return getConfiguration().getImageFileType();
+	}
+
+	@Override
+	public String getXMLInformationFilePath(SaveInformation saveInformation) throws ResourceException, RemoteException {
+		return "information.xml";
+	}
+
+	@Override
+	public String getHTMLInformationFilePath(SaveInformation saveInformation)
+			throws ResourceException, RemoteException {
+		return "information.html";
 	}
 	
 }

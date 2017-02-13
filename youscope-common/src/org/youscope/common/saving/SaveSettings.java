@@ -22,14 +22,26 @@ import org.youscope.common.resource.ResourceException;
 public interface SaveSettings extends Resource 
 {    
     /**
-     * Path of the XML file (with extension) where the scope and channel settings are saved into. Typically "scope_settings.xml".
+     * Path of the XML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.xml".
      * The path is relative to {@link #getMeasurementBasePath(SaveInformation)}.
      * @param saveInformation Immutable object containing basic information about the measurement, like its name and start time. This might be used, but typically isn't, in calculating the return value.
-     * @return Scope settings file path
+     * @return XML information file path
+     * @throws ResourceException 
+     * @throws RemoteException
+     * @see #getHTMLInformationFilePath(SaveInformation) 
+     */
+    String getXMLInformationFilePath(SaveInformation saveInformation) throws ResourceException,RemoteException;
+    
+    /**
+     * Path of the HTML file (with extension) where the measurement metadata, and the scope and channel settings are saved into. Typically "information.html".
+     * The path is relative to {@link #getMeasurementBasePath(SaveInformation)}.
+     * @param saveInformation Immutable object containing basic information about the measurement, like its name and start time. This might be used, but typically isn't, in calculating the return value.
+     * @return XML information file path
      * @throws ResourceException 
      * @throws RemoteException 
+     * @see #getXMLInformationFilePath(SaveInformation)
      */
-    String getScopeSettingsFilePath(SaveInformation saveInformation) throws ResourceException,RemoteException;
+    String getHTMLInformationFilePath(SaveInformation saveInformation) throws ResourceException,RemoteException;
     
     /**
      * Path of the file (with extension) where the measurement configuration should be saved into. Typically "configuration.csb". Note: by

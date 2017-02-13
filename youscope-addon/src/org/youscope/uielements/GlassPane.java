@@ -2,6 +2,10 @@ package org.youscope.uielements;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,6 +36,8 @@ public class GlassPane extends JPanel
     
     private boolean waitbarIndeterminate = true;
 
+    private final Color backgroundColor;
+    
     /**
      * Creates a glas pane to overlay a frame, e.g. when it is loading.
      * @param text Text to display on glass plane.
@@ -45,11 +51,51 @@ public class GlassPane extends JPanel
         else
             setOpaque(false);
         this.showWaitbar = showWaitbar;
+        Color labelBackground = new JLabel().getBackground();
+        backgroundColor = new Color(labelBackground.getRed(), labelBackground.getGreen(), labelBackground.getBlue(), 215);
         messageLabel = new JLabel(text, SwingConstants.CENTER);
         messageWidth = messageLabel.getPreferredSize().width;
         messageHeight = messageLabel.getPreferredSize().height;
         messageLabel.setSize(messageWidth, messageHeight);
         add(messageLabel);
+        
+        // prevent mouse and keyboard actions
+        setFocusable(true);
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                e.consume();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                e.consume();
+            }
+        });
+        addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                e.consume();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                e.consume();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                e.consume();
+            }
+        });
+        
         if (showWaitbar)
         {
             ensureWaitbar();
@@ -107,7 +153,7 @@ public class GlassPane extends JPanel
     @Override
     public void paintComponent(Graphics grp)
     {
-        grp.setColor(new Color(1.0F, 1.0F, 1.0F, 0.7F));
+        grp.setColor(backgroundColor);
         grp.fillRect(0, 0, getWidth(), getHeight());
 
         int width = getWidth();

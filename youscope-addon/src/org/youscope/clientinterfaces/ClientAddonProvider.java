@@ -16,7 +16,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.saving.MeasurementFileLocations;
 
 /**
- * Provider with which YouScop client addons can be constructed.
+ * Provider with which YouScope client addons can be constructed.
  * @author Moritz Lang
  *
  */

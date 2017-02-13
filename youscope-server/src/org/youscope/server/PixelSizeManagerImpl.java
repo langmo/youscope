@@ -32,7 +32,7 @@ class PixelSizeManagerImpl implements MicroscopeConfigurationListener
 		this.microscope = microscope;
 		microscope.addConfigurationListener(this);
 	}
-
+ 
 	public PixelSizeImpl[] getPixelSizes()
 	{
 		PixelSizeImpl[] retVal = pixelSizes.values().toArray(new PixelSizeImpl[0]);

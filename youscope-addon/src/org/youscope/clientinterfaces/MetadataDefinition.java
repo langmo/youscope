@@ -5,11 +5,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamInclude;
+
 /**
  * An immutable class representing a metadata property, it's known possible values, and properties like if it is mandatory
  * @author Moritz Lang
  *
  */
+@XStreamAlias("metadata-definition")
+@XStreamInclude(MetadataDefinition.Type.class)
 public class MetadataDefinition implements Serializable, Iterable<String>, Comparable<MetadataDefinition>
 {
 
@@ -23,19 +30,23 @@ public class MetadataDefinition implements Serializable, Iterable<String>, Compa
 	 * @author mlang
 	 *
 	 */
+	@XStreamAlias("Type")
 	public enum Type
 	{
 		/**
 		 * Indicates that this property is mandatory, that is, must be included in all measurements.
 		 */
+		@XStreamAlias("mandatory")
 		MANDATORY,
 		/**
 		 * Indicates that this property is not mandatory, but should be by default included in all measurements.
 		 */
+		@XStreamAlias("default")
 		DEFAULT,
 		/**
 		 * Indicates that this property is neither mandatory nor by default included in the measurement.
 		 */
+		@XStreamAlias("optional")
 		OPTIONAL;
 		
 		@Override
@@ -45,10 +56,15 @@ public class MetadataDefinition implements Serializable, Iterable<String>, Compa
 		}
 	}
 	
-	
+	@XStreamImplicit(itemFieldName="value")
 	private final String[] knownValues;
+	@XStreamAlias("custom-values")
+	@XStreamAsAttribute
 	private final boolean customValuesAllowed;
+	@XStreamAlias("type")
 	private final Type type;
+	@XStreamAlias("name")
+	@XStreamAsAttribute
 	private final String name;
 	/**
 	 * Constructor.
@@ -127,6 +143,12 @@ public class MetadataDefinition implements Serializable, Iterable<String>, Compa
 	{
 		return name;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 	/**
 	 * Returns true if user can enter custom values for this property besides choosing one of the known values.
 	 * @return If user can enter custom values.
@@ -149,6 +171,8 @@ public class MetadataDefinition implements Serializable, Iterable<String>, Compa
 	 */
 	public String[] getKnownValues()
 	{
+		if(knownValues == null)
+			return new String[0];
 		String[] result = new String[knownValues.length];
 		System.arraycopy(knownValues, 0, result, 0, knownValues.length);
 		return result;

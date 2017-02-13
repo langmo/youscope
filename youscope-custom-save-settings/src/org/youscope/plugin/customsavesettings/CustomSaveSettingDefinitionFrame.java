@@ -48,7 +48,8 @@ class CustomSaveSettingDefinitionFrame
 	private final JTextField imageMetadataTableFilePath = new JTextField();
 	private final JTextField measurementConfigurationFilePath = new JTextField();
 	private final JTextField microscopeConfigurationFilePath = new JTextField();
-	private final JTextField scopeSettingsFilePath = new JTextField();
+	private final JTextField xmlInformationFilePath = new JTextField();
+	private final JTextField htmlInformationFilePath = new JTextField();
 	private final JTextField logOutFilePath = new JTextField();
 	private final JTextField logErrFilePath = new JTextField();
 	private final JComboBox<String> imageExtension;
@@ -324,10 +325,15 @@ class CustomSaveSettingDefinitionFrame
 		microscopeConfigurationFilePath.setToolTipText(generalToolTip);
 		elementsPanel.add(microscopeConfigurationFilePath);
 		
-		elementsPanel.add(new JLabel("Path of XML file storing microscope state at measurement start (with extension, typically .xml):"));
-		scopeSettingsFilePath.setText(customSaveSettingType.getScopeSettingsFilePath());
-		scopeSettingsFilePath.setToolTipText(generalToolTip);
-		elementsPanel.add(scopeSettingsFilePath);
+		elementsPanel.add(new JLabel("Path of XML file storing measurement metadata, channels, and initial microscope state (with extension, typically .xml):"));
+		xmlInformationFilePath.setText(customSaveSettingType.getXMLInformationFilePath());
+		xmlInformationFilePath.setToolTipText(generalToolTip);
+		elementsPanel.add(xmlInformationFilePath);
+		
+		elementsPanel.add(new JLabel("Path of HTML file storing measurement metadata, channels, and initial microscope state (with extension, typically .html):"));
+		htmlInformationFilePath.setText(customSaveSettingType.getHTMLInformationFilePath());
+		htmlInformationFilePath.setToolTipText(generalToolTip);
+		elementsPanel.add(htmlInformationFilePath);
 		
 		elementsPanel.add(new JLabel("Path of regular log file (with extension, typically .txt):"));
 		logOutFilePath.setText(customSaveSettingType.getLogOutFilePath());
@@ -379,7 +385,8 @@ class CustomSaveSettingDefinitionFrame
 		customSaveSettingType.setImageMetadataTableFilePath(imageMetadataTableFilePath.getText());
 		customSaveSettingType.setMeasurementConfigurationFilePath(measurementConfigurationFilePath.getText());
 		customSaveSettingType.setMicroscopeConfigurationFilePath(microscopeConfigurationFilePath.getText());
-		customSaveSettingType.setScopeSettingsFilePath(scopeSettingsFilePath.getText());
+		customSaveSettingType.setXMLInformationFilePath(xmlInformationFilePath.getText());
+		customSaveSettingType.setHTMLInformationFilePath(htmlInformationFilePath.getText());
 		customSaveSettingType.setLogOutFilePath(logOutFilePath.getText());
 		customSaveSettingType.setLogErrFilePath(logErrFilePath.getText());
 		customSaveSettingType.setImageExtension((String) imageExtension.getSelectedItem());

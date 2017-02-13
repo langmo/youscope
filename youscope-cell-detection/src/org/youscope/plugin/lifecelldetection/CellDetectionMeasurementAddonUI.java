@@ -3,17 +3,14 @@
  */
 package org.youscope.plugin.lifecelldetection;
 
-import javax.swing.Icon;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentMetadataAdapter;
 import org.youscope.addon.measurement.MeasurementAddonUIAdapter;
-import org.youscope.addon.measurement.pages.DescriptionPage;
 import org.youscope.addon.measurement.pages.GeneralSettingsPage;
 import org.youscope.addon.measurement.pages.MetadataPage;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.serverinterfaces.YouScopeServer;
-import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.common.measurement.Measurement;
 
 /**
@@ -32,11 +29,8 @@ class CellDetectionMeasurementAddonUI extends MeasurementAddonUIAdapter<CellDete
 		super(getMetadata(), client, server);
 		
 		setTitle("Life Cell Detection Measurement");
-		String description = "Continuously takes images in a given channel and detects the cells in it.<br>If selected, an image is automatically created highlighting all detected cells.";
-		Icon image = ImageLoadingTools.getResourceIcon("org/youscope/plugin/lifecelldetection/images/life-cell-detection.jpg", "Life Cell Detection Measurement");
-		addPage(new DescriptionPage(null, description, image, null));
-		addPage(new GeneralSettingsPage<CellDetectionMeasurementConfiguration>(client, CellDetectionMeasurementConfiguration.class));
 		addPage(new MetadataPage<>(client));
+		addPage(new GeneralSettingsPage<CellDetectionMeasurementConfiguration>(client, CellDetectionMeasurementConfiguration.class));
 		addPage(new StartAndEndConfigurationPage(client, server));
 		addPage(new ImagingConfigurationPage(client, server));
 	}

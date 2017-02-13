@@ -3,6 +3,7 @@ package org.youscope.uielements;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,19 +11,25 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import org.youscope.clientinterfaces.MetadataDefinition;
-import org.youscope.clientinterfaces.MetadataDefinitionProvider;
+import org.youscope.clientinterfaces.MetadataDefinitionManager;
 import org.youscope.clientinterfaces.PropertyProvider;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.common.MetadataProperty;
@@ -39,10 +46,14 @@ public class MeasurementMetadataPanel extends JPanel
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 1608172021539503499L;
-	private final MetadataDefinitionProvider measurementMetadataProvider;
+	private final MetadataDefinitionManager measurementMetadataProvider;
 	private final PropertyProvider propertyProvider;
 	private final ArrayList<MetadataProperty> properties = new ArrayList<>();
 	private static final String PROPERTY_LAST_PREFIX = "YouScope.MeasurementProperties.Last.";
+	
+	private static final int DELETE_COLUMN_IDX = 0;
+	private static final int NAME_COLUMN_IDX = 1;
+	private static final int VALUE_COLUMN_IDX = 2;
 	/**
 	 * Constructor. Adds all default properties to the list. Same as {@code MeasurementMetadataPanel(youscopeClient, null)}.
 	 * @param youscopeClient Reference to the YouScope client object.
@@ -50,29 +61,7 @@ public class MeasurementMetadataPanel extends JPanel
 	 */
 	public MeasurementMetadataPanel(YouScopeClient youscopeClient) throws IllegalArgumentException
 	{
-		super(new BorderLayout());
-		if(youscopeClient == null)
-			throw new IllegalArgumentException();
-		measurementMetadataProvider = youscopeClient.getMeasurementMetadataProvider();
-		propertyProvider = youscopeClient.getPropertyProvider();
-		
-		// Initialize with default properties
-		setMetadataProperties(null);
-		
-		JTable table = new JTable(propertyTableModel);
-		table.setAutoCreateColumnsFromModel(true);
-		table.setRowSelectionAllowed(true);
-		table.setColumnSelectionAllowed(false);
-		table.setSurrendersFocusOnKeystroke(true);
-		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        PropertyTableEditor editor = new PropertyTableEditor();
-        table.setDefaultRenderer(String.class, editor);
-        table.setDefaultEditor(String.class, editor);
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        tableScrollPane.setPreferredSize(new Dimension(250, 150));
-        tableScrollPane.setMinimumSize(new Dimension(10, 10));
-        add(tableScrollPane, BorderLayout.CENTER);
+		this(youscopeClient, null);
 	}
 	
 	/**
@@ -92,21 +81,88 @@ public class MeasurementMetadataPanel extends JPanel
 		// Initialize with default properties
 		setMetadataProperties(properties);
 		
-		JTable table = new JTable(propertyTableModel);
+		
+        PropertyTableEditor propertyEditor = new PropertyTableEditor();
+        table.setDefaultRenderer(String.class, propertyEditor);
+        table.setDefaultEditor(String.class, propertyEditor);
+        DeleteTableEditor deleteEditor = new DeleteTableEditor();
+        table.setDefaultRenderer(Boolean.class, deleteEditor);
+        table.setDefaultEditor(Boolean.class, deleteEditor);
+        table.setDragEnabled(false);
+		table.setShowHorizontalLines(true);
+		table.setShowVerticalLines(true);
+		table.setShowGrid(false);
+		table.setIntercellSpacing(new Dimension(8, 0));
+		table.setTableHeader(null);
 		table.setAutoCreateColumnsFromModel(true);
-		table.setRowSelectionAllowed(true);
+		table.setRowSelectionAllowed(false);
 		table.setColumnSelectionAllowed(false);
 		table.setSurrendersFocusOnKeystroke(true);
 		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        PropertyTableEditor editor = new PropertyTableEditor();
-        table.setDefaultRenderer(String.class, editor);
-        table.setDefaultEditor(String.class, editor);
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        tableScrollPane.setPreferredSize(new Dimension(250, 150));
-        tableScrollPane.setMinimumSize(new Dimension(10, 10));
+		table.setFillsViewportHeight(true);
+		tableModel.addTableModelListener(columnAdjuster);
+		
+        JScrollPane tableScrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        tableScrollPane.setPreferredSize(new Dimension(250, 100));
+        tableScrollPane.setMinimumSize(new Dimension(100, 75));
         add(tableScrollPane, BorderLayout.CENTER);
+        
+        // set width of delete column
+        TableColumn deleteColumn = table.getColumnModel().getColumn(DELETE_COLUMN_IDX);
+        int deleteColumnWidth = deleteEditor.inactiveAllowed.getPreferredSize().width + table.getIntercellSpacing().width;
+		deleteColumn.setPreferredWidth(deleteColumnWidth);
+		deleteColumn.setMaxWidth(deleteColumnWidth);
+		deleteColumn.setMinWidth(deleteColumnWidth);
+        
+        
+        columnAdjuster.tableChanged(new TableModelEvent(tableModel));
 	}
+	
+	private final TableModelListener columnAdjuster = new TableModelListener()
+	{
+
+		@Override
+		public void tableChanged(final TableModelEvent event) 
+		{
+			Runnable runner = new Runnable()
+			{
+				@Override
+				public void run() 
+				{
+					int column = event.getColumn();
+					if(column == NAME_COLUMN_IDX || column < 0)
+						adjustColumn(NAME_COLUMN_IDX);
+				}
+			};
+			if(SwingUtilities.isEventDispatchThread())
+				runner.run();
+			else
+				SwingUtilities.invokeLater(runner);
+		}
+
+		/*
+		 *  Adjust the width of the specified column in the table
+		 */
+		private void adjustColumn(final int column)
+		{
+			TableColumn tableColumn = table.getColumnModel().getColumn(column);
+			if (! tableColumn.getResizable()) 
+				return;
+			int width = 0;
+			for (int row = 0; row < table.getRowCount(); row++)
+			{
+				TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+				Component c = table.prepareRenderer(cellRenderer, row, column);
+				int dataWidth = c.getPreferredSize().width + table.getIntercellSpacing().width;
+				width = Math.max(width, dataWidth);
+			}
+
+			tableColumn.setPreferredWidth(width);
+			tableColumn.setMaxWidth(width);
+			tableColumn.setMinWidth(width);
+		}	
+	};
 	
 	/**
 	 * Returns all defined metadata properties.
@@ -145,7 +201,17 @@ public class MeasurementMetadataPanel extends JPanel
 			}
 		}
 		
-		propertyTableModel.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
+	}
+	private boolean deleteProperty(int index)
+	{
+		if(index < 0 || index >= properties.size())
+			return false;
+		MetadataDefinition propertyDefinition = measurementMetadataProvider.getMetadataDefinition(properties.get(index).getName());
+		if(propertyDefinition != null && propertyDefinition.getType() == MetadataDefinition.Type.MANDATORY)
+			return false;
+		properties.remove(index);
+		return true;
 	}
 	private boolean addProperty(String propertyName, String propertyValue)
 	{
@@ -248,19 +314,22 @@ public class MeasurementMetadataPanel extends JPanel
 		propertyProvider.setProperty(PROPERTY_LAST_PREFIX+propertyName, propertyValue);
 	}
 	
-	private final AbstractTableModel propertyTableModel = new AbstractTableModel() 
+	private final AbstractTableModel tableModel = new AbstractTableModel() 
     {
-        /**
+		/**
 		 * Serial Version UID.
 		 */
 		private static final long serialVersionUID = 4091073520994701669L;
 		@Override
         public String getColumnName(int col)
         {
-        	if(col == 0)
+        	if(col == DELETE_COLUMN_IDX)
+        		return "Delete";
+        	else if(col == NAME_COLUMN_IDX)
         		return "Property";
-			return "Value";
-        	
+        	else if(col == VALUE_COLUMN_IDX)
+        		return "Value";
+        	return "";
         }
 
         @Override
@@ -277,12 +346,14 @@ public class MeasurementMetadataPanel extends JPanel
         @Override
         public int getColumnCount()
         {
-            return 2;
+            return 3;
         }
 
         @Override
-        public Class<?> getColumnClass(int column)
+        public Class<?> getColumnClass(int col)
         {
+        	if(col == DELETE_COLUMN_IDX)
+        		return Boolean.class;
         	return String.class;
         }
 
@@ -291,14 +362,22 @@ public class MeasurementMetadataPanel extends JPanel
         {
         	if(row < properties.size())
         	{
-        		if(col == 0)
+        		if(col == DELETE_COLUMN_IDX)
+        			return false;
+        		else if(col == NAME_COLUMN_IDX)
         			return properties.get(row).getName();
-				return properties.get(row).getValue();
+        		else if(col == VALUE_COLUMN_IDX)
+        			return properties.get(row).getValue();
+        		return "";
         	}
         	// Last row = add properties.
-			if(col == 0)
-				return "(+) Add Metadata";
-			return "";
+        	if(col == DELETE_COLUMN_IDX)
+    			return false;
+    		else if(col == NAME_COLUMN_IDX)
+    			return "<add new>";
+    		else if(col == VALUE_COLUMN_IDX)
+    			return "";
+    		return "";
         }
         @Override
         public boolean isCellEditable(int row, int col)
@@ -306,51 +385,162 @@ public class MeasurementMetadataPanel extends JPanel
         	// Last row = add properties.
         	if(row >= properties.size())
         	{
-        		if(col == 0)
+        		if(col == NAME_COLUMN_IDX)
         			return true;
         		return false;
         	}
         	// Value always editable
-        	if(col == 1)
+        	else if(col == VALUE_COLUMN_IDX)
         		return true;
-        	MetadataDefinition definition = measurementMetadataProvider.getMetadataDefinition(properties.get(row).getName());
-        	if(definition == null)
-        		return true;
-			return definition.getType() != MetadataDefinition.Type.MANDATORY;
+        	else if(col == NAME_COLUMN_IDX || col == DELETE_COLUMN_IDX)
+        	{
+	        	MetadataDefinition definition = measurementMetadataProvider.getMetadataDefinition(properties.get(row).getName());
+	        	if(definition == null)
+	        		return true;
+				return definition.getType() != MetadataDefinition.Type.MANDATORY;
+        	}
+        	else
+        		return false;
         }
         @Override
         public void setValueAt(Object rawValue, int row, int col) 
         {
         	if(rawValue == null)
         		return;
+        	if(col == DELETE_COLUMN_IDX)
+        	{
+        		if(!(rawValue instanceof Boolean) || !((Boolean)rawValue).booleanValue())
+        			return;
+        		if(deleteProperty(row))
+        		{
+        			fireTableRowsDeleted(row, row);
+        		}
+        		return;
+        	}
         	String value = rawValue.toString();
         	if(row >= properties.size())
         	{
         		// we want to add a value...
-        		if(col != 0)
+        		if(col != NAME_COLUMN_IDX)
         			return;
         		if(addProperty(value, null))
         			fireTableRowsInserted(properties.size(), properties.size());
         		return;
         	}
-			if(col == 1)
+        	else if(col == VALUE_COLUMN_IDX)
 			{
 				// we want to change a value...
 				addProperty(properties.get(row).getName(), value);
 				fireTableCellUpdated(row, col);
 				return;
 			}
-			// replace the old property by the new one, if allowed...
-			if(setProperty(value, null, row))
-			{
-				fireTableRowsUpdated(row, row);
-			}
+        	else if(col == NAME_COLUMN_IDX)
+        	{
+				// replace the old property by the new one, if allowed...
+				if(setProperty(value, null, row))
+				{
+					fireTableRowsUpdated(row, row);
+				}
+				return;
+        	}
 		}
     };
+    private final JTable table = new JTable(tableModel);
 	
+    
+    private class DeleteTableEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer
+    {
+    	/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = 5717587328458546821L;
+    	private final JLabel inactiveForbidden = new JLabel("");
+    	private final JLabel activeForbidden = new JLabel("");
+    	private final JButton inactiveAllowed;
+    	private final JButton activeAllowed;
+    	private boolean lastDecision = false;
+    	public DeleteTableEditor() 
+    	{
+    		Icon deleteIcon = ImageLoadingTools.getResourceIcon("iconsShadowless/cross-script.png", "Delete");
+    		if(deleteIcon != null)
+    		{
+    			inactiveAllowed = new JButton(deleteIcon);
+    			activeAllowed = new JButton(deleteIcon);
+    		}
+    		else
+    		{
+    			inactiveAllowed = new JButton("X");
+    			activeAllowed = new JButton("X");
+    		}
+    		inactiveAllowed.setBorderPainted(false);
+    		activeAllowed.setBorderPainted(false);
+    		inactiveAllowed.setBorder(null);
+    		activeAllowed.setBorder(null);
+    		inactiveAllowed.setOpaque(false);
+    		activeAllowed.setOpaque(false);
+    		inactiveAllowed.setContentAreaFilled(false);
+    		activeAllowed.setContentAreaFilled(false);
+    		
+    		JTextField colorModel = new JTextField();
+    		activeAllowed.setBackground(colorModel.getBackground());
+    		inactiveAllowed.setBackground(colorModel.getBackground());
+    		activeAllowed.setForeground(colorModel.getForeground());
+    		inactiveAllowed.setForeground(colorModel.getForeground());
+    		inactiveForbidden.setBackground(colorModel.getBackground());
+    		activeForbidden.setBackground(colorModel.getBackground());
+    		
+    		Dimension dim1 = inactiveForbidden.getPreferredSize();
+    		Dimension dim2 = activeAllowed.getPreferredSize();
+    		Dimension dim = new Dimension(Math.max(dim1.width,  dim2.width), Math.max(dim1.height,  dim2.height));
+    		inactiveForbidden.setPreferredSize(dim);
+    		inactiveForbidden.setMaximumSize(dim);
+    		inactiveForbidden.setMinimumSize(dim);
+    		activeForbidden.setPreferredSize(dim);
+    		activeForbidden.setMaximumSize(dim);
+    		activeForbidden.setMinimumSize(dim);
+    		inactiveAllowed.setPreferredSize(dim);
+    		inactiveAllowed.setMaximumSize(dim);
+    		inactiveAllowed.setMinimumSize(dim);
+    		activeAllowed.setPreferredSize(dim);
+    		activeAllowed.setMaximumSize(dim);
+    		activeAllowed.setMinimumSize(dim);
+    		
+    		activeAllowed.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) 
+				{
+					lastDecision = true;
+					fireEditingStopped();
+				}
+			});
+		}
+		@Override
+		public Object getCellEditorValue() 
+		{
+			return lastDecision;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int col)
+		{
+			lastDecision = false;
+			activeAllowed.setSelected(false);
+			if(tableModel.isCellEditable(row, col))
+				return activeAllowed;
+			return activeForbidden;
+		}
+		
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col)
+		{
+			if(tableModel.isCellEditable(row, col))
+				return inactiveAllowed;
+			return inactiveForbidden;
+		}
+    }
 	private class PropertyTableEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer
 	{
-		
 		/**
 		 * Serial Version UID.
 		 */
@@ -359,9 +549,15 @@ public class MeasurementMetadataPanel extends JPanel
 		private final JTextField editTextField = new JTextField();
 		private final JLabel viewLabel = new JLabel();
 		private Object lastEditor = null;
+		private final Font plainFont;
+		private final Font boldFont;
 		PropertyTableEditor()
 		{
+			plainFont = viewLabel.getFont();
+			boldFont = plainFont.deriveFont(Font.BOLD);
 			viewLabel.setOpaque(true);
+			viewLabel.setBackground(editTextField.getBackground());
+			viewLabel.setForeground(editTextField.getForeground());
 			editComboBox.addActionListener(new ActionListener() 
 			{
 				@Override
@@ -369,7 +565,6 @@ public class MeasurementMetadataPanel extends JPanel
 					fireEditingStopped();
 				}
 			});
-			editTextField.setBorder(new EmptyBorder(0, 0, 0, 0));
 		}
 		@Override
 		public Object getCellEditorValue()
@@ -428,7 +623,7 @@ public class MeasurementMetadataPanel extends JPanel
 				lastEditor = editTextField;
 				return editTextField;
 			}
-			else if(col == 0)
+			else if(col == NAME_COLUMN_IDX)
 			{
 				// we want to change a property to another...
 				// get all defined properties not yet set
@@ -452,7 +647,7 @@ public class MeasurementMetadataPanel extends JPanel
 				lastEditor = editComboBox;
 				return editComboBox;
 			}
-			else
+			else if(col == VALUE_COLUMN_IDX)
 			{
 				// we want to change a value
 				MetadataDefinition definition = measurementMetadataProvider.getMetadataDefinition(properties.get(row).getName());
@@ -479,26 +674,35 @@ public class MeasurementMetadataPanel extends JPanel
 				lastEditor = editTextField;
 				return editTextField;
 			}
+			else
+			{
+				editTextField.setText("");
+				lastEditor = editTextField;
+				return editTextField;
+			}
 		}
 		
 		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value,
-		        boolean isSelected, boolean hasFocus, int row, int col)
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col)
 		{
 			String text = value == null ? "" : value.toString();
+			if(text.isEmpty() && col == VALUE_COLUMN_IDX && row < properties.size())
+				text = "<enter value>";
+			else if(col == NAME_COLUMN_IDX && row < properties.size()) 
+				text+=":";
 			viewLabel.setText(text);
-		    if(row >= properties.size() || col>0)
-		    	viewLabel.setEnabled(true);
-		    else 
+		    if(row >= properties.size())
+		    	viewLabel.setFont(plainFont);
+		    else if(col == NAME_COLUMN_IDX) 
 		    {
 		    	MetadataDefinition definition = measurementMetadataProvider.getMetadataDefinition(properties.get(row).getName());
-		    	if(definition == null)
-		    	{
-		    		viewLabel.setEnabled(true);
-		    	}
+		    	if(definition == null || definition.getType() != MetadataDefinition.Type.MANDATORY)
+		    		viewLabel.setFont(plainFont);
 		    	else
-		    		viewLabel.setEnabled(definition.getType() != MetadataDefinition.Type.MANDATORY);
+		    		viewLabel.setFont(boldFont);
 		    }
+		    else
+		    	viewLabel.setFont(plainFont);
 		    return viewLabel;
 		}
 	}

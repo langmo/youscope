@@ -4,19 +4,27 @@ import java.io.Serializable;
 
 import org.youscope.common.measurement.Measurement;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 
 /**
  * A metadata property is a name-value pair, representing metadata of e.g. a {@link Measurement}. 
  * This class is immutable.
  * @author Moritz Lang
  */
+@XStreamAlias("metadata-property")
 public class MetadataProperty implements Serializable, Comparable<MetadataProperty>
 {
 	/**
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 7590465549631720974L;
+	@XStreamAlias("name")
+	@XStreamAsAttribute
 	private final String name;
+	@XStreamAlias("value")
+	@XStreamAsAttribute
 	private final String value;
 	/**
 	 * Constructor.
