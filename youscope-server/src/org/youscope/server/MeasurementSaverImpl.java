@@ -5,6 +5,7 @@ package org.youscope.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -464,7 +465,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 					folder.mkdirs();
 				synchronized(logListener)
 				{
-					logStream = new PrintStream(logOutFilePath);
+					logStream = new PrintStream(new FileOutputStream(logOutFilePath, true), true);
 				}
 			}
 			catch(FileNotFoundException e)

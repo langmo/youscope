@@ -246,8 +246,11 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 				if(!folder.exists())
 					folder.mkdirs();
 				if(tableWriter != null)
+				{
+					tableWriter.flush();
 					tableWriter.close();
-				tableWriter = new FileWriter(filePath, false);
+				}
+				tableWriter = new FileWriter(filePath, true);
 			}
 			catch(IOException e1)
 			{
@@ -270,6 +273,7 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 
 			try
 			{
+				tableWriter.flush();
 				tableWriter.close();
 			}
 			catch(IOException e)
