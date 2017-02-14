@@ -123,6 +123,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		public void initialize(SaveSettings saveSettings, String measurementName, MeasurementContext measurementContext) throws ResourceException, RemoteException
 		{
 			this.saveSettings = saveSettings;
+			//TODO: pass real measurement start time, not current time. Pass pause duration.
 			this.saveInformation = new SaveInformation(measurementName, System.currentTimeMillis());
 			if(saveSettings.isInitialized())
 				saveSettings.uninitialize(measurementContext);

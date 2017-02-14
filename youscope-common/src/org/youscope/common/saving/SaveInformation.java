@@ -19,6 +19,8 @@ public final class SaveInformation implements Serializable
 	private final String measurementName;
 	private final long measurementStartTime;
 	
+	// TODO: include measurement pause duration, and offer a method to get runtime.
+	
 	/**
 	 * Constructor.
 	 * @param measurementName Name of the measurement.
