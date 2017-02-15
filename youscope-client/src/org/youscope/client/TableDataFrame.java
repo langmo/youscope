@@ -322,7 +322,7 @@ class TableDataFrame
         	{
         		if(table.getExecutionInformation() == null)
         			return "";
-        		long timeInS = (table.getExecutionInformation().getMeasurementRuntime(table.getCreationTime()))/1000;
+        		long timeInS = table.getCreationRuntime()/1000;
         		return String.format("%dh %02dmin %02ds", timeInS / 3600, (timeInS % 3600) / 60, (timeInS % 60));
         	}
         	else if(col == 2)

@@ -297,4 +297,19 @@ public interface Measurement extends Component
 	 * @throws ComponentRunningException
 	 */
 	void addFinishDeviceSetting(DeviceSetting setting) throws RemoteException, ComponentRunningException;
+	
+	/**
+	 * Sets the initial runtime of the measurement when the measurement starts. Typically, this is zero.
+	 * @param initialRuntime Initial runtime of the measurement. Must be greater or equal to zero.
+	 * @throws RemoteException 
+	 * @throws ComponentRunningException
+	 * @throws IllegalArgumentException If initial runtime is smaller than zero.
+	 */
+	void setInitialRuntime(long initialRuntime) throws RemoteException, ComponentRunningException, IllegalArgumentException;
+	/**
+	 * Returns the initial runtime of the measurement when the measurement starts. Typically, this is zero.
+	 * @return initial runtime of the measurement. Must be greater or equal to zero.
+	 * @throws RemoteException 
+	 */
+	long getInitialRuntime() throws RemoteException;
 }

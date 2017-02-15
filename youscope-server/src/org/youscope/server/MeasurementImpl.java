@@ -65,6 +65,8 @@ class MeasurementImpl implements TaskExecutor
 	
 	private final MeasurementMetadataImpl metadata;
 	
+	private volatile long initialRuntime = 0;
+	
 	/*
 	 * Tasks are first submitted into the scheduledTasksQueue. When they are due, they are moved into the 
 	 * pendingTasksQueue. The measurement manager unpacks the jobs of the most pending task into the pendingJobsQueue, and processes them
@@ -310,8 +312,10 @@ class MeasurementImpl implements TaskExecutor
 		long pauseDuration = this.pauseDuration;
 		long pauseTime = this.pauseTime;
 		long stopTime = this.stopTime;
-		return startTime<0 ? -1 : (stopTime>=0 ? stopTime-startTime -pauseDuration: (pauseTime >= 0 ? pauseTime - startTime-pauseDuration :  currentTime - startTime-pauseDuration));
+		return startTime<0 ? -1 : (stopTime>=0 ? initialRuntime+stopTime-startTime -pauseDuration: (pauseTime >= 0 ? initialRuntime+pauseTime - startTime-pauseDuration :  initialRuntime+currentTime - startTime-pauseDuration));
 	}
+	
+	
 	
 	/**
 	 * Returns the time when last time started (not resumed), or -1 if yet not started.
@@ -1122,6 +1126,21 @@ class MeasurementImpl implements TaskExecutor
 	{
 		scheduledTasksQueue.put(new ScheduledTask(runtime, task));
 		
+	}
+	
+	public void setInitialRuntime(long initialRuntime) throws ComponentRunningException, IllegalArgumentException
+	{
+		if(initialRuntime < 0)
+			throw new IllegalArgumentException("Initial runtime must be greater or equal to zero.");
+		synchronized(runState)
+		{
+			runState.assertEditable();
+			this.initialRuntime = initialRuntime;
+		}
+	}
+	public long getInitialRuntime()
+	{
+		return initialRuntime;
 	}
 
 	@Override

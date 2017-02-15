@@ -92,4 +92,20 @@ public interface Task
 	 * @throws IndexOutOfBoundsException Thrown if jobIndex is smaller than zero, or greater or equal to {@link #getNumJobs()}.
 	 */
 	Job getJob(int jobIndex) throws RemoteException, IndexOutOfBoundsException;
+	
+	/**
+	 * Sets the initial execution number of this task. Typically, this is always zero. Negative numbers are not allowed.
+	 * @param executionNumber initial execution number of task
+	 * @throws ComponentRunningException
+	 * @throws RemoteException
+	 * @throws IllegalArgumentException 
+	 */
+	void setInitialExecutionNumber(long executionNumber) throws ComponentRunningException, RemoteException, IllegalArgumentException;
+	/**
+	 * Returns the initial execution number of this task. Typically, this is always zero. Negative numbers are not allowed.
+	 * @return initial execution number of task.
+	 * @throws RemoteException 
+	
+	 */
+	long getInitialExecutionNumber() throws RemoteException;
 }

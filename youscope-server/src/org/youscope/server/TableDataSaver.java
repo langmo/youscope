@@ -80,7 +80,7 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 				// append default information (well, time, etc.)
 				String[] saveEntry = new String[rowView.getNumColumns() + defaultColumns.length];
 				saveEntry[0] = table.getExecutionInformation() == null ? "" : table.getExecutionInformation().getEvaluationString();
-				saveEntry[1] = (table.getExecutionInformation() == null) ? "" : Long.toString(table.getExecutionInformation().getMeasurementRuntime(table.getCreationTime()));
+				saveEntry[1] = (table.getExecutionInformation() == null) ? "" : Long.toString(table.getCreationRuntime());
 				saveEntry[2] = Long.toString(table.getCreationTime());
 				saveEntry[3] = new Date(table.getCreationTime()).toString();
 				saveEntry[4] = (table.getPositionInformation() != null && table.getPositionInformation().getWell() != null) ? table.getPositionInformation().getWell().getWellName() : "";
@@ -216,7 +216,7 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 
 	}
 
-	public void startWriting()
+	public boolean startWriting()
 	{
 		String filePath;
 		try
@@ -229,32 +229,35 @@ class TableDataSaver extends UnicastRemoteObject implements TableListener, Runna
 		catch(Exception e)
 		{
 			ServerSystem.err.println("Could not determine where to save table data \"" + getTableSaveName() + ".", e);
-			return;
+			return false;
 		}
 		if(filePath == null)
 		{
 			ServerSystem.err.println("Could not create file to save table data \"" + getTableSaveName() + " since table path is null.", null);
-			return;
+			return false;
 		}
 		writeLock.lock();
 		try
 		{
-			dataReceived = false;
 			try
 			{
-				File folder = new File(filePath).getParentFile();
+				File file = new File(filePath);
+				File folder = file.getParentFile();
 				if(!folder.exists())
 					folder.mkdirs();
+				dataReceived = file.exists();
 				if(tableWriter != null)
 				{
 					tableWriter.flush();
 					tableWriter.close();
 				}
 				tableWriter = new FileWriter(filePath, true);
+				return true;
 			}
 			catch(IOException e1)
 			{
 				ServerSystem.err.println("Could not create file to save table data \"" + getTableSaveName() + ".", e1);
+				return false;
 			}
 		}
 		finally

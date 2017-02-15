@@ -59,7 +59,7 @@ class StatisticsJobImpl extends JobAdapter implements StatisticsJob
 					throw new InterruptedException();
 			}
 		}
-		Table table = new Table(getProducedTableDefinition(), getPositionInformation(), executionInformation);
+		Table table = new Table(getProducedTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 		for(JobStatisticListener listener : jobListeners)
 		{
 			try {

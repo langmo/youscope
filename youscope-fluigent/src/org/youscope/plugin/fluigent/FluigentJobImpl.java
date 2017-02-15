@@ -106,7 +106,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 		// Execute input job.
 		if(timingTable != null)
 		{
-			SyringeTableRow timing = timingTable.getActiveSettings(executionInformation.getMeasurementRuntime());
+			SyringeTableRow timing = timingTable.getActiveSettings(measurementContext.getMeasurementRuntime());
 			if(timing == null)
 			{
 				// do nothing.
@@ -135,7 +135,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 		{
 			// Set controller algorithm variables
 			localEngine.put("evaluationNumber", executionInformation.getEvaluationNumber());
-			localEngine.put("evaluationTime", executionInformation.getMeasurementRuntime());
+			localEngine.put("evaluationTime", measurementContext.getMeasurementRuntime());
 			localEngine.put("fluigent", this);
 			
 			// Run controller algorithm.
@@ -195,7 +195,7 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 		TableListener[] listeners = tableDataListeners.toArray(new TableListener[tableDataListeners.size()]);
 		if(listeners.length > 0)
 		{
-			Table monitorTable = new Table(getProducedTableDefinition(), getPositionInformation(), executionInformation);
+			Table monitorTable = new Table(getProducedTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 			for(int i=0; i<numFlowRateUnits; i++)
 			{
 				try

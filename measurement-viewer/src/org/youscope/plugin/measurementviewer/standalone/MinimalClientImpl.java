@@ -29,7 +29,6 @@ class MinimalClientImpl implements YouScopeClient {
 
 	@Override
 	public MeasurementConfiguration[] getLastSavedMeasurements() {
-		// TODO Auto-generated method stub
 		return new MeasurementConfiguration[0];
 	}
 

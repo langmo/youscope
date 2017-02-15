@@ -53,9 +53,11 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 		private ImageEvent<?> lastImage = null;
 		private volatile int evaluationNumber = 0;
 		private final PositionInformation positionInformation;
-		ImageGatherer(PositionInformation positionInformation) throws RemoteException
+		private final MeasurementContext measurementContext;
+		ImageGatherer(PositionInformation positionInformation, MeasurementContext measurementContext) throws RemoteException
 		{
 			this.positionInformation = positionInformation;
+			this.measurementContext = measurementContext;
 		}
 		@Override
 		public void imageMade(ImageEvent<?> image) throws RemoteException
@@ -64,7 +66,8 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			
 			if(burstMode)
 			{
-				image.setExecutionInformation(new ExecutionInformation(System.currentTimeMillis(), 0, evaluationNumber++));
+				image.setExecutionInformation(new ExecutionInformation(evaluationNumber++));
+				image.setCreationRuntime(measurementContext.getMeasurementRuntime());
 				sendImageToListeners(image);
 			}
 			else
@@ -115,6 +118,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 				if(image == null)
 					continue;
 				image.setExecutionInformation(executionInformation);
+				image.setCreationRuntime(measurementContext.getMeasurementRuntime());
 				sendImageToListeners(image);
 			}
 		}
@@ -299,7 +303,7 @@ class ContinuousImagingJobImpl extends JobAdapter implements ContinuousImagingJo
 			PositionInformation positionInformation = getPositionInformation();
 			if(cameraIDs.length > 1)
 				positionInformation = new PositionInformation(positionInformation, PositionInformation.POSITION_TYPE_CAMERA, i);
-			imageGatherers[i] = new ImageGatherer(positionInformation);
+			imageGatherers[i] = new ImageGatherer(positionInformation, measurementContext);
 			
 			CameraDevice camera;
 			try

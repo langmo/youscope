@@ -175,6 +175,7 @@ class ShortContinuousImagingJobImpl extends JobAdapter implements ShortContinuou
 					continue;
 				ExecutionInformation exInfo = new ExecutionInformation(executionInformation, n);
 				image.setExecutionInformation(exInfo);
+				image.setCreationRuntime(measurementContext.getMeasurementRuntime());
 				sendImageToListeners(image);
 			}
 			if(!burstMode)

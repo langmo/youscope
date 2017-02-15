@@ -275,4 +275,15 @@ class MeasurementRMI extends UnicastRemoteObject implements Measurement
 	public MeasurementMetadata getMetadata() throws RemoteException {
 		return measurement.getMetadata();
 	}
+
+	@Override
+	public void setInitialRuntime(long initialRuntime)
+			throws RemoteException, ComponentRunningException, IllegalArgumentException {
+		measurement.setInitialRuntime(initialRuntime);
+	}
+
+	@Override
+	public long getInitialRuntime() throws RemoteException {
+		return measurement.getInitialRuntime();
+	}
 }

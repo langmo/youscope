@@ -204,9 +204,19 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		
 		if(result != null && result.getLabelImage() != null)
 		{
-			sendSegmentationImageToListeners(result.getLabelImage(), executionInformation);
+			ImageEvent<?> image = result.getLabelImage();
+			image.setPositionInformation(getPositionInformation());
+			image.setExecutionInformation(executionInformation);
+			image.setCreationRuntime(measurementContext.getMeasurementRuntime());
+			sendSegmentationImageToListeners(image);
 			if(visualizationAlgorithm == null)
-				sendImageToListeners(result.getLabelImage(), executionInformation);
+			{
+				ImageEvent<?> e = result.getLabelImage();
+				e.setPositionInformation(getPositionInformation());
+				e.setExecutionInformation(executionInformation);
+				e.setCreationRuntime(measurementContext.getMeasurementRuntime());
+				sendImageToListeners(e);
+			}
 		}
 		
 		
@@ -223,8 +233,11 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 			}
 			if(visImage != null)
 			{
-				sendControlImageToListeners(visImage, executionInformation);
-				sendImageToListeners(visImage, executionInformation);
+				visImage.setPositionInformation(getPositionInformation());
+				visImage.setExecutionInformation(executionInformation);
+				visImage.setCreationRuntime(measurementContext.getMeasurementRuntime());
+				sendControlImageToListeners(visImage);
+				sendImageToListeners(visImage);
 			}
 		}
 		
@@ -256,11 +269,8 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		return retVal;
 	}
 	
-	private void sendImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
+	private void sendImageToListeners(ImageEvent<?> e)
 	{
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
 		synchronized(imageListeners)
 		{
 			for(int i = 0; i < imageListeners.size(); i++)
@@ -280,11 +290,8 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		}
 	}
 	
-	private void sendSegmentationImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
+	private void sendSegmentationImageToListeners(ImageEvent<?> e)
 	{
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
 		synchronized(segmentationImageListeners)
 		{
 			for(int i = 0; i < segmentationImageListeners.size(); i++)
@@ -304,11 +311,8 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 		}
 	}
 	
-	private void sendControlImageToListeners(ImageEvent<?> e, ExecutionInformation executionInformation)
+	private void sendControlImageToListeners(ImageEvent<?> e)
 	{
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
 		synchronized(controlImageListeners)
 		{
 			for(int i = 0; i < controlImageListeners.size(); i++)

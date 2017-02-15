@@ -13,6 +13,15 @@ import java.util.UUID;
  */
 public interface MeasurementContext extends Remote
 {
+	
+	/**
+	 * Returns the current runtime of the measurement in ms.
+	 * @return Current measurement runtime in ms.
+	 * @throws RemoteException
+	 */
+	public long getMeasurementRuntime() throws RemoteException;
+	
+	
     /**
      * Sets a property, such that it can be loaded by any other job in the measurement. Any property with the same identifier will
      * be replaced.

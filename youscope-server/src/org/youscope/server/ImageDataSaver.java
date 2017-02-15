@@ -151,7 +151,7 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 
 	private synchronized void saveImageMetadataInList(final ImageEvent<?> e, String path, String imageName) throws TableException, RemoteException
 	{
-		Table imageTable = new Table(getProducedTableDefinition(), e.getCreationTime(), e.getPositionInformation(), e.getExecutionInformation());
+		Table imageTable = new Table(getProducedTableDefinition(), e.getCreationTime(), e.getCreationRuntime(), e.getPositionInformation(), e.getExecutionInformation());
 		imageTable.addRow(path, imageName, e.getCamera(), e.getChannelGroup(), e.getChannel(), new Integer(e.getBitDepth()));
 		for(TableListener listener : tableDataListeners)
 		{

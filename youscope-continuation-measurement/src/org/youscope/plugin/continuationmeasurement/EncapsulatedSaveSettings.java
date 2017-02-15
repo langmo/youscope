@@ -1,43 +1,81 @@
-package org.youscope.plugin.measurementappender;
+package org.youscope.plugin.continuationmeasurement;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.UUID;
 
-import org.youscope.common.ExecutionInformation;
+import org.youscope.common.ComponentRunningException;
+import org.youscope.common.MeasurementContext;
+import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.image.ImageEvent;
-import org.youscope.common.resource.ResourceAdapter;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.saving.SaveInformation;
 import org.youscope.common.saving.SaveSettings;
 
-/**
- * Standard save settings, e.g. the definition where images should be stored under which name.
- * @author mlang
- *
- */
-public class AppenderSaveSettings extends ResourceAdapter<AppenderSaveSettingsConfiguration> implements SaveSettings
-{
+class EncapsulatedSaveSettings extends UnicastRemoteObject implements SaveSettings {
 
 	/**
-	 * Serial Version UID
+	 * Serial Version UID.
 	 */
-	private static final long serialVersionUID = -3600016559165429151L;
-	
+	private static final long serialVersionUID = 4562689142733565577L;
 	private final SaveSettings encapsulatedSettings;
+	private final String measurementFolder;
 	private final static String EXTEND_POSTFIX = "_continued";
-	/**
-	 * Constructor.
-	 * @param positionInformation Position information.
-	 * @param configuration configuration of the save settings.
-	 * @param encapsulatedSettings 
-	 * @throws ConfigurationException
-	 * @throws RemoteException 
-	 */
-	public AppenderSaveSettings(PositionInformation positionInformation, AppenderSaveSettingsConfiguration configuration, SaveSettings encapsulatedSettings)
-					throws ConfigurationException, RemoteException {
-		super(positionInformation, configuration, AppenderSaveSettingsConfiguration.TYPE_IDENTIFIER, AppenderSaveSettingsConfiguration.class, "appender save settings");
+	public EncapsulatedSaveSettings(SaveSettings encapsulatedSettings, String measurementFolder) throws RemoteException 
+	{
 		this.encapsulatedSettings = encapsulatedSettings;
+		this.measurementFolder = measurementFolder;
+	}
+
+	@Override
+	public String getTypeIdentifier() throws RemoteException {
+		return encapsulatedSettings.getTypeIdentifier();
+	}
+
+	@Override
+	public void initialize(MeasurementContext measurementContext) throws ResourceException, RemoteException {
+		encapsulatedSettings.initialize(measurementContext);
+	}
+
+	@Override
+	public void uninitialize(MeasurementContext measurementContext) throws ResourceException, RemoteException {
+		encapsulatedSettings.uninitialize(measurementContext);
+	}
+
+	@Override
+	public boolean isInitialized() throws RemoteException {
+		return encapsulatedSettings.isInitialized();
+	}
+
+	@Override
+	public void addMessageListener(MessageListener writer) throws RemoteException {
+		encapsulatedSettings.addMessageListener(writer);
+	}
+
+	@Override
+	public void removeMessageListener(MessageListener writer) throws RemoteException {
+		encapsulatedSettings.removeMessageListener(writer);
+	}
+
+	@Override
+	public PositionInformation getPositionInformation() throws RemoteException {
+		return encapsulatedSettings.getPositionInformation();
+	}
+
+	@Override
+	public String getName() throws RemoteException {
+		return encapsulatedSettings.getName();
+	}
+
+	@Override
+	public void setName(String name) throws RemoteException, ComponentRunningException {
+		encapsulatedSettings.setName(name);
+	}
+
+	@Override
+	public UUID getUUID() throws RemoteException {
+		return encapsulatedSettings.getUUID();
 	}
 
 	@Override
@@ -68,7 +106,7 @@ public class AppenderSaveSettings extends ResourceAdapter<AppenderSaveSettingsCo
 
 	@Override
 	public String getMeasurementBasePath(SaveInformation saveInformation) {
-		return getConfiguration().getBaseFolder();
+		return measurementFolder;
 	}
 
 	@Override
@@ -84,15 +122,6 @@ public class AppenderSaveSettings extends ResourceAdapter<AppenderSaveSettingsCo
 	@Override
 	public String getImageFilePath(SaveInformation saveInformation, ImageEvent<?> event, String imageName) throws ResourceException, RemoteException 
 	{
-		// modify execution information of image
-		ExecutionInformation orgInf = event.getExecutionInformation();
-		if(orgInf != null && orgInf.getMeasurementStartTime() != saveInformation.getMeasurementStartTime()-getConfiguration().getPreviousRuntime())
-		{
-			ExecutionInformation newInf = new ExecutionInformation(saveInformation.getMeasurementStartTime()-getConfiguration().getPreviousRuntime(), orgInf.getMeasurementPauseDuration(), orgInf.getEvaluationNumber()+getConfiguration().getDeltaEvaluationNumber());
-			for(long loopNumber : orgInf.getLoopNumbers())
-				newInf = new ExecutionInformation(newInf, loopNumber);
-			event.setExecutionInformation(newInf);
-		}
 		return encapsulatedSettings.getImageFilePath(saveInformation, event, imageName); 
 	}
 
@@ -117,5 +146,5 @@ public class AppenderSaveSettings extends ResourceAdapter<AppenderSaveSettingsCo
 		String extension = orgFile.substring(orgFile.lastIndexOf('.'));
 		return base+EXTEND_POSTFIX+extension;
 	}
-	
+
 }

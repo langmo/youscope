@@ -27,6 +27,8 @@ import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.Property;
+import org.youscope.common.resource.ResourceException;
+import org.youscope.server.MeasurementSaverImpl.SaverInformation;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -41,6 +43,22 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 class InformationSaver 
 {
+	@XStreamAlias("file")
+	static class MeasurementFile
+	{
+		@XStreamAlias("name")
+		@XStreamAsAttribute
+		final String name;
+		@XStreamAlias("path")
+		@XStreamAsAttribute
+		final String path;
+		MeasurementFile(String name, String path)
+		{
+			this.name = name;
+			this.path = path;
+		}
+	}
+	
 	@XStreamAlias("measurement-information")
 	static class Measurement
 	{
@@ -58,12 +76,84 @@ class InformationSaver
 		
 		@XStreamAlias("channel-definitions")
 		final ScopeChannel[] scopeChannels;
-		Measurement(MeasurementImpl measurement, Microscope microscope)
+		
+		@XStreamAlias("files")
+		final MeasurementFile[] files;
+		
+		private static MeasurementFile[] initializeFiles(SaverInformation saverInformation)
+		{
+			final ArrayList<MeasurementFile> files = new ArrayList<>();
+			File xmlFolder;
+			try
+			{
+				xmlFolder = new File(saverInformation.getFullXMLInformationFilePath()).getParentFile();			
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// we need this path to calculate all other relative paths.
+				return new MeasurementFile[0];
+			}
+			
+			try
+			{
+				File file = new File(saverInformation.getFullImageTablePath());
+				files.add(new MeasurementFile("image-table", xmlFolder.toURI().relativize(file.toURI()).getPath()));
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// do nothing.
+			}
+				
+			try
+			{
+				File file = new File(saverInformation.getFullLogErrFilePath());
+				files.add(new MeasurementFile("error-log", xmlFolder.toURI().relativize(file.toURI()).getPath()));
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// do nothing.
+			}
+			
+			try
+			{
+				File file = new File(saverInformation.getFullLogOutFilePath());
+				files.add(new MeasurementFile("log", xmlFolder.toURI().relativize(file.toURI()).getPath()));
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// do nothing.
+			}
+			
+			try
+			{
+				File file = new File(saverInformation.getFullMeasurementConfigurationFilePath());
+				files.add(new MeasurementFile("measurement-configuration", xmlFolder.toURI().relativize(file.toURI()).getPath()));
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// do nothing.
+			}
+			
+			try
+			{
+				File file = new File(saverInformation.getFullMicroscopeConfigurationFilePath());
+				files.add(new MeasurementFile("microscope-configuration", xmlFolder.toURI().relativize(file.toURI()).getPath()));
+			}
+			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
+			{
+				// do nothing.
+			}
+			return files.toArray(new MeasurementFile[files.size()]);
+		}
+		
+		Measurement(MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation)
 		{
 			name = measurement.getName();
 			description = measurement.getMetadata().getDescription();
 			metadataProperties = measurement.getMetadata().getMetadataProperties();
+			files = initializeFiles(saverInformation);
 			
+						
 			ArrayList<ScopeDevice> tempScopeDevices = new ArrayList<>();
 			try {
 				for(Device device : microscope.getDevices())
@@ -305,10 +395,10 @@ class InformationSaver
 		xstream.processAnnotations(new Class<?>[] {MetadataProperty.class, InformationSaver.ScopeChannel.class, InformationSaver.ScopeChannelSetting.class, InformationSaver.ScopeDevice.class, InformationSaver.Measurement.class, InformationSaver.ScopeDeviceSetting.class});
 		return xstream;
 	}
-	public void saveXMLInformation(MeasurementImpl measurement, Microscope microscope, String xmlFileName) throws IOException
+	public void saveXMLInformation(MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation, String xmlFileName) throws IOException
 	{
 		// Write XML file
-		Measurement root = new Measurement(measurement, microscope);
+		Measurement root = new Measurement(measurement, microscope, saverInformation);
 		XStream xstream = getSerializerInstance();
 		File xmlFile = new File(xmlFileName);
 		File xmlFolder = xmlFile.getParentFile();

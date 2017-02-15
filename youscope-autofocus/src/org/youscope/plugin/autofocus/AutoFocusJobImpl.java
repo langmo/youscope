@@ -243,7 +243,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	}
 	
 	@Override
-	public void runJob(final ExecutionInformation executionInformation, final Microscope microscope, MeasurementContext measurementContext) throws JobException, InterruptedException, RemoteException
+	public void runJob(final ExecutionInformation executionInformation, final Microscope microscope, final MeasurementContext measurementContext) throws JobException, InterruptedException, RemoteException
 	{
 		// wait a short time. Some focus devices do not adjust their current position immediately.
 		Thread.sleep(100);
@@ -313,7 +313,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 					setFocus(microscope, zeroPosition + relativeFocusPosition);
 					if(adjustmentTime>0)
 						Thread.sleep(adjustmentTime);
-					ImageEvent<?> image = takeImage(microscope, executionInformation, new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_ZSTACK, step));			
+					ImageEvent<?> image = takeImage(microscope, measurementContext, executionInformation, new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_ZSTACK, step));			
 					focusScore = getScore(image);
 				}
 				catch(RemoteException e)
@@ -494,7 +494,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 		}
 	}
 	
-	private ImageEvent<?> takeImage(Microscope microscope, ExecutionInformation executionInformation, PositionInformation positionInformation) throws RemoteException, JobException, InterruptedException
+	private ImageEvent<?> takeImage(Microscope microscope, MeasurementContext measurementContext, ExecutionInformation executionInformation, PositionInformation positionInformation) throws RemoteException, JobException, InterruptedException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();
@@ -522,6 +522,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 		}
 		image.setPositionInformation(positionInformation);
 		image.setExecutionInformation(executionInformation);
+		image.setCreationRuntime(measurementContext.getMeasurementRuntime());
 		
 		sendImageToListeners(image);
 		return image;

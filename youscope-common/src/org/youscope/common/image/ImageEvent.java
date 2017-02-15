@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.util.Date;
 
 import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 
 /**
@@ -24,7 +25,7 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 	 */
 	private static final long		serialVersionUID		= 3149338017624936717L;
 
-	private final T			imageData;
+	private final T					imageData;
 	private final int				width;
 	private final int				height;
 	private final int				bytesPerPixel;
@@ -32,6 +33,7 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 	private ExecutionInformation	executionInformation	= null;
 	private PositionInformation		positionInformation		= null;
 	private long					creationTime;
+	private long 					creationRuntime			= -1;
 	private String					camera					= "";
 	private String					channelGroup				= "";
 	private String					channel					= "";
@@ -324,6 +326,24 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 	{
 		return creationTime;
 	}
+	
+	/**
+	 * Sets the runtime in ms when the image was created. See {@link MeasurementContext#getMeasurementRuntime()}.
+	 * @param creationRuntime Runtime in ms, or -1 if not known.
+	 */
+	public void setCreationRuntime(long creationRuntime)
+	{
+		this.creationRuntime = creationRuntime;
+	}
+	
+	/**
+	 * Returns the runtime in ms when the image was created. See {@link MeasurementContext#getMeasurementRuntime()}.
+	 * @return Measurement runtime in ms.
+	 */
+	public long getCreationRuntime()
+	{
+		return creationRuntime;
+	}
 
 	/**
 	 * Set the name of the camera with which the image was taken.
@@ -383,7 +403,7 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 	@Override
 	public ImageEvent<T> clone()
 	{
-		// image data needs not to be cloned since it is final
+		// We don't clone the image data. Even though it might be manipulated, the convention is that it is not.
 		try {
 			return (ImageEvent<T>)super.clone();
 		} catch (CloneNotSupportedException e) {
@@ -401,6 +421,7 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 		result = prime * result + ((camera == null) ? 0 : camera.hashCode());
 		result = prime * result + ((channel == null) ? 0 : channel.hashCode());
 		result = prime * result + ((channelGroup == null) ? 0 : channelGroup.hashCode());
+		result = prime * result + (int) (creationRuntime ^ (creationRuntime >>> 32));
 		result = prime * result + (int) (creationTime ^ (creationTime >>> 32));
 		result = prime * result + ((executionInformation == null) ? 0 : executionInformation.hashCode());
 		result = prime * result + height;
@@ -443,6 +464,8 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 				return false;
 		} else if (!channelGroup.equals(other.channelGroup))
 			return false;
+		if (creationRuntime != other.creationRuntime)
+			return false;
 		if (creationTime != other.creationTime)
 			return false;
 		if (executionInformation == null) {
@@ -472,5 +495,4 @@ public final class ImageEvent<T extends Object> implements Serializable, Cloneab
 			return false;
 		return true;
 	}
-
 }

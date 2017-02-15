@@ -106,7 +106,7 @@ class NemesysJobImpl extends JobAdapter implements NemesysJob, NemesysScriptCall
 		// Execute input job.
 		if(timingTable != null)
 		{
-			SyringeTableRow timing = timingTable.getActiveSettings(executionInformation.getMeasurementRuntime());
+			SyringeTableRow timing = timingTable.getActiveSettings(measurementContext.getMeasurementRuntime());
 			if(timing == null)
 			{
 				// do nothing.
@@ -135,7 +135,7 @@ class NemesysJobImpl extends JobAdapter implements NemesysJob, NemesysScriptCall
 		{
 			// Set controller algorithm variables
 			localEngine.put("evaluationNumber", executionInformation.getEvaluationNumber());
-			localEngine.put("evaluationTime", executionInformation.getMeasurementRuntime());
+			localEngine.put("evaluationTime", measurementContext.getMeasurementRuntime());
 			localEngine.put("nemesys", this);
 			
 			// Run controller algorithm.
@@ -195,7 +195,7 @@ class NemesysJobImpl extends JobAdapter implements NemesysJob, NemesysScriptCall
 		TableListener[] listeners = tableListeners.toArray(new TableListener[tableListeners.size()]);
 		if(listeners.length > 0)
 		{
-			Table monitorTable = new Table(getProducedTableDefinition(), getPositionInformation(), executionInformation);
+			Table monitorTable = new Table(getProducedTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 			for(int i=0; i<numDosingUnits; i++)
 			{
 				try

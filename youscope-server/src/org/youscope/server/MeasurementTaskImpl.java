@@ -39,7 +39,8 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	private final long startTime;
 	private final long[] periods;
 	
-	private volatile long nextExecutionNumber = 0;
+	private volatile long initialExecutionNumber = 0;
+	private volatile long nextExecutionNumber = initialExecutionNumber;
 
 	private final ArrayList<Job> jobs = new ArrayList<Job>();
 
@@ -370,7 +371,7 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 	void initializeTask(Microscope microscope, MeasurementContext measurementContext, TaskExecutor taskExecutor) throws TaskException, InterruptedException
 	{
 		stateManager.toState(TaskState.INITIALIZING, "Cannot initialize task,", TaskState.READY);
-		nextExecutionNumber = 0;
+		nextExecutionNumber = initialExecutionNumber;
 		this.taskExecutor = taskExecutor;
 		scheduleTask();
 		// Initialize jobs
@@ -513,5 +514,23 @@ class MeasurementTaskImpl extends UnicastRemoteObject implements Task
 		{
 			return jobs.get(jobIndex);
 		}
+	}
+
+	@Override
+	public void setInitialExecutionNumber(long executionNumber) throws ComponentRunningException, IllegalArgumentException 
+	{
+		if(executionNumber < 0)
+			throw new IllegalArgumentException("Initial execution number must be greater or equal to zero.");
+		synchronized(stateManager)
+		{
+			stateManager.assertEditable();
+			initialExecutionNumber = executionNumber;
+		}
+	}
+
+	@Override
+	public long getInitialExecutionNumber()
+	{
+		return initialExecutionNumber;
 	}
 }

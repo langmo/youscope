@@ -10,7 +10,6 @@ import org.youscope.common.job.Job;
 
 /**
  * Information about how many times the currently executed job has already been executed.
- * <br>
  * The class is immutable.
  * @author Moritz Lang
  * 
@@ -22,24 +21,18 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	 */
 	private static final long	serialVersionUID	= -8699056656518664004L;
 	private final long			evaluationNumber;
-	private final long			measurementStartTime;
-	private final long 			measurementPauseDuration;
 	private final long[]		loopNumbers;
 
 	/**
 	 * Creates an execution information initialized with the given evaluation number, starting at 0.
 	 * Typically, this constructor should not be called directly by a {@link Job} or similar to construct a new execution information. 
 	 * Instead, execution informations are typically created using the constructor {@link #ExecutionInformation(ExecutionInformation, long)}, which extends on an existing execution information and ensures that all fields are set correctly. 
-	 * @param measurementStartTime The time when the measurement was started, in number of milliseconds since January 1, 1970, 00:00:00 GMT.
-	 * @param measurementPauseDuration The total duration, in ms, during which the measurement was paused, or 0 if measurement was not yet paused.
 	 * @param evaluationNumber The main evaluation number.
 	 */
-	public ExecutionInformation(long measurementStartTime, long measurementPauseDuration, long evaluationNumber)
+	public ExecutionInformation(long evaluationNumber)
 	{
-		this.measurementStartTime = measurementStartTime;
 		this.evaluationNumber = evaluationNumber;
 		this.loopNumbers = new long[0];
-		this.measurementPauseDuration = measurementPauseDuration;
 	}
 
 	/**
@@ -51,8 +44,6 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	public ExecutionInformation(ExecutionInformation parentInformation, long loopNumber)
 	{
 		this.evaluationNumber = parentInformation.getEvaluationNumber();
-		this.measurementStartTime = parentInformation.getMeasurementStartTime();
-		this.measurementPauseDuration = parentInformation.getMeasurementPauseDuration();
 		long[] parentLoopNo = parentInformation.getLoopNumbers();
 		this.loopNumbers = new long[parentLoopNo.length + 1];
 		System.arraycopy(parentLoopNo, 0, this.loopNumbers, 0, parentLoopNo.length);
@@ -91,45 +82,6 @@ public final class ExecutionInformation implements Serializable, Cloneable
 	}
 
 	/**
-	 * Returns the absolute time when the measurement was started, in number of milliseconds since January 1, 1970, 00:00:00 GMT.
-	 * @return The time when the measurement was started, in Unix time.
-	 */
-	public long getMeasurementStartTime()
-	{
-		return measurementStartTime;
-	}
-	
-	/**
-	 * Returns the time duration for which the measurement was in total paused. When the measurement was yet not paused, returns 0.
-	 * @return The duration, in ms, during which the measurement was paused.
-	 */
-	public long getMeasurementPauseDuration()
-	{
-		return measurementPauseDuration;
-	}
-
-	/**
-	 * Returns the duration in ms of how long the current measurement is already running.
-	 * Returns {@link System#currentTimeMillis()} - {@link #getMeasurementStartTime()} - {@link #getMeasurementPauseDuration()}.
-	 * Note that the runtime is precise only in the moment when the function is called.
-	 * @return runtime of the measurement in ms.
-	 */
-	public long getMeasurementRuntime()
-	{
-		return System.currentTimeMillis() - measurementStartTime - measurementPauseDuration;
-	}
-	/**
-	 * Returns the duration in ms of how long the current measurement was already running at the provided time.
-	 * Returns time - {@link #getMeasurementStartTime()} - {@link #getMeasurementPauseDuration()}.
-	 * @param time Time in ms (see {@link System#currentTimeMillis()}) which should be translated into measurement runtime.
-	 * @return runtime of the measurement at the given time in ms.
-	 */
-	public long getMeasurementRuntime(long time)
-	{
-		return time - measurementStartTime - measurementPauseDuration;
-	}
-
-	/**
 	 * Some jobs may execute their child jobs more than once per execution, in some kind of loop.
 	 * The child jobs should than obtain an execution information with the same evaluation number, but with a loop number indicating the number of times the loop has been executed, starting at 0.
 	 * Since loops can be in loops, the returned value can contain more than one loop number. The outer loop numbers are stored at the beginning, and the inner at the end of the array.
@@ -164,7 +116,6 @@ public final class ExecutionInformation implements Serializable, Cloneable
 		int result = 1;
 		result = prime * result + (int) (evaluationNumber ^ (evaluationNumber >>> 32));
 		result = prime * result + Arrays.hashCode(loopNumbers);
-		result = prime * result + (int) (measurementStartTime ^ (measurementStartTime >>> 32));
 		return result;
 	}
 
@@ -180,8 +131,6 @@ public final class ExecutionInformation implements Serializable, Cloneable
 		if (evaluationNumber != other.evaluationNumber)
 			return false;
 		if (!Arrays.equals(loopNumbers, other.loopNumbers))
-			return false;
-		if (measurementStartTime != other.measurementStartTime)
 			return false;
 		return true;
 	}

@@ -200,6 +200,7 @@ class ComposedImagingJobImpl  extends JobAdapter implements ComposedImagingJob
 			
 			e.setPositionInformation(positionInformation);
 			e.setExecutionInformation(executionInformation);
+			e.setCreationRuntime(measurementContext.getMeasurementRuntime());
 			
 			sendImageToListeners(e);
 		}

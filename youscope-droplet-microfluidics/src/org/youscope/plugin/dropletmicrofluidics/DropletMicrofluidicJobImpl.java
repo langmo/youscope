@@ -184,7 +184,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		}
 
 		// Execute the output.
-		Table nemesysTable = new Table(NemesysControlTable.getTableDefinition(), getPositionInformation(), executionInformation);
+		Table nemesysTable = new Table(NemesysControlTable.getTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 		try
 		{
 			for(int i=0; i<controllerResult.getNumFlowUnits(); i++)
@@ -207,7 +207,7 @@ class DropletMicrofluidicJobImpl extends JobAdapter implements DropletMicrofluid
 		outputJob.executeJob(executionInformation, microscope, measurementContext);
 		
 		// Create state table
-		Table stateTable = new Table(DropletMicrofluidicTable.getTableDefinition(), getPositionInformation(), executionInformation);
+		Table stateTable = new Table(DropletMicrofluidicTable.getTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 		try
 		{
 			for(int i = 0; i<controllerResult.getNumFlowUnits() || i < observerResult.getNumDroplets() || i < 1; i++)

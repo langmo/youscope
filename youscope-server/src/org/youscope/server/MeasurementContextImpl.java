@@ -75,4 +75,9 @@ class MeasurementContextImpl implements MeasurementContext
 		return measurement.getUUID();
 	}
 
+	@Override
+	public long getMeasurementRuntime() throws RemoteException {
+		return measurement.getRuntime();
+	}
+
 }

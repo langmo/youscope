@@ -33,7 +33,6 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 
 	private UserControlMeasurementCallback callback;
 	private volatile ImageEvent<?> lastImage = null;
-	private volatile ExecutionInformation lastExecutionInformation = null;
 	
 	private final ArrayList<ImageListener> imageListeners = new ArrayList<ImageListener>();
 	
@@ -148,10 +147,10 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 			{
 				image.setPositionInformation(getPositionInformation());
 				image.setExecutionInformation(executionInformation);
+				image.setCreationRuntime(measurementContext.getMeasurementRuntime());
 				synchronized(this)
 				{
 					lastImage = image;
-					lastExecutionInformation = executionInformation;
 				}
 				callback.newImage(image);
 			}
@@ -269,13 +268,11 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	public void snapImage() throws RemoteException
 	{
 		ImageEvent<?> image;
-		ExecutionInformation executionInformation;
 		synchronized(this)
 		{
 			image = lastImage;
-			executionInformation = lastExecutionInformation;
 		}
-		if(image == null || executionInformation == null)
+		if(image == null)
 			return;
 		
 		if((currentPositionInformation == 0 && getStageTolerance() >= 0) 
@@ -292,7 +289,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		imageNumber++;
 		image.setChannel(channel);
 		image.setChannelGroup(channelGroup);
-		image.setExecutionInformation(new ExecutionInformation(System.currentTimeMillis(), 0, imageNumber));
+		image.setExecutionInformation(new ExecutionInformation(imageNumber));
 		image.setPositionInformation(new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_MAIN_POSITION, currentPositionInformation));
 		
 		// save image

@@ -35,7 +35,7 @@ class EvaporationController  extends ResourceAdapter<EvaporationControllerConfig
 		// get and update state
 		ControllerState state = loadState(measurementContext, microfluidicChipID);
 		long lastExecution = state.getLastExecutionTime();
-		long currentExecution = executionInformation.getMeasurementRuntime();
+		long currentExecution = measurementContext.getMeasurementRuntime();
 		double intError = state.getIntegralError();
 		if(lastExecution >= 0)
 			intError += meanDropletOffset * (currentExecution-lastExecution)/60/1000;

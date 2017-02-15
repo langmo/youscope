@@ -322,7 +322,7 @@ class TableDataVisualizerFrame
     	}
     	
     	long evaluationNumber = table.getExecutionInformation() == null ? currentDataNum : table.getExecutionInformation().getEvaluationNumber();
-    	double timeMin = (table.getExecutionInformation() == null) ? currentDataNum : ((double)(table.getExecutionInformation().getMeasurementRuntime(table.getCreationTime()))) / 60000;
+    	double timeMin = (table.getExecutionInformation() == null) ? currentDataNum : ((double)table.getCreationRuntime()) / 60000;
     	
     	
     	// get x values

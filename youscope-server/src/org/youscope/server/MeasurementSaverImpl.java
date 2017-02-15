@@ -391,7 +391,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		{
 			InformationSaver informationSaver = new InformationSaver();
 			try {
-				informationSaver.saveXMLInformation(measurement, microscope, xmlInformationFilePath);
+				informationSaver.saveXMLInformation(measurement, microscope, saverInformation, xmlInformationFilePath);
 			} catch (IOException e) {
 				ServerSystem.err.println("Could not save information about measurement to "+xmlInformationFilePath+".", e);
 				informationSaver = null;

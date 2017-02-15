@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.youscope.plugin.measurementappender;
+package org.youscope.plugin.continuationmeasurement;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.AddonMetadata;
@@ -15,15 +15,15 @@ import org.youscope.serverinterfaces.YouScopeServer;
  * @author Moritz Lang
  *
  */
-public class AppenderPostProcessingFactory implements PostProcessorAddonFactory
+public class ContinuationMeasurementPostProcessingFactory implements PostProcessorAddonFactory
 {
 
 	@Override
 	public ToolAddonUI createPostProcessorUI(String ID, YouScopeClient client, YouScopeServer server, MeasurementFileLocations measurementFileLocations) throws AddonException
 	{
-		if(AppenderTool.TYPE_IDENTIFIER.equals(ID))
+		if(ContinuationMeasurementPostProcessing.TYPE_IDENTIFIER.equals(ID))
 		{
-			return new AppenderTool(client, server, measurementFileLocations);
+			return new ContinuationMeasurementPostProcessing(client, server, measurementFileLocations);
 		}
 		throw new AddonException("Type identifer "+ID+" not supported by this factory.");
 	}
@@ -31,21 +31,21 @@ public class AppenderPostProcessingFactory implements PostProcessorAddonFactory
 	@Override
 	public String[] getSupportedTypeIdentifiers()
 	{
-		return new String[]{AppenderTool.TYPE_IDENTIFIER};		
+		return new String[]{ContinuationMeasurementPostProcessing.TYPE_IDENTIFIER};		
 	}
 
 	@Override
 	public boolean isSupportingTypeIdentifier(String ID)
 	{
-		if(AppenderTool.TYPE_IDENTIFIER.equals(ID))
+		if(ContinuationMeasurementPostProcessing.TYPE_IDENTIFIER.equals(ID))
 			return true;
 		return false;
 	}
 
 	@Override
 	public AddonMetadata getPostProcessorMetadata(String typeIdentifier) throws AddonException {
-		if(AppenderTool.TYPE_IDENTIFIER.equals(typeIdentifier))
-			return AppenderTool.getMetadata();
+		if(ContinuationMeasurementPostProcessing.TYPE_IDENTIFIER.equals(typeIdentifier))
+			return ContinuationMeasurementPostProcessing.getMetadata();
 		throw new AddonException("Type identifer "+typeIdentifier+" not supported by this factory.");
 	}
 

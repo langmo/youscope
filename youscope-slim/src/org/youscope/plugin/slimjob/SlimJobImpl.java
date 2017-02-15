@@ -185,6 +185,7 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 		}
 		slimImage.setPositionInformation(getPositionInformation());
 		slimImage.setExecutionInformation(executionInformation);
+		slimImage.setCreationRuntime(measurementContext.getMeasurementRuntime());
 		sendImageToListeners(slimImage);
 	}
 	

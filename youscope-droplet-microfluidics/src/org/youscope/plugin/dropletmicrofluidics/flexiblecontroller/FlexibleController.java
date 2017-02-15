@@ -33,7 +33,7 @@ class FlexibleController  extends ResourceAdapter<FlexibleControllerConfiguratio
 		// get and update state
 		ControllerState state = loadState(measurementContext, microfluidicChipID);
 		long lastExecution = state.getLastExecutionTime();
-		long currentExecution = executionInformation.getMeasurementRuntime();
+		long currentExecution = measurementContext.getMeasurementRuntime();
 		double intError = state.getIntegralError();
 		if(lastExecution >= 0)
 			intError += meanDropletOffset * (currentExecution-lastExecution)/60/1000;
@@ -50,7 +50,7 @@ class FlexibleController  extends ResourceAdapter<FlexibleControllerConfiguratio
 		FlexibleSyringeTableRow activeRow = rows[0];
 		for(int i=1; i<rows.length; i++)
 		{
-			if(rows[i].getStartTimeMS() <= executionInformation.getMeasurementRuntime())
+			if(rows[i].getStartTimeMS() <= measurementContext.getMeasurementRuntime())
 				activeRow = rows[i];
 			else
 				break;

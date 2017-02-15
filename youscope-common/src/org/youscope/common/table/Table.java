@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.youscope.common.ExecutionInformation;
+import org.youscope.common.MeasurementContext;
 import org.youscope.common.PositionInformation;
 
 /**
@@ -27,6 +28,7 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 	private final ExecutionInformation	executionInformation;
 	private final PositionInformation		positionInformation;
 	private final long creationTime;
+	private final long creationRuntime;
 	
 	/**
 	 * Only used for tables without columns, i.e. empty tables.
@@ -48,6 +50,7 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 		executionInformation = other.executionInformation;
 		positionInformation = other.positionInformation;
 		creationTime = other.creationTime;
+		creationRuntime = other.creationRuntime;
 		numRows = other.numRows;
 	}
 	
@@ -57,9 +60,10 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 	 * @param executionInformation The execution of the measurement where this table was created.
 	 * @param positionInformation The logical position in the measurement where this table was created.
 	 * @param creationTime The time (in milliseconds since January 1, 1970, 00:00:00 GMT) when the content of this table was created (see {@link Date#getTime()}). 
+	 * @param creationRuntime The measurement runtime in ms when the content of this table was created (see {@link MeasurementContext#getMeasurementRuntime()}.
 	 * @throws NullPointerException Thrown if the table definition is null.
 	 */
-	public Table(TableDefinition tableDefinition, long creationTime, PositionInformation positionInformation, ExecutionInformation executionInformation) throws NullPointerException
+	public Table(TableDefinition tableDefinition, long creationTime, long creationRuntime, PositionInformation positionInformation, ExecutionInformation executionInformation) throws NullPointerException
 	{
 		if(tableDefinition == null)
 			throw new NullPointerException();
@@ -68,19 +72,21 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 		this.positionInformation = positionInformation;
 		this.executionInformation = executionInformation;
 		this.creationTime = creationTime;
+		this.creationRuntime = creationRuntime;
 	}
 	
 	/**
 	 * Constructor using an already available {@link TableDefinition}.
 	 * The creation time of the table is set to the current time.
 	 * @param tableDefinition The table definition, defining the number, names and types of the columns.
+	 * @param creationRuntime The measurement runtime in ms when the content of this table was created (see {@link MeasurementContext#getMeasurementRuntime()}.
 	 * @param executionInformation The execution of the measurement where this table was created.
 	 * @param positionInformation The logical position in the measurement where this table was created.
 	 * @throws NullPointerException Thrown if the table definition is null.
 	 */
-	public Table(TableDefinition tableDefinition, PositionInformation positionInformation, ExecutionInformation executionInformation) throws NullPointerException
+	public Table(TableDefinition tableDefinition, long creationRuntime, PositionInformation positionInformation, ExecutionInformation executionInformation) throws NullPointerException
 	{
-		this(tableDefinition, System.currentTimeMillis(), positionInformation, executionInformation);
+		this(tableDefinition, System.currentTimeMillis(), creationRuntime, positionInformation, executionInformation);
 	}
 	
 	/**
@@ -90,15 +96,16 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 	 * @param tableName The name (title) of the table. Should be a single short line.
 	 * @param tableDescription Description of the meaning and intended usage of the table. Might contain multiple lines (separated by line breaks).
 	 * @param creationTime The time (in milliseconds since January 1, 1970, 00:00:00 GMT) when the content of this table was created (see {@link Date#getTime()}).
+	 * @param creationRuntime The measurement runtime in ms when the content of this table was created (see {@link MeasurementContext#getMeasurementRuntime()}.
 	 * @param executionInformation The execution of the measurement where this table was created.
 	 * @param positionInformation The logical position in the measurement where this table was created.
 	 * @param columnDefinitions The columns of the table.
 	 * @throws TableException Thrown if given column definitions are currently not supported by YouScope.
 	 * @throws NullPointerException Thrown if one of the columns is null, or the title is null.
 	 */
-	public Table(String tableName, String tableDescription, long creationTime, PositionInformation positionInformation, ExecutionInformation executionInformation, ColumnDefinition<?>... columnDefinitions) throws TableException, NullPointerException
+	public Table(String tableName, String tableDescription, long creationTime, long creationRuntime, PositionInformation positionInformation, ExecutionInformation executionInformation, ColumnDefinition<?>... columnDefinitions) throws TableException, NullPointerException
 	{
-		this(new TableDefinition(tableName, tableDescription, columnDefinitions), creationTime, positionInformation, executionInformation);
+		this(new TableDefinition(tableName, tableDescription, columnDefinitions), creationTime, creationRuntime, positionInformation, executionInformation);
 	}
 	
 	/**
@@ -108,15 +115,16 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 	 * The creation time of the table is set to the current time.
 	 * @param tableName The name (title) of the table. Should be a single short line.
 	 * @param tableDescription Description of the meaning and intended usage of the table. Might contain multiple lines (separated by line breaks).
+	 * @param creationRuntime The measurement runtime in ms when the content of this table was created (see {@link MeasurementContext#getMeasurementRuntime()}.
 	 * @param executionInformation The execution of the measurement where this table was created.
 	 * @param positionInformation The logical position in the measurement where this table was created.
 	 * @param columnDefinitions The columns of the table.
 	 * @throws TableException Thrown if given column definitions are currently not supported by YouScope.
 	 * @throws NullPointerException Thrown if one of the columns is null, or the title is null.
 	 */
-	public Table(String tableName, String tableDescription, PositionInformation positionInformation, ExecutionInformation executionInformation, ColumnDefinition<?>... columnDefinitions) throws TableException, NullPointerException
+	public Table(String tableName, String tableDescription, long creationRuntime, PositionInformation positionInformation, ExecutionInformation executionInformation, ColumnDefinition<?>... columnDefinitions) throws TableException, NullPointerException
 	{
-		this(new TableDefinition(tableName, tableDescription, columnDefinitions), new Date().getTime(), positionInformation, executionInformation);
+		this(new TableDefinition(tableName, tableDescription, columnDefinitions),System.currentTimeMillis(), creationRuntime, positionInformation, executionInformation);
 	}
 	
 	/**
@@ -712,6 +720,15 @@ public class Table implements Cloneable, Serializable, Iterable<RowView>
 	 */
 	public long getCreationTime() {
 		return creationTime;
+	}
+	
+	/**
+	 * Returns the runtime of the measurement, in ms, when the content of this table was created.
+	 * See {@link MeasurementContext#getMeasurementRuntime()}.
+	 * @return Time in ms when content was created.
+	 */
+	public long getCreationRuntime() {
+		return creationRuntime;
 	}
 
 	@Override

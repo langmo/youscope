@@ -382,6 +382,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 		result.setChannelGroup(labelImage.getChannelGroup());
 		result.setExecutionInformation(labelImage.getExecutionInformation());
 		result.setCreationTime(labelImage.getCreationTime());
+		result.setCreationRuntime(labelImage.getCreationRuntime());
 		result.setPositionInformation(labelImage.getPositionInformation());
 		result.setSwitchXY(labelImage.isSwitchXY());
 		result.setTransposeX(labelImage.isTransposeX());

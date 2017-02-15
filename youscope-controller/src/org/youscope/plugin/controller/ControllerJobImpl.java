@@ -219,13 +219,13 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 			throw new JobException("Input job did not produce table used as input for controller.");	
 		
 		// Create new output table
-		Table outputTable = new Table(((TableConsumer)outputJob).getConsumedTableDefinition(), getPositionInformation(), executionInformation);
+		Table outputTable = new Table(((TableConsumer)outputJob).getConsumedTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 		
 		// Set controller algorithm variables
 		ControllerCallbackImpl callback = new ControllerCallbackImpl(inputTable, outputTable, states);
 		localEngine.put(ScriptEngine.FILENAME, "Controller");
 		localEngine.put("evaluationNumber", executionInformation.getEvaluationNumber());
-		localEngine.put("evaluationTime", executionInformation.getMeasurementRuntime());
+		localEngine.put("evaluationTime", outputTable.getCreationRuntime());
 		PositionInformation pos = getPositionInformation();
 		Well well = pos.getWell();
 		if(well == null)
@@ -295,7 +295,7 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 		
 		// Send data to listeners.
 		// For this we have to combine input and output rows into one table.
-		Table listenerTable = new Table(getProducedTableDefinition(), getPositionInformation(), executionInformation);
+		Table listenerTable = new Table(getProducedTableDefinition(), measurementContext.getMeasurementRuntime(), getPositionInformation(), executionInformation);
 		int numRows = inputTable.getNumRows() < outputTable.getNumRows() ? outputTable.getNumRows() : inputTable.getNumRows();
 		try
 		{

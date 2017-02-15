@@ -24,6 +24,7 @@ public class SimpleMeasurementContext extends UnicastRemoteObject implements Mea
 	 * Serial Version UID.
 	 */
 	private static final long serialVersionUID = 8098035348098383719L;
+	final long startTime;
 	/**
 	 * Constructor.
 	 * @throws RemoteException
@@ -31,6 +32,7 @@ public class SimpleMeasurementContext extends UnicastRemoteObject implements Mea
 	public SimpleMeasurementContext() throws RemoteException
 	{
 		super();
+		startTime = System.currentTimeMillis();
 	}
 	
     @Override
@@ -71,6 +73,11 @@ public class SimpleMeasurementContext extends UnicastRemoteObject implements Mea
 	@Override
 	public UUID getMeasurementUUID() throws RemoteException {
 		return uniqueIdentifier;
+	}
+
+	@Override
+	public long getMeasurementRuntime() throws RemoteException {
+		return System.currentTimeMillis() - startTime;
 	}
 
 }

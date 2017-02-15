@@ -241,7 +241,11 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 			{
 				throw new JobException("Could not take image.", e1);
 			}
-			sendImageToListeners(executionInformation, e);
+			// Set execution information
+			e.setExecutionInformation(executionInformation);
+			e.setCreationRuntime(measurementContext.getMeasurementRuntime());
+			
+			sendImageToListeners(e);
 		}
 		else
 		{
@@ -256,7 +260,10 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 			}
 			for(ImageEvent<?> image : images)
 			{
-				sendImageToListeners(executionInformation, image);
+				// Set execution information
+				image.setExecutionInformation(executionInformation);
+				image.setCreationRuntime(measurementContext.getMeasurementRuntime());
+				sendImageToListeners(image);
 			}
 		}
 	}
@@ -278,11 +285,8 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 		return text;
 	}
 
-	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent<?> e)
+	private void sendImageToListeners(ImageEvent<?> e)
 	{
-		// Set execution information
-		e.setExecutionInformation(executionInformation);
-		
 		// Set position information
 		if(cameras.length > 1)
 		{

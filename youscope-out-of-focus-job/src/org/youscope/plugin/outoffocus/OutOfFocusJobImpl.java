@@ -123,7 +123,10 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 		{
 			goFocus(microscope, offset);
 			ImageEvent<?> e = microscope.getCameraDevice().makeImage(channelGroup, channel, exposure);
-			sendImageToListeners(executionInformation, e);
+			e.setPositionInformation(getPositionInformation());
+			e.setExecutionInformation(executionInformation);
+			e.setCreationRuntime(measurementContext.getMeasurementRuntime());
+			sendImageToListeners(e);
 			goFocus(microscope, -offset);
 		}
 		catch(Exception e)
@@ -138,11 +141,8 @@ class OutOfFocusJobImpl extends JobAdapter implements OutOfFocusJob
 		return "Out of focus (offset "+Double.toString(getOffset())+"um) imaging channel " + getChannelGroup() + "." + getChannel() + ", exposure " + Double.toString(getExposure()) + "ms";
 	}
 
-	private void sendImageToListeners(ExecutionInformation executionInformation, ImageEvent<?> e)
+	private void sendImageToListeners(ImageEvent<?> e)
 	{
-		e.setPositionInformation(getPositionInformation());
-		e.setExecutionInformation(executionInformation);
-
 		synchronized(imageListeners)
 		{
 			for(int i = 0; i < imageListeners.size(); i++)
