@@ -63,6 +63,7 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 	private PrintStream										errStream				= null;
 	
 	private volatile MeasurementFileLocations lastMeasurementInformation = null;
+	private volatile InformationSaver informationSaver = null;
 
 	private final MessageListener					logListener				= new MessageListener()
 	{
@@ -383,28 +384,26 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 			ServerSystem.err.println("Could not get information where to store error log. Not storing error log.", e1);
 		} 
 		
-		lastMeasurementInformation = new MeasurementFileLocations(measurementBaseFolder, imageTablePath, measurementConfigurationFilePath, logErrFilePath, logOutFilePath, microscopeConfigurationFilePath);
-
+		lastMeasurementInformation = new MeasurementFileLocations(measurementBaseFolder, imageTablePath, measurementConfigurationFilePath, logErrFilePath, logOutFilePath, microscopeConfigurationFilePath, xmlInformationFilePath, htmlInformationFilePath);
 		
 		// Save measurement configuration as XML file.
 		if(xmlInformationFilePath != null)
 		{
-			InformationSaver informationSaver = new InformationSaver();
+			informationSaver = new InformationSaver(xmlInformationFilePath, htmlInformationFilePath, measurement, microscope, saverInformation);
 			try {
-				informationSaver.saveXMLInformation(measurement, microscope, saverInformation, xmlInformationFilePath);
+				informationSaver.saveXMLInformation();
 			} catch (IOException e) {
 				ServerSystem.err.println("Could not save information about measurement to "+xmlInformationFilePath+".", e);
 				informationSaver = null;
 			}
-			if(informationSaver != null && htmlInformationFilePath != null)
-			{
-				try {
-					informationSaver.saveHTMLInformation(xmlInformationFilePath, htmlInformationFilePath);
-				} catch (IOException | SAXException | TransformerException | ParserConfigurationException e) {
-					ServerSystem.err.println("Could not save information about measurement to "+htmlInformationFilePath+".", e);
-					informationSaver = null;
-				}
+			
+			try {
+				informationSaver.saveHTMLInformation();
+			} catch (IOException | SAXException | TransformerException | ParserConfigurationException e) {
+				ServerSystem.err.println("Could not save information about measurement to "+htmlInformationFilePath+".", e);
+				informationSaver = null;
 			}
+		
 		}
 
 		// Save measurement configuration as loadable file.
@@ -544,6 +543,26 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		// unregister log and error listeners
 		ServerSystem.removeMessageOutListener(logListener);
 		ServerSystem.removeMessageErrListener(logListener);
+		
+		// Update information about measurement.
+		if(informationSaver != null)
+		{
+			try {
+				informationSaver.saveXMLInformation();
+			} catch (IOException e) {
+				ServerSystem.err.println("Could not update information about measurement to XML.", e);
+				informationSaver = null;
+			}
+			try {
+				informationSaver.saveHTMLInformation();
+			} catch (IOException | SAXException | TransformerException | ParserConfigurationException e) {
+				ServerSystem.err.println("Could not update information about measurement to HTML.", e);
+				informationSaver = null;
+			}
+		
+		
+			informationSaver = null;
+		}
 
 		// cleanup ram.
 		System.gc();

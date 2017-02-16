@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:youscope="java"
+	exclude-result-prefixes="youscope">
 <xsl:output method="html"/>
+
+<xsl:key name="wellKey" match="/measurement-information/images/image" use="@well" />
+<xsl:key name="positionKey" match="/measurement-information/images/image" use="concat(@well,@position)" />
+<xsl:key name="imageKey" match="/measurement-information/images/image" use="concat(@well, @position, @name)" />
+
 <xsl:template match="/">
 <html>
 <head>
@@ -108,110 +116,100 @@
 				button.innerHTML = "show";
 			}
 		}
-		function readImageTable(file)
-		{
-			// IE doesn't like XMLHttpRequest on localhost
-			var rawFile = null;
-			try
-			{
-				//IE
-				rawFile = new ActiveXObject("MSXML2.XMLHTTP");
-			}
-			catch(e)
-			{
-				// other browsers
-				rawFile = new XMLHttpRequest();
-				rawFile.overrideMimeType("text/plain");
-			}
-			rawFile.open("GET", file, true);
-			rawFile.onreadystatechange = function ()
-			{
-				if(rawFile.readyState === 4)
-				{
-					if(rawFile.status === 200 || rawFile.status == 0)
-					{
-						var allText = rawFile.responseText;
-						processImageTable(allText);
-					}
-				}
-			}
-			rawFile.send(null);
-		}
 		var images = {};
-		function processImageTable(table)
+		<xsl:if test="/measurement-information/images/image">
+			<xsl:for-each select="/measurement-information/images/image[generate-id(.) = generate-id(key('wellKey',@well)[1])]">
+				images["<xsl:value-of select="@well"/>"] = {};
+			</xsl:for-each>
+			<xsl:for-each select="/measurement-information/images/image[generate-id(.) = generate-id(key('positionKey',concat(@well, @position))[1])]">
+				images["<xsl:value-of select="@well"/>"]["<xsl:value-of select="@position"/>"] = {};
+			</xsl:for-each>
+			<xsl:for-each select="/measurement-information/images/image[generate-id(.) = generate-id(key('imageKey',concat(@well, @position, @name))[1])]">
+				images["<xsl:value-of select="@well"/>"]["<xsl:value-of select="@position"/>"]["<xsl:value-of select="@name"/>"] = {};
+				<xsl:for-each select="key('imageKey',concat(@well, @position, @name))">
+					images["<xsl:value-of select="@well"/>"]["<xsl:value-of select="@position"/>"]["<xsl:value-of select="@name"/>"]["<xsl:value-of select="@evaluation"/>"]="<xsl:value-of select="@path"/>";
+				</xsl:for-each>
+			</xsl:for-each>
+		</xsl:if>	
+		function loadWells()
 		{
-			var lines = table.split("\n");
-			var i, len;
-			for (i = 1, len = lines.length; i &lt; len; ++i) 
-			{
-				var entries = lines[i].split(";");
-				if(entries.length &lt; 12)
-					continue;
-				var posString = entries[5].replace(/["]/g, '').trim();
-				var wellString = entries[4].replace(/["]/g, '').trim();
-				var position;
-				if(!posString &amp;&amp; !wellString)
-					position ="base";
-				else if(!posString)
-					position = wellString;
-				else if(!wellString)
-					position = posString;
-				else
-					position = wellString+"."+posString;
-				if(!(position in images))
-					images[position] = {};
-				var channel = entries[10].replace(/["]/g, '').trim();
-				if(!(channel in images[position]))
-					images[position][channel] = {};
-				var imageNumber = entries[0].replace(/["]/g, '').trim();
-				images[position][channel][imageNumber] = entries[6].replace(/["]/g, '');
-			}
-			list = document.getElementById("imagePositionList");
-			for(var position in images)
+			list = document.getElementById("imageWellList");
+			for(var well in images)
 			{
 				var opt = document.createElement("option");
-				opt.text = position;
-				opt.value = position;
+				opt.text = (well) ? well : "&lt;base&gt;";
+				opt.value = well;
 				list.add(opt, null);
 		    }
-			loadChannels();
+			loadPositions();
+		}
+		function loadPositions()
+		{
+			wellList = document.getElementById("imageWellList");
+			positionList = document.getElementById("imagePositionList");
+			while (positionList.options.length > 0) 
+			{
+				positionList.remove(positionList.options.length - 1);
+			}
+			if(!wellList.options[wellList.selectedIndex])
+				return;
+			well = wellList.options[wellList.selectedIndex].value;
+			for(var position in images[well])
+			{
+				var opt = document.createElement("option");
+				opt.text = (position) ? position : "&lt;base&gt;";
+				opt.value = position;
+				positionList.add(opt, null);
+			}
+			loadChannels()
 		}
 		function loadChannels()
 		{
+			wellList = document.getElementById("imageWellList");
 			positionList = document.getElementById("imagePositionList");
 			channelList = document.getElementById("imageChannelList");
 			while (channelList.options.length > 0) 
 			{
 				channelList.remove(channelList.options.length - 1);
 			}
+			if(!wellList.options[wellList.selectedIndex])
+				return;
 			if(!positionList.options[positionList.selectedIndex])
 				return;
+			well = wellList.options[wellList.selectedIndex].value;
 			position = positionList.options[positionList.selectedIndex].value;
-			for(var channel in images[position])
+			for(var channel in images[well][position])
 			{
 				var opt = document.createElement("option");
-				opt.text = channel;
+				opt.text = (channel) ? channel : "&lt;default&gt;";
 				opt.value = channel;
 				channelList.add(opt, null);
 			}
 			loadImages();
 		}
 		var currentImageIndex = 0;
+		var currentWell = 0;
 		var currentPosition = 0;
 		var currentChannel = 0;
 		var currentIndices = [];
 		function loadImages()
 		{
-			var positionList = document.getElementById("imagePositionList");
-			var channelList = document.getElementById("imageChannelList");
+			wellList = document.getElementById("imageWellList");
+			positionList = document.getElementById("imagePositionList");
+			channelList = document.getElementById("imageChannelList");
 			
 			currentImageIndex = 0;
+			if(!wellList.options[wellList.selectedIndex])
+				return;
 			if(!positionList.options[positionList.selectedIndex])
 				return;
+			if(!channelList.options[channelList.selectedIndex])
+				return;
+			currentWell = wellList.options[wellList.selectedIndex].value;
 			currentPosition = positionList.options[positionList.selectedIndex].value;
 			currentChannel = channelList.options[channelList.selectedIndex].value;
 			currentIndices = [];
-			for(var index in images[currentPosition][currentChannel])
+			for(var index in images[currentWell][currentPosition][currentChannel])
 			{
 				currentIndices.push(index);
 		    }
@@ -245,7 +243,7 @@
 					currentImageIndex = 0;
 				else if(n &lt; 0) 
 					currentImageIndex = currentIndices.length-1;
-				var imageFile = images[currentPosition][currentChannel][currentIndices[currentImageIndex]];
+				var imageFile = images[currentWell][currentPosition][currentChannel][currentIndices[currentImageIndex]];
 				var imageFileType = imageFile.substring(imageFile.lastIndexOf(".")+1);
 				if(!image || !imageLink)
 				{
@@ -276,10 +274,7 @@
 				currentImage.innerHTML="Image "+(currentImageIndex+1)+" of "+ currentIndices.length+" ("+imageFile+")";
 			}
 		}
-		window.onload = function() 
-		{
-	  		readImageTable("<xsl:value-of select="/measurement-information/files/file[@name = 'image-table']/@path"/>");
-		};
+		window.onload = loadWells;
 		
 	</script>
 </head>
@@ -309,6 +304,8 @@
   <h2>Images (<span class="showHideButton" onclick="minimizeMaximize('images')" id="images.button">hide</span>)</h2>
   <div id="images" class="showHide" style="display:block">
   	 <p>
+		 Well: <select id="imageWellList" onchange="loadPositions()">
+		 </select> 
 		 Position: <select id="imagePositionList" onchange="loadChannels()">
 		 </select> 
 		 Channel: <select id="imageChannelList" onchange="loadImages()">

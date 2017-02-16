@@ -19,6 +19,8 @@ public class MeasurementFileLocations implements Serializable
 	private final String logOutFilePath;
 	private final String microscopeConfigurationFilePath;
 	private final String measurementBaseFolder;
+	private final String xmlInformationPath;
+	private final String htmlInformationPath;
 	/**
 	 * Constructor.
 	 * @param measurementBaseFolder Base folder of the measurement.
@@ -27,8 +29,10 @@ public class MeasurementFileLocations implements Serializable
 	 * @param logErrFilePath Path to the error log file.
 	 * @param logOutFilePath Path to the normal log file.
 	 * @param microscopeConfigurationFilePath path to the microscope configuration file.
+	 * @param xmlInformationPath Path to the measurement information as XML.
+	 * @param htmlInformationPath Path to the measurement information as HTML.
 	 */
-	public MeasurementFileLocations(String measurementBaseFolder, String imageTablePath, String measurementConfigurationFilePath, String logErrFilePath, String logOutFilePath, String microscopeConfigurationFilePath)
+	public MeasurementFileLocations(String measurementBaseFolder, String imageTablePath, String measurementConfigurationFilePath, String logErrFilePath, String logOutFilePath, String microscopeConfigurationFilePath, String xmlInformationPath, String htmlInformationPath)
 	{
 		this.measurementBaseFolder =measurementBaseFolder;
 		this.imageTablePath = imageTablePath;
@@ -36,6 +40,8 @@ public class MeasurementFileLocations implements Serializable
 		this.logErrFilePath = logErrFilePath;
 		this.logOutFilePath = logOutFilePath;
 		this.microscopeConfigurationFilePath = microscopeConfigurationFilePath;
+		this.xmlInformationPath = xmlInformationPath;
+		this.htmlInformationPath = htmlInformationPath;
 	}
 	
 	/**
@@ -85,6 +91,22 @@ public class MeasurementFileLocations implements Serializable
 	public String getMicroscopeConfigurationFilePath()
 	{
 		return microscopeConfigurationFilePath;
+	}
+
+	/**
+	 * Path to the measurement information as XML.
+	 * @return measurement information file.
+	 */
+	public String getXmlInformationPath() {
+		return xmlInformationPath;
+	}
+
+	/**
+	 * Path to the measurement information as HTML.
+	 * @return measurement information file.
+	 */
+	public String getHtmlInformationPath() {
+		return htmlInformationPath;
 	}
 
 }

@@ -1,10 +1,13 @@
 package org.youscope.server;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -80,19 +83,13 @@ class InformationSaver
 		@XStreamAlias("files")
 		final MeasurementFile[] files;
 		
-		private static MeasurementFile[] initializeFiles(SaverInformation saverInformation)
+		@XStreamAlias("images")
+		final File images;
+		
+		private static MeasurementFile[] initializeFiles(SaverInformation saverInformation, String xmlFilePath)
 		{
 			final ArrayList<MeasurementFile> files = new ArrayList<>();
-			File xmlFolder;
-			try
-			{
-				xmlFolder = new File(saverInformation.getFullXMLInformationFilePath()).getParentFile();			
-			}
-			catch(@SuppressWarnings("unused") RemoteException | ResourceException e)
-			{
-				// we need this path to calculate all other relative paths.
-				return new MeasurementFile[0];
-			}
+			File xmlFolder = new File(xmlFilePath).getParentFile();			
 			
 			try
 			{
@@ -146,14 +143,21 @@ class InformationSaver
 			return files.toArray(new MeasurementFile[files.size()]);
 		}
 		
-		Measurement(MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation)
+		Measurement(MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation, String xmlFilePath)
 		{
 			name = measurement.getName();
 			description = measurement.getMetadata().getDescription();
 			metadataProperties = measurement.getMetadata().getMetadataProperties();
-			files = initializeFiles(saverInformation);
+			files = initializeFiles(saverInformation, xmlFilePath);
 			
-						
+			String imageTablePath;
+			try {
+				imageTablePath = saverInformation.getFullImageTablePath();
+			} catch (@SuppressWarnings("unused") ResourceException | RemoteException e1) {
+				imageTablePath = null;
+			}
+			images = imageTablePath == null ? null : new File(imageTablePath);
+		
 			ArrayList<ScopeDevice> tempScopeDevices = new ArrayList<>();
 			try {
 				for(Device device : microscope.getDevices())
@@ -182,7 +186,65 @@ class InformationSaver
 			scopeChannels = tempScopeChannels.toArray(new ScopeChannel[tempScopeChannels.size()]);
 		}
 	}
-	
+	class ImageTableIncluder implements Converter
+	{
+
+		@Override
+		public boolean canConvert(@SuppressWarnings("rawtypes") Class clazz) {
+			return clazz.equals(File.class);
+		}
+
+		@Override
+		public void marshal(Object value, HierarchicalStreamWriter writer,
+                MarshallingContext context) 
+		{
+			if(value == null || !(value instanceof File) || !((File)value).exists())
+				return;
+			URI xmlURI = new File(xmlFilePath).getParentFile().toURI();
+			File tableFile = (File)value;
+			File tableFolder = tableFile.getParentFile();
+			try(FileReader fileReader = new FileReader(tableFile); BufferedReader br = new BufferedReader(fileReader);)
+			{
+				// ignore header line
+				String line = br.readLine();
+			    while(true) 
+			    {
+			    	line = br.readLine();
+			    	if(line == null)
+			    		break;
+			    	String[] tokens = line.split(";");
+			    	if(tokens.length < 12)
+			    		continue;
+			    	String path = xmlURI.relativize(new File(tableFolder, tokens[6].substring(1, tokens[6].length()-1)).toURI()).getPath();
+			    	writer.startNode("image");
+			    	writer.addAttribute("evaluation", tokens[0].substring(1, tokens[0].length()-1));
+			    	writer.addAttribute("runtime", tokens[1].substring(1, tokens[1].length()-1));
+			    	writer.addAttribute("time", tokens[2].substring(1, tokens[2].length()-1));
+			    	writer.addAttribute("well", tokens[4].substring(1, tokens[4].length()-1));
+			    	writer.addAttribute("position", tokens[5].substring(1, tokens[5].length()-1));
+			    	writer.addAttribute("path", path);
+			    	writer.addAttribute("name", tokens[7].substring(1, tokens[7].length()-1));
+			    	writer.addAttribute("camera", tokens[8].substring(1, tokens[8].length()-1));
+			    	writer.addAttribute("channel-group", tokens[9].substring(1, tokens[9].length()-1));
+			    	writer.addAttribute("channel", tokens[10].substring(1, tokens[10].length()-1));
+			    	writer.addAttribute("original-bit-depth", tokens[11].substring(1, tokens[11].length()-1));
+			    	
+			    	
+			    	writer.endNode();
+			        
+			    }
+			} catch (@SuppressWarnings("unused") IOException e) {
+				return;
+			}
+		}
+
+		@Override
+		public Object unmarshal(HierarchicalStreamReader arg0, UnmarshallingContext arg1) {
+			// we don't have to do anything: we are only writing XML objects, but not reading them.
+			return null;
+		}
+		
+	}
 	static class DescriptionConverter implements Converter
 	{
 		private boolean paragraph = false;
@@ -391,16 +453,25 @@ class InformationSaver
 		XStream xstream = new XStream(new DomDriver("UTF-8"));
 		xstream.aliasSystemAttribute("type", "class");
 		xstream.registerLocalConverter(Measurement.class, "description", new DescriptionConverter());
+		xstream.registerLocalConverter(Measurement.class, "images", new ImageTableIncluder());
 		// Process the annotations of the classes needed to know.
 		xstream.processAnnotations(new Class<?>[] {MetadataProperty.class, InformationSaver.ScopeChannel.class, InformationSaver.ScopeChannelSetting.class, InformationSaver.ScopeDevice.class, InformationSaver.Measurement.class, InformationSaver.ScopeDeviceSetting.class});
 		return xstream;
 	}
-	public void saveXMLInformation(MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation, String xmlFileName) throws IOException
+	private final Measurement root;
+	private final String xmlFilePath;
+	private final String htmlFilePath;
+	public InformationSaver(String xmlFilePath, String htmlFilePath, MeasurementImpl measurement, Microscope microscope, SaverInformation saverInformation)
+	{
+		this.xmlFilePath = xmlFilePath;
+		this.htmlFilePath = htmlFilePath;
+		root = new Measurement(measurement, microscope, saverInformation, xmlFilePath);
+	}
+	public void saveXMLInformation() throws IOException
 	{
 		// Write XML file
-		Measurement root = new Measurement(measurement, microscope, saverInformation);
 		XStream xstream = getSerializerInstance();
-		File xmlFile = new File(xmlFileName);
+		File xmlFile = new File(xmlFilePath);
 		File xmlFolder = xmlFile.getParentFile();
 		if(!xmlFolder.exists())
 			xmlFolder.mkdirs();
@@ -411,11 +482,13 @@ class InformationSaver
 			xstream.toXML(root, fos);
 		} 		
 	}
-	public void saveHTMLInformation(String xmlFileName, String htmlFileName) throws FileNotFoundException, IOException, SAXException, TransformerException, ParserConfigurationException
+	public void saveHTMLInformation() throws FileNotFoundException, IOException, SAXException, TransformerException, ParserConfigurationException
 	{
-		File xmlFile = new File(xmlFileName);
+		if(htmlFilePath == null)
+			return;
+		File xmlFile = new File(xmlFilePath);
 		// Convert to HTML
-		File htmlFile = new File(htmlFileName);
+		File htmlFile = new File(htmlFilePath);
 		File htmlFolder = htmlFile.getParentFile();
 		if(!htmlFolder.exists())
 			htmlFolder.mkdirs();
