@@ -1,0 +1,9 @@
+The file "nemesys_dll.dll" is proprietary to Cetoni (www.cetoni.de) and not part of YouScope. We are grateful to Cetoni for allowing us to distribute the DLL together with YouScope.
+
+YouScope only runs with the 32bit version of this file, even if YouScope is executed in 64bit.
+YouScope was tested with the file version 2014.10.21.2 of nemesys_dll.dll.
+
+The DLL "NemesysDotCom.dll" exposes the functionality of "nemesys_dll.dll" as interfaces of a .COM server, which is run in a separate process. This allows YouScope to access the functionality via the .COM client "mmgr_dal_NemesysPump.dll" in the devices folder of YouScope, independently if YouScope is run in 32bit or 64bit.
+
+Please contact directly Cetoni for further information on the file "nemesys_dll.dll", including questions concerning redistribution, altering, and similar.
+

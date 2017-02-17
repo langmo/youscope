@@ -7,7 +7,7 @@
 ; Comment out to not export win64
 !define WIN64
 ; Comment out to not expoirt win32
-;!define WIN32
+!define WIN32
 
 
 
@@ -67,7 +67,7 @@ BrandingText "YouScope - The Microscope Control Software"
 !insertmacro MUI_PAGE_WELCOME
 
 !define MUI_LICENSEPAGE_RADIOBUTTONS
-!insertmacro MUI_PAGE_LICENSE "COPYING.txt"
+!insertmacro MUI_PAGE_LICENSE "LICENSE"
 
 !insertmacro MUI_PAGE_COMPONENTS
 
@@ -119,7 +119,8 @@ Section "-Main Program" SecMain
 	SectionIn 1 2 3 4
   
 	SetOutPath "$INSTDIR"
-	FILE COPYING.txt
+	FILE LICENSE
+	FILE README.md
 	!ifdef WIN64
 		FILE YouScope64.exe
 	!endif
@@ -170,7 +171,6 @@ Section "!Client" SecClient
   
 	;Files:
 	FILE "client\youscope-client.jar"
-	FILE "client\youscope-client-uielements.jar"
 SectionEnd
 
 ;--------------------------------
@@ -188,17 +188,23 @@ Section "!Server" SecServer
 SectionEnd
 
 ;--------------------------------
-;Client
+;Drivers
 Section "!Device Drivers" SecDeviceDrivers
 	SectionIn 1 2 3
   
 	!ifdef WIN64
 		SetOutPath "$INSTDIR\drivers64"
-		FILE "drivers64\*"
+		FILE /r "drivers64\*"
+		SetOutPath "$INSTDIR\drivers64\nemesys"
+		RegDLL "$INSTDIR\drivers64\nemesys\NemesysDotCom.dll"
 	!endif
 	!ifdef WIN32
 		SetOutPath "$INSTDIR\drivers32"
-		FILE "drivers32\*"
+		FILE /r "drivers32\*"
+		!ifndef WIN64
+			SetOutPath "$INSTDIR\drivers32\nemesys"
+			RegDLL "$INSTDIR\drivers32\nemesys\NemesysDotCom.dll"
+		!endif
 	!endif
 SectionEnd
 
@@ -492,6 +498,20 @@ SectionGroup "Job Types" SecJobTypes
   		;Files:
   		FILE "plugins\youscope-slim.jar"  
 	SectionEnd
+	Section "Share Execution" SecShareExecution
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-share-execution.jar"  
+	SectionEnd
+	Section "Wait since last action" SecWaitSinceLastAction
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-wait-since-last-action.jar"  
+	SectionEnd
 SectionGroupEnd
 
 ;--------------------------------
@@ -594,6 +614,30 @@ SectionGroup "Misc" SecOptional
   		FILE "plugins\youscope-custom-save-settings.jar"  
 	SectionEnd
 
+	Section "Custom Metadata" SecCustomMetadata
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-custom-metadata.jar"  
+	SectionEnd
+
+	Section "Standard Paths" SecStandardPaths
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-standard-paths.jar"  
+	SectionEnd
+
+	Section "Traveling Salesman" SecTravelingSalesman
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-traveling-salesman.jar"  
+	SectionEnd
+
 	Section "Default Skin (System)" SecSystemSkin
 		SetOutPath "$INSTDIR\plugins"
   		SectionIn 1 2 4
@@ -601,14 +645,14 @@ SectionGroup "Misc" SecOptional
   		;Files:
   		FILE "plugins\youscope-system-skin.jar"  
 	SectionEnd
-	Section "Dark Skin " SecDarkSkin
+	Section "Dark Skin" SecDarkSkin
 		SetOutPath "$INSTDIR\plugins"
   		SectionIn 1 4
   
   		;Files:
   		FILE "plugins\youscope-dark-skin.jar"  
 	SectionEnd
-	Section "Red Skin " SecRedSkin
+	Section "Red Skin" SecRedSkin
 		SetOutPath "$INSTDIR\plugins"
   		SectionIn 1 4
   
@@ -696,7 +740,7 @@ SectionEnd
 	LangString DESC_SecTaskMeasurement ${LANG_ENGLISH} "Running of one or more imaging protocols in parallel, e.g. to image several channels with the same or different period lengths."
 
 	LangString DESC_SecResultConsumers ${LANG_ENGLISH} "Elements which can process or display the results of a measurement."
-	LangString DESC_SecOpenBIS ${LANG_ENGLISH} "Uploading of measurement images and meta-data to the OpenBIS screening database."
+;	LangString DESC_SecOpenBIS ${LANG_ENGLISH} "Uploading of measurement images and meta-data to the OpenBIS screening database."
 	LangString DESC_SecOpenFolder ${LANG_ENGLISH} "Simple tool to open the folder in which the measurement was saved."
 
 	LangString DESC_SecJobTypes ${LANG_ENGLISH} "Jobs are small bricks of actions which compose an imaging protocol, and can be added to several different measurement protocols."
@@ -734,17 +778,13 @@ SectionEnd
 	LangString DESC_SecFocusingJob ${LANG_ENGLISH} "Job to change the focus position."
 	LangString DESC_SecMultiCameraStream ${LANG_ENGLISH} "Displays the current image of multiple cameras in a grid like fashion. Experimental!"
 	LangString DESC_SecSimpleMeasurement ${LANG_ENGLISH} "Measurement to execute a given protocol at a given position. Protocol can be executed more than once, with different period settings."
-	LangString DESC_SecCellDetection ${LANG_ENGLISH} "Provides several life cell-detection utilities: a job to detect cells, which allows to process or save the cell-positions; measurement to monitor cells at a given position; life stream to detect cells at the current position and display them. Experimental!"
-	LangString DESC_SecAutofocusJob ${LANG_ENGLISH} "Job to automatically find the focus plane. Based on an optimization algorithm, which iteratively takes images, measures their focus, and adjusts the current focus position (similar to Newton method). Experimental!"
 	LangString DESC_SecWaitForUser ${LANG_ENGLISH} "Job to display a message to the user. The execution of the protocol gets paused until user acknowledges/confirms message."
 	LangString DESC_SecUserControlMeasurement ${LANG_ENGLISH} "Measurement which displays the current microscope image similar to the life-stream. When user hits a button, the currently displayed image gets saved."
 
 
-
-
 	LangString DESC_SecAutofocusJob ${LANG_ENGLISH} "Job to find the focal plane by different software based autofocus algorithms." 
 	LangString DESC_SecCellDetection ${LANG_ENGLISH} "Job to detect and track cells during a measurement." 
-	LangString DESC_SecCellX ${LANG_ENGLISH} "Advanced cell detection algorithm. Requires cell detection job." 
+	;LangString DESC_SecCellX ${LANG_ENGLISH} "Advanced cell detection algorithm. Requires cell detection job." 
 	LangString DESC_SecController ${LANG_ENGLISH} "Allows to implement feedback control algorithms." 
 	LangString DESC_SecCustomJob ${LANG_ENGLISH} "Allows to define custom reusable job types." 
 	LangString DESC_SecDropletMicrofluidics ${LANG_ENGLISH} "Droplet based microfluidic control algorithm." 
@@ -754,12 +794,19 @@ SectionEnd
 	LangString DESC_SecRepeatJob ${LANG_ENGLISH} "Job repeating its child jobs several times."
 	LangString DESC_SecSLIM ${LANG_ENGLISH} "Support for SLIM microscopy."
 
+
+	LangString DESC_SecCustomMetadata ${LANG_ENGLISH} "Possibility to customize which metadata is by default saved for measurements, and which has to be saved." 
 	LangString DESC_SecCustomSaveSettings ${LANG_ENGLISH} "Possibility to customize how measurement is saved to disk." 
 	LangString DESC_SecStandardSaveSettings ${LANG_ENGLISH} "Standard settings how measurement is saved to disk." 
 	LangString DESC_SecSystemSkin ${LANG_ENGLISH} "Default skin, in agreement to operating system look-and-feel." 
 	LangString DESC_SecDarkSkin ${LANG_ENGLISH} "A dark skin for dark rooms." 
 	LangString DESC_SecRedSkin ${LANG_ENGLISH} "A red skin, good for the eyes in dark rooms." 
- 
+
+	LangString DESC_SecTravelingSalesman ${LANG_ENGLISH} "Traveling salesman optimizers for path through microplate." 
+ 	LangString DESC_SecStandardPaths ${LANG_ENGLISH} "Simple standard paths through microplate." 
+
+	LangString DESC_SecWaitSinceLastAction ${LANG_ENGLISH} "Job which guarantees that between its last execution and the current execution a certain minimal time has passed." 
+	LangString DESC_SecShareExecution ${LANG_ENGLISH} "Staggering between wells and multiple positions." 
 
 	;Assign language strings to sections
 	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -780,7 +827,7 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecTaskMeasurement} $(DESC_SecTaskMeasurement) 
 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecResultConsumers} $(DESC_SecResultConsumers) 
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenBIS} $(DESC_SecOpenBIS)
+		;!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenBIS} $(DESC_SecOpenBIS)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecOpenFolder} $(DESC_SecOpenFolder) 
 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecJobTypes} $(DESC_SecJobTypes) 
@@ -808,7 +855,7 @@ SectionEnd
 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecDocumentation} $(DESC_SecDocumentation) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecExampleScripts} $(DESC_SecExampleScripts)
-
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecStandardPaths} $(DESC_SecStandardPaths)
 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecStatisticsJob} $(DESC_SecStatisticsJob)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiCameraMeasurement} $(DESC_SecMultiCameraMeasurement)
@@ -824,10 +871,7 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecUserControlMeasurement} $(DESC_SecUserControlMeasurement)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecWaitForUser} $(DESC_SecWaitForUser)
 
-		
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecAutofocusJob} $(DESC_SecAutofocusJob)
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecCellDetection} $(DESC_SecCellDetection) 
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecCellX} $(DESC_SecCellX) 
+		;!insertmacro MUI_DESCRIPTION_TEXT ${SecCellX} $(DESC_SecCellX) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecController} $(DESC_SecController) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomJob} $(DESC_SecCustomJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecDropletMicrofluidics} $(DESC_SecDropletMicrofluidics) 
@@ -837,10 +881,15 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecRepeatJob} $(DESC_SecRepeatJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecSLIM} $(DESC_SecSLIM)
 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomMetadata} $(DESC_SecCustomMetadata)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomSaveSettings} $(DESC_SecCustomSaveSettings)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecStandardSaveSettings} $(DESC_SecStandardSaveSettings)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecSystemSkin} $(DESC_SecSystemSkin)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecDarkSkin} $(DESC_SecDarkSkin)
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecRedSkin} $(DESC_SecRedSkin)
+
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecTravelingSalesman} $(DESC_SecTravelingSalesman)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecWaitSinceLastAction} $(DESC_SecWaitSinceLastAction)
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecShareExecution} $(DESC_SecShareExecution)
 
 	!insertmacro MUI_FUNCTION_DESCRIPTION_END
