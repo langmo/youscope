@@ -221,7 +221,7 @@
 		{
 			loadImage(currentImageIndex += n);
 		}
-
+		var ffLoadedExternalJS = false;
 		function loadImage(n) 
 		{
 			var imageDiv = document.getElementById("imageDiv");
@@ -245,7 +245,67 @@
 					currentImageIndex = currentIndices.length-1;
 				var imageFile = images[currentWell][currentPosition][currentChannel][currentIndices[currentImageIndex]];
 				var imageFileType = imageFile.substring(imageFile.lastIndexOf(".")+1);
-				if(!image || !imageLink)
+				
+				if((imageFileType=="tif" || imageFileType=="tiff") &amp;&amp; navigator.userAgent.toLowerCase().indexOf('firefox') &gt; -1)
+				{
+					if(!ffLoadedExternalJS)
+					{
+						var fileref=document.createElement('script');
+						fileref.type = "application/javascript";
+						fileref.src = "http://langmo.github.io/youscope/scripts/tiff.min.js";
+						fileref.onload = function(){ffLoadedExternalJS=true; loadImage(n);};
+						document.getElementsByTagName("head")[0].appendChild(fileref);
+						return;
+					}
+					while(imageDiv.firstChild) 
+					{
+						imageDiv.removeChild(imageDiv.firstChild);
+					}
+					var imageLoading = document.createElement("p");
+					imageLoading.innerHTML = "Loading image...";
+					imageDiv.appendChild(imageLoading);
+					
+					var xhr = new XMLHttpRequest();
+					xhr.responseType = 'arraybuffer';
+					xhr.open('GET', imageFile);
+					xhr.responseType = 'arraybuffer';
+					xhr.onreadystatechange = function ()
+					{
+						if(xhr.readyState === 4)
+						{
+							if(xhr.status === 200 || xhr.status == 0)
+							{
+								var buffer = xhr.response;
+								var tiff = new Tiff({buffer: buffer});
+								var canvas = tiff.toCanvas();
+								var width = tiff.width();
+								var height = tiff.height();
+								while(imageDiv.firstChild) 
+								{
+									imageDiv.removeChild(imageDiv.firstChild);
+								}
+								imageLink = document.createElement("a");
+								imageLink.href = imageFile;
+								imageLink.target = "_blank";
+								if (canvas) 
+								{
+									canvas.style="height:300px";
+									imageLink.appendChild(canvas);
+								}
+								else
+								{
+									imageLink.innerHTML = "Either the image file could not be found, or your browser does not support the file ending "+imageFileType+".";
+								}
+								imageDiv.appendChild(imageLink);
+								currentImage.innerHTML="Image "+(currentImageIndex+1)+" of "+ currentIndices.length+" ("+imageFile+")";
+							}
+						}
+					}
+					xhr.send(null);
+					return;
+					
+				}
+				else if(!image || !imageLink)
 				{
 					while(imageDiv.firstChild) 
 					{
