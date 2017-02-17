@@ -1,4 +1,0 @@
-; dlltool --base-file C:\Users\langmo\AppData\Local\Temp/cca15512.base --output-exp ch_ethz_csb_matlabscripting_util_LongFileNameToShort.exp --dllname ch_ethz_csb_matlabscripting_util_LongFileNameToShort.dll --output-def libch_ethz_csb_matlabscripting_util_LongFileNameToShort.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup@12 --def C:\Users\langmo\AppData\Local\Temp/cca15512.def --output-lib libch_ethz_csb_matlabscripting_util_LongFileNameToShort.a
-EXPORTS
-	Java_ch_ethz_csb_matlabscripting_util_LongFileNameToShort_toShortFileName@12 @ 1
-	Java_ch_ethz_csb_matlabscripting_util_LongFileNameToShort_toShortFileName = Java_ch_ethz_csb_matlabscripting_util_LongFileNameToShort_toShortFileName@12 @ 2

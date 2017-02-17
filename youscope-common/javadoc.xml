@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="javadoc">
-    <target name="javadoc">
-        <javadoc access="public" author="true" classpath="lib/xpp3_min-1.1.4c.jar;../youscope-client/lib/jsyntaxpane-0.9.5-b29.jar;../youscope-client/bin;lib/xstream-1.3.1.jar;../youscope-client/lib/fugue-icons-2.6.4.jar;bin;../youscope-server/lib/MMCoreJ.jar" destdir="../homepage/javadoc" doctitle="Youscope" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="org.youscope.common,org.youscope.server.microscopeaccess,org.youscope.common.configuration,org.youscope.starter,org.youscope.documentation.converter,org.youscope.client.addon.job.oscillatingdevice,org.youscope.common.scripting,org.youscope.common.tools,org.youscope.client.addon.tool.multistream,org.youscope.client.addon.job.outoffocus,org.youscope.server" source="1.6" sourcepath="../youscope-server/src;../youscope-starter/src;../youscope-out-of-focus-job/src;../youscope-documentation-converter/src;src;../youscope-multi-stream/src;../youscope-oscillating-device-job/src" splitindex="true" use="true" version="true"/>
-    </target>
-</project>
