@@ -74,10 +74,10 @@ function createReleaseElement(release, show)
 	{
 		if(lines[lID].substring(0,1) != '#' && lines[lID].trim().length > 0)
 		{
-			if(lines[lID].length <=100)
+			if(lines[lID].length <=49)
 				textPreviewElem.appendChild(document.createTextNode(lines[lID].trim()+".."));
 			else
-				textPreviewElem.appendChild(document.createTextNode(lines[lID].substring(0, 100).trim()+".."));
+				textPreviewElem.appendChild(document.createTextNode(lines[lID].substring(0, 49).trim()+".."));
 			break;
 		}
 	}
@@ -196,6 +196,20 @@ function createReleaseElement(release, show)
 				break;
 			}
 		}
+		
+		var sourceElem = document.createElement("p");
+		var sourceElemText = document.createElement("span");
+		sourceElemText.appendChild(document.createTextNode("Source Code Version: "));
+		sourceElemText.style.fontWeight="bold";
+		sourceElem.appendChild(sourceElemText);
+		var sourceURL = document.createElement("a");
+		sourceURL.href = "https://github.com/langmo/youscope/tree/"+id;
+		sourceURL.target = "_blank";
+		sourceURL.innerHTML = "https://github.com/langmo/youscope/tree/"+id;			
+		sourceElem.appendChild(sourceURL);
+		releaseDiv.appendChild(sourceElem);
+		
+		
 		if(assets.length > Object.keys(delIdx).length)
 		{
 			var additionalElem = document.createElement("p");
@@ -204,7 +218,7 @@ function createReleaseElement(release, show)
 			additionalElem.style.marginBottom = "0cm";
 			releaseDiv.appendChild(additionalElem);
 			var listElem = document.createElement("ul");
-			listElem.style.marginLeft = "0.6cm";
+			listElem.style.marginLeft = "0.3cm";
 			listElem.style.marginTop = "0cm";
 			for(var lID =0; lID < assets.length; lID++)
 			{
