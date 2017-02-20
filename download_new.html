@@ -3,7 +3,10 @@ layout : layout
 title : Download
 ---
 <script src="{{ site.github.url }}/scripts/releasePrinter.js" type="text/javascript"></script>
-<div id="releases"></div>
+<div id="releases">
+	<p>Information on available YouScope loading...</p>
+	<p>If content is not loading, visit the static download site: <a href="https://github.com/langmo/youscope/releases" target="_blank">https://github.com/langmo/youscope/releases</a>.
+</div>
 <script type="text/javascript">
 	queryReleases(function callback(releases){createReleaseElements(releases, "releases");});
 </script>

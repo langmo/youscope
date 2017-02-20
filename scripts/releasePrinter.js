@@ -16,6 +16,10 @@ function showHide(elementID)
 function createReleaseElements(releases, elementID)
 {
 	var releasesElement = document.getElementById(elementID);
+	while(releasesElement.firstChild) 
+	{
+		releasesElement.removeChild(releasesElement.firstChild);
+	}
 	var latestStable = -1;
 	var header;
 	for(var i=0; i<releases.length; i++)
@@ -205,7 +209,7 @@ function createReleaseElement(release, show)
 		var sourceURL = document.createElement("a");
 		sourceURL.href = "https://github.com/langmo/youscope/tree/"+id;
 		sourceURL.target = "_blank";
-		sourceURL.innerHTML = "https://github.com/langmo/youscope/tree/"+id;			
+		sourceURL.innerHTML = "Tag "+id;			
 		sourceElem.appendChild(sourceURL);
 		releaseDiv.appendChild(sourceElem);
 		
@@ -218,7 +222,7 @@ function createReleaseElement(release, show)
 			additionalElem.style.marginBottom = "0cm";
 			releaseDiv.appendChild(additionalElem);
 			var listElem = document.createElement("ul");
-			listElem.style.marginLeft = "0.3cm";
+			listElem.style.marginLeft = "0cm";
 			listElem.style.marginTop = "0cm";
 			for(var lID =0; lID < assets.length; lID++)
 			{
@@ -230,6 +234,7 @@ function createReleaseElement(release, show)
 			}
 			releaseDiv.appendChild(listElem);
 		}
+		releaseDiv.appendChild(document.createElement("hr"));
 	}
 	
 	return releaseDiv;
