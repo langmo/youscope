@@ -60,7 +60,7 @@ function displayReleaseLinks(release)
 		if(name.indexOf("_32bit_installer.exe")>=0)
 		{
 			var assetURL = document.createElement("a");
-			assetURL.href = asset.browser_download_url;
+			assetURL.href = assets[lID].browser_download_url;
 			assetURL.target = "_blank";
 			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (32bit)";			
 			assetElem.appendChild(assetURL);
@@ -74,7 +74,7 @@ function displayReleaseLinks(release)
 		if(name.indexOf("_64bit_installer.exe")>=0)
 		{
 			var assetURL = document.createElement("a");
-			assetURL.href = asset.browser_download_url;
+			assetURL.href = assets[lID].browser_download_url;
 			assetURL.target = "_blank";
 			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (64bit)";			
 			assetElem.appendChild(assetURL);
