@@ -68,23 +68,19 @@ div#leftColumn a
 	margin:0 0px 0 0px;
 	font-weight: bold;
 	width:110px;
-}
-div#leftColumn a:link
-{
-	color: #000000;
-	background-color:#FFFFFF;
-	text-decoration:none;
-	border-top:1px solid #FFFFFF;
-	border-bottom:1px solid #FFFFFF;
-}
-div#leftColumn a:visited
-{
-	color: #000000;
+	
 	background-color:#FFFFFF;  
 	text-decoration:none;  
 	border-top:1px solid #FFFFFF;  
 	border-bottom:1px solid #FFFFFF;  
-
+}
+div#leftColumn a:link
+{
+	color: #000000;
+}
+div#leftColumn a:visited
+{
+	color: #000000;
 }
 div#leftColumn a:hover
 {
@@ -177,6 +173,7 @@ div.rightBox li
 div.rightBox a 
 {
 	font-weight: bold;
+	text-decoration:underline;
 }
 div.rightBox a:link
 {
@@ -186,7 +183,6 @@ div.rightBox a:link
 div.rightBox a:visited
 {
 	color: #000000;
-	text-decoration:underline; 
 }
 div.rightBox a:hover
 {
@@ -235,6 +231,7 @@ div#main li
 div#main a 
 {
 	font-weight: bold;
+	text-decoration:underline;
 }
 div#main a:link
 {
@@ -244,7 +241,6 @@ div#main a:link
 div#main a:visited
 {
 	color: #000000;
-	text-decoration:underline; 
 }
 div#main a:hover
 {
