@@ -57,20 +57,6 @@ function displayReleaseLinks(release)
 	for(var lID =0; lID < assets.length; lID++)
 	{
 		var name = assets[lID].name.toLowerCase();
-		if(name.indexOf("_32bit_installer.exe")>=0)
-		{
-			var assetURL = document.createElement("a");
-			assetURL.href = assets[lID].browser_download_url;
-			assetURL.target = "_blank";
-			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (32bit)";			
-			assetElem.appendChild(assetURL);
-			assetElem.appendChild(document.createElement("br"));
-			break;
-		}
-	}
-	for(var lID =0; lID < assets.length; lID++)
-	{
-		var name = assets[lID].name.toLowerCase();
 		if(name.indexOf("_64bit_installer.exe")>=0)
 		{
 			var assetURL = document.createElement("a");
@@ -78,7 +64,20 @@ function displayReleaseLinks(release)
 			assetURL.target = "_blank";
 			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (64bit)";			
 			assetElem.appendChild(assetURL);
-			assetElem.appendChild(document.createElement("br"));
+			break;
+		}
+	}
+	assetElem.appendChild(document.createElement("br"));
+	for(var lID =0; lID < assets.length; lID++)
+	{
+		var name = assets[lID].name.toLowerCase();
+		if(name.indexOf("_32bit_installer.exe")>=0)
+		{
+			var assetURL = document.createElement("a");
+			assetURL.href = assets[lID].browser_download_url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (32bit)";			
+			assetElem.appendChild(assetURL);
 			break;
 		}
 	}
@@ -107,10 +106,12 @@ function createMostRecent(releases, elementID)
 				headerText.appendChild(document.createTextNode("Latest Stable Release: "));
 			headerText.style.fontWeight="bold";
 			header.appendChild(headerText);
-			header.appendChild(document.createTextNode(releases[i].name));
+			header.appendChild(document.createElement("br"));
+			header.appendChild(document.createTextNode(releases[i].name+" ("+releases[i].tag_name+")"));
 			
 			releasesElement.appendChild(header);
 			releasesElement.appendChild(displayReleaseLinks(releases[i]));		
+			releasesElement.appendChild(document.createElement("hr"));
 			break;
 		}
 	}
@@ -121,9 +122,11 @@ function createMostRecent(releases, elementID)
 		headerText.appendChild(document.createTextNode("Latest Pre-Release: "));
 		headerText.style.fontWeight="bold";
 		header.appendChild(headerText);
-		header.appendChild(document.createTextNode(releases[0].name));
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createTextNode(releases[0].name+" ("+releases[0].tag_name+")"));
 		releasesElement.appendChild(header);
 		releasesElement.appendChild(displayReleaseLinks(releases[0]));		
+		releasesElement.appendChild(document.createElement("hr"));
 	}
 }
 window.onload = function()
