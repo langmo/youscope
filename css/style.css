@@ -9,7 +9,8 @@ body
 
 div#page {
 	margin: 5px 5px 5px 5px;
-	max-width: 1400px;
+	max-width: 1200px;
+	min-width: 600px;
 	padding: 0;
 	background: #ffffff;
 	border: 1px solid #777777;
