@@ -40,3 +40,93 @@ function minimizeMaximize(elementID)
 		plusMinus.src = "img/plus.gif";
 	}
 }
+
+function displayReleaseLinks(release)
+{
+	var assets = release.assets;
+	var addAsset = function(asset)
+	{
+		var assetURL = document.createElement("a");
+		assetURL.href = asset.browser_download_url;
+		assetURL.target = "_blank";
+		assetURL.innerHTML = asset.name;			
+		return assetURL;
+	};
+	var assetElem = document.createElement("p");
+	assetElem.style.fontWeight="bold";
+	for(var lID =0; lID < assets.length; lID++)
+	{
+		var name = assets[lID].name.toLowerCase();
+		if(name.indexOf("_32bit_installer.exe")>=0)
+		{
+			var assetURL = document.createElement("a");
+			assetURL.href = asset.browser_download_url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (32bit)";			
+			assetElem.appendChild(assetURL);
+			assetElem.appendChild(document.createElement("br"));
+			break;
+		}
+	}
+	for(var lID =0; lID < assets.length; lID++)
+	{
+		var name = assets[lID].name.toLowerCase();
+		if(name.indexOf("_64bit_installer.exe")>=0)
+		{
+			var assetURL = document.createElement("a");
+			assetURL.href = asset.browser_download_url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (64bit)";			
+			assetElem.appendChild(assetURL);
+			assetElem.appendChild(document.createElement("br"));
+			break;
+		}
+	}
+	return assetElem;
+}
+
+function createMostRecent(releases, elementID)
+{
+	var releasesElement = document.getElementById(elementID);
+	while(releasesElement.firstChild) 
+	{
+		releasesElement.removeChild(releasesElement.firstChild);
+	}
+	var latestStable = -1;
+	var header;
+	for(var i=0; i<releases.length; i++)
+	{
+		if(!releases[i].prerelease)
+		{
+			latestStable = i;
+			header = document.createElement("p");
+			var headerText = document.createElement("span");
+			if(i==0)
+				headerText.appendChild(document.createTextNode("Current Release: "));
+			else
+				headerText.appendChild(document.createTextNode("Latest Stable Release: "));
+			headerText.style.fontWeight="bold";
+			header.appendChild(headerText);
+			header.appendChild(document.createTextNode(releases[i].name));
+			
+			releasesElement.appendChild(header);
+			releasesElement.appendChild(displayReleaseLinks(releases[i]));		
+			break;
+		}
+	}
+	if(latestStable != 0)
+	{
+		header = document.createElement("p");
+		var headerText = document.createElement("span");
+		headerText.appendChild(document.createTextNode("Latest Pre-Release: "));
+		headerText.style.fontWeight="bold";
+		header.appendChild(headerText);
+		header.appendChild(document.createTextNode(releases[0].name));
+		releasesElement.appendChild(header);
+		releasesElement.appendChild(displayReleaseLinks(releases[0]));		
+	}
+}
+window.onload = function()
+{
+	queryReleases(function callback(releases){createMostRecent(releases, "mostRecentReleases");});
+};
