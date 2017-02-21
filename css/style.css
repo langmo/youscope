@@ -151,7 +151,7 @@ div.rightBoxMain hr
 	}
 	div#headerLeft
 	{
-		background-image: url("{{ site.github.url }}/img/header.jpg");
+		background-image: url("http://langmo.github.io/youscope/img/header.jpg");
 		width:221px;
 		height:100px;
 		margin: 0;
