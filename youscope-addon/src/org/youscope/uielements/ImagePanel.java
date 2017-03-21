@@ -133,7 +133,10 @@ public class ImagePanel extends JPanel
 	
 	private static final double ZOOM_IN_STEP = Math.sqrt(2);
 	private static final double ZOOM_OUT_STEP = 1/Math.sqrt(2);
-	private static final double ZOOM_MAX = 100;
+	/**
+	 * Maximal zoom level.
+	 */
+	public static final double ZOOM_MAX = 100;
 	private double zoom = 1;
 	private double centerX = 0.5;
 	private double centerY = 0.5;
@@ -141,6 +144,7 @@ public class ImagePanel extends JPanel
 	private String title = "Image Viewer";
 	private final ArrayList<PixelListener> pixelListeners = new ArrayList<PixelListener>();
 	private final ArrayList<LineListener> lineListeners = new ArrayList<LineListener>();
+	private final ArrayList<ZoomAndCenterListener> zoomAndCenterListeners = new ArrayList<>();
 	private final HistogramControl histogramControl;
 	private final ArrayList<Control> controlsList = new ArrayList<Control>(1);
 	protected YouScopeFrame frame = null;
@@ -355,6 +359,22 @@ public class ImagePanel extends JPanel
 		 */
 		public void lineChanged(LineInfo line);
 	}
+	
+	/**
+	 * Listener which gets informed if the current zoom or the center of the displayed image changed.
+	 * @author Moritz Lang
+	 *
+	 */
+	public static interface ZoomAndCenterListener extends EventListener
+	{
+		/**
+		 * Notifies a listener that the zoom level or the center changed.
+		 * @param zoom zoom level. Between 1 and {@link ImagePanel#ZOOM_MAX}.
+		 * @param centerX Center of displayed image in x direction. Between 0 and 1.
+		 * @param centerY Center of displayed image in y direction. Between 0 and 1.
+		 */
+		public void zoomOrCenterChanged(double zoom, double centerX, double centerY);
+	}
 	/**
 	 * Adds a listener which gets informed over which pixels the user hovers with the mouse.
 	 * @param listener Pixel listener to add.
@@ -398,6 +418,29 @@ public class ImagePanel extends JPanel
 		synchronized(lineListeners) 
 		{
 			lineListeners.remove(listener);
+		}
+	}
+	
+	/**
+	 * Adds a listener which gets informed if the current zoom level or the center of the displayed area changed.
+	 * @param listener Listener to add.
+	 */
+	public void addZoomAndCenterListener(ZoomAndCenterListener listener)
+	{
+		synchronized (zoomAndCenterListeners) 
+		{
+			zoomAndCenterListeners.add(listener);
+		}
+	}
+	/**
+	 * Removes a previously added listener.
+	 * @param listener listener to remove.
+	 */
+	public void removeZoomAndCenterListener(ZoomAndCenterListener listener)
+	{
+		synchronized(zoomAndCenterListeners) 
+		{
+			zoomAndCenterListeners.remove(listener);
 		}
 	}
 	
@@ -458,6 +501,9 @@ public class ImagePanel extends JPanel
 		BufferedImage image = ImagePanel.this.lastDrawnRenderedImage;
 		if(image == null)
 			return;
+		double centerX = this.centerX;
+		double centerY = this.centerY;
+		double zoom = this.zoom;
 		if(zoomIn)
 		{
 			int imageWidth = image.getWidth();
@@ -472,27 +518,64 @@ public class ImagePanel extends JPanel
 				return;
 			}
 			centerX = pos.getX() / imageWidth;
-			if(centerX < 0)
-				centerX = 0;
-			else if(centerX > 1)
-				centerX = 1;
 			centerY = pos.getY() / imageHeight;
-			if(centerY < 0)
-				centerY = 0;
-			else if(centerY > 1)
-				centerY = 1;
 			
 			zoom*=ZOOM_IN_STEP;
-			if(zoom > ZOOM_MAX)
-				zoom = ZOOM_MAX;
 		}
 		else
 		{
 			zoom*=ZOOM_OUT_STEP;
-			if(zoom < 1)
-				zoom = 1;
 		}
+		setZoomAndCenter(zoom, centerX, centerY);
+	}
+	/**
+	 * Sets the current zoom level and the center of the display area.
+	 * @param zoom zoom level. Between 1 and {@link #ZOOM_MAX}.
+	 * @param centerX x-position of center of displayed area. Between 0 and 1.
+	 * @param centerY y-position of center of displayed area. Between 0 and 1.
+	 */
+	public void setZoomAndCenter(double zoom, double centerX, double centerY)
+	{
+		if(centerX < 0)
+			centerX = 0;
+		else if(centerX > 1)
+			centerX = 1;
+		if(centerY < 0)
+			centerY = 0;
+		else if(centerY > 1)
+			centerY = 1;
+		if(zoom > ZOOM_MAX)
+			zoom = ZOOM_MAX;
+		else if(zoom < 1)
+			zoom = 1;
+		this.zoom = zoom;
+		this.centerX = centerX;
+		this.centerY = centerY;
 		repaint();
+		
+		synchronized(zoomAndCenterListeners)
+		{
+			for(ZoomAndCenterListener listener : zoomAndCenterListeners)
+			{
+				listener.zoomOrCenterChanged(zoom, centerX, centerY);
+			}
+		}
+	}
+	/**
+	 * Returns the current zoom level.
+	 * @return Current zoom level.
+	 */
+	public double getZoom()
+	{
+		return zoom;
+	}
+	/**
+	 * Returns the current center of the display area.
+	 * @return center of display area.
+	 */
+	public Point2D.Double getCenter()
+	{
+		return new Point2D.Double(centerX, centerY);
 	}
 	
 	/**
@@ -1097,6 +1180,7 @@ public class ImagePanel extends JPanel
     {
 		super(null);
 		setOpaque(true);
+		setBackground(DEFAULT_BACKGROUND);
 		this.client = client;
 		controlsPanel = new ControlsPanel();
 		histogramControl = new HistogramControl();
@@ -1213,7 +1297,7 @@ public class ImagePanel extends JPanel
 	@Override
     public void paintComponent(Graphics grp)
     {
-		grp.setColor(DEFAULT_BACKGROUND);
+		grp.setColor(getBackground());
 		grp.fillRect(0, 0, getWidth(), getHeight());
 		BufferedImage image;
 		Point startLine;

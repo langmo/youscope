@@ -15,8 +15,7 @@ package org.youscope.plugin.measurementviewer;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -26,6 +25,9 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.RowMapper;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -51,66 +53,49 @@ class MeasurementTree extends JTree
 		this.setModel(treeModel);
 		this.setCellRenderer(new MyTreeRenderer());
 		setRootVisible(false);
-		//setShowsRootHandles(true);
-		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		
-		addMouseListener (new MouseAdapter() 
-		{
-			@Override
-			public void mousePressed( MouseEvent e ) 
-			{
-				TreePath path = getPathForLocation(e.getX(), e.getY());
-	            if(path == null)
-	              return;
-	            Object selectedObject = path.getLastPathComponent();
-	            setSelectionPath(path);
-	            if(selectedObject instanceof ImageFolderNode)
-		        {
-	            	ImageFolderNode selectedNode = (ImageFolderNode)selectedObject;
-	            	if(selectedNode.getImageList() == null)
-	            		return;
-	            	
-	            	synchronized(imageFolderListeners)
-	        		{
-	            		for(ImageFolderListener listener : imageFolderListeners)
-	            		{
-	            			listener.showFolder(selectedNode);
-	            		}
-	        		}
-		        }
-			} 
-		});		
+		setExpandsSelectedPaths(true);
+		setSelectionModel(new MyTreeSelectionModel());
+		getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION );
 		setOpaque(false);
 		
 	}
 	
-	public synchronized void setRootNode(ImageFolderNode rootNode)
+	public synchronized void setRootNode(ImageFolderNode rootNode, ImageFolderNode selectedNode)
 	{
 		this.treeModel.setRootNode(rootNode);
-		ImageFolderNode currentNode = rootNode;
+		TreePath path = findNode(rootNode, selectedNode);
+		if(path != null)
+			setSelectionPath(path);
+		
+	}
+	private TreePath findNode(ImageFolderNode rootNode, ImageFolderNode node)
+	{
 		TreePath path = new TreePath(rootNode);
-		while(true)
+		if(node == null)
 		{
-			if(currentNode.getChildCount() <= 0)
-				break;
-			TreeNode node = currentNode.getChildAt(0);
-			if(!(node instanceof ImageFolderNode))
-				break;
-			currentNode = (ImageFolderNode)node;
-			path = path.pathByAddingChild(currentNode);
-			if(currentNode.getImageList() != null)
+			ImageFolderNode currentNode = rootNode;
+			while(currentNode.getChildCount() > 0)
 			{
-				synchronized(imageFolderListeners)
-        		{
-            		for(ImageFolderListener listener : imageFolderListeners)
-            		{
-            			listener.showFolder(currentNode);
-            		}
-        		}
-				setSelectionPath(path);
-				break;
+				currentNode = currentNode.children().nextElement();
+				path = path.pathByAddingChild(currentNode);
+				if(currentNode.getImageList() != null)
+				{
+					return path;
+				}
 			}
+			return null;
 		}
+		ArrayList<ImageFolderNode> pathElements = new ArrayList<>();
+		while(node != null)
+		{
+			pathElements.add(node);
+			node = (ImageFolderNode) node.getParent();
+		}
+		for(int i=pathElements.size()-2; i>=0; i--)
+		{
+			path = path.pathByAddingChild(pathElements.get(i));
+		}
+		return path;
 	}
 	
 	public void addImageFolderListener(ImageFolderListener listener)
@@ -165,8 +150,254 @@ class MeasurementTree extends JTree
 		}
 		
 	}
-	
-	private static class MyTreeModel implements TreeModel
+	private class MyTreeSelectionModel implements TreeSelectionModel
+	{
+		private final ArrayList<TreeSelectionListener> listeners = new ArrayList<>(1);
+		private RowMapper rowMapper = null;
+		private TreePath lastSelected = null;
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			// do nothing.
+		}
+
+		@Override
+		public void addSelectionPath(TreePath path) 
+		{
+			if(lastSelected == null)
+				setSelectionPaths(new TreePath[]{path});
+			else
+				setSelectionPaths(new TreePath[]{path, lastSelected});
+			
+		}
+
+		@Override
+		public void addSelectionPaths(TreePath[] paths) {
+			if(lastSelected == null)
+				setSelectionPaths(paths);
+			else
+			{
+				TreePath[] newPaths = new TreePath[paths.length+1];
+				newPaths[0] = lastSelected;
+				System.arraycopy(paths, 0, newPaths, 1, paths.length);
+				setSelectionPaths(newPaths);
+			}
+		}
+
+		@Override
+		public void addTreeSelectionListener(TreeSelectionListener x) {
+			listeners.add(x);
+			
+		}
+
+		@Override
+		public void clearSelection() {
+			// do nothing.
+		}
+
+		@Override
+		public TreePath getLeadSelectionPath() {
+			if(lastSelected == null)
+				return null;
+			return lastSelected;
+		}
+
+		@Override
+		public int getLeadSelectionRow() {
+			if(rowMapper == null || lastSelected == null)
+				return -1;
+			return rowMapper.getRowsForPaths(new TreePath[]{lastSelected})[0];
+		}
+
+		@Override
+		public int getMaxSelectionRow() 
+		{
+			int[] rows = getSelectionRows();
+			if(rows == null || rows.length == 0)
+				return -1;
+			int maxVal = Integer.MIN_VALUE;
+			for(int row : rows)
+			{
+				if(row > maxVal)
+					maxVal = row;
+			}
+			return maxVal;
+		}
+
+		@Override
+		public int getMinSelectionRow() {
+			int[] rows = getSelectionRows();
+			if(rows == null || rows.length == 0)
+				return -1;
+			int minVal = Integer.MAX_VALUE;
+			for(int row : rows)
+			{
+				if(row < minVal)
+					minVal = row;
+			}
+			return minVal;
+		}
+
+		@Override
+		public RowMapper getRowMapper() {
+			return rowMapper;
+		}
+
+		@Override
+		public int getSelectionCount() {
+			return lastSelected == null ? 0 : 1;
+		}
+
+		@Override
+		public int getSelectionMode() {
+			return DISCONTIGUOUS_TREE_SELECTION;
+		}
+
+		@Override
+		public TreePath getSelectionPath() {
+			return lastSelected;
+		}
+
+		@Override
+		public TreePath[] getSelectionPaths() {
+			return lastSelected == null ? new TreePath[0] : new TreePath[]{lastSelected};
+		}
+
+		@Override
+		public int[] getSelectionRows() {
+			if(rowMapper == null)
+				return null;
+			return rowMapper.getRowsForPaths(getSelectionPaths());
+		}
+
+		@Override
+		public boolean isPathSelected(TreePath path) {
+			if(lastSelected == null)
+				return false;
+			return lastSelected.equals(path);
+		}
+
+		@Override
+		public boolean isRowSelected(int aRow) 
+		{
+			int[] rows = getSelectionRows();
+			if(rows == null)
+				return false;
+			for(int row : rows)
+			{
+				if(aRow == row)
+					return true;
+			}
+			return false;
+		}
+
+		@Override
+		public boolean isSelectionEmpty() {
+			return lastSelected == null;
+		}
+
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			// do nothing
+		}
+
+		@Override
+		public void removeSelectionPath(TreePath path) {
+			// do nothing.
+		}
+
+		@Override
+		public void removeSelectionPaths(TreePath[] paths) {
+			// do nothing.
+		}
+
+		@Override
+		public void removeTreeSelectionListener(TreeSelectionListener x) {
+			listeners.remove(x);
+		}
+
+		@Override
+		public void resetRowSelection() {
+			// do nothing.
+		}
+
+		@Override
+		public void setRowMapper(RowMapper newMapper) {
+			rowMapper = newMapper;
+		}
+
+		@Override
+		public void setSelectionMode(int mode) {
+			// do nothing.
+		}
+
+		@Override
+		public void setSelectionPath(TreePath path) {
+			setSelectionPaths(new TreePath[]{path});
+		}
+
+		@Override
+		public void setSelectionPaths(TreePath[] paths) 
+		{
+			ArrayList<TreePath> validPaths = new ArrayList<>(1);
+			for(TreePath path : paths)
+			{
+				Object selectedObject = path.getLastPathComponent();
+				if(!(selectedObject instanceof ImageFolderNode))
+						continue;
+				if(((ImageFolderNode)selectedObject).getImageList() == null)
+            		return;
+				validPaths.add(path);
+			}
+			if(validPaths.size() == 0)
+				return;
+			TreePath oldSelected = lastSelected;
+			lastSelected = validPaths.remove(0);
+			if(!lastSelected.equals(oldSelected))
+			{
+				TreePath[] isPaths;
+				boolean[] isNew;
+				if(oldSelected == null)
+				{
+					isPaths = new TreePath[]{oldSelected, lastSelected};
+					isNew = new boolean[]{false, true};
+				}
+				else
+				{
+					isPaths = new TreePath[]{lastSelected};
+					isNew = new boolean[]{true};
+				}
+				for(TreeSelectionListener listener:listeners)
+				{
+					listener.valueChanged(new TreeSelectionEvent(MeasurementTree.this, isPaths, isNew, oldSelected, lastSelected));
+				}
+				
+				Object selectedObject = lastSelected.getLastPathComponent();
+				if(selectedObject instanceof ImageFolderNode)
+				{
+					for(ImageFolderListener listener : imageFolderListeners)
+            		{
+            			listener.showFolder((ImageFolderNode) selectedObject);
+            		}
+				}
+			}
+			if(!validPaths.isEmpty())
+			{
+				ImageFolderNode[] addNodes = new ImageFolderNode[validPaths.size()];
+				for(int i=0; i<validPaths.size(); i++)
+				{
+					addNodes[i] = (ImageFolderNode) validPaths.get(i).getLastPathComponent();
+				}
+				
+				for(ImageFolderListener listener : imageFolderListeners)
+        		{
+        			listener.addFolders(addNodes);
+        		}
+			}
+			
+		}
+		
+	}
+	private class MyTreeModel implements TreeModel
     {
 		private ImageFolderNode rootNode = new ImageFolderNode(null, "", ImageFolderNode.ImageFolderType.ROOT);
 		private final ArrayList<TreeModelListener> treeListeners = new ArrayList<TreeModelListener>();
@@ -242,7 +473,7 @@ class MeasurementTree extends JTree
 					{
 						for(TreeModelListener listener : treeListeners)
 						{
-							listener.treeStructureChanged(new TreeModelEvent(this, new Object[]{rootNode}));
+							listener.treeStructureChanged(new TreeModelEvent(MeasurementTree.this, new Object[]{rootNode}));
 						}
 					}
 				}

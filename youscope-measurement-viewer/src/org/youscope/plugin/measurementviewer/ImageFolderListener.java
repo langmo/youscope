@@ -22,4 +22,5 @@ import java.util.EventListener;
 interface ImageFolderListener extends EventListener
 {
 	public void showFolder(ImageFolderNode folder);
+	public void addFolders(ImageFolderNode[] folders);
 }
