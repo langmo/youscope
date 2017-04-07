@@ -48,14 +48,14 @@ class MinimalClientImpl implements YouScopeClient {
 	}
 
 	@Override
-	public void sendError(String message) {
+	public void sendError(String message) { 
 		sendError(message, null);
 	}
  
 	@Override
 	public void sendMessage(String message) {
 		System.err.println(message);
-	}
+	} 
 
 	@Override
 	public boolean isLocalServer() {

@@ -31,7 +31,7 @@ public class StandaloneMeasurementViewer
 	 * Main method of standalone viewer.
 	 * @param args
 	 */
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
 		// Set system look and feel.
 		try
