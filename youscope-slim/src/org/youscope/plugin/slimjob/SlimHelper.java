@@ -113,7 +113,7 @@ class SlimHelper
 		ImageEvent<short[]> image;
 		try
 		{
-			image = ImageEvent.createImage(result, width, height, 2);
+			image = ImageEvent.createImage(result, width, height, 16); 
 		}
 		catch(Exception e)
 		{

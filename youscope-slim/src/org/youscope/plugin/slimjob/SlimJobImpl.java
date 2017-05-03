@@ -191,7 +191,7 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 		try {
 			slimImage = SlimHelper.calculateSlimImage(images, attenuationFactor);
 		} catch (Exception e) {
-			throw new JobException("Could not calclate slim image.", e);
+			throw new JobException("Error while calculating SLIM image from the four images.", e);
 		}
 		slimImage.setPositionInformation(getPositionInformation());
 		slimImage.setExecutionInformation(executionInformation);
