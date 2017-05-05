@@ -237,6 +237,6 @@ class ImagingJobConfigurationAddon extends ComponentAddonUIAdapter<ImagingJobCon
 
 	@Override
 	protected void initializeDefaultConfiguration(ImagingJobConfiguration configuration) throws AddonException {
-		// do nothing.
+		configuration.setSaveImages(true);
 	}
 }

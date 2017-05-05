@@ -611,7 +611,7 @@ public class ImagePanel extends JPanel
 			if(adjustIcon != null)
 				adjustButton = new JButton(adjustIcon);
 			else
-				adjustButton = new JButton("adjust");
+				adjustButton = new JButton("enhance");
 			adjustButton.setToolTipText("Enhance contrast.");
 			adjustButton.setOpaque(false);
 			adjustButton.addActionListener(new ActionListener()

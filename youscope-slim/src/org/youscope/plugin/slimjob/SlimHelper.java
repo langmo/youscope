@@ -69,9 +69,9 @@ class SlimHelper
 				I3 = 0xffff & ((short[])imgRaw[3])[i];
 			}
 			// Calculate the factor beta 
-			double S = Math.pow(I0,2)+Math.pow(I1,2)+Math.pow(I2,2)+Math.pow(I3,2);
-			double D = Math.pow(Math.pow(I0, 2)-Math.pow(I2, 2), 2) + Math.pow(Math.pow(I3,2)-Math.pow(I1,2),2);
-			TU0s[i] = S/2*(1+Math.sqrt(Math.max(0, 1-4*D/Math.pow(S, 2)))); 
+			double S = I0+I1+I2+I3;//Math.pow(I0,2)+Math.pow(I1,2)+Math.pow(I2,2)+Math.pow(I3,2);
+			double D = Math.pow(I0-I2, 2) + Math.pow(I3-I1,2);//Math.pow(Math.pow(I0, 2)-Math.pow(I2, 2), 2) + Math.pow(Math.pow(I3,2)-Math.pow(I1,2),2);
+			TU0s[i] = S/2.0*(1.0+Math.sqrt(Math.max(0.0, 1.0-4.0*D/Math.pow(S, 2)))); 
 		}
 		// Take the median of all values of 4U_0^2
 		Arrays.sort(TU0s);
@@ -106,7 +106,8 @@ class SlimHelper
 				I2 = 0xffff & ((short[])imgRaw[2])[i];
 				I3 = 0xffff & ((short[])imgRaw[3])[i];
 			}
-			double phi = Math.atan2(Math.pow(I3,2)-Math.pow(I1,2), TU0+(Math.pow(I0,2)-Math.pow(I2,2)));
+			//double phi = Math.atan2(Math.pow(I3,2)-Math.pow(I1,2), TU0+(Math.pow(I0,2)-Math.pow(I2,2)));
+			double phi = Math.atan2(I3-I1, TU0+(I0-I2));
 			
 			result[i]=(short)((int)Math.round((phi+Math.PI)/(2*Math.PI)*(Math.pow(2, 16)-1)));
 		}

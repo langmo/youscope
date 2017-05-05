@@ -50,6 +50,7 @@ public class SlimJobAddonFactory extends ComponentAddonFactoryAdapter
 				job.setOuterRadius(configuration.getOuterRadius());
 				job.setMaskFileName(configuration.getMaskFileName());
 				job.setPhaseShiftOutside(configuration.getPhaseShiftOutside());
+				job.setNumSLIMImages(configuration.getNumSLIMImages());
 				for(int i=0; i<4; i++)
 				{
 					job.setPhaseShiftMask(i, configuration.getPhaseShiftMask(i));
@@ -74,6 +75,7 @@ public class SlimJobAddonFactory extends ComponentAddonFactoryAdapter
 					subJob.setExposure(configuration.getExposure());
 					if(configuration.isSaveImages())
 					{
+						
 						subJob.addImageListener(constructionContext.getMeasurementSaver().getSaveImageListener(configuration.getImageSaveName()+"_mask"+Integer.toString(i+1)));
 						subJob.setImageDescription(configuration.getImageSaveName()+"_mask"+Integer.toString(i+1) + " (" + subJob.getImageDescription() + ")");
 					}

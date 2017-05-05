@@ -1,5 +1,4 @@
 package org.youscope.plugin.measurementviewer;
-
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,12 +21,13 @@ class MeasurementTilingControl extends JPanel
 	private final JButton removeTileButton;
 	public MeasurementTilingControl() 
 	{
-		super(new FlowLayout(FlowLayout.LEFT));
+		//super(new GridLayout(1,2));
+		super(new FlowLayout(FlowLayout.CENTER));
 		setOpaque(false);
 		Icon addTileIcon = ImageLoadingTools.getResourceIcon("icons/application-split.png", "Add Tile");
 		JButton addTileButton;
 		if(addTileIcon == null)
-			addTileButton = new JButton("Add Tile");
+			addTileButton = new JButton("Add ");
 		else
 			addTileButton = new JButton(addTileIcon);
 		addTileButton.setOpaque(false);
@@ -46,7 +46,7 @@ class MeasurementTilingControl extends JPanel
 		
 		Icon removeTileIcon = ImageLoadingTools.getResourceIcon("icons/cross-script.png", "Remove Tile");
 		if(removeTileIcon == null)
-			removeTileButton = new JButton("Remove Tile");
+			removeTileButton = new JButton("Remove");
 		else
 			removeTileButton = new JButton(removeTileIcon);
 		removeTileButton.setOpaque(false);

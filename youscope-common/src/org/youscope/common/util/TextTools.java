@@ -228,7 +228,7 @@ public class TextTools {
 	{
 		string = string.replaceAll("[\"\\*/:<>\\?\\\\\\|]", "_");
 		// File names starting with a point not permitted in Windows
-		if(string.charAt(0)=='.')
+		if(string.length() > 0 && string.charAt(0)=='.')
 			return "_"+string;
 		return string;
 	}

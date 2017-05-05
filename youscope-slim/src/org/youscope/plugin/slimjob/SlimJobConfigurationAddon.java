@@ -90,6 +90,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 	private final JLabel outerRadiusLabel = new JLabel("Outer Radius (px):");
 	
 	
+	private final IntegerTextField numSLIMImagesField = new IntegerTextField(1);
 	private final IntegerTextField centerXField = new IntegerTextField();
 	private final IntegerTextField centerYField = new IntegerTextField();
 	private final IntegerTextField innerRadiusField = new IntegerTextField();
@@ -264,6 +265,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 		elementsPanel.add(channelField);
 		elementsPanel.add(new JLabel("Exposure (ms):"));
 		elementsPanel.add(exposureField);
+		elementsPanel.add(new JLabel("Number of SLIM images:"));
+		numSLIMImagesField.setMinimalValue(1);
+		elementsPanel.add(numSLIMImagesField);
 		elementsPanel.add(nameLabel);
 		elementsPanel.add(nameField);
 		elementsPanel.add(saveImagesField);
@@ -546,6 +550,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 			}
 		});
 
+		numSLIMImagesField.setValue(configuration.getNumSLIMImages());
 		exposureField.setValue(configuration.getExposure());
 		saveImagesField.setSelected(configuration.isSaveImages());
 		
@@ -775,6 +780,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 	protected void commitChanges(SlimJobConfiguration configuration) {
 		configuration.setChannel((String)configGroupField.getSelectedItem(), (String)channelField.getSelectedItem());
 		configuration.setExposure(((Number)exposureField.getValue()).doubleValue());
+		configuration.setNumSLIMImages(numSLIMImagesField.getValue());
 		configuration.setSaveImages(saveImagesField.isSelected());
 		configuration.setImageSaveName(nameField.getText());
 		configuration.setCamera((String)cameraField.getSelectedItem());

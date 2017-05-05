@@ -61,7 +61,7 @@ public class ImagingJobConfiguration implements JobConfiguration, ImageProducerC
 	@XStreamAlias("save-images")
 	@XStreamAsAttribute
 	@XStreamConverter(value = BooleanConverter.class, booleans = {false}, strings = {"yes", "no"})
-	private boolean				saveImages			= true;
+	private boolean				saveImages			= false;
 
 	/**
 	 * The name under which the image is saved.

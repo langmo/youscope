@@ -57,6 +57,7 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 	private volatile String maskFileName = null;
 	private ImageAdapter[] imageAdapters = null;
 	private volatile double attenuationFactor = 1;
+	private volatile int numSLIMImages = 1;
 	public SlimJobImpl(PositionInformation positionInformation) throws RemoteException
 	{
 		super(positionInformation);
@@ -169,34 +170,47 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 			
 			reflectorDevice.getProperty("phaseShiftBackground").setValue(Integer.toString(phaseShiftOutside));
 			Job[] jobs = getJobs();
-			if(jobs == null || jobs.length != 4)
-				throw new JobException("SLIM job requires 4 image producing child jobs.");
-			for(int i=0; i<phaseShiftsMask.length; i++)
+			if(jobs == null || jobs.length != phaseShiftsMask.length)
+				throw new JobException("SLIM job requires 4 image producing child jobs, which should have been automatically created.");
+			int N=numSLIMImages+phaseShiftsMask.length-1;
+			for(int i=0; i<N; i++)
 			{
-				reflectorDevice.getProperty("phaseShiftForeground").setValue(Integer.toString(phaseShiftsMask[i]));
+				reflectorDevice.getProperty("phaseShiftForeground").setValue(Integer.toString(phaseShiftsMask[i%phaseShiftsMask.length]));
 				if(slimDelayMs>0)
 					Thread.sleep(slimDelayMs);
-				imageAdapters[i].clearImage();
-				jobs[i].executeJob(executionInformation, microscope, measurementContext);
-				images[i] = imageAdapters[i].clearImage();
+				imageAdapters[i%phaseShiftsMask.length].clearImage();
+				ExecutionInformation subExecutionInformation;
+				if(N>phaseShiftsMask.length)
+					subExecutionInformation = new ExecutionInformation(executionInformation, i/phaseShiftsMask.length);
+				else
+					subExecutionInformation = executionInformation;
+				jobs[i%phaseShiftsMask.length].executeJob(subExecutionInformation, microscope, measurementContext);
+				images[i%phaseShiftsMask.length] = imageAdapters[i%phaseShiftsMask.length].clearImage();
+				if(i+1>=phaseShiftsMask.length)
+				{
+					if(N>phaseShiftsMask.length)
+						subExecutionInformation = new ExecutionInformation(executionInformation, i-phaseShiftsMask.length+1);
+					else
+						subExecutionInformation = executionInformation;
+					ImageEvent<?> slimImage;
+					try {
+						slimImage = SlimHelper.calculateSlimImage(images, attenuationFactor);
+					} catch (Exception e) {
+						throw new JobException("Error while calculating SLIM image from the four images.", e);
+					}
+					slimImage.setPositionInformation(getPositionInformation());
+					slimImage.setExecutionInformation(subExecutionInformation);
+					slimImage.setCreationRuntime(measurementContext.getMeasurementRuntime());
+					sendImageToListeners(slimImage);
+				}
 			}
 			reflectorDevice.getProperty("phaseShiftBackground").setValue("0");
 			reflectorDevice.getProperty("phaseShiftForeground").setValue("0");
 		}
 		catch(Exception e)
 		{
-			throw new JobException("Could not take SLIM images.", e);
+			throw new JobException("Could not take SLIM image.", e);
 		}
-		ImageEvent<?> slimImage;
-		try {
-			slimImage = SlimHelper.calculateSlimImage(images, attenuationFactor);
-		} catch (Exception e) {
-			throw new JobException("Error while calculating SLIM image from the four images.", e);
-		}
-		slimImage.setPositionInformation(getPositionInformation());
-		slimImage.setExecutionInformation(executionInformation);
-		slimImage.setCreationRuntime(measurementContext.getMeasurementRuntime());
-		sendImageToListeners(slimImage);
 	}
 	
 	@Override
@@ -365,5 +379,13 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 	{
 		assertRunning();
 		this.attenuationFactor=attenuationFactor;
+	}
+	@Override
+	public int getNumSLIMImages() {
+		return numSLIMImages;
+	}
+	@Override
+	public void setNumSLIMImages(int numSLIMImages) {
+		this.numSLIMImages = numSLIMImages>=1 ? numSLIMImages : 1;
 	}
 }

@@ -82,6 +82,9 @@ public class SlimJobConfiguration implements JobConfiguration, ImageProducerConf
 	@XStreamAlias("attenuation-factor")
 	private double attenuationFactor = 1;
 	
+	@XStreamAlias("num-slim-images")
+	private int numSLIMImages = 1;
+	
 	/**
 	 * Returns the attenuation factor with which the SLIM image is calculated.
 	 * @return Attenuation factor.
@@ -440,5 +443,27 @@ public class SlimJobConfiguration implements JobConfiguration, ImageProducerConf
 	public void checkConfiguration() throws ConfigurationException {
 		// do nothing, too complicated.
 		
+	}
+	
+	/**
+	 * Returns the number of SLIM images which are made (at least one). If the number N is one, 4 mask images will be made and the SLIM image
+	 * is calculated from these mask images. If N>1, N+3 mask images will be made, and the first SLIM image is calculated from mask image 0..3, the second from mask images 1..4, and so on.
+	 * The mask images are made using the phase shifts [getPhaseShiftMask(0), getPhaseShiftMask(1), getPhaseShiftMask(2), getPhaseShiftMask(3), getPhaseShiftMask(1), getPhaseShiftMask(2),...]. 
+	 * @return The number of SLIM images made in a continuous cycle of the masks.
+	 */
+	public int getNumSLIMImages()
+	{
+		return numSLIMImages;
+	}
+
+	/**
+	 * Sets the number of SLIM images which are made (at least one). If the number N is one, 4 mask images will be made and the SLIM image
+	 * is calculated from these mask images. If N>1, N+3 mask images will be made, and the first SLIM image is calculated from mask image 0..3, the second from mask images 1..4, and so on.
+	 * The mask images are made using the phase shifts [getPhaseShiftMask(0), getPhaseShiftMask(1), getPhaseShiftMask(2), getPhaseShiftMask(3), getPhaseShiftMask(1), getPhaseShiftMask(2),...]. 
+	 * @param numSLIMImages The number of SLIM images made in a continuous cycle of the masks.
+	 */
+	public void setNumSLIMImages(int numSLIMImages)
+	{
+		this.numSLIMImages = numSLIMImages>=1? numSLIMImages : 1;
 	}
 }
