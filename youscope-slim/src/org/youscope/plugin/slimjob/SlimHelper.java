@@ -69,7 +69,7 @@ class SlimHelper
 				I3 = 0xffff & ((short[])imgRaw[3])[i];
 			}
 			// Calculate the factor beta 
-			double S = I0+I1+I2+I3;//Math.pow(I0,2)+Math.pow(I1,2)+Math.pow(I2,2)+Math.pow(I3,2);
+			double S = I0+I1+I2+I3;//Math.pow(I0,2)+Math.pow(I1,2)+Math.pow(I2,2)+Math.pow(I3,2); 
 			double D = Math.pow(I0-I2, 2) + Math.pow(I3-I1,2);//Math.pow(Math.pow(I0, 2)-Math.pow(I2, 2), 2) + Math.pow(Math.pow(I3,2)-Math.pow(I1,2),2);
 			TU0s[i] = S/2.0*(1.0+Math.sqrt(Math.max(0.0, 1.0-4.0*D/Math.pow(S, 2)))); 
 		}
