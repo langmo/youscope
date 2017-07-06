@@ -398,8 +398,14 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 			}
 			throw new JobException(message);
 		}			
-		
-		localEngine = theFactory.getScriptEngine();
+		try
+		{
+			localEngine = theFactory.getScriptEngine();
+		}
+		catch(Throwable e)
+		{
+			throw new JobException("Could not create local script engine with name " + controllerScriptEngine + ".", e);
+		}
 		if(localEngine == null)
 			throw new JobException("Could not create local script engine with name " + controllerScriptEngine + ".");
 

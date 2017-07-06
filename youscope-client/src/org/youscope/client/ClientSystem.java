@@ -108,7 +108,8 @@ class ClientSystem
 				message = buffer.toString();
 				buffer.setLength(0);
 			}
-			ClientSystem.err.println("Unexpected error occured.", new Exception(message));
+			if(message.length() > 0)
+				ClientSystem.err.println("Unexpected error occured.", new Exception(message));
 	    	
 		}
 

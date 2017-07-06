@@ -193,6 +193,7 @@ class ScriptingTool extends ToolAddonUIAdapter implements EditFileListener
     				console.clearConsole();
     				console.outputMessage("Script Engine with engine name " +  engineName + " could not be loaded.\n" + e.getMessage() + "\n=====================================================\n");
     				console.setEnabled(false);
+    				getClient().sendError("Could not initialize script engine with name " +  engineName + ".", e);
 					return;
     			}
     			console.clearConsole();

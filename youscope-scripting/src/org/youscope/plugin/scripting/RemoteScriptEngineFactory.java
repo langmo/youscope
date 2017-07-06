@@ -56,9 +56,13 @@ public class RemoteScriptEngineFactory implements CallbackAddonFactory
 		if(factory == null)
 			throw new CallbackCreationException("Remote script engines with type identifiers " + typeIdentifier + " not supported by this callback factory.");
 		try {
-			return new RemoteScriptEngineImpl(factory.getScriptEngine(), typeIdentifier);
+			return new RemoteScriptEngineImpl(factory.getScriptEngine(), typeIdentifier); 
 		} catch (RemoteException e) {
 			throw new CallbackCreationException("Remote exception occured while constructing remote script engine.", e);
+		}
+		catch(Throwable e)
+		{
+			throw new CallbackCreationException("Could not create script engine.", e);
 		}
 	}
 

@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 import org.youscope.addon.AddonException;
 
 /**
- * @author langmo
+ * @author Moritz Lang
  *
  */
 class ScriptDefinitionManager
@@ -245,7 +245,16 @@ class ScriptDefinitionManager
 		}
 		try
 		{
-			ScriptEngine scriptEngine = factory.getScriptEngine();
+			ScriptEngine scriptEngine;
+			try
+			{
+				scriptEngine = factory.getScriptEngine();
+			}
+			catch(Throwable e)
+			{
+				ClientSystem.err.println("Script file (" + scriptDefinition.getName() + ") could not be evaluated because initialization of script engine failed.", e);
+				return;
+			}
 			scriptEngine.put("youscopeServer", YouScopeClientImpl.getServer());
 			scriptEngine.put("youscopeClient", new YouScopeClientConnectionImpl());
         	

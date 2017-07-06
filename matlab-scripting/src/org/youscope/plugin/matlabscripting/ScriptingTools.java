@@ -94,7 +94,7 @@ class ScriptingTools
 	
 	
 	
-    static String toMatlabPath(String path)
+    static String toMatlabPath(String path) throws MatlabConnectionException
     {
         // Get Operating system
         String osName = System.getProperty("os.name");
@@ -111,7 +111,11 @@ class ScriptingTools
             if (path.indexOf(" ") >= 0)
             {
                 // Workaround for "Space-Error"...
-                path = LongFileNameToShort.convertToShortFileName(path);
+                try {
+					path = LongFileNameToShort.convertToShortFileName(path);
+				} catch (Exception e) {
+					throw new MatlabConnectionException("Could not establish Matlab connection since path to YouScope contains spaces, and workaround for the Matlab bug to allow RMI communication when path contains spaces failed.", e);
+				}
                 if (path.indexOf(" ") >= 0)
                 {
                     // Did not work, do manually...

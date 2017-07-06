@@ -42,12 +42,15 @@ public class MatlabScriptEngine extends AbstractScriptEngine
 
     /**
      * Creates a new Matlab script engine. Every engine starts a new Matlab process.
+     * @throws MatlabConnectionException 
      */
-    public MatlabScriptEngine()
+    public MatlabScriptEngine() throws MatlabConnectionException
     {
         setBindings(new MatlabBindings(), ScriptContext.ENGINE_SCOPE);
         if (_factory == null)
             _factory = new RemoteMatlabProxyFactory();
+        
+        createConnection();
         
     }
 
@@ -314,7 +317,9 @@ public class MatlabScriptEngine extends AbstractScriptEngine
         } 
         catch (MatlabConnectionException e)
         {
-            throw new ScriptException("Could not connect to Matlab: " + e.getMessage());
+        	ScriptException exception = new ScriptException("Could not connect to Matlab.");
+        	exception.initCause(e);
+            throw exception;
         } 
         catch (MatlabInvocationException e)
         {

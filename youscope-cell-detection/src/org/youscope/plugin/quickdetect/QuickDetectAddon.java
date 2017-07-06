@@ -94,8 +94,14 @@ class QuickDetectAddon extends ResourceAdapter<QuickDetectConfiguration> impleme
 			}
 			throw new CellDetectionException(message);
 		}			
-		
-		scriptEngine = theFactory.getScriptEngine();
+		try
+		{
+			scriptEngine = theFactory.getScriptEngine();
+		}
+		catch(Throwable e)
+		{
+			throw new ResourceException("Could not create local script engine with name Matlab Scripting.", e);
+		}
 		if(scriptEngine == null)
 			throw new CellDetectionException("Could not create local script engine with name Matlab Scripting.");
 		// Set output writer of engine

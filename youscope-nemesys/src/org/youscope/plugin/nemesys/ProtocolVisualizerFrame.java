@@ -356,8 +356,15 @@ class ProtocolVisualizerFrame
 				}
 				throw new NemesysException(message);
 			}			
-			
-			ScriptEngine localEngine = theFactory.getScriptEngine();
+			ScriptEngine localEngine;
+			try
+			{
+				localEngine = theFactory.getScriptEngine();
+			}
+			catch(Throwable e)
+			{
+				throw new NemesysException("Could not create local script engine with name " + scriptEngine + ".", e);
+			}
 			if(localEngine == null)
 				throw new NemesysException("Could not create local script engine with name " + scriptEngine + ".");
 	

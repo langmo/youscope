@@ -130,7 +130,13 @@ public class MatlabScriptEngineFactory implements ScriptEngineFactory
     public ScriptEngine getScriptEngine()
     {
         if (engine == null)
-            engine = new MatlabScriptEngine();
+        {
+			try {
+				engine = new MatlabScriptEngine();
+			} catch (MatlabConnectionException e) {
+				throw new RuntimeException("Error while creating Matlab script engine.", e);
+			}
+        }
         return engine;
     }
 

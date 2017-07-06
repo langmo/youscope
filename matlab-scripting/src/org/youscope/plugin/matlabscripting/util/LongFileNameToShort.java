@@ -38,12 +38,13 @@ public class LongFileNameToShort
 
     /**
      * Converts a Windows long file name to its short file name (8.3 DOS-like file names). If
-     * conversion didn't succeed, the original file name is returned.
+     * conversion didn't succeed, an exception is thrown.
      * 
      * @param longFileName The long file name to convert.
      * @return The short file name (8.3).
+     * @throws Exception Thrown if conversion did not work
      */
-    public static synchronized String convertToShortFileName(String longFileName)
+    public static synchronized String convertToShortFileName(String longFileName) throws Exception
     {
         if (!libLoaded)
         {
@@ -53,11 +54,14 @@ public class LongFileNameToShort
         	String folder = x64 ? LIBRARY_LOCATION_64 : LIBRARY_LOCATION_32;
         	
             // Copy library from jar achieve to the file system
-            InputStream inputStream = null;
+            InputStream inputStream = LongFileNameToShort.class.getClassLoader().getResourceAsStream(folder + LIBRARY_BASE_NAME + ".dll");
+            if(inputStream == null)
+            {
+            	throw new Exception("Could not find temporary native library file to convert file names to old-style 8.3 file names. Expected location was \""+folder + LIBRARY_BASE_NAME + ".dll"+"\".");
+            }
             File libraryFile;
             try
             {
-            	inputStream = LongFileNameToShort.class.getClassLoader().getResourceAsStream(folder + LIBRARY_BASE_NAME + ".dll");
                 libraryFile = File.createTempFile(LIBRARY_BASE_NAME, ".dll");
                 libraryFile.deleteOnExit();
                 FileOutputStream fileOutputStream = new FileOutputStream(libraryFile);
@@ -71,28 +75,27 @@ public class LongFileNameToShort
             } 
             catch (Exception e)
             {
-            	System.err.println(e.getMessage());
-            	e.printStackTrace();
-                return longFileName;
+            	throw new Exception("Could not extract temporary native library file to convert file names to old-style 8.3 file names.", e);
             }
             finally
             {
-            	try {
-					inputStream.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// do nothing.
-				}
+            	if(inputStream != null)
+            	{
+	            	try {
+						inputStream.close();
+					} catch (@SuppressWarnings("unused") IOException e) {
+						// do nothing.
+					}
+            	}
             }
 
-            // Load the library
-            // System.loadLibrary(libraryName);
             try
             {
             	System.load(libraryFile.getAbsolutePath());
             }
-            catch(UnsatisfiedLinkError e)
+            catch(Throwable e)
             {
-            	throw new UnsatisfiedLinkError("Could not load temporary native library file \"" + libraryFile.getAbsolutePath() +"\".\nError message: " + e.getMessage());
+            	throw new Exception("Could not load extracted temporary native library file \"" + libraryFile.getAbsolutePath() +"\"  to convert file names to old-style 8.3 file names.", e);
             }
             libLoaded = true;
         }

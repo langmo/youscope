@@ -31,6 +31,7 @@
     <initialHeapPercent>10</initialHeapPercent>
     <maxHeapSize>1024</maxHeapSize>
     <maxHeapPercent>50</maxHeapPercent>
+    <opt>-Dpython.console.encoding=UTF-8</opt>
   </jre>
   <splash>
     <file>splash.bmp</file>

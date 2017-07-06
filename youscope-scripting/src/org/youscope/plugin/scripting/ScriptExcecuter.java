@@ -157,7 +157,14 @@ class ScriptExcecuter implements EvaluationListener
         	throw new Exception("Could not get script engine factory for script engine name " + engineName + ".", e);
 		}
 		this.engineName = engineName;
-		engine = factory.getScriptEngine();
+		try
+		{
+			engine = factory.getScriptEngine();
+		}
+		catch(Throwable e)
+		{
+			throw new Exception("Could not create script engine for engine name " + engineName + ".", e);
+		}
 				
         if(engine != null)
         {
