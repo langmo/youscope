@@ -42,10 +42,10 @@ public class CellXConfiguration extends CellDetectionConfiguration
 		// do nothing.
 	}
 		
-	@XStreamAlias("generate-detection-image")
+	@XStreamAlias("generate-label-image")
 	@XStreamAsAttribute
 	@XStreamConverter(value = BooleanConverter.class, booleans = {false}, strings = {"yes", "no"})
-	private boolean generateDetectionImage = true;
+	private boolean generateLabelImage = true;
 	
 	@XStreamAlias("track-cells")
 	@XStreamAsAttribute
@@ -68,11 +68,11 @@ public class CellXConfiguration extends CellDetectionConfiguration
 	
 	/**
 	 * Set to true if a label image should be generated.
-	 * @param generateDetectionImage True if detection image should be generated, otherwise false.
+	 * @param generateLabelImage True if detection image should be generated, otherwise false.
 	 */
-	public void setGenerateLabelImage(boolean generateDetectionImage)
+	public void setGenerateLabelImage(boolean generateLabelImage)
 	{
-		this.generateDetectionImage = generateDetectionImage;
+		this.generateLabelImage = generateLabelImage;
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class CellXConfiguration extends CellDetectionConfiguration
 	@Override
 	public boolean isGenerateLabelImage()
 	{
-		return generateDetectionImage;
+		return generateLabelImage;
 	}
 
 	/**

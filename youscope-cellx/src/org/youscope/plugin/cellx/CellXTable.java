@@ -47,6 +47,7 @@ public class CellXTable
 				{
 					ColumnDefinition.createIntegerColumnDefinition("cell.frame", "", false),
 					CellDetectionTableColumns.TABLE_COLUMN_CELL_ID,
+					CellDetectionTableColumns.TABLE_COLUMN_CELL_TRACKING_ID,
 					CellDetectionTableColumns.TABLE_COLUMN_XPOSITION_PX,
 					CellDetectionTableColumns.TABLE_COLUMN_YPOSITION_PX,
 					CellDetectionTableColumns.TABLE_COLUMN_MAJOR_AXIS_PX,
@@ -59,11 +60,12 @@ public class CellXTable
 					ColumnDefinition.createDoubleColumnDefinition("cell.mem.volume", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("cell.nuc.radius", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("cell.nuc.area", "", true),
-					ColumnDefinition.createDoubleColumnDefinition("fluo.background.median", "", true),
+					ColumnDefinition.createIntegerColumnDefinition("fluo.id", "", true),
+					ColumnDefinition.createDoubleColumnDefinition("fluo.background.mean", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.background.std", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.cell.total", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.cell.q75", "", true),
-					CellDetectionTableColumns.TABLE_COLUMN_FLUORESCENCE,
+					ColumnDefinition.createDoubleColumnDefinition("fluo.cell.median", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.cell.q25", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.mem.total", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.mem.q75", "", true),
@@ -77,8 +79,7 @@ public class CellXTable
 					ColumnDefinition.createDoubleColumnDefinition("fluo.bright.q75", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.bright.median", "", true),
 					ColumnDefinition.createDoubleColumnDefinition("fluo.bright.q25", "", true),
-					ColumnDefinition.createDoubleColumnDefinition("fluo.bright.euler", "", true),
-					CellDetectionTableColumns.TABLE_COLUMN_CELL_TRACKING_ID
+					ColumnDefinition.createDoubleColumnDefinition("fluo.bright.euler", "", true)
 				};
 		
 		tableDefinition = new TableDefinition("Cell-Detection Results", 

@@ -40,7 +40,6 @@ import org.youscope.common.image.ImageEvent;
 import org.youscope.common.resource.ResourceAdapter;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.table.Table;
-import org.youscope.common.table.TableDataAdapter;
 import org.youscope.common.table.TableDefinition;
 import org.youscope.common.table.TableListener;
 
@@ -148,10 +147,10 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		if(detectionImage == null)
 			throw new CellDetectionException("Image in which cells should be detected is null.");
 		
-		TableDataAdapter tableDataSink;
+		CellXSinkImpl tableDataSink;
 		try
 		{
-			tableDataSink = new TableDataAdapter();
+			tableDataSink = new CellXSinkImpl(detectionImage.getCreationTime(), detectionImage.getPositionInformation(), detectionImage.getExecutionInformation());
 		}
 		catch(RemoteException e1)
 		{
@@ -255,7 +254,7 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 			sendMessage(returnVal.toString());
 		
 		// TODO: update script for new table layout.
-		Table table = tableDataSink.clear();
+		Table table = tableDataSink.getTable();
 		sendTableToListeners(table);		
 		CellDetectionResult result = new CellDetectionResult(table, imageSink == null ? null : imageSink.clearImage());
 		

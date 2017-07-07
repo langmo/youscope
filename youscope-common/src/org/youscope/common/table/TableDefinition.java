@@ -159,6 +159,21 @@ public final class TableDefinition implements Iterable<ColumnDefinition<?>>, Ser
 	}
 	
 	/**
+	 * Returns the index of the colum with the given name. Returns -1 if colum could not be found.
+	 * @param columnName Column name.
+	 * @return The index of the column with the name, or -1.
+	 */
+	public int getColumnIndex(String columnName)
+	{
+		for(int i=0; i<columns.length; i++)
+		{
+			if(columns[i].getColumnName().equals(columnName))
+				return i;
+		}
+		return -1;
+	}
+	
+	/**
 	 * Returns the name of the given column.
 	 * @param column Index of the column.
 	 * @return Name (title) of the column.

@@ -89,28 +89,6 @@ cellXYouScopeInterfacer = CellXYouScopeInterface(invocationNo, configFileName,se
     previousCellTable);
 cellXYouScopeInterfacer.run;
 
-%% Save tracking data for next call
-currentResult.setData('segmentedCells', hlp_serialize(cellXYouScopeInterfacer.currentSegmentedCells));
-currentResult.setData('segmentationMask', hlp_serialize(cellXYouScopeInterfacer.currentSegmentationMask));
-currentResult.setData('cellTable', hlp_serialize(cellXYouScopeInterfacer.currentResult));    
-currentResult.setData('invocation', invocationNo);
-
-%% Send data to YouScope
-if numel(cellXYouScopeInterfacer.currentResult.data) > 0
-	% Convert to string table
-	cellPositionsStr = reshape(cellstr(num2str(cellXYouScopeInterfacer.currentResult.data(:))), size(cellXYouScopeInterfacer.currentResult.data, 1), size(cellXYouScopeInterfacer.currentResult.data, 2));
-	% Convert to array of row objects
-	cellTableRows = javaArray('org.youscope.common.TableDataRow', size(cellPositionsStr, 1));
-	for i=1:size(cellPositionsStr, 1)
-		cellTableRows(i) = org.youscope.common.TableDataRow(cellPositionsStr(i, :), [], [], java.util.Date());
-	end
-	% Submit to YouScope
-	tableDataSink.newRows([], cellTableRows);
-end
-if exist('imageSink', 'var')
-    imageSink.imageMade(toYouScopeImage(uint8(cellXYouScopeInterfacer.currentSegmentationMask)));  
-end
-   
 %% Display headers for debugging
 if exist('debug_mode', 'var')
 	fprintf('\nHeaders: ');   
@@ -122,6 +100,32 @@ if exist('debug_mode', 'var')
 	end    
 	fprintf('\n');
 end
+
+%% Save tracking data for next call
+currentResult.setData('segmentedCells', hlp_serialize(cellXYouScopeInterfacer.currentSegmentedCells));
+currentResult.setData('segmentationMask', hlp_serialize(cellXYouScopeInterfacer.currentSegmentationMask));
+currentResult.setData('cellTable', hlp_serialize(cellXYouScopeInterfacer.currentResult));    
+currentResult.setData('invocation', invocationNo);
+
+%% Send data to YouScope
+if numel(cellXYouScopeInterfacer.currentResult.data) > 0
+	% Convert to string table
+	%cellPositionsStr = reshape(cellstr(num2str(cellXYouScopeInterfacer.currentResult.data(:))), size(cellXYouScopeInterfacer.currentResult.data, 1), size(cellXYouScopeInterfacer.currentResult.data, 2));
+	% Convert to array of row objects
+	%cellTableRows = javaArray('org.youscope.common.TableDataRow', size(cellPositionsStr, 1));
+	%for i=1:size(cellPositionsStr, 1)
+	%	cellTableRows(i) = org.youscope.common.TableDataRow(cellPositionsStr(i, :), [], [], java.util.Date());
+	%end
+	% Submit to YouScope
+	%tableDataSink.newRows([], cellTableRows);
+	for i=1:size(cellXYouScopeInterfacer.currentResult.data, 1)
+		tableDataSink.addCell(cellXYouScopeInterfacer.currentResult.headers, cellXYouScopeInterfacer.currentResult.data(i, :));
+	end
+end
+if exist('imageSink', 'var')
+    imageSink.imageMade(toYouScopeImage(uint8(cellXYouScopeInterfacer.currentSegmentationMask)));  
+end
+   
 
 %% Reset warning state
 warning(oldWarnState);

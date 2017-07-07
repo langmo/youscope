@@ -118,7 +118,8 @@ class ScriptingTools
 				}
                 if (path.indexOf(" ") >= 0)
                 {
-                    // Did not work, do manually...
+                	throw new MatlabConnectionException("YouScope is located in a path containing spaces. The Matlab implementation of the Java VM contains a bug preventing the correct handling of paths with spaces. YouScope contains a workaround converting filenames with spaces to their 8.3 equivalence, but 8.3 filenames seems to be deactivated on your system. Either reactivate them or copy YouScope into a folder not containing spaces.");
+                    /*// Did not work, do manually...
                     boolean isJar;
                     if (path.charAt(path.length() - 1) == '/'
                             || path.charAt(path.length() - 1) == '\\')
@@ -146,7 +147,7 @@ class ScriptingTools
                     if (isJar)
                     {
                         path = path.substring(0, path.length() - 1);
-                    }
+                    }*/
                 }
             }
         }

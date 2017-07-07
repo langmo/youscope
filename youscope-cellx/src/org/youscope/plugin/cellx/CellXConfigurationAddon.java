@@ -283,7 +283,7 @@ class CellXConfigurationAddon  extends ComponentAddonUIAdapter<CellXConfiguratio
 			{
 		configuration.setConfigurationFile(configFileField.getText());
     	configuration.setTrackCells(trackCellsField.isSelected());
-		
+		configuration.setGenerateLabelImage(true);
 	}
 
 	@Override
