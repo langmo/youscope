@@ -111,6 +111,9 @@ public class AutoFocusJobConfiguration implements ImageProducerConfiguration, Co
 	@XStreamAlias("focus-search-configuration")
 	private FocusSearchConfiguration focusSearchAlgorithm = null;
 	
+	@XStreamAlias("invert-focus-score")
+	private boolean invertFocusScore = false;
+	
 	@Override
 	public String getTypeIdentifier()
 	{
@@ -374,5 +377,23 @@ public class AutoFocusJobConfiguration implements ImageProducerConfiguration, Co
 		{
 			childJob.checkConfiguration();
 		}
+	}
+
+	/**
+	 * Return true if the focus score calculated by the focus score algorithm is inverted, i.e. to search
+	 * a local minimum of the focus score instead of a maximum.
+	 * @return true if score is inverted.
+	 */
+	public boolean isInvertFocusScore() {
+		return invertFocusScore;
+	}
+
+	/**
+	 * Set to true to invert the focus score calculated by the focus score algorithm, i.e. to search
+	 * a local minimum of the focus score instead of a maximum.
+	 * @param invertFocusScore true to invert focus score, false otherwise.
+	 */
+	public void setInvertFocusScore(boolean invertFocusScore) {
+		this.invertFocusScore = invertFocusScore;
 	}
 }

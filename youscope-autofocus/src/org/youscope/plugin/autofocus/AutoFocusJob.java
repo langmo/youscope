@@ -67,6 +67,23 @@ public interface AutoFocusJob extends Job, CompositeJob, ImageProducer, TablePro
 	public void setExposure(double exposure) throws RemoteException, ComponentRunningException;
 
 	/**
+	 * Return true if the focus score calculated by the focus score algorithm is inverted, i.e. to search
+	 * a local minimum of the focus score instead of a maximum.
+	 * @return true if score is inverted.
+	 * @throws RemoteException 
+	 */
+	public boolean isInvertFocusScore() throws RemoteException;
+
+	/**
+	 * Set to true to invert the focus score calculated by the focus score algorithm, i.e. to search
+	 * a local minimum of the focus score instead of a maximum.
+	 * @param invertFocusScore true to invert focus score, false otherwise.
+	 * @throws RemoteException 
+	 * @throws ComponentRunningException 
+	 */
+	public void setInvertFocusScore(boolean invertFocusScore)  throws RemoteException, ComponentRunningException;
+	
+	/**
 	 * Gets the exposure. If more than one camera is initialized, returns the exposure of the first camera.
 	 * 
 	 * @return The exposure.

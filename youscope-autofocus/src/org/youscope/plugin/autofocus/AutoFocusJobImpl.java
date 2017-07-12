@@ -69,7 +69,8 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	private FocusScoreResource focusScoreAlgorithm = null;
 	private FocusSearchResource focusSearchAlgorithm = null;
 	
-	double lastOptimalRelativeFocus = 0;
+	private double lastOptimalRelativeFocus = 0;
+	private boolean invertFocusScore = false;
 	
 	public AutoFocusJobImpl(PositionInformation positionInformation) throws RemoteException
 	{
@@ -310,7 +311,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 			private static final int EXPECTED_NUM_ITERATIONS = 10;
 			public ArrayList<FocusInfo> focusInfos = new ArrayList<FocusInfo>(EXPECTED_NUM_ITERATIONS);
 			public int maxFocusIdx = -1; 
-			public double maxFocusScore = 0;
+			public double maxFocusScore = -Double.MAX_VALUE;
 			@Override
 			public double getFocusScore(double relativeFocusPosition) throws ResourceException 
 			{
@@ -324,7 +325,7 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 					if(adjustmentTime>0)
 						Thread.sleep(adjustmentTime);
 					ImageEvent<?> image = takeImage(microscope, measurementContext, executionInformation, new PositionInformation(getPositionInformation(), PositionInformation.POSITION_TYPE_ZSTACK, step));			
-					focusScore = getScore(image);
+					focusScore = invertFocusScore ? -getScore(image) : getScore(image);
 				}
 				catch(RemoteException e)
 				{
@@ -736,5 +737,18 @@ class AutoFocusJobImpl extends JobAdapter implements AutoFocusJob
 	@Override
 	public Job getJob(int jobIndex) throws RemoteException, IndexOutOfBoundsException {
 		return jobs.get(jobIndex);
+	}
+
+	@Override
+	public boolean isInvertFocusScore() 
+	{
+		return invertFocusScore;
+	}
+
+	@Override
+	public void setInvertFocusScore(boolean invertFocusScore) throws ComponentRunningException 
+	{
+		assertRunning();
+		this.invertFocusScore = invertFocusScore;
 	}
 }

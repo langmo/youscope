@@ -32,10 +32,10 @@ public interface FocusScoreResource  extends Resource
 	 * The focus score must be larger or equal zero. The upper bound-if one exists-is implementation dependent.
 	 * It can be assumed that the focus score is approximately continuous (except noise in imaging) for different focus values.
 	 * Depending on the algorithm, there might exist more than one (local) maximum for different focus values.
-	 * @param e The image which should be analyzed.
+	 * @param image The image which should be analyzed.
 	 * @return The focus score of the image, given the algorithm of this addon.
 	 * @throws ResourceException
 	 * @throws RemoteException
 	 */
-	public double calculateScore(ImageEvent<?> e) throws ResourceException, RemoteException;
+	public double calculateScore(ImageEvent<?> image) throws ResourceException, RemoteException;
 }

@@ -62,6 +62,7 @@ public class AutoFocusJobFactory extends ComponentAddonFactoryAdapter
 					job.setFocusDevice(null);
 					job.setFocusAdjustmentTime(0);
 				}
+				job.setInvertFocusScore(configuration.isInvertFocusScore());
 				
 				// configure imaging
 				job.setChannel(configuration.getChannelGroup(), configuration.getChannel());

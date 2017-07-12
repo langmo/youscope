@@ -59,6 +59,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 	
 	private final JCheckBox										rememberFocusField			= new JCheckBox("Center at last focal plane", true);
 	private final JCheckBox										resetFocusField			= new JCheckBox("Reset focus after job execution", true);
+	private final JCheckBox										invertFocusScoreField			= new JCheckBox("Invert focus score", false);
 	
 	private final JTextField									focusTableNameField				= new JTextField();
 
@@ -161,6 +162,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
         centerPanel.add(focusSearchAlgorithmConfiguration);
         focusScoreAlgorithmConfiguration = new FocusScoreAlgorithmPanel(getClient(), getServer(), getContainingFrame(), configuration.getFocusScoreAlgorithm());
         centerPanel.add(focusScoreAlgorithmConfiguration);
+        centerPanel.add(invertFocusScoreField);
         focusTableSaveField.setOpaque(false);
         centerPanel.add(focusTableSaveField);
 		centerPanel.add(focusTableNameLabel);
@@ -300,6 +302,7 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 	{
 		rememberFocusField.setSelected(configuration.isRememberFocus());
 		resetFocusField.setSelected(configuration.isResetFocusAfterSearch());
+		invertFocusScoreField.setSelected(configuration.isInvertFocusScore());
 		
 		loadFocusDevices();
         if(configuration.getFocusConfiguration() != null && configuration.getFocusConfiguration().getFocusDevice() != null)
@@ -361,7 +364,8 @@ class AutoFocusJobConfigurationAddon extends ComponentAddonUIAdapter<AutoFocusJo
 	{
 		configuration.setRememberFocus(rememberFocusField.isSelected());
 		configuration.setResetFocusAfterSearch(resetFocusField.isSelected());
-    	    	
+    	configuration.setInvertFocusScore(invertFocusScoreField.isSelected());
+		
     	String focusDevice = focusDevicesField.getSelectedItem().toString();
         int adjustmentTime = ((Number)adjustmentTimeField.getValue()).intValue();
     	FocusConfiguration focusConfiguration = new FocusConfiguration();
