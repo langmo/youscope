@@ -93,7 +93,7 @@ public class HistogramPanel extends JComponent
 	private BufferedImage lastBufferedImage = null;
 	
 	/**
-	 * Constuctor.
+	 * Constructor.
 	 */
 	public HistogramPanel() {
 		updateUI();		

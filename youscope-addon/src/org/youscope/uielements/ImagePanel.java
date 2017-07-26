@@ -611,7 +611,7 @@ public class ImagePanel extends JPanel
 			if(adjustIcon != null)
 				adjustButton = new JButton(adjustIcon);
 			else
-				adjustButton = new JButton("enhance");
+				adjustButton = new JButton("enhance"); 
 			adjustButton.setToolTipText("Enhance contrast.");
 			adjustButton.setOpaque(false);
 			adjustButton.addActionListener(new ActionListener()
@@ -619,6 +619,7 @@ public class ImagePanel extends JPanel
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					histogramPanel.autoAdjust();
+					fireImageChanged();
 				}
 			});
 			contrastButtonsPanel.add(adjustButton);
@@ -635,7 +636,9 @@ public class ImagePanel extends JPanel
 			{
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					histogramPanel.setAutoAdjusting(false);
 					histogramPanel.adjust(0, 1);
+					fireImageChanged();
 				}
 			});
 			contrastButtonsPanel.add(noAdjustButton);
@@ -661,6 +664,8 @@ public class ImagePanel extends JPanel
 				public void actionPerformed(ActionEvent e) 
 				{
 					histogramPanel.setAutoAdjusting(autoAdjustField.isSelected());
+					if(autoAdjustField.isSelected())
+						fireImageChanged();
 				}
 			});
 			autoAdjustField.setForeground(DEFAULT_FOREGROUND);

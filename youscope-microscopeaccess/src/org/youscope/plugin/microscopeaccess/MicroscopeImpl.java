@@ -810,7 +810,6 @@ class MicroscopeImpl implements MicroscopeInternal
 			unlockRead();
 		}
 		
-		
 		if(type == mmcorej.DeviceType.UnknownType)
 			return DeviceType.UnknownType;
 		else if(type == mmcorej.DeviceType.AnyType)
