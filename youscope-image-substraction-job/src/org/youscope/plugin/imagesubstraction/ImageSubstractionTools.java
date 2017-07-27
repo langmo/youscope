@@ -58,6 +58,10 @@ class ImageSubstractionTools {
 				{
 					throw new Exception("Error creating YouScope image.", e);
 				}
+				image.setCamera(image1.getCamera());
+				image.setSwitchXY(image1.isSwitchXY());
+				image.setTransposeX(image1.isTransposeX());
+				image.setTransposeY(image1.isTransposeY());
 				return image;
 			}
 			// else bytesPerPixel == 2
@@ -79,6 +83,10 @@ class ImageSubstractionTools {
 			{
 				throw new Exception("Error creating YouScope image.", e);
 			}
+			image.setCamera(image1.getCamera());
+			image.setSwitchXY(image1.isSwitchXY());
+			image.setTransposeX(image1.isTransposeX());
+			image.setTransposeY(image1.isTransposeY());
 			return image;
 	}
 }
