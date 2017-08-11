@@ -777,15 +777,18 @@ class MeasurementImpl implements TaskExecutor
 					// the null task is a special task, intended to signal that the measurement should stop.
 					if(scheduledTask.task == null)
 						stopMeasurement(true);
-					pendingQueuesLock.lock();
-					try
+					else
 					{
-						pendingTasksQueue.add(scheduledTask);
-						jobsAvailable.signalAll();
-					}
-					finally
-					{
-						pendingQueuesLock.unlock();
+						pendingQueuesLock.lock();
+						try
+						{
+							pendingTasksQueue.add(scheduledTask);
+							jobsAvailable.signalAll();
+						}
+						finally
+						{
+							pendingQueuesLock.unlock();
+						}
 					}
 				}
 				if(Thread.interrupted())
