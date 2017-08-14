@@ -141,6 +141,7 @@ class ScriptTemplates
 		returnValue += 
 			"u = cell(controller.getNumInputRows(), " + Integer.toString(inputColumns.length) + ");\n" +
 			"for r=1 : controller.getNumInputRows()\n";
+		
 		for(int i=0; i<inputColumns.length; i++)
 		{
 			if(Integer.class.isAssignableFrom(inputColumns[i].getValueType()) || Long.class.isAssignableFrom(inputColumns[i].getValueType()))
@@ -188,12 +189,12 @@ class ScriptTemplates
 				returnValue +=
 					"y{" + Integer.toString(i+1) + "} = 0." + Integer.toString(i) + " / 3.141 * x; % output = "+outputColumns[i].getColumnName()+", type = double/float\n";
 			}
-			else if(Integer.class.isAssignableFrom(inputColumns[i].getValueType()) || Long.class.isAssignableFrom(inputColumns[i].getValueType()))
+			else if(Integer.class.isAssignableFrom(outputColumns[i].getValueType()) || Long.class.isAssignableFrom(outputColumns[i].getValueType()))
 			{
 				returnValue +=
 					"y{" + Integer.toString(i+1) + "} = " + Integer.toString(i+7) + " - 2 * x; % output = "+outputColumns[i].getColumnName()+", type = integer/long\n";
 			}
-			else if(Boolean.class.isAssignableFrom(inputColumns[i].getValueType()))
+			else if(Boolean.class.isAssignableFrom(outputColumns[i].getValueType()))
 			{
 				returnValue +=
 						"y{" + Integer.toString(i+1) + "} = true; % output = "+outputColumns[i].getColumnName()+", type = boolean\n";

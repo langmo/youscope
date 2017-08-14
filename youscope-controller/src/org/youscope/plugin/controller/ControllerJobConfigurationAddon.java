@@ -15,10 +15,10 @@ package org.youscope.plugin.controller;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
@@ -71,26 +71,20 @@ public class ControllerJobConfigurationAddon extends ComponentAddonUIAdapter<Con
 	    algorithmConfigurationPanel = new AlgorithmConfigurationPanel(configuration, getClient(), getServer());
 	    miscConfigurationPanel = new MiscConfigurationPanel(configuration, getContainingFrame());
 	    
-	    outputJobConfigurationPanel.addActionListener(new ActionListener()
-	    		{
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						algorithmConfigurationPanel.setOutputColumns(outputJobConfigurationPanel.getOutputColumns());
-					}
-	    		});
-	    inputJobConfigurationPanel.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				algorithmConfigurationPanel.setInputColumns(inputJobConfigurationPanel.getInputColumns());
-			}
-		});
-	    
 		JTabbedPane centralPanel = new JTabbedPane(JTabbedPane.TOP);
         centralPanel.addTab("Input", inputJobConfigurationPanel);
         centralPanel.addTab("Output", outputJobConfigurationPanel);
         centralPanel.addTab("Control Algorithm", algorithmConfigurationPanel);
         centralPanel.addTab("Misc", miscConfigurationPanel);
+        
+        centralPanel.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				algorithmConfigurationPanel.setOutputColumns(outputJobConfigurationPanel.getOutputColumns());
+				algorithmConfigurationPanel.setInputColumns(inputJobConfigurationPanel.getInputColumns());
+			}
+		});
         
 		return centralPanel;
     }

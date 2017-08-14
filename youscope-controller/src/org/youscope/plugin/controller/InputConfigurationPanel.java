@@ -14,7 +14,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,7 +42,6 @@ class InputConfigurationPanel extends DynamicPanel
 	private final YouScopeClient client;
 	private final YouScopeFrame frame;
 	private final ControllerJobConfiguration controllerConfiguration;
-	private final ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	private final ComponentComboBox<JobConfiguration> componentBox;
 	public InputConfigurationPanel(ControllerJobConfiguration controllerConfiguration, YouScopeClient client, YouScopeFrame frame)
 	{
@@ -103,14 +101,6 @@ class InputConfigurationPanel extends DynamicPanel
 		client.sendError("Selected input job does not produce table data.");
 		return null;
 	}
-	void addActionListener(ActionListener listener)
-	{
-		actionListeners.add(listener);
-	}
-	void removeActionListener(ActionListener listener)
-	{
-		actionListeners.remove(listener);
-	}
 	private void displayAddonConfiguration(ComponentMetadata<? extends JobConfiguration> inputOption)
 	{
 		if(currentAddon != null)
@@ -129,7 +119,6 @@ class InputConfigurationPanel extends DynamicPanel
 			revalidate();
 			if(frame.isVisible())
 				frame.pack();
-			fireJobChanged();
 			return;
 		}
 		try 
@@ -152,7 +141,6 @@ class InputConfigurationPanel extends DynamicPanel
 			revalidate();
 			if(frame.isVisible())
 				frame.pack();
-			fireJobChanged();
 			return;
 		}
 		
@@ -160,14 +148,5 @@ class InputConfigurationPanel extends DynamicPanel
 		revalidate();
 		if(frame.isVisible())
 			frame.pack();
-		fireJobChanged();
-	}
-	
-	private void fireJobChanged()
-	{
-		for(ActionListener listener : actionListeners)
-		{
-			listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_FIRST, "job changed"));
-		}
 	}
 }

@@ -48,7 +48,7 @@ public class ControllerTable
 			}
 			for(int i=0; i< outputColumns.length; i++)
 			{
-				columns[i] = ColumnDefinition.createColumnDefinition(OUTPUT_PREFIX + outputColumns[i].getColumnName(), outputColumns[i].getColumnDescription(),  outputColumns[i].getValueType(), true);
+				columns[i+inputColumns.length] = ColumnDefinition.createColumnDefinition(OUTPUT_PREFIX + outputColumns[i].getColumnName(), outputColumns[i].getColumnDescription(),  outputColumns[i].getValueType(), true);
 			}
 		}
 		catch(@SuppressWarnings("unused") TableException e)
