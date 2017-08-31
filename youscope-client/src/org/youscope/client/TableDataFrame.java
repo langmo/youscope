@@ -32,7 +32,6 @@ import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.PositionInformation;
 import org.youscope.common.table.Table;
 import org.youscope.common.table.TableDefinition;
-import org.youscope.common.table.TableException;
 import org.youscope.common.table.TableListener;
 import org.youscope.common.table.TableProducer;
 
@@ -186,6 +185,7 @@ class TableDataFrame
         JPanel centralPanel = new JPanel(new BorderLayout(2, 2));
         tableDataModel = new TableDataModel(tableDefinition);
         tableDataTable = new JTable(tableDataModel);
+        
         tableDataTable.setRowSelectionAllowed(true);
         tableDataTable.setColumnSelectionAllowed(true);
         tableDataTable.setSurrendersFocusOnKeystroke(true);
@@ -222,13 +222,64 @@ class TableDataFrame
         private final String[] defaultColumns = {"Evaluation", "Measurement Time", "Absolute Time", "Well", "Position"};
         
         private TableDefinition tableDefinition;
-        private Table lastTable = null;
+        private String[] tableColumns;
+        private String[][] tableData;
+        private int firstRow=0;
+        private int numRows = 0;
         private final static int MAX_ROWS = 100;
+        private final SimpleDateFormat absoluteTimeFormat = new SimpleDateFormat("HH:mm:ss");
         TableDataModel(TableDefinition tableDefinition)
         {
-            this.tableDefinition = tableDefinition;
+        	setTableDefinition(tableDefinition);
         }
-        
+        private void setTableDefinition(TableDefinition tableDefinition)
+        {
+        	this.tableDefinition = tableDefinition;
+        	String[] specificColumns = tableDefinition.getColumnNames();
+        	tableColumns = new String[specificColumns.length+defaultColumns.length];
+        	System.arraycopy(defaultColumns, 0, tableColumns, 0, defaultColumns.length);
+        	System.arraycopy(specificColumns, 0, tableColumns, defaultColumns.length, specificColumns.length);
+        	this.tableData = new String[MAX_ROWS][tableColumns.length];
+        	this.numRows = 0;
+        	this.firstRow = 0;
+        }
+        private boolean addTableData(Table table)
+        {
+        	boolean layoutChanged;
+        	if(!tableDefinition.equals(table.getTableDefinition()))
+			{
+        		setTableDefinition(table.getTableDefinition());
+				layoutChanged = true;
+			}
+        	else
+        		layoutChanged = false;
+        	for(int row =0; row<table.getNumRows(); row++)
+        	{
+        		int idx;
+        		if(numRows == MAX_ROWS)
+        		{
+        			idx = firstRow;
+        			firstRow = (firstRow+1) % MAX_ROWS;
+        		}
+        		else
+        		{
+        			idx = firstRow+numRows;
+        			numRows++;
+        		}
+        		tableData[idx][0] = table.getExecutionInformation() == null ? "" : table.getExecutionInformation().getEvaluationString();
+        		long timeInS = table.getCreationRuntime()/1000;
+        		tableData[idx][1] = String.format("%dh %02dmin %02ds", timeInS / 3600, (timeInS % 3600) / 60, (timeInS % 60)); 
+        		tableData[idx][2] = absoluteTimeFormat.format(new Date(table.getCreationTime()));
+        		tableData[idx][3] = (table.getPositionInformation() != null && table.getPositionInformation().getWell() != null) ? table.getPositionInformation().getWell().getWellName() : "";
+        		tableData[idx][4] = table.getPositionInformation() != null ? table.getPositionInformation().getPositionsString() : "";
+        		for(int i = 0; i<table.getNumColumns(); i++)
+        		{
+        			tableData[idx][defaultColumns.length+i] = table.getEntry(row, i).getValueAsString(); 
+        		} 
+        	}
+        	return layoutChanged;
+        	
+        }
         private void addTable(final Table table)
         {
         	Runnable runner = new Runnable()
@@ -236,42 +287,7 @@ class TableDataFrame
 				@Override
 				public void run() 
 				{
-					boolean layoutChanged;
-					if(lastTable == null)
-					{
-						lastTable = table.clone();
-						if(!tableDefinition.equals(table.getTableDefinition()))
-						{
-							tableDefinition = table.getTableDefinition();
-							layoutChanged = true;
-						}
-						else
-							layoutChanged = false;
-					}
-					else
-					{
-						if(tableDefinition.equals(table.getTableDefinition()))
-						{
-							try {
-								lastTable.addRows(table);
-							} catch (TableException e) {
-								client.sendError("Could not combine tables.", e);
-								return;
-							}
-							layoutChanged = false;
-							while(lastTable.getNumRows() > MAX_ROWS)
-							{
-								lastTable.removeRow(0);
-							}
-						}
-						else
-						{
-							lastTable = table.clone();
-							tableDefinition = table.getTableDefinition();
-							layoutChanged = true;
-						}
-					}
-					if(layoutChanged)
+					if(addTableData(table))
 						fireTableStructureChanged();
 					else
 						fireTableDataChanged();
@@ -287,28 +303,21 @@ class TableDataFrame
         @Override
         public String getColumnName(int col)
         {
-        	if(col >= 0 && col < defaultColumns.length)
-        		return defaultColumns[col];
-        	else if(tableDefinition != null && col-defaultColumns.length >= 0 && col-defaultColumns.length < tableDefinition.getNumColumns())
-        		return tableDefinition.getColumnName(col-defaultColumns.length);
-        	else
-        		return "Invalid Column";
+        	if(col >= 0 && col < tableColumns.length)
+        		return tableColumns[col];
+			return "Invalid Column";
         }
 
         @Override
         public int getRowCount()
         {
-        	if(lastTable == null)
-        		return 0;
-			return lastTable.getNumRows();
+        	return numRows;
         }
 
         @Override
         public int getColumnCount()
         {
-        	if(tableDefinition == null)
-        		return defaultColumns.length;
-			return tableDefinition.getNumColumns()+defaultColumns.length;
+        	return tableColumns.length;
         }
 
         @Override
@@ -320,34 +329,9 @@ class TableDataFrame
         @Override
         public Object getValueAt(int row, int col)
         {
-        	Table table = lastTable;
-        	
-        	if(row < 0 || row >= table.getNumRows())
-        		return "Invalid Row";
-        	if(col < 0)
-        		return "Invalid Column";
-        	else if(col == 0)
-        		return table.getExecutionInformation() == null ? "" : table.getExecutionInformation().getEvaluationString();
-        	else if(col == 1)
-        	{
-        		if(table.getExecutionInformation() == null)
-        			return "";
-        		long timeInS = table.getCreationRuntime()/1000;
-        		return String.format("%dh %02dmin %02ds", timeInS / 3600, (timeInS % 3600) / 60, (timeInS % 60));
-        	}
-        	else if(col == 2)
-        	{
-        		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        		return format.format(new Date(table.getCreationTime()));
-        	}
-        	else if(col == 3)
-        		return (table.getPositionInformation() != null && table.getPositionInformation().getWell() != null) ? table.getPositionInformation().getWell().getWellName() : "";
-        	else if(col == 4)
-        		return table.getPositionInformation() != null ? table.getPositionInformation().getPositionsString() : "";
-        	else if(col < table.getNumColumns() + defaultColumns.length)	
-        		return table.getEntry(row, col-defaultColumns.length).getValueAsString(); 
-        	else
-        		return "Invalid Column";
+        	if(col >= 0 && col < tableColumns.length)
+        		return tableData[(firstRow+row)%MAX_ROWS][col];
+        	return "Invalid Cell";
         }
         @Override
         public boolean isCellEditable(int row, int col)
