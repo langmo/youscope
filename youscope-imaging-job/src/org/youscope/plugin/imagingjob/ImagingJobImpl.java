@@ -116,7 +116,7 @@ class ImagingJobImpl extends JobAdapter implements ImagingJob
 	{
 		if(cameras == null || cameras.length < 1)
 			return null;
-		return cameras[1];
+		return cameras[0];
 	}
 	
 	@Override
