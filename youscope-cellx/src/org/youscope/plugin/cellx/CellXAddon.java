@@ -69,7 +69,6 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		if(isInitialized())
 			return;
 		super.initialize(measurementContext);
-		
 		CellXConfiguration configuration = getConfiguration();
 		
 		if(configuration.getConfigurationFile() == null || configuration.getConfigurationFile().length() < 1)

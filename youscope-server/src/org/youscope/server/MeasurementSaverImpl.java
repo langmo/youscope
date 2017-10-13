@@ -604,6 +604,11 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		if(measurementRunning)
 		{
 			startSavingMeasurement();
+			try {
+				measurement.setInitialMeasurementContextProperty("baseFolder", lastMeasurementInformation.getMeasurementBaseFolder());
+			} catch (ComponentRunningException e) {
+				ServerSystem.err.println("Could not set variable \"baseFolder\" in measurement context telling the measurement where it is saved.", e);
+			}
 		}
 		else
 		{
