@@ -35,6 +35,7 @@ import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.Well;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.microplate.WellLayout;
+import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.plugin.microplate.measurement.MicroplateMeasurementConfiguration;
 import org.youscope.plugin.microplate.measurement.TileConfiguration;
 import org.youscope.plugin.microplate.measurement.TileDefinitionUI;
@@ -95,7 +96,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 			microplateLayout = null;
 		}	
 		microplateSelectionUI.setMicroplateLayout(microplateLayout);
-		microplateSelectionUI.setSelectedWells(configuration.getSelectedWells());
+		microplateSelectionUI.setSelectedWellWithGroups(configuration.getSelectedWells());
 		
 		boolean tileMeasurement = false;
 		if(microplateLayout != null)
@@ -167,7 +168,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 	{
 		if(microplateLayout != null)
 		{
-			configuration.setSelectedWells(microplateSelectionUI.getSelectedWells());
+			configuration.setSelectedWells(microplateSelectionUI.getSelectedWellWithGroups());
 			if(tileMeasurementField.isSelected())
 			{
 				TileConfiguration tileConfiguration = new TileConfiguration();
@@ -184,7 +185,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 		}
 		else
 		{
-			configuration.setSelectedWells(new HashSet<Well>(0));
+			configuration.setSelectedWells(new HashSet<WellWithGroup>(0));
 			configuration.setTileConfiguration(null);
 			configuration.setSelectedTiles(new HashSet<Well>(0));
 		}
@@ -225,6 +226,7 @@ class WellSelectionPage extends MeasurementAddonUIPage<MicroplateMeasurementConf
 		setLayout(new BorderLayout());
 		
 		microplateSelectionUI = new MicroplateWellSelectionUI(client, server);
+		microplateSelectionUI.setWellGroups(true);
 		tileSelectionUI = new TileDefinitionUI(client, server);
 		
 		DynamicPanel mainPanel = new DynamicPanel();

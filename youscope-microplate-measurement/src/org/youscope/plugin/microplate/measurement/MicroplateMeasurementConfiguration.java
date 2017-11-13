@@ -26,6 +26,7 @@ import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.job.JobConfiguration;
 import org.youscope.common.measurement.MeasurementConfiguration;
+import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.common.Well;
 import org.youscope.common.task.PeriodConfiguration;
 import org.youscope.common.util.ConfigurationTools;
@@ -47,9 +48,9 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	private static final long						serialVersionUID	= 3413810800791783902L;
 
 	/**
-	 * A list of all the jobs which should be done during the measurement.
+	 * A list of all the jobs which should be done during the measurement for a given group.
 	 */
-	private ArrayList<JobConfiguration>	jobs				= new ArrayList<JobConfiguration>();
+	private HashMap<WellWithGroup.WellGroup, ArrayList<JobConfiguration>>	jobs				= new HashMap<>();
 
 	@XStreamAlias("statistics-file")
 	private String statisticsFileName = "statistics";
@@ -74,7 +75,7 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	private HashMap<PositionInformation, XYAndFocusPosition> configuredPositions = new HashMap<>(200);
 	
 	@XStreamAlias("selected-wells")
-	private HashSet<Well> selectedWells = new HashSet<>(200);
+	private HashSet<WellWithGroup> selectedWells = new HashSet<>(200);
 	@XStreamAlias("selected-tiles")
 	private HashSet<Well> selectedTiles = new HashSet<>(200);
 	
@@ -138,7 +139,7 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	 * Sets the wells which are selected in the microplate.
 	 * @param selectedWells selected wells.
 	 */
-	public void setSelectedWells(Set<Well> selectedWells)
+	public void setSelectedWells(Set<WellWithGroup> selectedWells)
 	{
 		this.selectedWells.clear();
 		this.selectedWells.addAll(selectedWells);
@@ -148,7 +149,7 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 	 * Returns a collection of all wells selected in the microplate.
 	 * @return selected wells.
 	 */
-	public Set<Well> getSelectedWells()
+	public Set<WellWithGroup> getSelectedWells()
 	{
 		return new HashSet<>(selectedWells);
 	}
@@ -204,43 +205,61 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 		this.tileConfiguration = tileConfiguration;
 	}
 	/**
-	 * Returns the jobs executed in each well/tile of the measurement.
+	 * Returns the jobs executed in each well/tile of the measurement belonging to the given group.
+	 * @param wellGroup The well group for which the jobs should be returned.
 	 * 
 	 * @return Jobs.
 	 */
-	public JobConfiguration[] getJobs()
+	public JobConfiguration[] getJobs(WellWithGroup.WellGroup wellGroup)
 	{
-		return jobs.toArray(new JobConfiguration[jobs.size()]);
+		ArrayList<JobConfiguration> groupJobs = jobs.get(wellGroup);
+		if(groupJobs == null)
+			return new JobConfiguration[0];
+		return groupJobs.toArray(new JobConfiguration[groupJobs.size()]);
 	}
 
 	/**
-	 * Sets the jobs executed in each well/tile of the measurement.
+	 * Sets the jobs executed in each well/tile of the measurement belonging to the given group.
+	 * @param wellGroup The well group for which the jobs should be set.
 	 * 
 	 * @param jobs New jobs.
 	 */
-	public void setJobs(JobConfiguration[] jobs) 
+	public void setJobs(WellWithGroup.WellGroup wellGroup, JobConfiguration[] jobs) 
 	{
-		this.jobs.clear();
+		ArrayList<JobConfiguration> groupJobs = new ArrayList<>(jobs.length);
 		for(JobConfiguration job:jobs)
 		{
-			this.jobs.add(job);
+			groupJobs.add(job);
 		}
+		this.jobs.put(wellGroup, groupJobs);
 	}
 	/**
-	 * Adds a job to the jobs executed in each well/tile of the measurement.
+	 * Adds a job to the jobs executed in each well/tile of the measurement belonging to the given group.
+	 * @param wellGroup Well group for the job
 	 * 
 	 * @param job Job to be added.
 	 */
-	public void addJob(JobConfiguration job)
+	public void addJob(WellWithGroup.WellGroup wellGroup, JobConfiguration job)
 	{
-		jobs.add(job);
+		ArrayList<JobConfiguration> groupJobs = jobs.get(wellGroup);
+		if(groupJobs != null)
+		{
+			groupJobs.add(job);
+		}
+		else
+		{
+			groupJobs = new ArrayList<>();
+			groupJobs.add(job);
+			jobs.put(wellGroup, groupJobs);
+		}
 	}
 	/**
-	 * Removes all jobs executed in each well/tile of the measurement.
+	 * Removes all jobs executed in each well/tile of the measurement belonging to the given group.
+	 * @param wellGroup Well group for which all jobs should be cleared.
 	 */
-	public void clearJobs()
+	public void clearJobs(WellWithGroup.WellGroup wellGroup)
 	{
-		jobs.clear();
+		jobs.remove(wellGroup);
 	}
 	
 	/**
@@ -298,31 +317,47 @@ public class MicroplateMeasurementConfiguration extends MeasurementConfiguration
 		{
 			throw new ConfigurationException("Position/well configuration not yet run.\nThe position fine configuration has to be run in order for the measurement to obtain valid stage positions.");
 		}
-		for(JobConfiguration childJob:jobs)
+		for(ArrayList<JobConfiguration> groupJobs : jobs.values())
 		{
-			childJob.checkConfiguration();
+			for(JobConfiguration childJob:groupJobs)
+			{
+				childJob.checkConfiguration();
+			}
 		}
 	}
 	
 	/**
 	 * Removes the job at the given index.
+	 * @param wellGroup  Well group where the job should be removed from.
 	 * 
 	 * @param index Index of the job to be removed.
 	 */
-	public void removeJob(int index)
+	public void removeJob(WellWithGroup.WellGroup wellGroup, int index)
 	{
-		jobs.remove(index);
+		ArrayList<JobConfiguration> groupJobs = jobs.get(wellGroup);
+		if(groupJobs == null)
+			return;
+		groupJobs.remove(index);
 	}
 
 	/**
 	 * Inserts a job to the jobs executed at each well/tile of the measurement.
+	 * @param wellGroup  Well group where the job should be added the job
 	 * 
 	 * @param job Job to be added.
 	 * @param index position where to insert. 
 	 */
-	public void addJob(JobConfiguration job, int index)
+	public void addJob(WellWithGroup.WellGroup wellGroup, JobConfiguration job, int index)
 	{
-		jobs.add(index, job);
+		ArrayList<JobConfiguration> groupJobs = jobs.get(wellGroup);
+		if(groupJobs == null)
+		{
+			groupJobs = new ArrayList<>();
+			groupJobs.add(index, job);
+			jobs.put(wellGroup, groupJobs);
+		}
+		else
+			groupJobs.add(index, job);
 
 	}
 

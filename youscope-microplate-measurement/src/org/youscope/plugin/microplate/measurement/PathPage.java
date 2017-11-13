@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -50,6 +51,7 @@ import org.youscope.common.configuration.FocusConfiguration;
 import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.Well;
 import org.youscope.common.microplate.MicroplateLayout;
+import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.MicroscopeException;
@@ -84,7 +86,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	private final HashMap<PositionInformation, XYAndFocusPosition> configuredPositions= new HashMap<>(200);
 	private MicroplateLayout microplateLayout = null;
 	private TileConfiguration tileConfiguration = null;
-	private Set<Well> selectedWells;
+	private Set<WellWithGroup> selectedWells;
 	private Set<Well> selectedTiles;
 	private YouScopeFrame frame;
 	private PathOptimizerConfiguration pathOptimizerConfiguration;
@@ -484,7 +486,14 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		positionFineConfiguration.setStageDevice(stageDevice);
 		positionFineConfiguration.setFocusDevice(focusDevice);
 		if(microplateLayout != null)
-			positionFineConfiguration.setSelectedWells(microplateLayout, selectedWells);
+		{
+			HashSet<Well> onlyWells = new HashSet<>();
+			for(WellWithGroup well : selectedWells)
+			{
+				onlyWells.add(well.getWell());
+			}
+			positionFineConfiguration.setSelectedWells(microplateLayout, onlyWells);
+		}
 		if(microplateLayout != null && tileConfiguration != null)
 			positionFineConfiguration.setSelectedTiles(tileConfiguration, selectedTiles);
 		if(!forceNew)
@@ -573,9 +582,9 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		// check if all entries there
 		if(tileConfiguration == null)
 		{
-			for(Well well : selectedWells)
+			for(WellWithGroup well : selectedWells)
 			{
-				if(!configuredPositions.containsKey(new PositionInformation(well)))
+				if(!configuredPositions.containsKey(new PositionInformation(well.getWell())))
 				{
 					return false;
 				}
@@ -583,9 +592,9 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		}
 		else
 		{
-			for(Well well : selectedWells)
+			for(WellWithGroup well : selectedWells)
 			{
-				PositionInformation wellPos = new PositionInformation(well);
+				PositionInformation wellPos = new PositionInformation(well.getWell());
 				for(Well tile : selectedTiles)
 				{
 					if(!configuredPositions.containsKey(new PositionInformation(new PositionInformation(wellPos, PositionInformation.POSITION_TYPE_YTILE, tile.getWellY()), PositionInformation.POSITION_TYPE_XTILE, tile.getWellX())))

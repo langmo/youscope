@@ -10,9 +10,11 @@
  ******************************************************************************/
 package org.youscope.addon.microplate;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -36,7 +38,13 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -50,6 +58,7 @@ import org.youscope.common.Well;
 import org.youscope.common.measurement.SimpleMeasurementContext;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.microplate.WellLayout;
+import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.serverinterfaces.YouScopeServer;
 
 
@@ -76,11 +85,32 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	private HashMap<Integer, Point2D.Double> yWellLabelPositions = null;
 	private boolean showXWellLabels = true;
 	private boolean showYWellLabels = true;
+	private boolean wellGroupsActive = false;
 	
 	private static final Font WELL_LABEL_FONT = new Font(Font.DIALOG, Font.BOLD, 12);
 	private static final double WELL_LABEL_FONT_MARGIN = 3;
 	private boolean center = false;
 	private final Color textColor;
+	private WellWithGroup.WellGroup currentWellGroup = WellWithGroup.WellGroup.GROUP0;
+	
+	
+	/**
+	 * Set to true to activate different well groups. If set to false, all wells are automatically in the same group,
+	 * the group with ID 0.
+	 * @param wellGroupsActive True to activate well groups.
+	 */
+	public void setWellGroups(boolean wellGroupsActive)
+	{
+		this.wellGroupsActive = wellGroupsActive;
+	}
+	/**
+	 * Returns true if well groups are activated.
+	 * @return True if different well groups are activated.
+	 */
+	public boolean isWellGroups()
+	{
+		return wellGroupsActive;
+	}
 	
 	/**
 	 * Enumeration defining how many wells can be selected.
@@ -188,7 +218,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		{
 			if(lastSelectedWell != null && lastSelectedWell.equals(wellDisplay.getWell()))
 				continue;
-			wellDisplay.setSelected(false);
+			wellDisplay.setWellGroup(null);
 		}
 		if(lastSelectedWell == null && selectionMode == SelectionMode.EXACTLY_ONE)
 			selectFirstWell();
@@ -236,7 +266,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			returnVal = new HashSet<>(wellDisplays.size());
 			for(WellDisplay well : wellDisplays.values())
 			{
-				if(well.isSelected())
+				if(well.getWellGroup() != null)
 					returnVal.add(well.getWellLayout());
 			}
 		}
@@ -245,6 +275,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	
 	/**
 	 * Returns a collection of well identifiers of the wells selected by the user or programmatically selected.
+	 * To also get their groups, if different, use getSelectedWellWithGroups()
 	 * @return Well identifiers of selected wells.
 	 */
 	public Set<Well> getSelectedWells()
@@ -254,6 +285,36 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		for(WellLayout well : selectedWells)
 		{
 			returnVal.add(well.getWell());
+		}
+		return returnVal;
+	}
+	/**
+	 * Returns a collection of well identifiers of the wells selected by the user or programmatically selected.
+	 * @return Well identifiers of selected wells.
+	 */
+	public Set<WellWithGroup> getSelectedWellWithGroups()
+	{
+		HashSet<WellWithGroup> returnVal;
+		if(selectionMode == SelectionMode.NONE)
+		{
+			returnVal = new HashSet<>(0);
+		}
+		else if(selectionMode == SelectionMode.SINGLE || selectionMode == SelectionMode.EXACTLY_ONE)
+		{
+			returnVal = new HashSet<>(1);
+			if(lastSelectedWell != null)
+			{
+				returnVal.add(wellDisplays.get(lastSelectedWell).getWellWithGroup());
+			}
+		}
+		else
+		{
+			returnVal = new HashSet<>(wellDisplays.size());
+			for(WellDisplay well : wellDisplays.values())
+			{
+				if(well.getWellGroup() != null)
+					returnVal.add(well.getWellWithGroup());
+			}
 		}
 		return returnVal;
 	}
@@ -277,6 +338,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	
 	/**
 	 * Selects or deselects the well with the given well identifier. Returns true if successful. Returns false if well does not exist or is disabled.
+	 * If the well is selected, it is assigned to the first well group.
 	 * @param well Well identifier of well to select or deselect.
 	 * @param selected true if well should be selected, false if unselected.
 	 * @return True if well could be selected/deselected, false if well does not exist or is disabled.
@@ -290,12 +352,12 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			return false;
 		if(!wellDisplay.isEnabled())
 			return false;
-		wellDisplay.setSelected(selected);
+		wellDisplay.setWellGroup(selected ? WellWithGroup.WellGroup.GROUP0 : null);
 		
 		if(selected)
 		{
 			if((selectionMode == SelectionMode.SINGLE || selectionMode == SelectionMode.EXACTLY_ONE) && lastSelectedWell != null && !lastSelectedWell.equals(well))
-				wellDisplays.get(lastSelectedWell).setSelected(false);
+				wellDisplays.get(lastSelectedWell).setWellGroup(null);
 			lastSelectedWell = well;
 		}
 		else if(lastSelectedWell != null && well.equals(lastSelectedWell))
@@ -303,7 +365,45 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			if(selectionMode == SelectionMode.EXACTLY_ONE)
 			{
 				// veto the change
-				wellDisplay.setSelected(true);
+				wellDisplay.setWellGroup(WellWithGroup.WellGroup.GROUP0);
+				return false;
+			}
+			lastSelectedWell = null;
+		}
+		microplateDisplay.repaint();
+		return true;
+	}
+	/**
+	 * Selects or deselects the well with the given well identifier, depending on if the second parameter is unequal or equal to null. 
+	 * Returns true if successful. Returns false if well does not exist or is disabled.
+	 * If the well is selected, it is assigned to the provided well group.
+	 * @param well Well identifier of well to select or deselect.
+	 * @param wellGroup The well group to which the well should be assigned, or null to deselect well.
+	 * @return True if well could be selected/deselected, false if well does not exist or is disabled.
+	 */
+	public boolean setSelected(Well well, WellWithGroup.WellGroup wellGroup)
+	{
+		if(selectionMode == SelectionMode.NONE || well == null)
+			return false;
+		WellDisplay wellDisplay = wellDisplays.get(well);
+		if(wellDisplay == null)
+			return false;
+		if(!wellDisplay.isEnabled())
+			return false;
+		wellDisplay.setWellGroup(wellGroup);
+		
+		if(wellGroup != null)
+		{
+			if((selectionMode == SelectionMode.SINGLE || selectionMode == SelectionMode.EXACTLY_ONE) && lastSelectedWell != null && !lastSelectedWell.equals(well))
+				wellDisplays.get(lastSelectedWell).setWellGroup(null);
+			lastSelectedWell = well;
+		}
+		else if(lastSelectedWell != null && well.equals(lastSelectedWell))
+		{
+			if(selectionMode == SelectionMode.EXACTLY_ONE)
+			{
+				// veto the change
+				wellDisplay.setWellGroup(WellWithGroup.WellGroup.GROUP0);
 				return false;
 			}
 			lastSelectedWell = null;
@@ -319,7 +419,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		{
 			if(!wellDisplay.isEnabled())
 				continue;
-			wellDisplay.setSelected(true);
+			wellDisplay.setWellGroup(WellWithGroup.WellGroup.GROUP0);
 			lastSelectedWell = wellDisplay.getWell();
 			return;
 		}
@@ -372,6 +472,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	}
 	/**
 	 * Selects all wells with the well identifiers contained in the given collection, and de-selects all others.
+	 * All wells are assigned to the first well group.
 	 * @param wells Wells which should be selected. If a well is not defined in the current layout, the well is ignored.
 	 */
 	public void setSelectedWells(Collection<Well> wells)
@@ -382,7 +483,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		inverseSet.removeAll(wells);
 		for(Well inversePosition : inverseSet)
 		{
-			wellDisplays.get(inversePosition).setSelected(false);
+			wellDisplays.get(inversePosition).setWellGroup(null);
 		}
 		lastSelectedWell = null;
 		for(Well position : wells)
@@ -390,12 +491,47 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			WellDisplay wellDisplay = wellDisplays.get(position);
 			if(wellDisplay == null)
 				continue;
-			wellDisplay.setSelected(true);
+			wellDisplay.setWellGroup(WellWithGroup.WellGroup.GROUP0);
 			if((selectionMode == SelectionMode.EXACTLY_ONE || selectionMode == SelectionMode.SINGLE) && lastSelectedWell != null && !lastSelectedWell.equals(position))
 			{
-				wellDisplays.get(lastSelectedWell).setSelected(false);
+				wellDisplays.get(lastSelectedWell).setWellGroup(null);
 			}
 			lastSelectedWell = position;
+		}
+		if(lastSelectedWell == null && selectionMode == SelectionMode.EXACTLY_ONE)
+			selectFirstWell();
+		microplateDisplay.repaint();
+	}
+	/**
+	 * Selects all wells with the well identifiers contained in the given collection, and de-selects all others.
+	 * All wells are assigned to the specified well groups.
+	 * @param wells Wells which should be selected. If a well is not defined in the current layout, the well is ignored.
+	 */
+	public void setSelectedWellWithGroups(Collection<WellWithGroup> wells)
+	{
+		if(selectionMode == SelectionMode.NONE || wells == null)
+			return;
+		HashSet<Well> inverseSet = new HashSet<>(wellDisplays.keySet());
+		for(WellWithGroup well : wells)
+		{
+			inverseSet.remove(well.getWell());
+		}
+		for(Well inversePosition : inverseSet)
+		{
+			wellDisplays.get(inversePosition).setWellGroup(null);
+		}
+		lastSelectedWell = null;
+		for(WellWithGroup position : wells)
+		{
+			WellDisplay wellDisplay = wellDisplays.get(position.getWell());
+			if(wellDisplay == null)
+				continue;
+			wellDisplay.setWellGroup(position.getGroup());
+			if((selectionMode == SelectionMode.EXACTLY_ONE || selectionMode == SelectionMode.SINGLE) && lastSelectedWell != null && !lastSelectedWell.equals(position))
+			{
+				wellDisplays.get(lastSelectedWell).setWellGroup(null);
+			}
+			lastSelectedWell = position.getWell();
 		}
 		if(lastSelectedWell == null && selectionMode == SelectionMode.EXACTLY_ONE)
 			selectFirstWell();
@@ -498,7 +634,49 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		setMaximizable(true);
 		setResizable(true);
 		setTitle(TITLE);
-		//setPreferredSize(new Dimension(400,250));
+		if(wellGroupsActive)
+		{
+			class WellGroupRenderer extends JLabel implements ListCellRenderer<WellWithGroup.WellGroup>
+			{
+				/**
+				 * Serial Version UID.
+				 */
+				private static final long serialVersionUID = 2233507106324450573L;
+				public WellGroupRenderer() 
+			    {
+			        setText(WellWithGroup.WellGroup.GROUP0.getName());
+			        setIcon(WellWithGroup.WellGroup.GROUP0.getIcon());
+			        setVerticalAlignment(SwingConstants.CENTER);
+			    }
+			     
+			    @Override
+			    public Component getListCellRendererComponent(JList<? extends WellWithGroup.WellGroup> list, WellWithGroup.WellGroup value,
+			            int index, boolean isSelected, boolean cellHasFocus) {
+			        setText(value.getName());
+			        setIcon(value.getIcon());
+			        return this;
+			    }
+			 
+			}
+			final JComboBox<WellWithGroup.WellGroup> wellGroupChooser = new JComboBox<>(WellWithGroup.WellGroup.values());
+			wellGroupChooser.setRenderer(new WellGroupRenderer());
+			wellGroupChooser.setSelectedItem(WellWithGroup.WellGroup.GROUP0);
+			wellGroupChooser.addActionListener(new ActionListener() 
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) 
+				{
+					currentWellGroup = (WellWithGroup.WellGroup) wellGroupChooser.getSelectedItem();
+				}
+			});
+			wellGroupChooser.setToolTipText("For each well in a given group, the same imaging protocol is performed. Adding wells to different groups allows to define different protocols for each group.");
+			JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			panel.add(wellGroupChooser);
+			JPanel contentPane = new JPanel(new BorderLayout());
+			contentPane.add(panel, BorderLayout.NORTH);
+			contentPane.add(microplateDisplay, BorderLayout.CENTER);
+			return contentPane;
+		}
 		return microplateDisplay;
 	}
 	
@@ -509,11 +687,10 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		 */
 		private static final long serialVersionUID = -1940982800744370076L;
 		boolean enabled = true;
-		boolean selected = false;
-		boolean temporarySelected = false;
+		WellWithGroup.WellGroup selectedGroup = null;
+		WellWithGroup.WellGroup temporarySelected = null;
 		private final Color BACKGROUND_DISABLED = Color.DARK_GRAY;
 		private final Color BACKGROUND_UNSELECTED = Color.LIGHT_GRAY;
-		private final Color BACKGROUND_SELECTED = Color.GREEN;
 		private final WellLayout wellLayout;
 		WellDisplay(WellLayout wellLayout)
 		{
@@ -525,8 +702,12 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 	    {
 			if(!enabled)
 				g.setColor(BACKGROUND_DISABLED);
-			else if(selected != temporarySelected)
-				g.setColor(BACKGROUND_SELECTED);
+			else if(temporarySelected != null && selectedGroup != temporarySelected)
+				g.setColor(temporarySelected.getColor());
+			else if(temporarySelected != null && selectedGroup == temporarySelected)
+				g.setColor(BACKGROUND_UNSELECTED);
+			else if(selectedGroup != null)
+				g.setColor(selectedGroup.getColor());
 			else
 				g.setColor(BACKGROUND_UNSELECTED);
 			g.fill(this);
@@ -541,28 +722,35 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		{
 			return wellLayout.getWell();
 		}
-		boolean isSelected()
+		WellWithGroup getWellWithGroup()
 		{
-			return selected;
+			return new WellWithGroup(wellLayout.getWell(), selectedGroup);
+		}
+		WellWithGroup.WellGroup getWellGroup()
+		{
+			return selectedGroup;
 		}
 		boolean isEnabled()
 		{
 			return enabled;
 		}
-		boolean setSelected(boolean selected)
+		boolean setWellGroup(WellWithGroup.WellGroup wellGroup)
 		{
-			if(!enabled || this.selected == selected)
+			if(!enabled || this.selectedGroup == wellGroup)
 				return false;
-			this.selected = selected;
+			this.selectedGroup = wellGroup;
 			return true;
 		}
 		boolean setEnabled(boolean enabled)
 		{
-			if(this.enabled == enabled && !selected && !temporarySelected)
+			if(this.enabled == enabled && selectedGroup == null && temporarySelected == null)
 				return false;
 			this.enabled = enabled;
-			this.selected = this.selected && enabled;
-			this.temporarySelected = this.temporarySelected && enabled;
+			if(!enabled)
+			{
+				this.selectedGroup = null;
+				this.temporarySelected = null;
+			}
 			return true;
 		}
 		/**
@@ -574,7 +762,10 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		{
 			if(enabled && contains(pos))
 			{
-				selected = !selected;
+				if(selectedGroup == currentWellGroup)
+					selectedGroup = null;
+				else
+					selectedGroup = currentWellGroup;
 				return true;
 			}
 			return false;
@@ -592,7 +783,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		
 		void revertTemporary()
 		{
-			temporarySelected = false;
+			temporarySelected = null;
 		}
 		/**
 		 * If the well was temporarily selected/unselected, this change is permanently accepted.
@@ -600,17 +791,21 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 		 */
 		boolean acceptTemporary()
 		{
-			if(!temporarySelected)
+			if(temporarySelected == null)
 				return false;
-			selected = temporarySelected != selected;
-			temporarySelected = false;
+			
+			if(selectedGroup == temporarySelected)
+				selectedGroup = null;
+			else
+				selectedGroup = temporarySelected;
+			temporarySelected = null;
 			return true;
 		}
 
 		public void temporaryMark(Rectangle2D selection) 
 		{
 			if(enabled)
-				temporarySelected = this.intersects(selection);
+				temporarySelected = this.intersects(selection) ? currentWellGroup : null;
 		}
 	}
 	
@@ -843,10 +1038,10 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 				{
 					if(wellDisplay.clicked(pos))
 					{
-						if(wellDisplay.isSelected())
+						if(wellDisplay.getWellGroup() != null)
 						{
 							if((selectionMode == SelectionMode.SINGLE || selectionMode == SelectionMode.EXACTLY_ONE) && lastSelectedWell != null && !lastSelectedWell.equals(wellDisplay.getWell()))
-								wellDisplays.get(lastSelectedWell).setSelected(false);
+								wellDisplays.get(lastSelectedWell).setWellGroup(null);
 							lastSelectedWell = wellDisplay.getWell();
 						}
 						else
@@ -856,7 +1051,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 								if(selectionMode == SelectionMode.EXACTLY_ONE)
 								{
 									// don't allow this change
-									wellDisplay.setSelected(true);
+									wellDisplay.setWellGroup(WellWithGroup.WellGroup.GROUP0);
 									return;
 								}
 								lastSelectedWell = null;
@@ -906,7 +1101,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 					if(wellDisplay.acceptTemporary())
 					{
 						changed = true;
-						if(wellDisplay.isSelected())
+						if(wellDisplay.getWellGroup() != null)
 							lastSelectedWell = wellDisplay.getWell();
 						else if(lastSelectedWell != null && lastSelectedWell.equals(wellDisplay.getWell()))
 							lastSelectedWell = null;

@@ -16,9 +16,11 @@ package org.youscope.plugin.microplate.measurement;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentCreationException;
@@ -27,6 +29,7 @@ import org.youscope.addon.pathoptimizer.PathOptimizerConfiguration;
 import org.youscope.addon.pathoptimizer.PathOptimizerResource;
 import org.youscope.common.ComponentRunningException;
 import org.youscope.common.PositionInformation;
+import org.youscope.common.Well;
 import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.job.CompositeJob;
 import org.youscope.common.job.Job;
@@ -38,6 +41,7 @@ import org.youscope.common.job.basicjobs.FocusingJob;
 import org.youscope.common.job.basicjobs.StatisticsJob;
 import org.youscope.common.measurement.Measurement;
 import org.youscope.common.measurement.SimpleMeasurementContext;
+import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.resource.ResourceException;
 import org.youscope.common.task.Task;
@@ -107,6 +111,15 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 			}
 		}
 
+		// Create map between well and well group
+		Set<WellWithGroup> allWells = configuration.getSelectedWells();
+		HashMap<Well, WellWithGroup.WellGroup> groupOfWell = new HashMap<>();
+		for(WellWithGroup well : allWells)
+		{
+			groupOfWell.put(well.getWell(), well.getGroup());
+		}
+		
+		
 		// Iterate over all wells and positions
 		Map<PositionInformation, XYAndFocusPosition> positions = configuration.getPositions();
 		
@@ -368,8 +381,15 @@ public class MicroplateMeasurementInitializer implements MeasurementInitializer<
 						
 					}
 
+					WellWithGroup.WellGroup group;
+					if(positionInformation.getWell() == null)
+						group = WellWithGroup.WellGroup.GROUP0;
+					else
+						group =  groupOfWell.get(positionInformation.getWell());
+					if(group == null)
+						group = WellWithGroup.WellGroup.GROUP0;
 					// Add all other configured jobs
-					JobConfiguration[] jobConfigurations = configuration.getJobs();
+					JobConfiguration[] jobConfigurations = configuration.getJobs(group);
 					for(JobConfiguration jobConfiguration : jobConfigurations)
 					{
 						Job job;
