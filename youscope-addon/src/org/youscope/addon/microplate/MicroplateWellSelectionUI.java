@@ -647,11 +647,31 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			        setText(WellWithGroup.WellGroup.GROUP0.getName());
 			        setIcon(WellWithGroup.WellGroup.GROUP0.getIcon());
 			        setVerticalAlignment(SwingConstants.CENTER);
+			        setOpaque(true);
 			    }
-			     
+			    @Override
+				public Dimension getPreferredSize()
+			    {
+			    	Dimension dim = super.getPreferredSize();
+			    	dim.width += 10;
+			    	return dim;
+			    }
 			    @Override
 			    public Component getListCellRendererComponent(JList<? extends WellWithGroup.WellGroup> list, WellWithGroup.WellGroup value,
-			            int index, boolean isSelected, boolean cellHasFocus) {
+			            int index, boolean isSelected, boolean cellHasFocus) 
+			    {
+			    	if (isSelected) 
+			        {
+			    	     setOpaque(true);
+			             setBackground(list.getSelectionBackground());
+			             setForeground(list.getSelectionForeground());
+			        } 
+			        else 
+			        {
+			        	 setOpaque(false);
+			             setBackground(list.getBackground());
+			             setForeground(list.getForeground());
+			        }
 			        setText(value.getName());
 			        setIcon(value.getIcon());
 			        return this;

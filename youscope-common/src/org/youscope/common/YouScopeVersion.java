@@ -39,7 +39,7 @@ public class YouScopeVersion
 {
 	private static final String	UNKNOWN	= "UNKNOWN";
 
-	private final static String		DEVELOPER_VERSION = "2.1.0-beta.3";
+	private final static String		DEVELOPER_VERSION = "2.1.0-beta.4"; 
 
 	private final static String		PRODUCT_VERSION = "R2017"; 
 
