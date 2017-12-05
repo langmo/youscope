@@ -679,6 +679,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			 
 			}
 			final JComboBox<WellWithGroup.WellGroup> wellGroupChooser = new JComboBox<>(WellWithGroup.WellGroup.values());
+			wellGroupChooser.setEditable(false);
 			wellGroupChooser.setRenderer(new WellGroupRenderer());
 			wellGroupChooser.setSelectedItem(WellWithGroup.WellGroup.GROUP0);
 			wellGroupChooser.addActionListener(new ActionListener() 

@@ -60,15 +60,17 @@ class ShareExecutionJobImpl extends CompositeJobAdapter implements ShareExecutio
 	public void runJob(ExecutionInformation executionInformation, Microscope microscope, MeasurementContext measurementContext) throws JobException, InterruptedException, RemoteException
 	{
 		long currentIteration = executionInformation.getEvaluationNumber();
+		long firstIteration = measurementContext.getProperty(getFirstIterationPropertyName(), Long.class);
 		long lastIteration = measurementContext.getProperty(getLastIterationPropertyName(), Long.class);
 		long lastID = measurementContext.getProperty(getLastIDPropertyName(), Long.class);
 		long numIDs = measurementContext.getProperty(getNumIDsPropertyName(), Long.class);
+		boolean isFirstIteration = measurementContext.getProperty(getIsFirstIterationPropertyName(), Boolean.class);
 		long currentID;
 		if(lastIteration != currentIteration)
 		{
 			currentID = 0;
 			measurementContext.setProperty(getLastIterationPropertyName(), currentIteration);
-			if(currentIteration != 0)
+			if(!isFirstIteration)
 			{
 				numIDs = lastID+1;
 				measurementContext.setProperty(getNumIDsPropertyName(), numIDs);
@@ -76,13 +78,15 @@ class ShareExecutionJobImpl extends CompositeJobAdapter implements ShareExecutio
 			else
 			{
 				numIDs = Long.MAX_VALUE;
+				firstIteration = currentIteration;
 				measurementContext.setProperty(getNumIDsPropertyName(), numIDs);
+				measurementContext.setProperty(getIsFirstIterationPropertyName(), false);
+				measurementContext.setProperty(getFirstIterationPropertyName(), firstIteration);
 			}
 		}
 		else
 			currentID = lastID+1;
-		
-		long id0 = ((currentIteration%numIDs)*numShare)%numIDs;
+		long id0 = (((currentIteration-firstIteration)%numIDs)*numShare)%numIDs;
 		if((currentID >= id0 && currentID < id0+numShare) 
 				|| (id0+numShare>numIDs && currentID < (id0+numShare)%numIDs))
 		{
@@ -104,7 +108,7 @@ class ShareExecutionJobImpl extends CompositeJobAdapter implements ShareExecutio
 			return "ShareExecutionJob.action"+Long.toString(shareID)+".well"+getPositionInformation().getWell().toString();
 		return "ShareExecutionJob.action"+Long.toString(shareID);
 	}
-	private String getLastIterationPropertyName()
+	private String getLastIterationPropertyName() 
 	{
 		return getPropertyBaseName()+".lastIteration";
 	}
@@ -116,11 +120,21 @@ class ShareExecutionJobImpl extends CompositeJobAdapter implements ShareExecutio
 	{
 		return getPropertyBaseName()+".numIDs";
 	}
+	private String getIsFirstIterationPropertyName()
+	{
+		return getPropertyBaseName()+".isFirstIteration";
+	}
+	private String getFirstIterationPropertyName()
+	{
+		return getPropertyBaseName()+".firstIteration";
+	}
 	private void resetJob(MeasurementContext measurementContext) throws RemoteException
 	{
 		measurementContext.setProperty(getLastIterationPropertyName(), new Long(-1));
 		measurementContext.setProperty(getLastIDPropertyName(), new Long(-1));
 		measurementContext.setProperty(getNumIDsPropertyName(), new Long(Long.MAX_VALUE));
+		measurementContext.setProperty(getIsFirstIterationPropertyName(), new Boolean(true));
+		measurementContext.setProperty(getFirstIterationPropertyName(), new Long(0));
 	}
 	@Override
 	public void uninitializeJob(Microscope microscope, MeasurementContext measurementContext) throws JobException, InterruptedException, RemoteException
