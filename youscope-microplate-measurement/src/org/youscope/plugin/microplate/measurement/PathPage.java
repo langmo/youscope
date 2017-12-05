@@ -86,7 +86,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 	private final HashMap<PositionInformation, XYAndFocusPosition> configuredPositions= new HashMap<>(200);
 	private MicroplateLayout microplateLayout = null;
 	private TileConfiguration tileConfiguration = null;
-	private Set<WellWithGroup> selectedWells;
+	private Set<Well> selectedWells;
 	private Set<Well> selectedTiles;
 	private YouScopeFrame frame;
 	private PathOptimizerConfiguration pathOptimizerConfiguration;
@@ -370,7 +370,12 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		configuredPositions.clear();
 		configuredPositions.putAll(configuration.getPositions());
 		
-		selectedWells = configuration.getSelectedWells();
+		Set<WellWithGroup> wellsWithGroup = configuration.getSelectedWells();
+		selectedWells = new HashSet<Well>();
+		for(WellWithGroup well : wellsWithGroup)
+		{
+			selectedWells.add(well.getWell());
+		}
 		selectedTiles = configuration.getSelectedTiles();
 		try
 		{
@@ -487,12 +492,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		positionFineConfiguration.setFocusDevice(focusDevice);
 		if(microplateLayout != null)
 		{
-			HashSet<Well> onlyWells = new HashSet<>();
-			for(WellWithGroup well : selectedWells)
-			{
-				onlyWells.add(well.getWell());
-			}
-			positionFineConfiguration.setSelectedWells(microplateLayout, onlyWells);
+			positionFineConfiguration.setSelectedWells(microplateLayout, selectedWells);
 		}
 		if(microplateLayout != null && tileConfiguration != null)
 			positionFineConfiguration.setSelectedTiles(tileConfiguration, selectedTiles);
@@ -582,9 +582,9 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		// check if all entries there
 		if(tileConfiguration == null)
 		{
-			for(WellWithGroup well : selectedWells)
+			for(Well well : selectedWells)
 			{
-				if(!configuredPositions.containsKey(new PositionInformation(well.getWell())))
+				if(!configuredPositions.containsKey(new PositionInformation(well)))
 				{
 					return false;
 				}
@@ -592,9 +592,9 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 		}
 		else
 		{
-			for(WellWithGroup well : selectedWells)
+			for(Well well : selectedWells)
 			{
-				PositionInformation wellPos = new PositionInformation(well.getWell());
+				PositionInformation wellPos = new PositionInformation(well);
 				for(Well tile : selectedTiles)
 				{
 					if(!configuredPositions.containsKey(new PositionInformation(new PositionInformation(wellPos, PositionInformation.POSITION_TYPE_YTILE, tile.getWellY()), PositionInformation.POSITION_TYPE_XTILE, tile.getWellX())))
