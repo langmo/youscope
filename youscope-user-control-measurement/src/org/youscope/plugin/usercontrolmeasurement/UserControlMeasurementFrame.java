@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.youscope.clientinterfaces.StandardProperty;
 import org.youscope.clientinterfaces.YouScopeClient;
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.image.ImageEvent;
@@ -64,6 +65,25 @@ class UserControlMeasurementFrame extends JPanel
 		imagePanel = new ImagePanel(client);
 		imagePanel.setUserChoosesAutoAdjustContrast(true);
 		channelControl = new LiveStreamPanel.ChannelControl(client, server);
+		
+		if((boolean) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_USE_DEFAULT_SETTINGS))
+		{
+			channelControl.setExposure((double)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_PERIOD));
+			channelControl.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CAMERA));
+			channelControl.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL_GROUP), 
+					(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_DEFAULT_CHANNEL));
+		}
+		else
+		{
+			channelControl.setExposure((double)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE));
+			channelControl.setImagingPeriod((int)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD));
+			channelControl.setCamera((String) client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA));
+			channelControl.setChannel((String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP), 
+					(String)client.getPropertyProvider().getProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL));
+		}
+	
+		
 		channelControl.addActionListener(new ActionListener()
 		{
 			@Override

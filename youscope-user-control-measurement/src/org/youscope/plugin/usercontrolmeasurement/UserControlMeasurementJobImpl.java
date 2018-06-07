@@ -63,7 +63,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 	private volatile double currentPositionX = 0;
 	private volatile double currentPositionY = 0;
 	
-	private volatile int currentPositionInformation = 0;
+	private volatile int currentPositionInformation = -1;
 	
 	private final ImageGatherer imageGatherer = new ImageGatherer();
 	
@@ -189,6 +189,11 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		super.initializeJob(microscope, measurementContext);
 		
 		imageNumber = -1;
+		currentPositionInformation = -1;
+		lastPositionX = 0;
+		lastPositionY = 0;
+		currentPositionX = 0;
+		currentPositionY = 0;
 		
 		// Check if callback defined.
 		if(callback == null)
@@ -285,9 +290,9 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		if(image == null)
 			return;
 		
-		if((currentPositionInformation == 0 && getStageTolerance() >= 0) 
-				|| Math.abs(currentPositionX - lastPositionX) > getStageTolerance()
-				|| Math.abs(currentPositionY - lastPositionY) > getStageTolerance())
+		if(currentPositionInformation == -1 
+				|| (getStageTolerance()>= 0 && Math.abs(currentPositionX - lastPositionX) > getStageTolerance())
+				|| (getStageTolerance()>= 0 && Math.abs(currentPositionY - lastPositionY) > getStageTolerance()))
 		{
 			currentPositionInformation++;
 			imageNumber = -1;

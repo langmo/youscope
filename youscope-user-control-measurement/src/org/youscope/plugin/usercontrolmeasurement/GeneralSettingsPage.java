@@ -13,8 +13,6 @@ package org.youscope.plugin.usercontrolmeasurement;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.youscope.addon.measurement.MeasurementAddonUIPage;
@@ -34,8 +32,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<UserControlMeasurementC
 
 	private final YouScopeClient	client;
 
-	private JTextField						nameField				= new JTextField("unnamed");
-
 	private SubConfigurationPanel<SaveSettingsConfiguration> saveSettingPanel = null;
 	
 	GeneralSettingsPage(YouScopeClient client)
@@ -46,7 +42,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<UserControlMeasurementC
 	@Override
 	public void loadData(UserControlMeasurementConfiguration configuration)
 	{
-		nameField.setText(configuration.getName());
 		saveSettingPanel.setConfiguration(configuration.getSaveSettings());
 	}
 
@@ -54,7 +49,6 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<UserControlMeasurementC
 	public boolean saveData(UserControlMeasurementConfiguration configuration)
 	{
 		
-		configuration.setName(nameField.getText());
 		configuration.setSaveSettings(saveSettingPanel.getConfiguration());
 
 		return true;
@@ -78,11 +72,7 @@ class GeneralSettingsPage extends MeasurementAddonUIPage<UserControlMeasurementC
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
 
-		GridBagConstraints newLineConstr = StandardFormats.getNewLineConstraint();
 		GridBagConstraints bottomConstr = StandardFormats.getBottomContstraint();
-		
-		StandardFormats.addGridBagElement(new JLabel("Name:"), layout, newLineConstr, this);
-		StandardFormats.addGridBagElement(nameField, layout, newLineConstr, this);
 
 		// Panel to choose save settings
 		saveSettingPanel = new SubConfigurationPanel<SaveSettingsConfiguration>("Save type:", null, SaveSettingsConfiguration.class, client, frame);

@@ -348,6 +348,7 @@ public class LiveStreamPanel extends ImagePanel {
 			channelField = new ChannelField(client, server);
 			
 			exposureField.setMinimalValue(0);
+			exposureField.setValue(10.0);
 			imagingPeriodField.setMinimalValue(0);
 			
 			ActionListener changeListener = new ActionListener()
