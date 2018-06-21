@@ -120,7 +120,8 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 			// Give script standard variables.
 			remoteEngine.put("jobs", jobs.toArray(new Job[jobs.size()]));
 			remoteEngine.put("microscope", microscope);
-
+			remoteEngine.put("measurementContext", measurementContext);
+			
 			// User defined variables
 			for(int i = 0; i < userKeys.size() && i < userValues.size(); i++)
 			{
@@ -178,6 +179,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 			// Give script standard variables.
 			localEngine.put("jobs", jobs.toArray(new Job[jobs.size()]));
 			localEngine.put("microscope", microscope);
+			localEngine.put("measurementContext", measurementContext);
 			
 			// User defined variables
 			for(int i = 0; i < userKeys.size() && i < userValues.size(); i++)
@@ -239,7 +241,8 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 				int[] pos = getPositionInformation().getPositions(); 
 				if(pos != null && pos.length > 0)
 					localEngine.put("position", pos);
-				
+				localEngine.put("measurementContext", measurementContext);
+				localEngine.put("executionInformation", executionInformation);
 				// Open file
 				InputStreamReader fileReader = null;
 				BufferedReader bufferedReader = null;
@@ -267,7 +270,8 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 				int[] pos = getPositionInformation().getPositions(); 
 				if(pos != null && pos.length > 0)
 					remoteEngine.put("position", pos);
-				
+				remoteEngine.put("measurementContext", measurementContext);
+				remoteEngine.put("executionInformation", executionInformation);
 				// evaluate script
 				remoteEngine.eval(scriptFile);
 			}
