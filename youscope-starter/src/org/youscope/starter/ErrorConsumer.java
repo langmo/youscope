@@ -38,8 +38,6 @@ class ErrorConsumer
         {
             message += iter.getClass().getSimpleName() + ": " + iter.getMessage() + "\n";
             iter = iter.getCause();
-            if (iter == null)
-                break;
         }
         if(exception.getStackTrace() != null)
         {

@@ -68,6 +68,23 @@ public class DynamicPanel extends JPanel
 			this.weightx = 1.0;
 		}
 	};
+	/**
+	 * The element will be aligned right at the line, and the next element will be placed below.
+	 */
+	public static final GridBagConstraints	CONSTRAINT_RIGHT	= new GridBagConstraints()
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long serialVersionUID = 6565854468491172536L;
+
+		{
+			this.gridwidth = GridBagConstraints.REMAINDER;
+			this.anchor = GridBagConstraints.EAST;
+			this.gridx = GridBagConstraints.RELATIVE;
+			this.weightx = 1.0;
+		}
+	};
 	
 	/**
 	 * The element fills the line, and the next element will be placed below. Furthermore, the component
@@ -135,13 +152,23 @@ public class DynamicPanel extends JPanel
 	}
 	
 	/**
-	 * Adding an element, setting the layout such that it is centered in its own line..
+	 * Adding an element, setting the layout such that it is centered in its own line.
 	 * @param component The component to add.
 	 * @return The added component.
 	 */
 	public Component addCenter(Component component)
 	{
 		return this.add(component, CONSTRAINT_CENTER);
+	}
+	
+	/**
+	 * Adding an element, setting the layout such that it is aligned right in its own line.
+	 * @param component The component to add.
+	 * @return The added component.
+	 */
+	public Component addRight(Component component)
+	{
+		return this.add(component, CONSTRAINT_RIGHT);
 	}
 	
 	/**

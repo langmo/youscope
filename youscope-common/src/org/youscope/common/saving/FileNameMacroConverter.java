@@ -367,8 +367,8 @@ public class FileNameMacroConverter
 		String string;
 		String string2;
 		
-		string = Long.toString(executionInformation.getEvaluationNumber());
-		string2 = Long.toString(executionInformation.getEvaluationNumber()+1);
+		string = executionInformation == null ? "0" : Long.toString(executionInformation.getEvaluationNumber());
+		string2 = executionInformation == null ? "1" : Long.toString(executionInformation.getEvaluationNumber()+1);
 		// add loop numbers
 		long[] loopNumbers = executionInformation == null ? new long[0] : executionInformation.getLoopNumbers();
 		for(int i = 0; i < loopNumbers.length; i++)
@@ -396,7 +396,7 @@ public class FileNameMacroConverter
 		info.add(new ReplaceInformation(PATTERN_IMAGE_CAMERA, camera));
 	
 		string = "";
-		int[] positions = positionInformation.getPositions();
+		int[] positions = positionInformation == null ? new int[0] : positionInformation.getPositions();
 		for(int i = 0; i < positions.length; i++)
 		{
 			if(positions[i] < 9)

@@ -550,7 +550,7 @@ class AttenuationFactorWizard
 		{
 			Point start = new Point(line.getX1(), line.getY1());
 			Point end = new Point(line.getX2(), line.getY2());
-			if(start == null || end == null || (start.x == end.x && start.y == end.y))
+			if(start.x == end.x && start.y == end.y)
 				return;
 			
 			int numPixels = Math.max(Math.abs(start.x-end.x), Math.abs(start.y-end.y))+1;

@@ -353,6 +353,8 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	 */
 	protected synchronized void addFrameListener(YouScopeFrameListener listener)
 	{
+		if(containingFrame != null)
+			containingFrame.addFrameListener(listener);
 		frameListeners.add(listener);
 	}
 
@@ -363,6 +365,8 @@ public abstract class AddonUIAdapter<T extends AddonMetadata>  implements AddonU
 	protected synchronized void removeFrameListener(YouScopeFrameListener listener)
 	{
 		frameListeners.remove(listener);
+		if(containingFrame != null)
+			containingFrame.removeFrameListener(listener);
 	}
 
 	/**
