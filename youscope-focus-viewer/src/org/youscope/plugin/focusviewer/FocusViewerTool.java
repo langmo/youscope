@@ -15,7 +15,6 @@ package org.youscope.plugin.focusviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -153,21 +152,23 @@ class FocusViewerTool extends ToolAddonUIAdapter
 				}
 				
 				// process image
-				String messageTemp;
 				double scoreTemp;
 				try
 				{
 					scoreTemp =calculateScore(image);			
-					messageTemp = String.format ("%.8f", scoreTemp);
 				}
-				catch(@SuppressWarnings("unused") Exception e)
+				catch(Exception e)
 				{
-					messageTemp = "Settings invalid!";
+					sendErrorMessage("Error while calculating focus score.", e);
 					scoreTemp = Double.NaN;
 				}
-				final double score = scoreTemp;
 				final int currentImage = nextImageIdx++;
-				final String message = messageTemp;
+				final double score = scoreTemp;
+				final String message;
+				if(Double.isNaN(score))
+					message = "Settings invalid!";
+				else
+					message = String.format ("%.8f", scoreTemp);
 				
 				Runnable runner = new Runnable()
 				{
@@ -204,19 +205,20 @@ class FocusViewerTool extends ToolAddonUIAdapter
 		{
 			if(currentAlgorithm != null)
 			{
-				currentAlgorithm.uninitialize(measurementContext);
+				FocusScoreResource algo = currentAlgorithm;
 				currentAlgorithm = null;
+				algo.uninitialize(measurementContext);
 			}
 			FocusScoreConfiguration configuration = focusScoreAlgorithmPanel.getConfiguration();
 			if(configuration == null)
-				throw new Exception("Configuration empty");
+				throw new Exception("Configuration of focus score algorithm is empty.");
 			try
 			{
 				configuration.checkConfiguration();
 			}
 			catch(ConfigurationException e)
 			{
-				throw new Exception("Configuration invalid", e);
+				throw new Exception("Configuration of focus score algorithm is invalid", e);
 			}
 			focusAlgorithm = getServer().getComponentProvider(null).createComponent(new PositionInformation(), configuration, FocusScoreResource.class);
 			focusAlgorithm.initialize(measurementContext);
@@ -226,6 +228,8 @@ class FocusViewerTool extends ToolAddonUIAdapter
 					currentAlgorithm = focusAlgorithm;
 			}
 		}
+		if(focusAlgorithm == null)
+			return Double.NaN;
 		return focusAlgorithm.calculateScore(image);
 	}
 	

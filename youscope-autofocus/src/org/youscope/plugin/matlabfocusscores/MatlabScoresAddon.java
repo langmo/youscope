@@ -201,8 +201,8 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 		BufferedReader bufferedReader;
 		try
 		{
-			bufferedReader = new BufferedReader(fileReader);
 			fileReader = new InputStreamReader(matlabFile.openStream());
+			bufferedReader = new BufferedReader(fileReader);
 			scriptEngine.eval(bufferedReader);
 		}
 		catch(ScriptException ex)
