@@ -433,29 +433,19 @@ class MeasurementSaverImpl extends UnicastRemoteObject implements MeasurementSav
 		// Save current microscope configuration
 		if(microscopeConfigurationFilePath != null)
 		{
-			RMIWriter rmiWriter = null;
 			try
 			{
 				File folder = new File(microscopeConfigurationFilePath).getParentFile();
 				if(!folder.exists())
 					folder.mkdirs();
-				rmiWriter = new RMIWriter(new FileWriter(microscopeConfigurationFilePath));
-				microscope.saveConfiguration(rmiWriter);
+				try(RMIWriter rmiWriter = new RMIWriter(new FileWriter(microscopeConfigurationFilePath));)
+				{
+					microscope.saveConfiguration(rmiWriter);
+				}
 			}
 			catch(Exception e)
 			{
 				ServerSystem.err.println("Could not save current microscope configuration to measurement folder. Skipping and continuing.", e);
-			}
-			finally
-			{
-				if(rmiWriter!= null)
-				{
-					try {
-						rmiWriter.close();
-					} catch (IOException e) {
-						ServerSystem.err.println("Could not close RMI writer.", e);
-					}
-				}
 			}
 		}
 

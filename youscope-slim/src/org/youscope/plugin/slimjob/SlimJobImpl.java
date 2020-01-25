@@ -103,7 +103,7 @@ class SlimJobImpl extends CompositeJobAdapter implements SlimJob
 			return getDefaultImageDescription();
 		return imageDescription;
 	}
-	private String getDefaultImageDescription()
+	private static String getDefaultImageDescription()
 	{
 		String retVal = "SLIM";
 		return retVal;

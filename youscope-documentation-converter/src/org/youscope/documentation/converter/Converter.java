@@ -152,18 +152,14 @@ public class Converter
     static void copyFile(String fileName, InputStream resource, File outputFile)
     {
         System.out.println("Copying file " + fileName + " ...");
-        try
+        try(BufferedInputStream bis = new BufferedInputStream(resource, 4096);
+        		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile), 4096);)
         {
-            BufferedInputStream bis = new BufferedInputStream(resource, 4096);
-            BufferedOutputStream bos =
-                    new BufferedOutputStream(new FileOutputStream(outputFile), 4096);
             int theChar;
             while ((theChar = bis.read()) != -1)
             {
                 bos.write(theChar);
             }
-            bos.close();
-            bis.close();
 
         } catch (@SuppressWarnings("unused") Exception e)
         {
@@ -271,39 +267,21 @@ public class Converter
 
     static void writeFile(File file, String content)
     {
-        FileWriter fileWriter = null;
-        try
+        try(FileWriter fileWriter = new FileWriter(file);)
         {
-            fileWriter = new FileWriter(file);
             fileWriter.write(content);
         } catch (Exception e)
         {
             failed("Could not save file " + file.getAbsolutePath(), e);
             return;
-        } finally
-        {
-            if (fileWriter != null)
-            {
-                try
-                {
-                    fileWriter.close();
-                } catch (IOException e)
-                {
-                    failed("Could not close file " + file.getAbsolutePath(), e);
-                }
-            }
-        }
+        } 
     }
 
     static String loadFile(String filePath, InputStream stream)
     {
-        InputStreamReader inputStreamReader = null;
-        BufferedReader bufferedReader = null;
-
-        try
+        try(InputStreamReader inputStreamReader = new InputStreamReader(stream);
+        		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);)
         {
-            inputStreamReader = new InputStreamReader(stream);
-            bufferedReader = new BufferedReader(inputStreamReader);
             String content = "";
             while (true)
             {
@@ -316,29 +294,7 @@ public class Converter
         } catch (Exception e)
         {
             failed("Could not open file " + filePath, e);
-        } finally
-        {
-            if (inputStreamReader != null)
-            {
-                try
-                {
-                    inputStreamReader.close();
-                } catch (IOException e)
-                {
-                    failed("Could not close file " + filePath, e);
-                }
-            }
-            if (bufferedReader != null)
-            {
-                try
-                {
-                    bufferedReader.close();
-                } catch (IOException e)
-                {
-                    failed("Could not close file " + filePath, e);
-                }
-            }
-        }
+        } 
         return null;
     }
 

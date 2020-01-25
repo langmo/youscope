@@ -1073,7 +1073,7 @@ public class Starter extends JFrame
 			public ConfigFileChooserComboBoxRenderer()
 			{
 				setBorder(new EmptyBorder(1, 1, 1, 1));
-				separator = new JSeparator(JSeparator.HORIZONTAL);
+				separator = new JSeparator(SwingConstants.HORIZONTAL);
 				JList<?> list = new JList<Object>();
 				foregroundUnselected = Integer.toHexString(list.getForeground().getRGB()).substring(2);
 				foregroundSelected = Integer.toHexString(list.getSelectionForeground().getRGB()).substring(2);

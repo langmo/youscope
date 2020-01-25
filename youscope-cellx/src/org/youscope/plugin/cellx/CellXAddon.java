@@ -198,15 +198,12 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		URL matlabFile = getClass().getClassLoader().getResource("org/youscope/plugin/cellx/CellXInvoker.m");
 		if(matlabFile == null)
 			throw new CellDetectionException("Could not detect matlab script in CellX JAR file. Check file consistency.");
-		InputStreamReader fileReader = null;
-		
+
 		Object returnVal;
 		scriptEngine.getContext().setWriter(outputListener);
-		BufferedReader bufferedReader = null;
-		try
+		try(InputStreamReader fileReader = new InputStreamReader(matlabFile.openStream());
+				BufferedReader bufferedReader = new BufferedReader(fileReader);)
 		{
-			fileReader = new InputStreamReader(matlabFile.openStream());
-			bufferedReader = new BufferedReader(fileReader);
 			returnVal = scriptEngine.eval(bufferedReader);
 		}
 		catch(ScriptException ex)
@@ -225,28 +222,6 @@ class CellXAddon extends ResourceAdapter<CellXConfiguration> implements CellDete
 		catch(IOException e1)
 		{
 			throw new CellDetectionException("Script file " + matlabFile.toString() + " could not be opened.", e1);
-		}
-		finally
-		{
-			if(bufferedReader != null)
-			{
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					sendErrorMessage("Could not close IO Buffer.", e);
-				}
-			}
-			if(fileReader != null)
-			{
-				try
-				{
-					fileReader.close();
-				}
-				catch(IOException e1)
-				{
-					sendErrorMessage("Could not close file.", e1);
-				}
-			}
 		}
 		receiveEngineMessages();
 		if(returnVal != null)

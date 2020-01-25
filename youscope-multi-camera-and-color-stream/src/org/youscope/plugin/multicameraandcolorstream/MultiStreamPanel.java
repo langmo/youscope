@@ -66,9 +66,9 @@ class MultiStreamPanel extends JPanel
 
 	//private AffineTransform[] imageTransformations = new AffineTransform[NUM_COLORS];
 	
-	private static double[] deltaXs = {0,0,0};
-	private static double[] deltaYs = {0,0,0};
-	private static double[] deltaPhis = {0,0,0};
+	private double[] deltaXs = {0,0,0};
+	private double[] deltaYs = {0,0,0};
+	private double[] deltaPhis = {0,0,0};
 	
     private float[] lowerCutoffs = {0.0F, 0.0F, 0.0F};
 

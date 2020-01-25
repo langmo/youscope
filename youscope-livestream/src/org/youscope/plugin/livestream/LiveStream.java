@@ -32,7 +32,7 @@ class LiveStream implements ToolAddonUI
 	private final YouScopeClient client;
 	private final YouScopeServer server;
 	private LiveStreamPanel liveStreamPanel = null;
-	LiveStream(YouScopeClient client, YouScopeServer server) throws AddonException
+	LiveStream(YouScopeClient client, YouScopeServer server)
 	{
 		this.client = client;
 		this.server = server;

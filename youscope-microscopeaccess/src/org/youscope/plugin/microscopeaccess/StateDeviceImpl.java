@@ -189,7 +189,9 @@ class StateDeviceImpl extends DeviceImpl implements StateDeviceInternal
 	@Override
 	public void setStateLabels(String[] labels, int accessID) throws ArrayIndexOutOfBoundsException, MicroscopeException, MicroscopeLockedException
 	{
-		if(labels == null || labels.length != getNumStates())
+		if(labels == null)
+			throw new ArrayIndexOutOfBoundsException("No states provided (null), " + Integer.toString(getNumStates()) + " required.");
+		else if(labels.length != getNumStates())
 			throw new ArrayIndexOutOfBoundsException("Wrong number of states provided (" + Integer.toString(labels.length) + " provided, " + Integer.toString(getNumStates()) + " required.");
 		for(int i=0; i<labels.length; i++)
 		{

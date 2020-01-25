@@ -107,14 +107,19 @@ public class MatlabFunctionCreator
 	 */
 	public void initialize() throws ResourceException
 	{
-		InputStream inputStream = null;
-	    try
+		try 
+		{
+			matlabFile = File.createTempFile(FILE_BASE_NAME, FILE_EXTENSION);
+		} 
+		catch (IOException e1) 
+		{
+			throw new ResourceException("Could not create temporary matlab file.", e1);
+		}
+        matlabFile.deleteOnExit();
+        
+	    try(InputStream inputStream = MatlabFunctionCreator.class.getClassLoader().getResourceAsStream(resourcePath);
+	    		FileOutputStream fileOutputStream = new FileOutputStream(matlabFile))
 	    {
-	    	inputStream = MatlabFunctionCreator.class.getClassLoader().getResourceAsStream(resourcePath);
-	        matlabFile = File.createTempFile(FILE_BASE_NAME, FILE_EXTENSION);
-	        matlabFile.deleteOnExit();
-	        FileOutputStream fileOutputStream = new FileOutputStream(matlabFile);
-	        
 	        // get info about created file
 	        functionName = matlabFile.getName();
 	        // delete .m ending
@@ -148,14 +153,6 @@ public class MatlabFunctionCreator
 	    catch (Exception e)
 	    {
 	    	throw new ResourceException("Could not create temporary matlab file.", e);
-	    }
-	    finally
-	    {
-	    	try {
-				inputStream.close();
-			} catch (@SuppressWarnings("unused") IOException e) {
-				// do nothing.
-			}
 	    }
 	}
 	/**

@@ -53,8 +53,6 @@ import org.youscope.common.Well;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.microplate.WellWithGroup;
 import org.youscope.common.microscope.Device;
-import org.youscope.common.microscope.DeviceException;
-import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.plugin.microplate.measurement.MicroplateMeasurementConfiguration;
 import org.youscope.plugin.microplate.measurement.PathDisplayUI;
 import org.youscope.plugin.microplate.measurement.PathTable;
@@ -229,7 +227,7 @@ class PathPage extends MeasurementAddonUIPage<MicroplateMeasurementConfiguration
 			stageDevice = stageDeviceField.getSelectedItem().toString();
 		}
 	}
-	private String[] getStageDevices() throws RemoteException, InterruptedException, DeviceException, MicroscopeException
+	private String[] getStageDevices() throws RemoteException
 	{
 		Device[] devices = server.getMicroscope().getStageDevices();
 		String[] deviceNames = new String[devices.length];

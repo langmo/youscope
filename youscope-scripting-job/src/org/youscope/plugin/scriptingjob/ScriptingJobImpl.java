@@ -244,20 +244,10 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 				localEngine.put("measurementContext", measurementContext);
 				localEngine.put("executionInformation", executionInformation);
 				// Open file
-				InputStreamReader fileReader = null;
-				BufferedReader bufferedReader = null;
-				try
+				try(InputStreamReader fileReader = new InputStreamReader(scriptFile.openStream());
+						BufferedReader bufferedReader = new BufferedReader(fileReader);)
 				{
-					fileReader = new InputStreamReader(scriptFile.openStream());
-					bufferedReader = new BufferedReader(fileReader);
 					localEngine.eval(bufferedReader);
-				}
-				finally
-				{
-					if(fileReader != null)
-						fileReader.close();
-					if(bufferedReader != null)
-						bufferedReader.close();
 				}
 				receiveEngineMessages();
 			}
@@ -332,15 +322,7 @@ class ScriptingJobImpl extends JobAdapter implements ScriptingJob
 		@Override
 		public ScriptImageStorage createImageStorage(ImageProducer job) throws RemoteException
 		{
-			try
-			{
-				return new ScriptImageStorageImpl(job);
-			}
-			catch(ComponentRunningException e)
-			{
-				println("Could not produce image storage for script: " + e.getMessage());
-				return null;
-			}
+			return new ScriptImageStorageImpl(job);
 		}
 
 		@Override

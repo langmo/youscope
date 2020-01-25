@@ -348,7 +348,7 @@ class ConfigFileParser extends ConfigFileManipulator
 		isInitialized = false;
 	}
 
-	private void parseInitialize(int accessID) throws MicroscopeLockedException, DeviceException, MicroscopeException, InterruptedException
+	private void parseInitialize(int accessID) throws MicroscopeLockedException, MicroscopeException, InterruptedException
 	{
 		// Initialize COM-ports first.
 		Collections.sort(preInitDevices);
@@ -398,7 +398,7 @@ class ConfigFileParser extends ConfigFileManipulator
 			channelManager.addChannel(tokens[1], tokens[2], accessID).addChannelOffSetting(setting, accessID);
 	}
 
-	private void parseChannelDelay(String[] tokens, int accessID) throws NumberFormatException, MicroscopeLockedException, SettingException
+	private void parseChannelDelay(String[] tokens, int accessID) throws NumberFormatException, MicroscopeLockedException
 	{
 		if(tokens[2].endsWith("_on"))
 			tokens[2] = tokens[2].substring(0, tokens[2].length() - 3);
@@ -406,7 +406,7 @@ class ConfigFileParser extends ConfigFileManipulator
 		channelManager.addChannel(tokens[1], tokens[2], accessID).setChannelTimeout(Integer.parseInt(tokens[3]), accessID);
 	}
 
-	private void parseNewDevice(String[] tokens) throws DeviceException, SettingException
+	private void parseNewDevice(String[] tokens) throws SettingException
 	{
 		if(isInitialized)
 			throw new SettingException("All devices must be defined after the command \"Property,Core,Initialize,0\" and before the command \"Property,Core,Initialize,1\"");
@@ -443,7 +443,7 @@ class ConfigFileParser extends ConfigFileManipulator
 		pixelSizeManager.addPixelSize(tokens[1], accessID).addPixelSizeSetting(new DeviceSetting(tokens[2], tokens[3], tokens[4]), accessID);
 	}
 
-	private void parsePixelSize(String[] tokens, int accessID) throws NumberFormatException, MicroscopeLockedException, SettingException, DeviceException
+	private void parsePixelSize(String[] tokens, int accessID) throws NumberFormatException, MicroscopeLockedException
 	{
 		pixelSizeManager.addPixelSize(tokens[1], accessID).setPixelSize(Double.parseDouble(tokens[2]), accessID);
 	}

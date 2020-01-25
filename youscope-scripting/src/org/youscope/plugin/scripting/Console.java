@@ -31,6 +31,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -93,7 +94,7 @@ class Console extends JPanel implements ScriptMessageListener
         inputAreaAreaPanel.add(inputAreaArea, BorderLayout.CENTER);
         
         // TabbedPane to select input type
-        JTabbedPane inputArea = new JTabbedPane(JTabbedPane.BOTTOM);
+        JTabbedPane inputArea = new JTabbedPane(SwingConstants.BOTTOM);
         inputArea.addTab("Single Line", inputAreaFieldPanel);
         inputArea.addTab("Multiple Lines", new JScrollPane(inputAreaAreaPanel));
         inputArea.setPreferredSize(new Dimension(200, inputAreaField.getPreferredSize().height));

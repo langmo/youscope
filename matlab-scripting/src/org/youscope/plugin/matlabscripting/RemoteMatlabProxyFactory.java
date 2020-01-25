@@ -351,7 +351,7 @@ public class RemoteMatlabProxyFactory
             // OS X
             if (osName.equalsIgnoreCase("Mac OS X"))
             {
-                matlabLoc = this.getOSXMatlabLocation();
+                matlabLoc = RemoteMatlabProxyFactory.getOSXMatlabLocation();
             }
             // Windows, Linux, and possibly others
             else
@@ -381,7 +381,7 @@ public class RemoteMatlabProxyFactory
         }
     }
 
-    private String getOSXMatlabLocation() throws MatlabConnectionException
+    private static String getOSXMatlabLocation() throws MatlabConnectionException
     {
         String matlabName = null;
         for (String fileName : new File("/Applications/").list())

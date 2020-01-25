@@ -243,7 +243,8 @@ public class ComponentList<C extends Configuration> extends JPanel
 	{
 		if(element == null)
 			setSelectedElement((String)null);
-		setSelectedElement(element.getTypeIdentifier());
+		else
+			setSelectedElement(element.getTypeIdentifier());
 	}
 	
 	/**

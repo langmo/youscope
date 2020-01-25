@@ -89,7 +89,7 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 	 * @param driverFolder The folder where the drivers are installed.
 	 * @return List of library names (shortened file name without prefix and suffix).
 	 */
-	private String[] getLibraryNamesByFolderSearch(String driverFolder)
+	private static String[] getLibraryNamesByFolderSearch(String driverFolder)
 	{
 		
 		final String prefix;

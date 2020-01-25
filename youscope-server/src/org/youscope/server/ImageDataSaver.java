@@ -128,16 +128,18 @@ class ImageDataSaver extends UnicastRemoteObject implements ImageListener, Table
 				folder.mkdirs();
 			Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersBySuffix(fileType);
 			if(imageWriters.hasNext())
-			{
-				ImageOutputStream outputStream = ImageIO.createImageOutputStream(file);
-				ImageWriter imageWriter = imageWriters.next();
-				imageWriter.setOutput(outputStream);
-				try {
+			{		
+				ImageWriter imageWriter = null;
+				try(ImageOutputStream outputStream = ImageIO.createImageOutputStream(file);) 
+				{
+					imageWriter = imageWriters.next();
+					imageWriter.setOutput(outputStream);
 					imageWriter.write(image);
-		        } finally {
-		        	imageWriter.dispose();
-		        	outputStream.flush();
-		        	outputStream.close();
+					outputStream.flush();
+		        } 
+				finally {
+					if(imageWriter != null)
+						imageWriter.dispose();
 		        }
 				ServerSystem.out.println("Image of type " + imageSaveName + " saved to " + filePath + ".");
 			}

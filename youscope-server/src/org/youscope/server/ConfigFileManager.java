@@ -86,7 +86,7 @@ class ConfigFileManager
 		return lastParseResult.getWarningMessage();
 	}
 
-	public void saveConfiguration(Writer configurationWriter, int accessID) throws MicroscopeConfigurationException, MicroscopeLockedException
+	public void saveConfiguration(Writer configurationWriter, int accessID) throws MicroscopeConfigurationException
 	{
 		(new ConfigFileWriter(microscope, channelManager, pixelSizeManager)).writeConfigFile(configurationWriter, accessID);
 	}

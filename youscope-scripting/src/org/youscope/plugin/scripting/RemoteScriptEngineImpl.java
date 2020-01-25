@@ -69,34 +69,17 @@ class RemoteScriptEngineImpl extends UnicastRemoteObject implements RemoteScript
 		{
 		 	throw new IOException("Script file is null.");		
 		}
-		InputStreamReader fileReader = null;
-        BufferedReader bufferedReader = null;	
-		
-        String content = "";
-        try
+		String content = "";
+        try(InputStreamReader fileReader = new InputStreamReader(scriptFile.openStream());
+        		BufferedReader bufferedReader = new BufferedReader(fileReader);)
         {
-           fileReader = new InputStreamReader(scriptFile.openStream());
-           bufferedReader = new BufferedReader(fileReader);
            while (true)
            {
                String line = bufferedReader.readLine();
                if (line == null)
                    break;
                content += line + "\n";
-           }
-       
-    	   
-       }
-	   finally
-       {
-           if (fileReader != null)
-           {
-               fileReader.close();
-           }
-           if (bufferedReader != null)
-           {
-               bufferedReader.close();
-           }
+           }   
        }
        eval(content);		
 	}

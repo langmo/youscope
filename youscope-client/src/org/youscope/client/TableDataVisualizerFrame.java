@@ -349,7 +349,10 @@ class TableDataVisualizerFrame
 			}
     		else if(xAxisType == XAxisType.TableColumnValue)
     		{
-    			xVals[row] = xColumn.getValue(row).doubleValue();
+    			if(xColumn != null)
+    				xVals[row] = xColumn.getValue(row).doubleValue();
+    			else
+    				xVals[row] = 0;
     		}
     	}
 

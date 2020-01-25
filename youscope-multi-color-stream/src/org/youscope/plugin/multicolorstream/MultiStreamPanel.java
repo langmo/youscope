@@ -60,7 +60,7 @@ public class MultiStreamPanel extends JPanel
 	
 	private volatile BufferedImage[] singleImages = new BufferedImage[4];
 
-    private static AffineTransform transform = new AffineTransform();
+    private AffineTransform transform = new AffineTransform();
 
     private float[] lowerCutoffs = {0.0F, 0.0F, 0.0F, 0.0F};
 

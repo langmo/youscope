@@ -106,10 +106,7 @@ final class YouScopeFrameImpl extends JInternalFrame
 		}
 		TOP_IMAGE = topImageTemp;
 		
-		if(TRAY_ICON_URL != null)
-			TRAY_ICON     = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL, "Tray icon");
-		else
-			TRAY_ICON = null;
+		TRAY_ICON     = ImageLoadingTools.getResourceIcon(TRAY_ICON_URL, "Tray icon");
 	}
 	
     // ////////////////////////////////////////

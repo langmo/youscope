@@ -712,12 +712,12 @@ public class BasicHistogramPanelUI extends HistogramPanelUI
 		g2D.drawLine(upperCutoffX, 0, upperCutoffX, panelHeight-1);
     }
     
-    private int transformX(double x, AffineTransform transform)
+    private static int transformX(double x, AffineTransform transform)
     {
     	return (int)Math.round(transform.transform(new Point2D.Double(x,  0), null).getX());
     }
     
-    private double backTransformX(int x, AffineTransform transform)
+    private static double backTransformX(int x, AffineTransform transform)
     {
     	try {
 			return transform.createInverse().transform(new Point2D.Double(x,  0), null).getX();

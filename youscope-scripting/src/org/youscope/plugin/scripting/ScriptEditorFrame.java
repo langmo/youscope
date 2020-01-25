@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Vector;
 
@@ -204,12 +203,9 @@ class ScriptEditorFrame implements UndoRedoListener
 		 updateScriptStyle(file);
 		 
 		 // Load file
-		FileReader fileReader = null;
-        BufferedReader bufferedReader = null;	
-		try
-        {
-            fileReader = new FileReader(file);
-            bufferedReader = new BufferedReader(fileReader);
+		try(FileReader fileReader = new FileReader(file);
+				BufferedReader bufferedReader = new BufferedReader(fileReader);)
+		{
             String content = "";
             while (true)
             {
@@ -225,31 +221,7 @@ class ScriptEditorFrame implements UndoRedoListener
         	client.sendError("Could not load script file.", e);
             return;
         } 
-		finally
-        {
-            if (fileReader != null)
-            {
-                try
-                {
-                    fileReader.close();
-                } 
-                catch (IOException e)
-                {
-                	client.sendError("Could not close script open stream.", e);
-                }
-            }
-            if (bufferedReader != null)
-            {
-                try
-                {
-                    bufferedReader.close();
-                }
-                catch (IOException e)
-                {
-                	client.sendError("Could not close script open stream.", e);
-                }
-            }
-        }
+		
         client.getPropertyProvider().setProperty(StandardProperty.PROPERTY_LAST_SCRIPT_PATH, file.getParent());
         lastFile = file; 
         //scriptPane.setFileNameExtension(file.)
@@ -286,11 +258,9 @@ class ScriptEditorFrame implements UndoRedoListener
 			}
 		}
 		String text = scriptEditor.getText();
-		try
+		try(PrintStream fileStream = new PrintStream(file);)
 		{
-			PrintStream fileStream = new PrintStream(file);
 			fileStream.print(text);
-			fileStream.close();
 		}
 		catch(Exception e)
 		{

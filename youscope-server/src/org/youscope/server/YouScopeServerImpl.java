@@ -150,6 +150,7 @@ public class YouScopeServerImpl implements YouScopeServer
 		if(policyURL == null)
 		{
 			quitDueToFatalError("Could not find policy file (" + POLICY_FILE + ").", null);
+			return;
 		}
 		System.setProperty("java.security.policy", policyURL.toString());
 		System.setProperty("java.rmi.server.randomIDs", "true");
@@ -218,14 +219,14 @@ public class YouScopeServerImpl implements YouScopeServer
 	 * @param forceConfiguration True if before the next time a microscope connection is
 	 *            established, the user should be asked for the connection type.
 	 */
-	public void setConfigureMicroscopeConnection(boolean forceConfiguration)
+	public static void setConfigureMicroscopeConnection(boolean forceConfiguration)
 	{
 		ConfigurationSettings configuration = ConfigurationSettings.loadProperties();
 		configuration.setProperty(PROPERTY_FORCE_CONNECTION_CONFIGURATION, true);
 		configuration.saveProperties();
 	}
 
-	private MicroscopeInternal tryMicroscopeConnection(String connectionType, String driverFolder) throws MicroscopeConnectionException
+	private static MicroscopeInternal tryMicroscopeConnection(String connectionType, String driverFolder) throws MicroscopeConnectionException
 	{
 		// Try to connect to the drivers.
 		MicroscopeInternal microscope = MicroscopeAccess.getMicroscope(connectionType, driverFolder);
@@ -259,7 +260,7 @@ public class YouScopeServerImpl implements YouScopeServer
 	 * @return
 	 * @throws MicroscopeException
 	 */
-	private MicroscopeInternal connectToMicroscope() throws MicroscopeException
+	private static MicroscopeInternal connectToMicroscope() throws MicroscopeException
 	{
 		ConfigurationSettings configuration = ConfigurationSettings.loadProperties();
 		String driverFolder = configuration.getProperty(PROPERTY_MICROSCOPE_DRIVER_FOLDER, null);
@@ -411,7 +412,7 @@ public class YouScopeServerImpl implements YouScopeServer
 		return new ServerConfigurationImpl();
 	}
 
-	protected void quitDueToFatalError(String errorDescription, Throwable exception)
+	protected static void quitDueToFatalError(String errorDescription, Throwable exception)
 	{
 		ServerSystem.err.println("Fatal Error occured, quitting program.", exception);
 		ServerSystem.out.println("Fatal error occured, shutting down program  (see error log)...");
@@ -483,7 +484,8 @@ public class YouScopeServerImpl implements YouScopeServer
 		}
 		catch(MicroscopeException e)
 		{
-			program.quitDueToFatalError("Could not initialize microscope.", e);
+			YouScopeServerImpl.quitDueToFatalError("Could not initialize microscope.", e);
+			return;
 		}
 
 		// Finish java if server finished
@@ -504,7 +506,8 @@ public class YouScopeServerImpl implements YouScopeServer
 		}
 		catch(MicroscopeException e)
 		{
-			program.quitDueToFatalError("Could not start program or error occured during program execution.", e);
+			YouScopeServerImpl.quitDueToFatalError("Could not start program or error occured during program execution.", e);
+			return;
 		}
 	}
 

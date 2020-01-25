@@ -178,12 +178,14 @@ class ClientSystem
             // Do nothing.
         }
 
-        public void println(String message)
+        @SuppressWarnings("static-method")
+		public void println(String message)
         {
             getClientSystem().printMessage(message, null);
         }
         
-        public void println(String message, Date time)
+        @SuppressWarnings("static-method")
+		public void println(String message, Date time)
         {
             getClientSystem().printMessage(message, time);
         }
@@ -196,16 +198,19 @@ class ClientSystem
             // Do nothing.
         }
 
-        public void println(String message)
+        @SuppressWarnings("static-method")
+		public void println(String message)
         {
             getClientSystem().printError(message, null, null);
         }
 
-        public void println(String message, Throwable e)
+        @SuppressWarnings("static-method")
+		public void println(String message, Throwable e)
         {
             getClientSystem().printError(message, e, null);
         }
-        public void println(String message, Throwable e, Date time)
+        @SuppressWarnings("static-method")
+		public void println(String message, Throwable e, Date time)
         {
             getClientSystem().printError(message, e, time);
         }
@@ -385,6 +390,7 @@ class ClientSystem
 		{
 			err.println("Uncaught Exception in thread " + thread.getName() + ".", e);
 		}
+		@SuppressWarnings("static-method")
 		public void handle(Throwable e) 
 		{
 		   // for EDT exceptions

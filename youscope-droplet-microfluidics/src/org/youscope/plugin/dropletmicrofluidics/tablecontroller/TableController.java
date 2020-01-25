@@ -139,7 +139,7 @@ class TableController  extends ResourceAdapter<TableControllerConfiguration> imp
 	{
 		return TableControllerConfiguration.TYPE_IDENTIFIER+".Chip"+Integer.toString(microfluidicChipID);
 	}
-	private ControllerState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
+	private static ControllerState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
 		String identifier = getStateIdentifier(microfluidicChipID);
 		ControllerState controllerState = measurementContext.getProperty(identifier, ControllerState.class);
@@ -147,7 +147,7 @@ class TableController  extends ResourceAdapter<TableControllerConfiguration> imp
 			controllerState = new ControllerState();
 		return controllerState;
 	}
-	private void saveState(ControllerState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
+	private static void saveState(ControllerState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
 		String identifier = getStateIdentifier(microfluidicChipID);
 		measurementContext.setProperty(identifier, state);

@@ -177,7 +177,6 @@ class ScriptEditorDocument extends DefaultStyledDocument
 	 *  Highlight lines to start or end delimiter
 	 */
 	private void highlightLinesAfter(String content, int line)
-		throws BadLocationException
 	{
 		int offset = rootElement.getElement( line ).getEndOffset();
 
@@ -216,7 +215,6 @@ class ScriptEditorDocument extends DefaultStyledDocument
 	 *  Parse the line to determine the appropriate highlighting
 	 */
 	private void applyHighlighting(String content, int line)
-		throws BadLocationException
 	{
 		int startOffset = rootElement.getElement( line ).getStartOffset();
 		int endOffset = rootElement.getElement( line ).getEndOffset() - 1;
@@ -261,7 +259,6 @@ class ScriptEditorDocument extends DefaultStyledDocument
 	 *  Does this line contain the start delimiter
 	 */
 	private boolean startingMultiLineComment(String content, int startOffset, int endOffset)
-		throws BadLocationException
 	{
 		int index = indexOf( content, scriptStyle.getBlockCommentStartDelimiter(), startOffset );
 
@@ -275,7 +272,6 @@ class ScriptEditorDocument extends DefaultStyledDocument
 	 *  Does this line contain the end delimiter
 	 */
 	private boolean endingMultiLineComment(String content, int startOffset, int endOffset)
-		throws BadLocationException
 	{
 		int index = indexOf( content, scriptStyle.getBlockCommentEndDelimiter(), startOffset );
 

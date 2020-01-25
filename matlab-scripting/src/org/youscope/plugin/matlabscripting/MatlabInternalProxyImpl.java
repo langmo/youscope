@@ -38,7 +38,6 @@ import java.rmi.server.UnicastRemoteObject;
  * 
  * @author <a href="mailto:jak2@cs.brown.edu">Joshua Kaplan</a>
  */
-@SuppressWarnings("javadoc")
 class MatlabInternalProxyImpl extends UnicastRemoteObject implements MatlabInternalProxy
 {
     private static final long serialVersionUID = 1L;
@@ -67,7 +66,7 @@ class MatlabInternalProxyImpl extends UnicastRemoteObject implements MatlabInter
     @Override
 	public synchronized void exit() throws RemoteException, MatlabInvocationException
     {
-        _wrapper.exit();
+        JMIWrapper.exit();
     }
 
     @Override
@@ -107,7 +106,7 @@ class MatlabInternalProxyImpl extends UnicastRemoteObject implements MatlabInter
     @Override
 	public synchronized void setEchoEval(boolean echo) throws RemoteException
     {
-        _wrapper.setEchoEval(echo);
+        JMIWrapper.setEchoEval(echo);
     }
 
     @Override

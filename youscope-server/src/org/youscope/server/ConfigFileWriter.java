@@ -32,8 +32,6 @@ import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeConfigurationException;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeException;
-import org.youscope.common.microscope.MicroscopeLockedException;
-import org.youscope.common.microscope.SettingException;
 
 /**
  * Class to write the current microscope configuration to a config file.
@@ -53,10 +51,9 @@ class ConfigFileWriter extends ConfigFileManipulator
 		this.pixelSizeManager = pixelSizeManager;
 	}
 
-	public void writeConfigFile(Writer outputWriter, @SuppressWarnings("unused") int accessID) throws MicroscopeConfigurationException, MicroscopeLockedException
+	public void writeConfigFile(Writer outputWriter, @SuppressWarnings("unused") int accessID) throws MicroscopeConfigurationException
 	{
-		BufferedWriter writer = new BufferedWriter(outputWriter);
-		try
+		try(BufferedWriter writer = new BufferedWriter(outputWriter);)
 		{
 
 			writeHeader(writer);
@@ -97,20 +94,9 @@ class ConfigFileWriter extends ConfigFileManipulator
 		{
 			throw new MicroscopeConfigurationException(e);
 		}
-		finally
-		{
-			try
-			{
-				writer.close();
-			}
-			catch(IOException e)
-			{
-				throw new MicroscopeConfigurationException(e);
-			}
-		}
 	}
 
-	private void writeIdentification(BufferedWriter writer) throws IOException
+	private static void writeIdentification(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Identification of how and for which machines this configuration was created.");
 		writeComment(writer, "Do not remove or edit the following lines.");
@@ -205,7 +191,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeChannels(BufferedWriter writer) throws IOException, MicroscopeException, InterruptedException, SettingException
+	private void writeChannels(BufferedWriter writer) throws IOException
 	{
 		boolean firstChannel = true;
 		for(String channelGroupID : channelManager.getChannelGroupIDs())
@@ -255,7 +241,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeLabels(BufferedWriter writer) throws IOException, MicroscopeException, DeviceException
+	private void writeLabels(BufferedWriter writer) throws IOException
 	{
 		boolean firstDevice = true;
 		for(StateDeviceInternal device : microscope.getStateDevices())
@@ -291,7 +277,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeStandardDevices(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException, DeviceException
+	private void writeStandardDevices(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Standard devices (\"Roles\").");
 		try
@@ -345,7 +331,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeDelays(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException, DeviceException
+	private void writeDelays(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Explicit delays (in ms).");
 		for(DeviceInternal device : microscope.getDevices())
@@ -357,7 +343,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeDevices(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException, DeviceException
+	private void writeDevices(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException
 	{
 		writeComment(writer, "Load devices.");
 		// Get devices.
@@ -424,13 +410,13 @@ class ConfigFileWriter extends ConfigFileManipulator
 		writer.newLine();
 	}
 
-	private void writeCommunicationTimeout(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException, DeviceException
+	private void writeCommunicationTimeout(BufferedWriter writer) throws IOException
 	{
 		writeComment(writer, "Communication timeout (ms).");
 		writeCommand(writer, COMMAND_COMMUNICATION_TIMEOUT, Integer.toString(microscope.getMicroscopeConfiguration().getCommunicationTimeout()));
 	}
 
-	private void writeImageBufferSize(BufferedWriter writer) throws IOException, MicroscopeDriverException, InterruptedException, MicroscopeException, DeviceException
+	private void writeImageBufferSize(BufferedWriter writer) throws IOException
 	{
 		int imageBufferSize;
 		try
@@ -449,7 +435,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeAxesStages(BufferedWriter writer) throws IOException, MicroscopeDriverException, MicroscopeException, DeviceException
+	private void writeAxesStages(BufferedWriter writer) throws IOException
 	{
 		StageDeviceInternal[] stages = microscope.getStageDevices();
 		if(stages.length <= 0)
@@ -469,7 +455,7 @@ class ConfigFileWriter extends ConfigFileManipulator
 		}
 	}
 
-	private void writeAxesCameras(BufferedWriter writer) throws IOException, MicroscopeDriverException, MicroscopeException, DeviceException
+	private void writeAxesCameras(BufferedWriter writer) throws IOException
 	{
 		CameraDeviceInternal[] cameras = microscope.getCameraDevices();
 		if(cameras.length <= 0)

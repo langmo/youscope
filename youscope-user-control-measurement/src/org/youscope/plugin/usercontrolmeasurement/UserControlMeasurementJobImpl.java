@@ -177,7 +177,7 @@ class UserControlMeasurementJobImpl extends JobAdapter implements ImageProducer,
 		return "User Control Measurement";
 	}
 
-	public void setMeasurementCallback(UserControlMeasurementCallback callback) throws RemoteException, ComponentRunningException
+	public void setMeasurementCallback(UserControlMeasurementCallback callback) throws ComponentRunningException
 	{
 		assertRunning();
 		this.callback = callback;

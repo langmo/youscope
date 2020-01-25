@@ -30,7 +30,7 @@ public class LiveModifiableJobCallbackFactory implements CallbackAddonFactory
 	
 	@Override
 	public String[] getSupportedTypeIdentifiers() {
-		return new String[]{LiveModifiableJobCallbackImpl.TYPE_IDENTIFIER};
+		return new String[]{LiveModifiableJobCallback.TYPE_IDENTIFIER};
 	}
 
 	@Override

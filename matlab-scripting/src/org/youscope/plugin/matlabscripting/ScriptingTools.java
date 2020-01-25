@@ -4,6 +4,7 @@
 package org.youscope.plugin.matlabscripting;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 //import java.net.URL;
@@ -23,14 +24,18 @@ class ScriptingTools
 		if(startupScript != null)
 			return startupScript;
 		
-		PrintStream printStream = null;
 		File initFile;
-        try
+		try 
+		{
+			initFile = File.createTempFile("mscriptInit", ".m");
+		} 
+		catch (IOException e1) 
+		{
+			throw new MatlabConnectionException("Could not create temporary matlab initialization script.", e1);
+		}
+        initFile.deleteOnExit();
+        try(PrintStream printStream = new PrintStream(initFile);)
         {
-            initFile = File.createTempFile("mscriptInit", ".m");
-            initFile.deleteOnExit();
-            printStream = new PrintStream(initFile);
-            
             // Write header
             printStream.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             printStream.println("% Initialization file for using Matlab as a ScriptEngine in Java.                                        %");
@@ -84,11 +89,6 @@ class ScriptingTools
         catch (Exception e)
         {
             throw new MatlabConnectionException("Could not create temporary matlab initialization script.", e);
-        }
-        finally
-        {
-        	if(printStream != null)
-        		printStream.close();
         }
 	}
 	

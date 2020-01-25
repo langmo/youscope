@@ -134,7 +134,7 @@ public class SingleComponentDefinitionPanel<C extends Configuration> extends Dyn
 		return currentAddon.getAddonMetadata();
 	}
 	
-	private Component createErrorUI(String message, Exception exception)
+	private static Component createErrorUI(String message, Exception exception)
 	{
 		if(exception != null)
 			message += "\n\n"+exception.getMessage();

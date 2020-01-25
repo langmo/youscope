@@ -68,7 +68,7 @@ class MeasurementTree extends JTree
 			setSelectionPath(path);
 		
 	}
-	private TreePath findNode(ImageFolderNode rootNode, ImageFolderNode node)
+	private static TreePath findNode(ImageFolderNode rootNode, ImageFolderNode node)
 	{
 		TreePath path = new TreePath(rootNode);
 		if(node == null)

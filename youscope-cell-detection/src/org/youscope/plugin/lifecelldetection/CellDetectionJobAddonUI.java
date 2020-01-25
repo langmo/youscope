@@ -16,6 +16,7 @@ package org.youscope.plugin.lifecelldetection;
 import java.awt.Component;
 
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUIAdapter;
@@ -69,7 +70,7 @@ public class CellDetectionJobAddonUI extends ComponentAddonUIAdapter<CellDetecti
 		quantificationPanel = new QuantificationPanel(configuration, getClient(), getServer(), getContainingFrame());
 		miscPanel = new MiscPanel(configuration, getContainingFrame());
 		
-		JTabbedPane contentPane = new JTabbedPane(JTabbedPane.TOP);
+		JTabbedPane contentPane = new JTabbedPane(SwingConstants.TOP);
         contentPane.addTab("Detection Image", inputImageConfigurationPanel);
         contentPane.addTab("Quantification Images", quantificationPanel);
         contentPane.addTab("Detection Algorithm", detectionAlgorithmConfigurationPanel);

@@ -31,7 +31,7 @@ public class UserControlMeasurementCallbackFactory implements CallbackAddonFacto
 	@Override
 	public Callback createCallback(String typeIdentifier,
 			YouScopeClient client, YouScopeServer server) throws CallbackCreationException {
-		if(UserControlMeasurementCallbackImpl.TYPE_IDENTIFIER.equals(typeIdentifier))
+		if(UserControlMeasurementCallback.TYPE_IDENTIFIER.equals(typeIdentifier))
 		{
 			try {
 				return new UserControlMeasurementCallbackImpl(client, server);
@@ -44,11 +44,11 @@ public class UserControlMeasurementCallbackFactory implements CallbackAddonFacto
 
 	@Override
 	public String[] getSupportedTypeIdentifiers() {
-		return new String[]{UserControlMeasurementCallbackImpl.TYPE_IDENTIFIER};
+		return new String[]{UserControlMeasurementCallback.TYPE_IDENTIFIER};
 	}
 
 	@Override
 	public boolean isSupportingTypeIdentifier(String typeIdentifier) {
-		return UserControlMeasurementCallbackImpl.TYPE_IDENTIFIER.equals(typeIdentifier);
+		return UserControlMeasurementCallback.TYPE_IDENTIFIER.equals(typeIdentifier);
 	}
 }

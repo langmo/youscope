@@ -369,74 +369,66 @@ class ProtocolVisualizerFrame
 				throw new NemesysException("Could not create local script engine with name " + scriptEngine + ".");
 	
 			// Set output writer of engine
-			StringWriter scriptOutputListener = new StringWriter();
-			localEngine.getContext().setWriter(scriptOutputListener);
-			scriptOutputListener.flush();
-			String message = scriptOutputListener.toString();
-			if(message != null && message.length() > 0)
+			try(StringWriter scriptOutputListener = new StringWriter();)
 			{
-				client.sendMessage("Nemesys script message: " + message);
-				scriptOutputListener.getBuffer().setLength(0);
-			}
-			
-			VirtualScriptCallback scriptCallback;
-			try
-			{
-				scriptCallback = new VirtualScriptCallback();
-			}
-			catch(RemoteException e1)
-			{
-				throw new NemesysException("Error while communicating with script engine.", e1);
-			}
-			
-			for(int i=0; i<numTimeSteps; i++)
-			{
-				int currentTime = startTime + i * timeStep;
-				
-				// Set controller algorithm variables
-				localEngine.put("evaluationNumber", i);
-				localEngine.put("evaluationTime", currentTime);
-				localEngine.put("nemesys", scriptCallback);
-				
-				// Run controller algorithm.
-				StringReader fileReader = null;
-				BufferedReader bufferedReader = null;
 				localEngine.getContext().setWriter(scriptOutputListener);
-				try
-				{
-					fileReader = new StringReader(script);
-					bufferedReader = new BufferedReader(fileReader);
-					localEngine.eval(bufferedReader);
-				}
-				catch(ScriptException e)
-				{
-					throw new NemesysException("Nemesys script produced error.", e);
-				}
-				finally
-				{
-					if(fileReader != null)
-						fileReader.close();
-					if(bufferedReader != null)
-					{
-						try {
-							bufferedReader.close();
-						} catch (IOException e) {
-							client.sendError("Could not close script file buffer.", e);
-						}
-					}
-				}
 				scriptOutputListener.flush();
-				message = scriptOutputListener.toString();
+				String message = scriptOutputListener.toString();
 				if(message != null && message.length() > 0)
 				{
 					client.sendMessage("Nemesys script message: " + message);
 					scriptOutputListener.getBuffer().setLength(0);
 				}
 				
-				for(int j=0; j<curves.length; j++)
+				VirtualScriptCallback scriptCallback;
+				try
 				{
-					curves[j].add(timeUnit.toUnit(currentTime), scriptCallback.getFlowRate(j));
+					scriptCallback = new VirtualScriptCallback();
 				}
+				catch(RemoteException e1)
+				{
+					throw new NemesysException("Error while communicating with script engine.", e1);
+				}
+				
+				for(int i=0; i<numTimeSteps; i++)
+				{
+					int currentTime = startTime + i * timeStep;
+					
+					// Set controller algorithm variables
+					localEngine.put("evaluationNumber", i);
+					localEngine.put("evaluationTime", currentTime);
+					localEngine.put("nemesys", scriptCallback);
+					
+					// Run controller algorithm.
+					localEngine.getContext().setWriter(scriptOutputListener);
+					try(StringReader fileReader = new StringReader(script);
+							BufferedReader bufferedReader = new BufferedReader(fileReader);)
+					{
+						localEngine.eval(bufferedReader);
+					}
+					catch(ScriptException e)
+					{
+						throw new NemesysException("Nemesys script produced error.", e);
+					}
+					catch (IOException e) 
+					{
+							client.sendError("Could not close script file buffer.", e);
+					}
+					scriptOutputListener.flush();
+					message = scriptOutputListener.toString();
+					if(message != null && message.length() > 0)
+					{
+						client.sendMessage("Nemesys script message: " + message);
+						scriptOutputListener.getBuffer().setLength(0);
+					}
+					
+					for(int j=0; j<curves.length; j++)
+					{
+						curves[j].add(timeUnit.toUnit(currentTime), scriptCallback.getFlowRate(j));
+					}
+				}
+			} catch (@SuppressWarnings("unused") IOException e2) {
+				// do nothing: we can just not close some writer...
 			}
 		}
 		for(int i=0; i<curves.length; i++)

@@ -41,20 +41,21 @@ class YouPongSounds
 		looseSoundURL = YouPongSounds.class.getClassLoader().getResource(LOOSE_SOUND_FILE);
 		this.client = client;
 	}
-	private Clip playAudioFile(URL soundURL) throws Exception
+	private static Clip playAudioFile(URL soundURL) throws Exception
 	{
-		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);
-		BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);
-	    AudioFormat af = audioInputStream.getFormat();
-	    int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());
-	    byte[] audio = new byte[size];
-	    DataLine.Info info = new DataLine.Info(Clip.class, af, size);
-	    bufferedInputStream.read(audio, 0, size);
-	    Clip clip = (Clip) AudioSystem.getLine(info);
-	    clip.open(af, audio, 0, size); 
-	    clip.start();
-	    bufferedInputStream.close();
-	    return clip;        
+		try(AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundURL);BufferedInputStream bufferedInputStream = new BufferedInputStream(audioInputStream);)
+		{
+		    AudioFormat af = audioInputStream.getFormat();
+		    int size = (int) (af.getFrameSize() * audioInputStream.getFrameLength());
+		    byte[] audio = new byte[size];
+		    DataLine.Info info = new DataLine.Info(Clip.class, af, size);
+		    bufferedInputStream.read(audio, 0, size);
+		    Clip clip = (Clip) AudioSystem.getLine(info);
+		    clip.open(af, audio, 0, size); 
+		    clip.start();
+		    bufferedInputStream.close();
+		    return clip;
+		}
 
 	} 
 	public void playHit()

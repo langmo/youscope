@@ -66,17 +66,10 @@ public class ConfigurationManagement
 	 */
 	public static Configuration loadConfiguration(String fileName) throws IOException
 	{
-		FileInputStream fis = null;
-		try
+		try(FileInputStream fis = new FileInputStream(fileName);)
 		{
-			fis = new FileInputStream(fileName);
 			XStream xstream = getSerializerInstance();
 			return (Configuration)xstream.fromXML(fis);
-		}
-		finally
-		{
-			if(fis != null)
-				fis.close();
 		}
 	}
 
@@ -97,27 +90,16 @@ public class ConfigurationManagement
 		if(!folder.exists())
 			folder.mkdirs();
 		
-		FileOutputStream fos = null;
-		OutputStreamWriter writer = null;
-		try
+		try(FileOutputStream fos = new FileOutputStream(new File(fileName)); OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");)
 		{
-			fos = new FileOutputStream(new File(fileName));
-			writer = new OutputStreamWriter(fos, "UTF-8");
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 			writer.flush();
 			xstream.toXML(configuration, writer);
 		}
-		finally
-		{
-			if(fos != null)
-				fos.close();
-			if(writer != null)
-				writer.close();
-		}
 	}
 
 	private static XStream singleton = null;
-	private synchronized static XStream getSerializerInstance() throws IOException
+	private synchronized static XStream getSerializerInstance()
 	{
 		if(singleton != null)
 			return singleton;

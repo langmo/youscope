@@ -63,7 +63,7 @@ class OutputConfigurationPanel extends DynamicPanel
 		displayAddonConfiguration(componentBox.getSelectedElement());
 	}
 	
-	private Component createErrorUI(String message, Exception exception)
+	private static Component createErrorUI(String message, Exception exception)
 	{
 		if(exception != null)
 			message += "\n\n"+exception.getMessage();

@@ -19,7 +19,6 @@ import org.youscope.addon.microplate.RectangularMicroplateLayout;
 import org.youscope.common.MeasurementContext;
 import org.youscope.common.MessageListener;
 import org.youscope.common.PositionInformation;
-import org.youscope.common.configuration.ConfigurationException;
 import org.youscope.common.microplate.MicroplateLayout;
 import org.youscope.common.resource.ResourceException;
 
@@ -35,7 +34,7 @@ class CustomRectangularMicroplateResource extends UnicastRemoteObject implements
 	private String name = "custom microplate";
 	private final UUID uuid = UUID.randomUUID();
 	public CustomRectangularMicroplateResource(PositionInformation positionInformation, String typeIdentifier)
-					throws ConfigurationException, RemoteException {
+					throws RemoteException {
 		this.typeIdentifier = typeIdentifier;
 		this.positionInformation= positionInformation;
 	}

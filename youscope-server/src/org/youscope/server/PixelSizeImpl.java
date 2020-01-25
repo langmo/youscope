@@ -115,7 +115,7 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 		ServerSystem.out.println("Added settings \"" + setting.toString() + "\" to pixel size configuration " + pixelSizeID + ".");
 	}
 
-	public void setPixelSize(double pixelSize, int accessID) throws MicroscopeLockedException, SettingException
+	public void setPixelSize(double pixelSize, int accessID) throws MicroscopeLockedException
 	{
 		microscope.lockExclusiveWrite(accessID);
 		try

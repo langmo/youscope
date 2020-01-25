@@ -565,6 +565,8 @@ public class BlossomAlgorithm
 					break;
 				}
 			}
+			if(blossom == null)
+				throw new BlossomException("Did not find exterior node.");
 			blossoms.remove(blossom);
 			
 			ArrayList<Edge> blossomEdges = new ArrayList<>(blossom.getBlossomEdges());
@@ -780,7 +782,7 @@ public class BlossomAlgorithm
 		root.clearEdgesToChilds();
 	}
 	
-	private void reverseEdgesToRoot(PseudoNode node) throws BlossomException, InterruptedException
+	private static void reverseEdgesToRoot(PseudoNode node) throws BlossomException, InterruptedException
 	{
 		do
 		{

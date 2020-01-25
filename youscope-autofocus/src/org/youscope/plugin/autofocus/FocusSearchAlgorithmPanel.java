@@ -82,7 +82,7 @@ class FocusSearchAlgorithmPanel extends JPanel
 		});
 	}
 	
-	private Component createErrorUI(String message, Exception exception)
+	private static Component createErrorUI(String message, Exception exception)
 	{
 		if(exception != null)
 			message += "\n\n"+exception.getMessage();

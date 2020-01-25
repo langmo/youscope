@@ -5,7 +5,6 @@ package org.youscope.plugin.matlabscripting.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -54,50 +53,41 @@ public class LongFileNameToShort
         	String folder = x64 ? LIBRARY_LOCATION_64 : LIBRARY_LOCATION_32;
         	
             // Copy library from jar achieve to the file system
-            InputStream inputStream = LongFileNameToShort.class.getClassLoader().getResourceAsStream(folder + LIBRARY_BASE_NAME + ".dll");
-            if(inputStream == null)
+            try(InputStream inputStream = LongFileNameToShort.class.getClassLoader().getResourceAsStream(folder + LIBRARY_BASE_NAME + ".dll");)
             {
-            	throw new Exception("Could not find temporary native library file to convert file names to old-style 8.3 file names. Expected location was \""+folder + LIBRARY_BASE_NAME + ".dll"+"\".");
-            }
-            File libraryFile;
-            try
-            {
-                libraryFile = File.createTempFile(LIBRARY_BASE_NAME, ".dll");
-                libraryFile.deleteOnExit();
-                FileOutputStream fileOutputStream = new FileOutputStream(libraryFile);
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) > 0)
-                {
-                    fileOutputStream.write(buffer, 0, bytesRead);
-                }
-                fileOutputStream.close();
-            } 
-            catch (Exception e)
-            {
-            	throw new Exception("Could not extract temporary native library file to convert file names to old-style 8.3 file names.", e);
-            }
-            finally
-            {
-            	if(inputStream != null)
-            	{
-	            	try {
-						inputStream.close();
-					} catch (@SuppressWarnings("unused") IOException e) {
-						// do nothing.
-					}
-            	}
-            }
-
-            try
-            {
-            	System.load(libraryFile.getAbsolutePath());
-            }
-            catch(Throwable e)
-            {
-            	throw new Exception("Could not load extracted temporary native library file \"" + libraryFile.getAbsolutePath() +"\"  to convert file names to old-style 8.3 file names.", e);
-            }
-            libLoaded = true;
+	            if(inputStream == null)
+	            {
+	            	throw new Exception("Could not find temporary native library file to convert file names to old-style 8.3 file names. Expected location was \""+folder + LIBRARY_BASE_NAME + ".dll"+"\".");
+	            }
+	            File libraryFile;
+	            try
+	            {
+	                libraryFile = File.createTempFile(LIBRARY_BASE_NAME, ".dll");
+	                libraryFile.deleteOnExit();
+	                try(FileOutputStream fileOutputStream = new FileOutputStream(libraryFile);)
+	                {
+		                byte[] buffer = new byte[8192];
+		                int bytesRead;
+		                while ((bytesRead = inputStream.read(buffer)) > 0)
+		                {
+		                    fileOutputStream.write(buffer, 0, bytesRead);
+		                }
+	                }
+	            } 
+	            catch (Exception e)
+	            {
+	            	throw new Exception("Could not extract temporary native library file to convert file names to old-style 8.3 file names.", e);
+	            }
+	            try
+	            {
+	            	System.load(libraryFile.getAbsolutePath());
+	            }
+	            catch(Throwable e)
+	            {
+	            	throw new Exception("Could not load extracted temporary native library file \"" + libraryFile.getAbsolutePath() +"\"  to convert file names to old-style 8.3 file names.", e);
+	            }
+	            libLoaded = true;
+            }            
         }
         return (new LongFileNameToShort()).toShortFileName(longFileName);
     }

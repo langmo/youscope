@@ -160,13 +160,22 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		StandardFormats.addGridBagElement(cameraNamesField, pixelsFromCameraLayout, newLineConstr, pixelsFromCameraPanel);
 		StandardFormats.addGridBagElement(pixelsFromCameraPanel, partLayout, newLineConstr, partPanel);
 		
+		ActionListener areaConfigChangedListener = new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				updateAreaConfig();
+			}
+		};
+		
 		// Pixels from user
 		GridBagLayout pixelsFromUserLayout  = new GridBagLayout();
 		pixelsFromUserPanel = new JPanel(pixelsFromUserLayout);
 		StandardFormats.addGridBagElement(new JLabel("Number of pixels in an image (width / height):"), pixelsFromUserLayout, newLineConstr, pixelsFromUserPanel);
 		JPanel numPixelPanel = new JPanel(new GridLayout(1, 2));
-		numPixelXField.addActionListener(new AreaConfigChangedListener());
-		numPixelYField.addActionListener(new AreaConfigChangedListener());
+		numPixelXField.addActionListener(areaConfigChangedListener);
+		numPixelYField.addActionListener(areaConfigChangedListener);
 		numPixelPanel.add(numPixelXField);
 		numPixelPanel.add(numPixelYField);
 		StandardFormats.addGridBagElement(numPixelPanel, pixelsFromUserLayout, newLineConstr, pixelsFromUserPanel);
@@ -228,20 +237,20 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		GridBagLayout pixelSizeFromUserLayout  = new GridBagLayout();
 		pixelSizeFromUserPanel = new JPanel(pixelSizeFromUserLayout);
 		StandardFormats.addGridBagElement(new JLabel("Pixel size in um:"), pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
-		pixelSizeField.addActionListener(new AreaConfigChangedListener());
+		pixelSizeField.addActionListener(areaConfigChangedListener);
 		StandardFormats.addGridBagElement(pixelSizeField, pixelSizeFromUserLayout, newLineConstr, pixelSizeFromUserPanel);
 		StandardFormats.addGridBagElement(pixelSizeFromUserPanel, partLayout, newLineConstr, partPanel);	
 
 		// Overlap
 		StandardFormats.addGridBagElement(new JLabel("Percentage of overlap between the pictures (0.0 - 1.0):"), partLayout, newLineConstr, partPanel);
-		overlapField.addActionListener(new AreaConfigChangedListener());
+		overlapField.addActionListener(areaConfigChangedListener);
 		StandardFormats.addGridBagElement(overlapField, partLayout, newLineConstr, partPanel);
 
 		// Number of images
 		StandardFormats.addGridBagElement(new JLabel("Number of images (x- / y-direction):"), partLayout, newLineConstr, partPanel);
 		JPanel numImagesPanel = new JPanel(new GridLayout(1, 2));
-		nxField.addActionListener(new AreaConfigChangedListener());
-		nyField.addActionListener(new AreaConfigChangedListener());
+		nxField.addActionListener(areaConfigChangedListener);
+		nyField.addActionListener(areaConfigChangedListener);
 		numImagesPanel.add(nxField);
 		numImagesPanel.add(nyField);
 		StandardFormats.addGridBagElement(numImagesPanel, partLayout, newLineConstr, partPanel);
@@ -313,14 +322,6 @@ class AreaConfigurationPage extends MeasurementAddonUIPage<ComposedImagingMeasur
 		{
 			numPixelXField.setValue(imageSize.width);
 			numPixelYField.setValue(imageSize.height);
-		}
-	}
-	private class AreaConfigChangedListener implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent arg0)
-		{
-			updateAreaConfig();
 		}
 	}
 	

@@ -149,7 +149,7 @@ class MetadataManagerImpl extends HashMap<String, MetadataDefinition> implements
 		return get(name);
 	}
 
-	private XStream getSerializerInstance()
+	private static XStream getSerializerInstance()
 	{
 		XStream xstream = new XStream();
 		xstream.aliasSystemAttribute("type", "class");

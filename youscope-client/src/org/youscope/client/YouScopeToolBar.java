@@ -227,10 +227,8 @@ class YouScopeToolBar extends JToolBar
 				return;
 		}
 		
-		BufferedReader reader = null;
-        try
-		{
-			reader = new BufferedReader(new FileReader(configFile));
+		try(BufferedReader reader = new BufferedReader(new FileReader(configFile));)
+        {
 			while(true)
 			{
 				String line = reader.readLine();
@@ -248,23 +246,9 @@ class YouScopeToolBar extends JToolBar
 			ClientSystem.err.println("Could not read toolbar configuration file " + configFile.toString()+ ".", e1);
 			return;
 		}
-		finally
-		{
-			if(reader != null)
-			{
-				try
-				{
-					reader.close();
-				}
-				catch(Exception e1)
-				{
-					ClientSystem.err.println("Could not close toolbar configuration file " + configFile.toString()+ ".", e1);
-				}
-			}						
-		}
 	}
 	
-	private boolean createConfiguration()
+	private static boolean createConfiguration()
 	{
 		File configFile = new File(CONFIG_FILE).getAbsoluteFile();
 		File parentDir = configFile.getParentFile();
@@ -276,9 +260,8 @@ class YouScopeToolBar extends JToolBar
 				return false;
 			}
 		}
-		try
+		try(PrintStream fileStream = new PrintStream(configFile);)
 		{
-			PrintStream fileStream = new PrintStream(configFile);
 			fileStream.println("YouScope.YouScopeLiveStream");
 			fileStream.println("YouScope.YouScopePositionControl");
 			fileStream.println();
@@ -288,7 +271,6 @@ class YouScopeToolBar extends JToolBar
 			fileStream.println("YouScope.SimpleMeasurement");
 			fileStream.println("YouScope.MicroPlateMeasurement");
 			fileStream.println();
-			fileStream.close();
 		}
 		catch(Exception e)
 		{

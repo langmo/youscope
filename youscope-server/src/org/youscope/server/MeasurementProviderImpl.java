@@ -55,7 +55,7 @@ class MeasurementProviderImpl extends UnicastRemoteObject implements Measurement
 	@Override
 	public Measurement createMeasurement(int measurementRuntime) throws RemoteException
 	{
-		return new MeasurementRMI(new MeasurementImpl(measurementRuntime), measurementManager);
+		return new MeasurementRMI(new MeasurementImpl(measurementRuntime), measurementManager); 
 	}
 
 	@Override
@@ -156,8 +156,8 @@ class MeasurementProviderImpl extends UnicastRemoteObject implements Measurement
 		return measurement;
 	}
 	
-	private void initializeMeasurement(Measurement measurement, MeasurementConfiguration measurementConfiguration, ConstructionContextImpl constructionContext)
-            throws ConfigurationException, RemoteException, ComponentCreationException
+	private static void initializeMeasurement(Measurement measurement, MeasurementConfiguration measurementConfiguration, ConstructionContextImpl constructionContext)
+            throws ConfigurationException, ComponentCreationException
     {
 		// make local copy.
 		if(measurementConfiguration != null)

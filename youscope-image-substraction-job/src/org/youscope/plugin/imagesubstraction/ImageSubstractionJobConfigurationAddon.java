@@ -84,7 +84,7 @@ class ImageSubstractionJobConfigurationAddon  extends ComponentAddonUIAdapter<Im
 				"Takes two images at different focus offsets and substracts their logarithms. Typically used for cell segmentation algorithms, since image substraction enhances cell-cell and cell-medium contrasts.",
 				"icons/image-blur.png");
 	}
-	private void goFocus(Microscope microscope, String focusDevice, double offset, long adjustmentTime) throws InterruptedException, RemoteException, MicroscopeLockedException, MicroscopeException, DeviceException
+	private static void goFocus(Microscope microscope, String focusDevice, double offset, long adjustmentTime) throws InterruptedException, RemoteException, MicroscopeLockedException, MicroscopeException, DeviceException
 	{
 		if(focusDevice == null)
 		{

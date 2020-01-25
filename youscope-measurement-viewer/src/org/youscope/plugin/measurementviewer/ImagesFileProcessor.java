@@ -36,10 +36,8 @@ class ImagesFileProcessor
 		
 		
 		// Open the CSV file
-		LineNumberReader lineReader = null;
-		try
+		try(LineNumberReader lineReader = new LineNumberReader(new FileReader(imagesFile));)
 		{
-			lineReader = new LineNumberReader(new FileReader(imagesFile));
 			int lineNumber = 1;
 			
 			// Read header line of the CSV file.
@@ -127,11 +125,6 @@ class ImagesFileProcessor
 			
 			// Return result.
 			return rootNode;
-		}
-		finally
-		{
-			if(lineReader != null)
-				lineReader.close();
 		}
 	}
 }

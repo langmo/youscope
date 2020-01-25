@@ -716,7 +716,7 @@ class ManageAddDeviceFrame
 		}
 	}
 	
-	private String getErrorText(String message, Exception e)
+	private static String getErrorText(String message, Exception e)
 	{
 		String errorMessage = "<p style=\"color:#EE2222\">" + message + "</p>";
 		if (e != null)

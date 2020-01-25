@@ -526,7 +526,7 @@ class InformationSaver
 	
 	private static final String DEFAULT_INFORMATION_STYLE_RESOURCE = "org/youscope/server/information_style.xsl";
 	private static final String INFORMATION_STYLE_FILE = "configuration/information_style.xsl";
-	private void copyDefaultStyle() throws IOException
+	private static void copyDefaultStyle() throws IOException
 	{
 		File dest = new File(INFORMATION_STYLE_FILE).getAbsoluteFile();
 		if(dest.exists())

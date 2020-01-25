@@ -252,32 +252,20 @@ class ControllerJobImpl extends JobAdapter implements ControllerJob
 		localEngine.put("controller", callback);
 		
 		// Run controller algorithm.
-		StringReader fileReader = null;
-		BufferedReader bufferedReader = null;
-		Object returnVal;
+		Object returnVal = null;
 		localEngine.getContext().setWriter(scriptOutputListener);
-		try
+		try(StringReader fileReader = new StringReader(controllerScript);
+				BufferedReader bufferedReader = new BufferedReader(fileReader);)
 		{
-			fileReader = new StringReader(controllerScript);
-			bufferedReader = new BufferedReader(fileReader);
 			returnVal = localEngine.eval(bufferedReader);
 		}
 		catch(ScriptException e)
 		{
 			throw new JobException("Controller algorithm evaluation failed.", e);
 		}
-		finally
+		catch (IOException e) 
 		{
-			if(fileReader != null)
-				fileReader.close();
-			if(bufferedReader != null)
-			{
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					this.sendErrorMessage("Could not close file buffer.", e);
-				}
-			}
+			this.sendErrorMessage("Could not close file buffer.", e);
 		}
 		receiveEngineMessages();
 		if(returnVal != null && returnVal.toString().length() > 0)

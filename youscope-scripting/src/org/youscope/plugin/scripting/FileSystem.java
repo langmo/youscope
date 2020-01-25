@@ -429,7 +429,7 @@ class FileSystem extends JPanel
 			return new FolderNode(file, parentNode);
 		return new FileNode(file, parentNode);
 	}
-	private File[] sortFiles(File[] files)
+	private static File[] sortFiles(File[] files)
 	{
 		class SortableFile implements Comparable<SortableFile>
 		{

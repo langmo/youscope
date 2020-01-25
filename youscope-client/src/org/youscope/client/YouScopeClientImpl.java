@@ -59,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -253,7 +254,7 @@ public class YouScopeClientImpl extends JFrame
             }
         });
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		tabbedPane.addTab("Microscope Log", logPanel);
 		refreshLastMeasurementsList();
 		tabbedPane.addTab("Last Measurements", new JScrollPane(lastMeasurementConfigurationsList));
@@ -654,7 +655,7 @@ public class YouScopeClientImpl extends JFrame
 		setExtendedState(MAXIMIZED_BOTH);
 	}
 	
-	private List<JMenuItem> getToolsMenuItems()
+	private static List<JMenuItem> getToolsMenuItems()
 	{
 		ArrayList<JMenuItem> toolMenuItems = new ArrayList<JMenuItem>();
 		for(final ToolMetadata metadata : ClientAddonProviderImpl.getProvider().getToolMetadata())
@@ -739,7 +740,7 @@ public class YouScopeClientImpl extends JFrame
 		return toolMenuItems;
 	}
 	
-	private List<JMenuItem> getMeasurementMenuItems()
+	private static List<JMenuItem> getMeasurementMenuItems()
 	{
 		ArrayList<JMenuItem> measurementMenuItems = new ArrayList<JMenuItem>();
 		for(final ComponentMetadata<? extends MeasurementConfiguration> metadata : ClientAddonProviderImpl.getProvider().getComponentMetadata(MeasurementConfiguration.class))
@@ -1029,6 +1030,7 @@ public class YouScopeClientImpl extends JFrame
 		{
 			ClientSystem.err.println("Could not find policy file (" + POLICY_FILE + "). Quitting...");
 			System.exit(1);
+			return;
 		}
 		System.setProperty("java.security.policy", policyURL.toString());
 
@@ -1178,7 +1180,7 @@ public class YouScopeClientImpl extends JFrame
 		return youScopeClient;
 	}
 	
-	private void askForConfiguration(String lastConfigFile, Exception lastException)
+	private static void askForConfiguration(String lastConfigFile, Exception lastException)
 	{
 		YouScopeFrame frame = YouScopeFrameImpl.createTopLevelFrame(); 
 		@SuppressWarnings("unused")
@@ -1192,11 +1194,11 @@ public class YouScopeClientImpl extends JFrame
 		{
 			if(configurationFile != null)
 			{
-				FileReader fileReader = new FileReader(configurationFile);
-				RMIReader rmiReader = new RMIReader(fileReader);
-				getMicroscope().loadConfiguration(rmiReader);
-				rmiReader.close();
-				fileReader.close();
+				try(FileReader fileReader = new FileReader(configurationFile);
+						RMIReader rmiReader = new RMIReader(fileReader);)
+				{
+					getMicroscope().loadConfiguration(rmiReader);
+				}
 			}
 			else
 				getMicroscope().loadConfiguration(null);
@@ -1208,6 +1210,7 @@ public class YouScopeClientImpl extends JFrame
 		checkLastConfigFileVersion();
 	}
 	
+	@SuppressWarnings("static-method")
 	boolean saveMicroscopeConfiguration()
 	{
 		PropertyProviderImpl settings = PropertyProviderImpl.getInstance();
@@ -1232,27 +1235,14 @@ public class YouScopeClientImpl extends JFrame
 		}
 		
 		// Save content to file
-		RMIWriter rmiWriter = null;
-		try
+		try(FileWriter fileWriter = new FileWriter(file); RMIWriter rmiWriter = new RMIWriter(fileWriter);)
 		{
-			rmiWriter = new RMIWriter(new FileWriter(file));
 			YouScopeClientImpl.getMicroscope().saveConfiguration(rmiWriter);
 		}
 		catch(Exception e)
 		{
 			ClientSystem.err.println("Could not create or save configuration.", e);
 			return false;
-		}
-		finally
-		{
-			if(rmiWriter != null)
-			{
-				try {
-					rmiWriter.close();
-				} catch (@SuppressWarnings("unused") IOException e1) {
-					// do nothing.
-				}
-			}
 		}
 		
 		// Add file to list of last configurations

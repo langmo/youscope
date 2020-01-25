@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -264,7 +265,7 @@ class ConfigFileChooserFrame
 			{
 				setOpaque(true);
 				setBorder(new EmptyBorder(1, 1, 1, 1));
-				separator = new JSeparator(JSeparator.HORIZONTAL);
+				separator = new JSeparator(SwingConstants.HORIZONTAL);
 			}
 
 			@Override

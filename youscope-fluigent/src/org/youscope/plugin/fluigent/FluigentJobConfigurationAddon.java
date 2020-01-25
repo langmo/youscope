@@ -215,11 +215,9 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
                     
                     getClient().getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                     
-                    BufferedReader reader = null;
                     String protocol = "";
-                    try
-					{
-						reader = new BufferedReader(new FileReader(file));
+                    try(BufferedReader reader = new BufferedReader(new FileReader(file));)
+                    {
 						while(true)
 						{
 							String line = reader.readLine();
@@ -232,20 +230,6 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
 					{
 						sendErrorMessage("Could not load Fluigent protocol " + file.toString()+ ".", e1);
 						return;
-					}
-					finally
-					{
-						if(reader != null)
-						{
-							try
-							{
-								reader.close();
-							}
-							catch(Exception e1)
-							{
-								sendErrorMessage("Could not close protocol " + file.toString()+ ".", e1);
-							}
-						}						
 					}
 					
 					scriptField.setText(protocol);
@@ -286,11 +270,9 @@ public class FluigentJobConfigurationAddon extends ComponentAddonUIAdapter<Fluig
                 getClient().getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                 
                 String text = scriptField.getText();
-        		try
+        		try(PrintStream fileStream = new PrintStream(file);)
         		{
-        			PrintStream fileStream = new PrintStream(file);
         			fileStream.print(text);
-        			fileStream.close();
         		}
         		catch(Exception e)
         		{

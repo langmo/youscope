@@ -97,7 +97,8 @@ public class JSONObject {
          * so the clone method returns itself.
          * @return     NULL.
          */
-        protected final Object clone() {
+        @Override
+		protected final Object clone() {
             return this;
         }
 
@@ -108,7 +109,8 @@ public class JSONObject {
          * @return true if the object parameter is the JSONObject.NULL object
          *  or null.
          */
-        public boolean equals(Object object) {
+        @Override
+		public boolean equals(Object object) {
             return object == null || object == this;
         }
 
@@ -117,9 +119,17 @@ public class JSONObject {
          * Get the "null" string value.
          * @return The string "null".
          */
-        public String toString() {
+        @Override
+		public String toString() {
             return "null";
         }
+
+
+		@Override
+		public int hashCode() 
+		{
+			return super.hashCode();
+		}
     }
 
 
@@ -325,7 +335,7 @@ public class JSONObject {
         try {
             return o instanceof Number ?
                     ((Number)o).doubleValue() : Double.parseDouble((String)o);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             throw new JSONException("JSONObject[" + quote(key) +
                 "] is not a number.");
         }
@@ -532,7 +542,7 @@ public class JSONObject {
     public boolean optBoolean(String key, boolean defaultValue) {
         try {
             return getBoolean(key);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -567,7 +577,7 @@ public class JSONObject {
             Object o = opt(key);
             return o instanceof Number ? ((Number)o).doubleValue() :
                 new Double((String)o).doubleValue();
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -600,7 +610,7 @@ public class JSONObject {
     public int optInt(String key, int defaultValue) {
         try {
             return getInt(key);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -661,7 +671,7 @@ public class JSONObject {
     public long optLong(String key, long defaultValue) {
         try {
             return getLong(key);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -920,7 +930,8 @@ public class JSONObject {
      *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *  with <code>}</code>&nbsp;<small>(right brace)</small>.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         try {
             Iterator<?>     keys = keys();
             StringBuffer sb = new StringBuffer("{");
@@ -936,7 +947,7 @@ public class JSONObject {
             }
             sb.append('}');
             return sb.toString();
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return null;
         }
     }

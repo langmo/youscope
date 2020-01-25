@@ -401,11 +401,11 @@ public class ScreeningPathResource  extends ResourceAdapter<ScreeningPathConfigu
 							else if(pos2[1] == tileLastColumn)
 								return -1;
 							// special rule for second column of wells, most left tiles, but only if not first row of wells
-							else if(well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos1[1] == tileFirstColumn && pos2[1] == tileFirstColumn)
+							else if(well1 != null && well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos1[1] == tileFirstColumn && pos2[1] == tileFirstColumn)
 								return pos1[0] < pos2[0] ? -1 : 1;
-							else  if(well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos1[1] == tileFirstColumn)
+							else  if(well1 != null && well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos1[1] == tileFirstColumn)
 								return -1;
-							else  if(well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos2[1] == tileFirstColumn)
+							else  if(well1 != null && well1.getWellX() == wellSecondColumn && well1.getWellY() != wellFirstRow && pos2[1] == tileFirstColumn)
 								return 1;
 							// None in last column. Go snake up
 							else if(pos1[0] != pos2[0])

@@ -425,12 +425,7 @@ class MeasurementControl
 		
 		for(AddonMetadata postProcessorMetadate : postProcessorMetadata)
 		{
-			try {
-				measurementProcessorChooser.add(new StartProcessorMenuItem(postProcessorMetadate));
-			} catch (@SuppressWarnings("unused") AddonException e1) {
-				continue;
-			}
-		
+			measurementProcessorChooser.add(new StartProcessorMenuItem(postProcessorMetadate));
 		}
 		
 		stopMeasurementButton.addActionListener(new ActionListener()
@@ -756,7 +751,7 @@ class MeasurementControl
 		 */
 		private static final long	serialVersionUID	= -1089398454827661984L;
 		private final AddonMetadata addonMetadata;
-		StartProcessorMenuItem(AddonMetadata addonMetadata) throws AddonException
+		StartProcessorMenuItem(AddonMetadata addonMetadata)
 		{
 			super(addonMetadata.getName());
 			this.addonMetadata = addonMetadata;

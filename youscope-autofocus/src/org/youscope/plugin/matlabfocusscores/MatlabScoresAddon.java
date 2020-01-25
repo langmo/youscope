@@ -197,12 +197,9 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 		URL matlabFile = getClass().getClassLoader().getResource(matlabFileURL);
 		if(matlabFile == null)
 			throw new ResourceException("Could not find Matlab script to calculate focus score. Expected location: " + matlabFileURL);
-		InputStreamReader fileReader = null;
-		BufferedReader bufferedReader;
-		try
+		try(InputStreamReader fileReader = new InputStreamReader(matlabFile.openStream());
+				BufferedReader bufferedReader = new BufferedReader(fileReader);)
 		{
-			fileReader = new InputStreamReader(matlabFile.openStream());
-			bufferedReader = new BufferedReader(fileReader);
 			scriptEngine.eval(bufferedReader);
 		}
 		catch(ScriptException ex)
@@ -221,21 +218,6 @@ class MatlabScoresAddon  extends ResourceAdapter<MatlabScoresConfiguration> impl
 		catch(IOException e1)
 		{
 			throw new ResourceException("Script file " + matlabFile.toString() + " could not be opened.", e1);
-		}
-		finally
-		{
-			receiveEngineMessages();
-			if(fileReader != null)
-			{
-				try
-				{
-					fileReader.close();
-				}
-				catch(@SuppressWarnings("unused") IOException e1)
-				{
-					// Do nothing.
-				}
-			}
 		}
 		
 		return focusSink.getLastScore();

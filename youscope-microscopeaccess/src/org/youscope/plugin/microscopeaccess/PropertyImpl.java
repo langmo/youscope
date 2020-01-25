@@ -100,7 +100,10 @@ public abstract class PropertyImpl implements PropertyInternal, Comparable<Prope
 	@Override
 	public abstract void setValue(String value, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException, DeviceException;
 	
-	protected void setStringValue(String value, int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException
+	/**
+	 * @throws MicroscopeLockedException thrown by subclasses. 
+	 */
+	protected void setStringValue(String value, int accessID) throws MicroscopeException, InterruptedException, MicroscopeLockedException
 	{
 		if(Thread.interrupted())
 			throw new InterruptedException();

@@ -59,7 +59,7 @@ class PreInitDevicePropertyImpl implements PreInitDevicePropertyInternal
 	}
 	
 	
-	private String[] getSerialPortNames() throws MicroscopeDriverException
+	private String[] getSerialPortNames()
 	{
 		DeviceInternal[] devices = microscope.getDevices(DeviceType.SerialDevice);
 		String[] deviceNames = new String[devices.length];

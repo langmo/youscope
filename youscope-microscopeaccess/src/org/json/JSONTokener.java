@@ -320,6 +320,8 @@ public class JSONTokener {
             case '[':
                 back();
                 return new JSONArray(this);
+		default:
+			break;
         }
 
         /*
@@ -372,26 +374,26 @@ public class JSONTokener {
                     try {
                         return new Integer(Integer.parseInt(s.substring(2),
                                 16));
-                    } catch (Exception e) {
+                    } catch (@SuppressWarnings("unused") Exception e) {
                         /* Ignore the error */
                     }
                 } else {
                     try {
                         return new Integer(Integer.parseInt(s, 8));
-                    } catch (Exception e) {
+                    } catch (@SuppressWarnings("unused") Exception e) {
                         /* Ignore the error */
                     }
                 }
             }
             try {
                 return new Integer(s);
-            } catch (Exception e) {
+            } catch (@SuppressWarnings("unused") Exception e) {
                 try {
                     return new Long(s);
-                } catch (Exception f) {
+                } catch (@SuppressWarnings("unused") Exception f) {
                     try {
                         return new Double(s);
-                    }  catch (Exception g) {
+                    }  catch (@SuppressWarnings("unused") Exception g) {
                         return s;
                     }
                 }
@@ -454,7 +456,8 @@ public class JSONTokener {
      *
      * @return " at character [this.myIndex] of [this.mySource]"
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return " at character " + this.myIndex + " of " + this.mySource;
     }
 }

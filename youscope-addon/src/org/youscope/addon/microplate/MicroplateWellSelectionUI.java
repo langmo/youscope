@@ -527,7 +527,7 @@ public class MicroplateWellSelectionUI extends AddonUIAdapter<AddonMetadata>
 			if(wellDisplay == null)
 				continue;
 			wellDisplay.setWellGroup(position.getGroup());
-			if((selectionMode == SelectionMode.EXACTLY_ONE || selectionMode == SelectionMode.SINGLE) && lastSelectedWell != null && !lastSelectedWell.equals(position))
+			if((selectionMode == SelectionMode.EXACTLY_ONE || selectionMode == SelectionMode.SINGLE) && lastSelectedWell != null && !lastSelectedWell.equals(position.getWell()))
 			{
 				wellDisplays.get(lastSelectedWell).setWellGroup(null);
 			}

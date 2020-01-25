@@ -14,7 +14,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -338,7 +337,7 @@ class DropletMicrofluidicJobCallbackUI
     	}
 	}
 
-	synchronized void initializeCallback(Serializable... arguments) throws RemoteException, CallbackException {
+	synchronized void initializeCallback(Serializable... arguments) {
 		numRegistered++;
 		String dropletName;
 		if(arguments == null || arguments.length < 1 || arguments[0]==null || !(arguments[0] instanceof PositionInformation) || ((PositionInformation)arguments[0]).getWell() == null)
@@ -354,7 +353,7 @@ class DropletMicrofluidicJobCallbackUI
 		setupUI();
 	}
 
-	synchronized void uninitializeCallback() throws RemoteException, CallbackException {
+	synchronized void uninitializeCallback() {
 		numRegistered--;
 		receivedData = true; // use anyway a new singleton.
 		if(numRegistered == 0 && frame != null)

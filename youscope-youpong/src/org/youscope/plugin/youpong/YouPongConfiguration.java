@@ -32,6 +32,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -401,7 +402,7 @@ class YouPongConfiguration extends JPanel
 		centralPanel.add(player1Panel);
 		centralPanel.add(player2Panel);
 
-		add(new JLabel("<html><center><h1>Welcome to YouPong</h1><h3>The best way to abuse the microscope for having fun!</h3></center>", JLabel.CENTER), BorderLayout.NORTH);
+		add(new JLabel("<html><center><h1>Welcome to YouPong</h1><h3>The best way to abuse the microscope for having fun!</h3></center>", SwingConstants.CENTER), BorderLayout.NORTH);
 		add(centralPanel, BorderLayout.CENTER);
 		add(startButton, BorderLayout.SOUTH);
 	}

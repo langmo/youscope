@@ -15,8 +15,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
 /**
  * Default model for the quick logger.
  * @author mlang
@@ -29,7 +27,7 @@ public class DefaultQuickLoggerModel implements QuickLoggerModel
 	private final int maxLines;
 	private volatile int firstLine = 0;
 	private volatile int lastLine = -1;
-	private final Calendar calendar = GregorianCalendar.getInstance();
+	private final Calendar calendar = Calendar.getInstance();
 	private final ArrayList<ActionListener> actionListeners = new ArrayList<ActionListener>();
 	/**
 	 * Constructor.

@@ -411,12 +411,12 @@ class PositionControl extends ToolAddonUIAdapter implements Runnable, YouScopeFr
         return contentPane;
 	}
 	
-	private double toSliderUnits(double moveStep)
+	private static double toSliderUnits(double moveStep)
 	{
 		return 10.0 * Math.log10(10.0 * moveStep);
 	}
 	
-	private double fromSliderUnits(double sliderStep)
+	private static double fromSliderUnits(double sliderStep)
 	{
 		return 0.1 * Math.pow(10.0, sliderStep / 10.0);
 	}
@@ -429,19 +429,22 @@ class PositionControl extends ToolAddonUIAdapter implements Runnable, YouScopeFr
             try
             {
                 Point2D.Double currentPosition = getMicroscope().getStageDevice().getPosition();
-                Formatter formatter = new Formatter();
-                xPositionField.setText(xPositionText + formatter.format("%2.2f um", currentPosition.x));
-                formatter.close();
-                formatter = new Formatter();
-                yPositionField.setText(yPositionText + formatter.format("%2.2f um", currentPosition.y));
-                formatter.close();
+                try(Formatter formatter = new Formatter();)
+                {
+                	xPositionField.setText(xPositionText + formatter.format("%2.2f um", currentPosition.x));
+                }
+                try(Formatter formatter = new Formatter();)
+                {
+                	yPositionField.setText(yPositionText + formatter.format("%2.2f um", currentPosition.y));
+                }
                 
                 if (focusDevicesField.getItemCount() > 0)
     			{
     				double focusPosition = getMicroscope().getFocusDevice(focusDevicesField.getSelectedItem().toString()).getFocusPosition();
-    				formatter = new Formatter();
-    				focusPositionField.setText(focusPositionText + formatter.format("%2.2f um", focusPosition));
-    				formatter.close();
+    				try(Formatter formatter = new Formatter();)
+                    {
+                    	focusPositionField.setText(focusPositionText + formatter.format("%2.2f um", focusPosition));
+                    }
     			}
                 else
                 {

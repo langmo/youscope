@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
-import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -64,7 +63,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 		return driverID;
 	}
 
-	void initializeDevice(int accessID) throws MicroscopeLockedException, MicroscopeDriverException, DeviceException
+	void initializeDevice(int accessID) throws MicroscopeLockedException, MicroscopeDriverException
 	{
 		// check settings
 		for(DeviceSetting setting : settings)

@@ -177,9 +177,10 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 					message += " in channel " + channel.getChannelGroupID() + "." + channel.getChannelID();
 				if(exposure > 0)
 				{
-					Formatter formatter = new Formatter();
-					message += " with exposure of " + formatter.format("%2.2f ms", exposure);
-					formatter.close();
+					try(Formatter formatter = new Formatter();)
+					{
+						message += " with exposure of " + formatter.format("%2.2f ms", exposure);
+					}
 				}
 				message += ".";
 				microscope.stateChanged(message);
@@ -232,10 +233,11 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			deviceStateModified();
 			microscope.unlockWrite();
 		}
-		Formatter formatter = new Formatter();
-		String exposureStr =formatter.format("%2.2f ms.", exposure).toString();
-		formatter.close();
-		microscope.stateChanged("Exposure of camera " + cameraDevice + " set to " + exposureStr);
+		try(Formatter formatter = new Formatter();)
+		{
+			String exposureStr =formatter.format("%2.2f ms.", exposure).toString();
+			microscope.stateChanged("Exposure of camera " + cameraDevice + " set to " + exposureStr);
+		}
 	}
 	public double getExposure() throws MicroscopeException, InterruptedException
 	{
@@ -1127,9 +1129,10 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 				message += " in channel " + channel.getChannelGroupID() + "." + channel.getChannelID();
 			if(exposure > 0)
 			{
-				Formatter formatter = new Formatter();
-				message += " with exposure of " + formatter.format("%2.2f ms", exposure);
-				formatter.close();
+				try(Formatter formatter = new Formatter();)
+				{
+					message += " with exposure of " + formatter.format("%2.2f ms", exposure);
+				}
 			}
 			message += " was made, but error occured when trying to obtain the image data from the camera and waiting additional time for the image data to show up did not help.";
 			
@@ -1354,9 +1357,10 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			message += " in channel " + channel.getChannelGroupID() + "." + channel.getChannelID();
 		if(exposure > 0)
 		{
-			Formatter formatter = new Formatter();
-			message += " with exposure of " + formatter.format("%2.2f ms", exposure);
-			formatter.close();
+			try(Formatter formatter = new Formatter();)
+			{
+				message += " with exposure of " + formatter.format("%2.2f ms", exposure);
+			}
 		}
 		message += ".";
 		microscope.stateChanged(message);

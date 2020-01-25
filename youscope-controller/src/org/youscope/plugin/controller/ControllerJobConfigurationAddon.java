@@ -17,6 +17,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -71,7 +72,7 @@ public class ControllerJobConfigurationAddon extends ComponentAddonUIAdapter<Con
 	    algorithmConfigurationPanel = new AlgorithmConfigurationPanel(configuration, getClient(), getServer());
 	    miscConfigurationPanel = new MiscConfigurationPanel(configuration, getContainingFrame());
 	    
-		JTabbedPane centralPanel = new JTabbedPane(JTabbedPane.TOP);
+		JTabbedPane centralPanel = new JTabbedPane(SwingConstants.TOP);
         centralPanel.addTab("Input", inputJobConfigurationPanel);
         centralPanel.addTab("Output", outputJobConfigurationPanel);
         centralPanel.addTab("Control Algorithm", algorithmConfigurationPanel);

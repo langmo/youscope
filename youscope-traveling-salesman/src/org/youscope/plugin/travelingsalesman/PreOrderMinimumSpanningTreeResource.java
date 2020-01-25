@@ -53,12 +53,7 @@ public class PreOrderMinimumSpanningTreeResource extends ResourceAdapter<PreOrde
 	public List<PositionInformation> getPath(Map<PositionInformation, ? extends Point2D.Double> positions)
 			throws ResourceException {
 				// Represent all positions in the microplate as a Vertex.
-				ArrayList<Vertex> vertices;
-				try {
-					vertices = new ArrayList<>(OptimizerHelper.toVertices(positions));
-				} catch (InterruptedException e) {
-					throw new ResourceException("Computation interrupted by user.", e);
-				}
+				ArrayList<Vertex> vertices = new ArrayList<>(OptimizerHelper.toVertices(positions));
 				if(vertices.size() <= 0)
 					return new ArrayList<PositionInformation>(0);
 				// Calculate shortest path approximation

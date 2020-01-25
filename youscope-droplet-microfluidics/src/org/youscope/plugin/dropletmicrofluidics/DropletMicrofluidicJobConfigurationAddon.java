@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.youscope.addon.AddonException;
 import org.youscope.addon.component.ComponentAddonUI;
@@ -98,7 +99,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		controllerConfigurationPanel = new ControllerConfigurationPanel(configuration, connectedSyringes); 
 		
 		
-		JTabbedPane contentPane = new JTabbedPane(JTabbedPane.TOP);
+		JTabbedPane contentPane = new JTabbedPane(SwingConstants.TOP);
 		contentPane.addTab("Physical Configuration", physicalConfigurationPanel);
 		contentPane.addTab("Autofocus Configuration", autofocusPanel);
 		contentPane.addTab("Observer Configuration", observerConfigurationPanel);
@@ -117,7 +118,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		private final JComboBox<String> nemesysDeviceField = new JComboBox<String>();
 		private final DynamicPanel syringesPanel = new DynamicPanel();
 		private JCheckBox[] selectedSyringes = new JCheckBox[0];
-		PhysicalConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
+		PhysicalConfigurationPanel(DropletMicrofluidicJobConfiguration configuration)
 		{
 			add(new JLabel("Microfluidic chip number:"));
 			chipField.setMinimalValue(1);
@@ -228,7 +229,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		private ComponentAddonUI<? extends DropletControllerConfiguration> currentAddon = null;
 		private int[] connectedSyringes;
 		
-		ControllerConfigurationPanel(DropletMicrofluidicJobConfiguration configuration, int[] connectedSyringes) throws AddonException
+		ControllerConfigurationPanel(DropletMicrofluidicJobConfiguration configuration, int[] connectedSyringes)
 		{
 			this.connectedSyringes = connectedSyringes;
 			DropletControllerConfiguration lastConfiguration = configuration.getControllerConfiguration();
@@ -341,7 +342,7 @@ class DropletMicrofluidicJobConfigurationAddon extends ComponentAddonUIAdapter<D
 		private JTextField dropletTableNameField = new JTextField();
 		private JLabel dropletTableNameLabel = new JLabel("Droplet-table save name (without extension):");
 		private JCheckBox saveDropletTableField = new JCheckBox("Save droplet table.");
-		ObserverConfigurationPanel(DropletMicrofluidicJobConfiguration configuration) throws AddonException
+		ObserverConfigurationPanel(DropletMicrofluidicJobConfiguration configuration)
 		{
 			DropletObserverConfiguration lastConfiguration = configuration.getObserverConfiguration();
 			observerTypeField = new ComponentComboBox<DropletObserverConfiguration>(getClient(), DropletObserverConfiguration.class);

@@ -411,11 +411,9 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
                 getClient().getPropertyProvider().setProperty(LAST_SLIM_PATH_PROPERTY, fileChooser
                         .getCurrentDirectory().getAbsolutePath());
                 
-                BufferedReader reader = null;
                 int[] lines = new int[10];
-                try
-				{
-					reader = new BufferedReader(new FileReader(file));
+                try(BufferedReader reader = new BufferedReader(new FileReader(file));)
+                {
 					for(int i=0; i<lines.length; i++)
 					{
 						String line = reader.readLine();
@@ -443,20 +441,7 @@ class SlimJobConfigurationAddon extends ComponentAddonUIAdapter<SlimJobConfigura
 					sendErrorMessage("Could not load SLIM configuration protocol " + file.toString()+ ".", e1);
 					return;
 				}
-				finally
-				{
-					if(reader != null)
-					{
-						try
-						{
-							reader.close();
-						}
-						catch(Exception e1)
-						{
-							sendErrorMessage("Could not SLIM configuration file " + file.toString()+ ".", e1);
-						}
-					}						
-				}
+                
 				// set values 
 				centerXField.setValue(lines[0]);
 				centerYField.setValue(lines[1]);

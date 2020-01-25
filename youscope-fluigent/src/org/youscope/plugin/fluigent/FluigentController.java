@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
@@ -245,7 +246,10 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 				{
 					Device fluigentDevice = FluigentController.this.fluigentDevice;
 					if(fluigentDevice == null)
+					{
 						sendErrorMessage("No Fluigent device selected", null);
+						return;
+					}
 					try {
 						fluigentDevice.getProperty("startIdentificationWizard").setValue("start");
 					} 
@@ -265,7 +269,10 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 				{
 					Device fluigentDevice = FluigentController.this.fluigentDevice;
 					if(fluigentDevice == null)
+					{ 
 						sendErrorMessage("No Fluigent device selected", null);
+						return;
+					}
 
 					String lastIdentFile = getClient().getPropertyProvider().getProperty(PROPERTY_LAST_IDENTIFICATION_FILE, "");
                     JFileChooser fileChooser = new JFileChooser(lastIdentFile);
@@ -477,24 +484,24 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 						}
 						pumpControl.actualizeReachable(reachable);
 					}	
-				}
-				if(pressureControl != null)
-				{
-					double[] pressures = new double[pressureControl.getNumPressureUnits()];
-					for(int i=0; i<pressures.length; i++)
+					if(pressureControl != null)
 					{
-						try
+						double[] pressures = new double[pressureControl.getNumPressureUnits()];
+						for(int i=0; i<pressures.length; i++)
 						{
-							pressures[i] = Double.parseDouble(fluigentDevice.getProperty("ezPressureUnit" + Integer.toString(i+1) + ".currentPressure").getValue());
+							try
+							{
+								pressures[i] = Double.parseDouble(fluigentDevice.getProperty("ezPressureUnit" + Integer.toString(i+1) + ".currentPressure").getValue());
+							}
+							catch(Exception e)
+							{
+								sendErrorMessage("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
+								continueQuery = false;
+								break outerActualizationLoop;
+							}
 						}
-						catch(Exception e)
-						{
-							sendErrorMessage("Error while obtaining Fluigent device state. Stoping actualizing fields", e);
-							continueQuery = false;
-							break outerActualizationLoop;
-						}
+						pressureControl.actualizePressures(pressures);
 					}
-					pressureControl.actualizePressures(pressures);
 				}	
 			
 				try
@@ -566,7 +573,7 @@ class FluigentController extends ToolAddonUIAdapter implements YouScopeFrameList
 			mainPanel.add(fluigentDeviceField);
 		}
 		fluigentDeviceChanged();
-		centralPanel = new JTabbedPane(JTabbedPane.TOP);
+		centralPanel = new JTabbedPane(SwingConstants.TOP);
         centralPanel.addTab("Flow Unit Control", pumpControl);
         centralPanel.addTab("EZ Pressure Unit Control", pressureControl);
 		

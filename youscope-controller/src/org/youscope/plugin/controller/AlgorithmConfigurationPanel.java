@@ -121,11 +121,9 @@ class AlgorithmConfigurationPanel extends JPanel
                     
                     client.getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                     
-                    BufferedReader reader = null;
                     String protocol = "";
-                    try
-					{
-						reader = new BufferedReader(new FileReader(file));
+                    try(BufferedReader reader = new BufferedReader(new FileReader(file));)
+                    {
 						while(true)
 						{
 							String line = reader.readLine();
@@ -139,21 +137,6 @@ class AlgorithmConfigurationPanel extends JPanel
 						client.sendError("Could not load Onix protocol " + file.toString()+ ".", e1);
 						return;
 					}
-					finally
-					{
-						if(reader != null)
-						{
-							try
-							{
-								reader.close();
-							}
-							catch(Exception e1)
-							{
-								client.sendError("Could not close protocol " + file.toString()+ ".", e1);
-							}
-						}						
-					}
-					
 					controllerScript.setText(protocol);
                 }
             });
@@ -192,11 +175,9 @@ class AlgorithmConfigurationPanel extends JPanel
                 client.getPropertyProvider().setProperty(PROPERTY_LAST_FILE_, file.toString());
                 
                 String text = controllerScript.getText();
-        		try
+        		try(PrintStream fileStream = new PrintStream(file);)
         		{
-        			PrintStream fileStream = new PrintStream(file);
         			fileStream.print(text);
-        			fileStream.close();
         		}
         		catch(Exception e)
         		{

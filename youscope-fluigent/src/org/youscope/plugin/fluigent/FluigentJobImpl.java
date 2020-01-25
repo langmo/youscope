@@ -149,32 +149,20 @@ class FluigentJobImpl extends JobAdapter implements FluigentJob, FluigentScriptC
 			localEngine.put("fluigent", this);
 			
 			// Run controller algorithm.
-			StringReader fileReader = null;
-			BufferedReader bufferedReader = null;
-			Object returnVal;
+			Object returnVal = null;
 			localEngine.getContext().setWriter(scriptOutputListener);
-			try
+			try(StringReader fileReader = new StringReader(script);
+					BufferedReader bufferedReader = new BufferedReader(fileReader);)
 			{
-				fileReader = new StringReader(script);
-				bufferedReader = new BufferedReader(fileReader);
 				returnVal = localEngine.eval(bufferedReader);
 			}
 			catch(ScriptException e)
 			{
 				throw new JobException("Fluigent syringe job failed due to error in control script.", e);
 			}
-			finally
+			catch (@SuppressWarnings("unused") IOException e) 
 			{
-				if(fileReader != null)
-					fileReader.close();
-				if(bufferedReader != null)
-				{
-					try {
-						bufferedReader.close();
-					} catch (@SuppressWarnings("unused") IOException e) {
-						// do nothing.
-					}
-				}
+				// do nothing.
 			}
 			receiveEngineMessages();
 			if(returnVal != null && returnVal.toString().length() > 0)

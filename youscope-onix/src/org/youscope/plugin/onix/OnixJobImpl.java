@@ -144,9 +144,10 @@ class OnixJobImpl extends JobAdapter implements OnixJob
 		{
 			if(waitUntilFinished)
 			{
-				RMIReader rmiReader = new RMIReader(new StringReader(onixProtocol));
-				onix.runProtocolAndWait(rmiReader);
-				rmiReader.close();
+				try(RMIReader rmiReader = new RMIReader(new StringReader(onixProtocol));)
+				{
+					onix.runProtocolAndWait(rmiReader);
+				}
 			}
 			else
 			{

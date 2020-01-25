@@ -45,57 +45,17 @@ public class ConfigurationTools
 	 */
 	public static <T extends Configuration> T deepCopy(T configuration, Class<T> configurationClass) throws ConfigurationException
 	{
-		ByteArrayOutputStream outStream = null;
-		ObjectOutputStream out = null;
-		ObjectInputStream in = null;
-		ByteArrayInputStream inStream = null;
-		try
-    	{ 
-			outStream = new ByteArrayOutputStream();
-        	out = new ObjectOutputStream(outStream);
-            out.writeObject(configuration);
-            inStream = new ByteArrayInputStream(outStream.toByteArray());
-            in = new ObjectInputStream(inStream);
-            configuration.getClass();
-            return configurationClass.cast(in.readObject());
-    	} 
-		catch (IOException | ClassNotFoundException e) {
-			throw new ConfigurationException("Could not deep clone configuration. Probably the configuration or one of its sub-configurations does not properly implement the interface Serializable.", e);
-		}
-		finally
+		try(ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				ObjectOutputStream out = new ObjectOutputStream(outStream);
+				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+				ObjectInputStream in = new ObjectInputStream(inStream))
 		{
-			if(outStream != null)
-			{
-				try {
-					outStream.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// ignore exception
-				}
-			}
-			if(out != null)
-			{
-				try {
-					out.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// ignore exception
-				}
-			}
-			if(in != null)
-			{
-				try {
-					in.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// ignore exception
-				}
-			}
-			if(inStream != null)
-			{
-				try {
-					inStream.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// ignore exception
-				}
-			}
+			out.writeObject(configuration);
+			configuration.getClass();
+            return configurationClass.cast(in.readObject());
+		} 
+		catch (IOException | ClassNotFoundException e1) {
+			throw new ConfigurationException("Could not deep clone configuration. Probably the configuration or one of its sub-configurations does not properly implement the interface Serializable.", e1);
 		}
 	}
 	

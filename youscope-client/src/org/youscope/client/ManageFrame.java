@@ -91,7 +91,7 @@ class ManageFrame
 				"MISC"
 		};
 		
-		tabbedPane = new JTabbedPane(JTabbedPane.LEFT, JTabbedPane.WRAP_TAB_LAYOUT);
+		tabbedPane = new JTabbedPane(SwingConstants.LEFT, JTabbedPane.WRAP_TAB_LAYOUT);
 		for(int i=0; i<tabElements.length; i++)
 		{
 			tabbedPane.addTab(tabElementsStrings[i], tabElements[i]);

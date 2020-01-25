@@ -95,7 +95,7 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 	{
 		return DefaultObserverConfiguration.TYPE_IDENTIFIER+".Chip"+Integer.toString(microfluidicChipID);
 	}
-	private ObserverState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
+	private static ObserverState loadState(MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
 		String identifier = getStateIdentifier(microfluidicChipID);
 		ObserverState observerState = measurementContext.getProperty(identifier, ObserverState.class);
@@ -103,7 +103,7 @@ class DefaultObserver extends ResourceAdapter<DefaultObserverConfiguration> impl
 			observerState = new ObserverState();
 		return observerState;
 	}
-	private void saveState(ObserverState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
+	private static void saveState(ObserverState state, MeasurementContext measurementContext,  int microfluidicChipID) throws RemoteException
 	{
 		String identifier = getStateIdentifier(microfluidicChipID);
 		measurementContext.setProperty(identifier, state);

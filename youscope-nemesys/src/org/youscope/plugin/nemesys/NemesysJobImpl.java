@@ -149,32 +149,19 @@ class NemesysJobImpl extends JobAdapter implements NemesysJob, NemesysScriptCall
 			localEngine.put("nemesys", this);
 			
 			// Run controller algorithm.
-			StringReader fileReader = null;
-			BufferedReader bufferedReader = null;
-			Object returnVal;
+			Object returnVal = null;
 			localEngine.getContext().setWriter(scriptOutputListener);
-			try
+			try(StringReader fileReader = new StringReader(script);
+					BufferedReader bufferedReader = new BufferedReader(fileReader);)
 			{
-				fileReader = new StringReader(script);
-				bufferedReader = new BufferedReader(fileReader);
 				returnVal = localEngine.eval(bufferedReader);
 			}
 			catch(ScriptException e)
 			{
 				throw new JobException("Nemesys syringe job failed due to error in control script.", e);
 			}
-			finally
-			{
-				if(fileReader != null)
-					fileReader.close();
-				if(bufferedReader != null)
-				{
-					try {
-						bufferedReader.close();
-					} catch (IOException e) {
-						sendErrorMessage("Could not close buffer for control script.", e);
-					}
-				}
+			catch (IOException e) {
+				sendErrorMessage("Could not close buffer for control script.", e);
 			}
 			receiveEngineMessages();
 			if(returnVal != null && returnVal.toString().length() > 0)

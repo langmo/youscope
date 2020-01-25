@@ -78,7 +78,7 @@ class CellDetectionJobImpl extends JobAdapter implements CellDetectionJob
 			return getDefaultImageDescription();
 		return imageDescription;
 	}
-	private String getDefaultImageDescription()
+	private static String getDefaultImageDescription()
 	{
 		String retVal = "Cell-Detection-Image";
 		return retVal;

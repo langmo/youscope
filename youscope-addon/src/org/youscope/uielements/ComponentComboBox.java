@@ -282,7 +282,8 @@ public class ComponentComboBox<C extends Configuration> extends JButton
 	{
 		if(element == null)
 			setSelectedElement((String)null);
-		setSelectedElement(element.getTypeIdentifier());
+		else
+			setSelectedElement(element.getTypeIdentifier());
 	}
 	
 	/**

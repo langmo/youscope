@@ -258,9 +258,10 @@ class ScriptDefinitionManager
 			scriptEngine.put("youscopeServer", YouScopeClientImpl.getServer());
 			scriptEngine.put("youscopeClient", new YouScopeClientConnectionImpl());
         	
-			FileReader fileReader =new FileReader(scriptDefinition.getScriptFile()); 
-			scriptEngine.eval(fileReader);
-			fileReader.close();
+			try(FileReader fileReader =new FileReader(scriptDefinition.getScriptFile());)
+			{
+				scriptEngine.eval(fileReader);
+			}
 		}
 		catch (ScriptException e1)
 		{

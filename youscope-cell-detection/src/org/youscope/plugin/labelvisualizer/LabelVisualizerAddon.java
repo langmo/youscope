@@ -115,7 +115,7 @@ class LabelVisualizerAddon extends ResourceAdapter<LabelVisualizerConfiguration>
 		
 	}
 
-	private BufferedImage paintInformationIntoImage(BufferedImage image, CellDetectionResult detectionResult) throws CellVisualizationException
+	private static BufferedImage paintInformationIntoImage(BufferedImage image, CellDetectionResult detectionResult)
 	{
 		if(detectionResult.getCellTable().getNumRows() <= 0)
 			return image;

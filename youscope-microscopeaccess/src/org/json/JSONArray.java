@@ -208,7 +208,7 @@ public class JSONArray {
         try {
             return o instanceof Number ?
                     ((Number)o).doubleValue() : Double.parseDouble((String)o);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             throw new JSONException("JSONArray[" + index +
                 "] is not a number.");
         }
@@ -370,7 +370,7 @@ public class JSONArray {
     public boolean optBoolean(int index, boolean defaultValue)  {
         try {
             return getBoolean(index);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -401,7 +401,7 @@ public class JSONArray {
     public double optDouble(int index, double defaultValue) {
         try {
             return getDouble(index);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -431,7 +431,7 @@ public class JSONArray {
     public int optInt(int index, int defaultValue) {
         try {
             return getInt(index);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -487,7 +487,7 @@ public class JSONArray {
     public long optLong(int index, long defaultValue) {
         try {
             return getLong(index);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return defaultValue;
         }
     }
@@ -704,10 +704,11 @@ public class JSONArray {
      * @return a printable, displayable, transmittable
      *  representation of the array.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         try {
             return '[' + join(",") + ']';
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return null;
         }
     }

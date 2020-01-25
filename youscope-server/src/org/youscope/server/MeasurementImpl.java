@@ -15,7 +15,6 @@ package org.youscope.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -498,57 +497,17 @@ class MeasurementImpl implements TaskExecutor
 		        	// we want to make a copy of the serializable object. However, we cannot assume that it implements Cloneable. Thus, we simply
 		        	// serialize and deserialize it, which has the same effect.
 		        	
-		        	ByteArrayOutputStream outStream = null;
-		        	ObjectOutputStream out = null;
-		        	ByteArrayInputStream inStream = null;
-		        	ObjectInputStream in = null;
-		        	try
+		        	try(ByteArrayOutputStream outStream = new ByteArrayOutputStream(); ObjectOutputStream out = new ObjectOutputStream(outStream);)
 		        	{
-		            	outStream = new ByteArrayOutputStream();
-		            	out = new ObjectOutputStream(outStream);
-		                out.writeObject(entry.getValue());
-		                inStream = new ByteArrayInputStream(outStream.toByteArray());
-		                in = new ObjectInputStream(inStream);
-		                clone = (Serializable) in.readObject();
+		            	out.writeObject(entry.getValue());
+		            	try(ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray()); ObjectInputStream in = new ObjectInputStream(inStream);)
+		            	{
+		            		clone = (Serializable) in.readObject();
+		            	}
 		        	}
 		        	catch(Exception e)
 		        	{
 		        		throw runState.toErrorState(new MeasurementException("Serialization of initial measurement context property " + entry.getKey() + " failed. Is the context property not only implementing Serializable, but also follow the rules what is allowed and what not when implementing Serializable?", e));
-		        	}
-		        	finally
-		        	{
-		        		if(outStream != null)
-		        		{
-		        			try {
-								outStream.close();
-							} catch (@SuppressWarnings("unused") IOException e) {
-								// ignore close exceptions.
-							}
-		        		}
-		        		if(out != null)
-		        		{
-		        			try {
-								outStream.close();
-							} catch (@SuppressWarnings("unused") IOException e) {
-								// ignore close exceptions.
-							}
-		        		}
-		        		if(inStream != null)
-		        		{
-		        			try {
-								outStream.close();
-							} catch (@SuppressWarnings("unused") IOException e) {
-								// ignore close exceptions.
-							}
-		        		}
-		        		if(in != null)
-		        		{
-		        			try {
-								outStream.close();
-							} catch (@SuppressWarnings("unused") IOException e) {
-								// ignore close exceptions.
-							}
-		        		}
 		        	}
 		        	
 		            measurementContext.setProperty(entry.getKey(), clone);
@@ -1127,7 +1086,7 @@ class MeasurementImpl implements TaskExecutor
 		}
 	}
 
-	public void setInitialMeasurementContextProperty(String identifier, Serializable property) throws ComponentRunningException
+	public void setInitialMeasurementContextProperty(String identifier, Serializable property)
     {
 		synchronized(initialMeasurementContextProperties)
 		{

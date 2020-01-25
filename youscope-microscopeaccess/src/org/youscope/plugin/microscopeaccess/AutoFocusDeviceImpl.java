@@ -324,10 +324,11 @@ class AutoFocusDeviceImpl extends DeviceImpl implements AutoFocusDeviceInternal
 			deviceStateModified();
 			microscope.unlockWrite();
 		}
-		Formatter formatter = new Formatter();
-		String offsetStr = formatter.format("%2.2f um.", offset).toString();
-		formatter.close();
-		microscope.stateChanged("Offset of auto-focus \"" + getDeviceID() + "\" set to " + offsetStr);
+		try(Formatter formatter = new Formatter();)
+		{
+			String offsetStr = formatter.format("%2.2f um.", offset).toString();
+			microscope.stateChanged("Offset of auto-focus \"" + getDeviceID() + "\" set to " + offsetStr);
+		}
 	}
 
 	@Override

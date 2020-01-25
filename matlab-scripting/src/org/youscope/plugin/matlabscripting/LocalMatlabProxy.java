@@ -60,7 +60,7 @@ public final class LocalMatlabProxy
      */
     public static void exit() throws MatlabInvocationException
     {
-        _wrapper.exit();
+        JMIWrapper.exit();
     }
 
     /**
@@ -218,6 +218,6 @@ public final class LocalMatlabProxy
      */
     public static void setEchoEval(boolean echo) throws MatlabInvocationException
     {
-        _wrapper.setEchoEval(echo);
+        JMIWrapper.setEchoEval(echo);
     }
 }

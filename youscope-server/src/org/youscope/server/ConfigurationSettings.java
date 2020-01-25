@@ -42,27 +42,14 @@ class ConfigurationSettings
 	{
 		Properties properties = new Properties();
 		// Get saved properties
-		FileInputStream in = null;
-		try
+		try(FileInputStream in = new FileInputStream(propertiesFile);)
 		{
-			in = new FileInputStream(propertiesFile);
 			properties.load(in);
 			in.close();
 		}
 		catch(IOException e)
 		{
 			System.out.println("Could not load last settings: " + e.getMessage());
-		}
-		finally
-		{
-			if(in != null)
-			{
-				try {
-					in.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// do nothing.
-				}
-			}
 		}
 		return new ConfigurationSettings(properties);
 	}
@@ -74,27 +61,13 @@ class ConfigurationSettings
 			return;
 
 		// Save properties
-		FileOutputStream out = null;
-		try
+		try(FileOutputStream out = new FileOutputStream(propertiesFile);)
 		{
-			out = new FileOutputStream(propertiesFile);
 			properties.store(out, "YouScope configuration properties.");
-			out.close();
 		}
 		catch(IOException e)
 		{
 			System.err.println("Configuration properties could not be saved: " + e.getMessage());
-		}
-		finally
-		{
-			if(out != null)
-			{
-				try {
-					out.close();
-				} catch (@SuppressWarnings("unused") IOException e) {
-					// do nothing.
-				}
-			}
 		}
 	}
 

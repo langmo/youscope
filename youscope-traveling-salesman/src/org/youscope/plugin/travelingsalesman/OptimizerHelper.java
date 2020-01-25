@@ -193,7 +193,7 @@ class OptimizerHelper
 		return hamiltonianCycle.toArray(new Vertex[hamiltonianCycle.size()]);
 	}
 	
-	public static Collection<Vertex> toVertices(Map<PositionInformation, ? extends Point2D.Double> positions) throws InterruptedException
+	public static Collection<Vertex> toVertices(Map<PositionInformation, ? extends Point2D.Double> positions)
 	{
 		// Represent all positions in the microplate as a Vertex.
 		ArrayList<Vertex> vertices = new ArrayList<>(positions.size());

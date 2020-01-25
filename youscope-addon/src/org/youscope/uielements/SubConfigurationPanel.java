@@ -184,7 +184,7 @@ public class SubConfigurationPanel <C extends Configuration> extends DynamicPane
 		displayAddonConfiguration(metadata==null ? null : metadata.getTypeIdentifier());
 	}
 	
-	private Component createErrorUI(String message, Exception exception)
+	private static Component createErrorUI(String message, Exception exception)
 	{
 		if(exception != null)
 			message += "\n\n"+exception.getMessage();

@@ -792,11 +792,9 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
                     
                     getClient().getPropertyProvider().setProperty(PROPERTY_PROTOCOL, file.toString());
                     
-                    BufferedReader reader = null;
                     String protocol = "";
-                    try
-					{
-						reader = new BufferedReader(new FileReader(file));
+                    try(BufferedReader reader = new BufferedReader(new FileReader(file));)
+                    {
 						while(true)
 						{
 							String line = reader.readLine();
@@ -809,20 +807,6 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
 					{
 						sendErrorMessage("Could not load Onix protocol " + file.toString()+ ".", e1);
 						return;
-					}
-					finally
-					{
-						if(reader != null)
-						{
-							try
-							{
-								reader.close();
-							}
-							catch(Exception e1)
-							{
-								sendErrorMessage("Could not close protocol " + file.toString()+ ".", e1);
-							}
-						}						
 					}
 					
 					protocolArea.setText(protocol);
@@ -865,11 +849,9 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
                 getClient().getPropertyProvider().setProperty(PROPERTY_PROTOCOL, file.toString());
                 
                 String text = protocolArea.getText();
-        		try
+        		try(PrintStream fileStream = new PrintStream(file);)
         		{
-        			PrintStream fileStream = new PrintStream(file);
         			fileStream.print(text);
-        			fileStream.close();
         		}
         		catch(Exception e)
         		{
@@ -932,7 +914,7 @@ class OnixController extends ToolAddonUIAdapter implements YouScopeFrameListener
         StandardFormats.addGridBagElement(runProtocolButton, protocolLayout, newLineConstr, protocolPanel);
 		
         // central panel
-        JTabbedPane centralPanel = new JTabbedPane(JTabbedPane.TOP);
+        JTabbedPane centralPanel = new JTabbedPane(SwingConstants.TOP);
         centralPanel.addTab("Direct Control", westPanel);
         centralPanel.addTab("Protocol", protocolPanel);
         			

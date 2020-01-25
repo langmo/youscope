@@ -59,10 +59,12 @@ final class ServerSystem
 			// Do nothing.
 		}
 
+		@SuppressWarnings("static-method")
 		public void println(String message)
 		{
 			getServerSystem().printMessage(message, null);
 		}
+		@SuppressWarnings("static-method")
 		public void println(String message, Date time)
 		{
 			getServerSystem().printMessage(message, time);
@@ -76,11 +78,13 @@ final class ServerSystem
 			// Do nothing.
 		}
 
+		@SuppressWarnings("static-method")
 		public void println(String message, Throwable e)
 		{
 			getServerSystem().printError(message, e, null);
 		}
 
+		@SuppressWarnings("static-method")
 		public void println(String message, Throwable e, Date time)
 		{
 			getServerSystem().printError(message, e, time);
@@ -119,6 +123,7 @@ final class ServerSystem
 
 	
 
+	@SuppressWarnings("static-method")
 	private void printMessage(String message, Date time)
 	{
 		if(time == null)
@@ -152,6 +157,7 @@ final class ServerSystem
 		}
 	}
 
+	@SuppressWarnings("static-method")
 	private void printError(String message, Throwable e, Date time)
 	{
 		if(message == null)
@@ -275,7 +281,7 @@ final class ServerSystem
 		return result.toArray(new ServerAddon[0]);
 	}
 
-	public static <T extends ServerAddon> T getGeneralAddon(Class<T> addonInterface) throws RemoteException
+	public static <T extends ServerAddon> T getGeneralAddon(Class<T> addonInterface)
 	{
 		T[] results = getGeneralAddons(addonInterface);
 		if(results.length <= 0)
@@ -284,7 +290,7 @@ final class ServerSystem
 	}
 
 	
-	public static <T extends ServerAddon> T[] getGeneralAddons(Class<T> addonInterface) throws RemoteException
+	public static <T extends ServerAddon> T[] getGeneralAddons(Class<T> addonInterface)
 	{
 		ArrayList<T> result = new ArrayList<T>(10);
 		for(ServerAddon addon : getGeneralAddons())

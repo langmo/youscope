@@ -50,7 +50,7 @@ class PixelSizeManagerImpl implements MicroscopeConfigurationListener
 		return retVal;
 	}
 
-	public void removePixelSize(String pixelSizeID, int accessID) throws MicroscopeLockedException, SettingException
+	public void removePixelSize(String pixelSizeID, int accessID) throws MicroscopeLockedException
 	{
 		boolean success;
 		microscope.lockExclusiveWrite(accessID);
@@ -86,7 +86,7 @@ class PixelSizeManagerImpl implements MicroscopeConfigurationListener
 		}
 	}
 
-	public PixelSizeImpl addPixelSize(String pixelSizeID, int accessID) throws MicroscopeLockedException, SettingException
+	public PixelSizeImpl addPixelSize(String pixelSizeID, int accessID) throws MicroscopeLockedException
 	{
 		PixelSizeImpl pixelSize;
 		microscope.lockExclusiveWrite(accessID);

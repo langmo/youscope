@@ -34,7 +34,7 @@ abstract class ClientServerConnection
     private static final String PLUGINS_LOCATION = "plugins/";
     private static final String LIB_LOCATION = "lib/";
 
-    private String getJarClassPath(URL url) throws IOException
+    private static String getJarClassPath(URL url) throws IOException
     {
         JarURLConnection uc;
         Attributes attr;
@@ -212,9 +212,8 @@ abstract class ClientServerConnection
         return subJarURLS;
     }
 
-    protected URL createJARURL(URL url) throws MalformedURLException
+    protected static URL createJARURL(URL url) throws MalformedURLException
     {
-        // URL url = new File(urlString).toURI().toURL();
         return new URL("jar", "", url + "!/");
     }
 

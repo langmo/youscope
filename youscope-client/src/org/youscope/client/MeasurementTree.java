@@ -236,7 +236,7 @@ class MeasurementTree extends JTree
 		}
 	}
 
-	private JobNode getParentNode(RootNode rootNode, PositionInformation positionInformation)
+	private static JobNode getParentNode(RootNode rootNode, PositionInformation positionInformation)
 	{
 		JobNode parentNode = rootNode;
 		if(positionInformation.getWell() != null)
@@ -331,7 +331,7 @@ class MeasurementTree extends JTree
 		allImagingNodes.add(node);
 	}
 	
-	private void computeTreeRepresentationOfTableDataProducer(RootNode rootNode, Job tableDataProducer)
+	private static void computeTreeRepresentationOfTableDataProducer(RootNode rootNode, Job tableDataProducer)
 	{
 		PositionInformation positionInformation;
 		try

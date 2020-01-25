@@ -27,6 +27,7 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import org.youscope.common.MessageListener;
 import org.youscope.uielements.QuickLogger;
@@ -59,8 +60,8 @@ class LogPanel extends JPanel
 		// Put the editor pane in a scroll pane.
 		quickLogger = new QuickLogger();
         logTextScrollPane = new JScrollPane(quickLogger);
-        logTextScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        logTextScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        logTextScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        logTextScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         logTextScrollPane.setPreferredSize(new Dimension(250, 145));
         logTextScrollPane.setMinimumSize(new Dimension(100, 0));
 

@@ -95,7 +95,7 @@ class ShowMeasurementInformation extends ToolAddonUIAdapter
 	{
 		try
 		{
-			Process p = Runtime.getRuntime().exec("cmd.exe /c start iexplore \""+measurementInformation+"\"");
+			Runtime.getRuntime().exec("cmd.exe /c start iexplore \""+measurementInformation+"\"");
 			closeAddon();
 		}
 		catch(IOException e1)

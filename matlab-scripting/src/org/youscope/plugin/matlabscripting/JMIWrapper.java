@@ -120,7 +120,7 @@ class JMIWrapper
      * 
      * @throws MatlabInvocationException
      */
-    void exit() throws MatlabInvocationException
+    static void exit() throws MatlabInvocationException
     {
         Matlab.whenMatlabReady(new Runnable()
             {
@@ -328,7 +328,7 @@ class JMIWrapper
      * 
      * @param echo
      */
-    void setEchoEval(final boolean echo)
+    static void setEchoEval(final boolean echo)
     {
         if (isMatlabThread())
         {

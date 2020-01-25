@@ -327,7 +327,7 @@ public class MatlabScriptEngine extends AbstractScriptEngine
         }
     }
     
-    private String createErrorMessage(Throwable throwable)
+    private static String createErrorMessage(Throwable throwable)
     {
     	String message = "";
     	for(int i = 0; throwable != null && i < 10; i++)

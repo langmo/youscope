@@ -16,7 +16,6 @@ package org.youscope.plugin.scripting;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -248,11 +247,9 @@ class ScriptExcecuter implements EvaluationListener
 			return;
 		ScriptException thrownException = null;
 		Object returnVal = null;
-		FileReader fileReader = null;
-		try
+		try(FileReader fileReader = new FileReader(file))
 		{
 			engine.put(ScriptEngine.FILENAME, file.getAbsolutePath());
-			fileReader = new FileReader(file);
 			returnVal = engine.eval(fileReader);
 		}
 		catch (ScriptException e1)
@@ -266,14 +263,6 @@ class ScriptExcecuter implements EvaluationListener
 		catch(Exception e)
 		{
 			thrownException = new ScriptException(e);
-		}
-		finally
-		{
-			try {
-				fileReader.close();
-			} catch (@SuppressWarnings("unused") IOException e) {
-				// do nothing.
-			}
 		}
 		outputListener.flush();
 		sendOutputMessage(outputListener.toString());

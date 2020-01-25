@@ -85,7 +85,7 @@ class ContinousMeasurementPanel extends JPanel
     private volatile ImageEvent<?> orgImage = null;
     private volatile int imageNo = 0;
 
-    private static AffineTransform transform = new AffineTransform();
+    private AffineTransform transform = new AffineTransform();
 
     private boolean increaseContrast = true;
 

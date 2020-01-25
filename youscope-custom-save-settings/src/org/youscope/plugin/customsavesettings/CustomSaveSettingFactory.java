@@ -33,7 +33,7 @@ import org.youscope.serverinterfaces.YouScopeServer;
 public class CustomSaveSettingFactory extends ComponentAddonFactoryAdapter
 {
 	
-	private CustomSaveSettingType getType(String typeIdentifier) throws AddonException 
+	private static CustomSaveSettingType getType(String typeIdentifier) throws AddonException 
 	{
 		String name = CustomSaveSettingManager.getCustomSaveSettingName(typeIdentifier);
 		try {

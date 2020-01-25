@@ -65,7 +65,7 @@ class ChannelManagerImpl implements MicroscopeConfigurationListener
 		return resVal;
 	}
 
-	public ChannelImpl[] getChannels(String channelGroupID) throws SettingException
+	public ChannelImpl[] getChannels(String channelGroupID)
 	{
 		Vector<ChannelImpl> foundChannels = new Vector<ChannelImpl>();
 		for(ChannelImpl channel : channels)
@@ -99,7 +99,7 @@ class ChannelManagerImpl implements MicroscopeConfigurationListener
 		ServerSystem.out.println("Channel " + channelGroupID + "." + channelID + " removed.");
 	}
 
-	public ChannelImpl addChannel(String channelGroupID, String channelID, int accessID) throws MicroscopeLockedException, SettingException
+	public ChannelImpl addChannel(String channelGroupID, String channelID, int accessID) throws MicroscopeLockedException
 	{
 		ChannelImpl channel;
 
