@@ -17,10 +17,17 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew assemble
-    - name: Upload artifact
+    - name: Upload artifact as .zip
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
         name: youscope.zip
         # Directory containing files to upload
-        path: build/distributions/
+        path: build/distributions/youscope.zip
+    - name: Upload artifact as .tar
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: youscope.tar
+        # Directory containing files to upload
+        path: build/distributions/youscope.tar
