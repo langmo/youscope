@@ -1,0 +1,3 @@
+dependencies {
+	implementation name: 'JTattoo-1.6.11'
+}

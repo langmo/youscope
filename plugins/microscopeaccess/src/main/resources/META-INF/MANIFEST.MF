@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: ../lib/youscope-api.jar ../lib/MMCoreJ.jar ../lib/xstream-1.4.2.jar

@@ -1,0 +1,3 @@
+dependencies {
+	implementation project(':plugins:live-modifiable-job')
+}

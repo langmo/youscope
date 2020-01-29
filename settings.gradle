@@ -1,0 +1,73 @@
+/*
+ * Projects to include in build of YouScope.
+ */
+
+rootProject.name = 'youscope'
+include 'core:api', 'core:server', 'core:client'
+
+// This works perfectly fine with gradle, however, seems to be too complex for Eclipse's cradle import.
+//include new File( 'plugins' ).listFiles().findAll { 
+//     it.isDirectory() && !( it =~ ".*/\\..*") && !( it =~ "^\\..*") 
+//    }.collect { 
+//        'plugins:' + it.getName() 
+//    }.toArray(new java.lang.String[0])
+
+
+include 'plugins:ansi-sbs-microplates'
+include 'plugins:autofocus'
+include 'plugins:bd-bioscience-multiwell-tc-microplates'
+include 'plugins:cell-detection'
+include 'plugins:cellx'
+include 'plugins:change-position-job'
+include 'plugins:composed-imaging'
+include 'plugins:composite-job'
+include 'plugins:continous-imaging'
+include 'plugins:continuation-measurement'
+include 'plugins:controller'
+include 'plugins:custom-job'
+include 'plugins:custom-metadata'
+include 'plugins:custom-microplates'
+include 'plugins:custom-save-settings'
+include 'plugins:dark-skin'
+include 'plugins:device-job'
+include 'plugins:device-setting-manager'
+include 'plugins:droplet-microfluidics'
+include 'plugins:focus-viewer'
+include 'plugins:focusing-job'
+include 'plugins:image-substraction-job'
+include 'plugins:imaging-job'
+include 'plugins:live-modifiable-job'
+include 'plugins:livestream'
+include 'plugins:matlab-scripting'
+include 'plugins:measurement-viewer'
+include 'plugins:microplate-measurement'
+include 'plugins:microscopeaccess'
+include 'plugins:multi-camera-and-color-stream'
+include 'plugins:multi-camera-continous-imaging'
+include 'plugins:multi-camera-stream'
+include 'plugins:multi-color-stream'
+include 'plugins:multi-position'
+include 'plugins:nemesys'
+include 'plugins:open-measurement-folder'
+include 'plugins:oscillating-device-job'
+include 'plugins:out-of-focus-job'
+include 'plugins:parallel-imaging-job'
+include 'plugins:position-control'
+include 'plugins:repeat-job'
+include 'plugins:scripting'
+include 'plugins:scripting-job'
+include 'plugins:share-execution'
+include 'plugins:show-measurement-information'
+include 'plugins:simple-measurement'
+include 'plugins:slim'
+include 'plugins:standard-paths'
+include 'plugins:standard-save-settings'
+include 'plugins:statistics-job'
+include 'plugins:system-skin'
+include 'plugins:task-measurement'
+include 'plugins:traveling-salesman'
+include 'plugins:user-control-measurement'
+include 'plugins:wait-for-user'
+include 'plugins:wait-job'
+include 'plugins:wait-since-last-action'
+include 'plugins:z-slides'

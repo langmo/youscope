@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<metadata-definition custom-values="true" name="Species">
+  <value>Anolis carolinensis</value>
+  <value>Arabidopsis thaliana</value>
+  <value>Caenorhabditis elegans</value>
+  <value>Chlamydomonas reinhardtii</value>
+  <value>Danio rerio</value>
+  <value>Dictyostelium discoideum</value>
+  <value>Drosophila melanogaster</value>
+  <value>Emiliania huxleyi</value>
+  <value>Escherichia coli</value>
+  <value>Fundulus heteroclitus</value>
+  <value>Mus musculus</value>
+  <value>Nothobranchius furzeri</value>
+  <value>Oryzias latipes</value>
+  <value>Physcomitrella patens</value>
+  <value>Saccharomyces cerevisiae</value>
+  <value>Schizosaccharomyces pombe</value>
+  <value>Tetrahymena thermophila</value>
+  <value>Xenopus laevis</value>
+  <type>DEFAULT</type>
+</metadata-definition>

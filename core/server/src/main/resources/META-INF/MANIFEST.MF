@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: youscope-api.jar xstream-1.4.2.jar
+Main-Class: org.youscope.server.YouScopeServerImpl

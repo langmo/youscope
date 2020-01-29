@@ -1,0 +1,5 @@
+dependencies {
+	implementation project(':plugins:change-position-job')
+	implementation project(':plugins:focusing-job')
+	implementation project(':plugins:live-modifiable-job')
+}

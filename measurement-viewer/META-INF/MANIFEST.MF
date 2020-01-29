@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.9.4
-Created-By: 1.8.0_71-b15 (Oracle Corporation)
-Main-Class: org.youscope.plugin.measurementviewer.standalone.Standalon
- eMeasurementViewer
-Class-Path: jai_imageio.jar youscope-addon.jar youscope-common.jar youscope-measurement-viewer.jar
-

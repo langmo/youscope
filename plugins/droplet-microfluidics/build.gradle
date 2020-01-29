@@ -1,0 +1,7 @@
+dependencies {
+	implementation name: 'commons-math3-3.5'
+	implementation name: 'jfreechart-1.0.14'
+	implementation name: 'jcommon-1.0.17'
+	implementation project(':plugins:autofocus')
+	implementation project(':plugins:nemesys')
+}

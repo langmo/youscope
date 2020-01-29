@@ -1,0 +1,72 @@
+Basel, 3/30/2012, cmayer@ethz.ch
+
+
+   --==========================-- 
+ -= Running CellX on the Cluster =- 
+   --==========================--
+
+
+This directory contains a test perl script (submit.pl) for parallelization 
+of CellX on a cluster. This how-to is specific for the SGE cluster/grid
+that is running in our department (BSSE), however, should be adaptable to 
+other cluster environments without much effort. 
+
+Requirements for the cluster system are
+
+- a shared filesystem where images and results are saved 
+- a qsub program (provided e.g. by SGE or Torque/PBS)
+
+On the head node:
+
+- Perl with xml modules libxml-perl libxml-dom-perl libxml-regexp-perl
+- java 1.6
+
+On the compute nodes:
+
+- Matlab compiler runtime MCR
+
+
+Login to the cluster with ssh -X bs-submit...
+
+
+1) Ensure that the following commands are 
+   the last lines in your .bash_profile 
+
+   module load repo/grid
+   module load grid/grid
+
+   unset BSSE_SGE
+
+2) Copy the CellX linux files 
+   (the MCR is already installed at /usr/local/bsse/MCR/v715)
+   to a folder in your cluster home
+
+
+3) Copy the images to the cluster file system 
+
+4) Run 
+   
+   java -jar CellXGui.jar 
+   
+   and configure your job as usual.
+
+
+5) Save the parameters to a file config.xml (File -> Export Parameters)
+
+
+6) Save the file series to a file series.xml (File -> Export File Series)
+
+
+7) Run 
+
+   ./submit.pl config.xml params.xml [INDEX-OF-SERIES]
+
+
+8) When all jobs have finished, run
+
+   ./runTracker.sh
+
+
+
+<EOF>
+

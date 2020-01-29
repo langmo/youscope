@@ -1,0 +1,210 @@
+/*
+ * This gradle configuration compiles and packages YouScope.
+ */
+
+// Gradle plugins
+plugins {
+	id 'application'
+}
+
+/*compileJava   {
+  sourceCompatibility = '1.7'
+  targetCompatibility = '1.7'
+}*/
+
+application {
+	executableDir = ''
+	mainClassName = 'org.youscope.starter.Starter'
+	applicationDefaultJvmArgs = ['-Djava.library.path=drivers64', '-Dpython.console.encoding=UTF-8']
+}
+
+distributions {
+    main {
+        distributionBaseName = 'youscope'
+        contents {
+            from 'distribution'
+        }
+    }
+}
+
+// global variables
+ext.archivesBaseName = "youscope"
+ext.version = '2.1.0'
+
+// Basic subprojects of youscope
+project(':core')
+{
+	subprojects {
+		apply plugin: 'java'
+		group = 'org.youscope'
+		version = rootProject.version
+		repositories {
+		   flatDir {
+			   dirs '../../libs'
+		   }
+		}
+		jar.archiveName = "${rootProject.archivesBaseName}-${project.name}.${jar.extension}"
+		
+		jar.doFirst{
+			manifest{
+				def manif = "${projectDir}/src/main/resources/META-INF/MANIFEST.MF"
+				if (new File(manif).exists()) {
+					from file(manif)
+				}
+				else
+				{
+					attributes(
+						'Class-Path'	 : configurations.compile.collect { it.getName() }.join(' ')
+					)
+				}
+				attributes(
+					'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+					'Build-Version'  : rootProject.ext.version,
+					'Created-By'     : "Gradle ${gradle.gradleVersion}",
+					'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+					'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+				)
+			}
+		}
+	}
+}
+// root project
+jar.doFirst{
+	manifest{
+			def manif = "${projectDir}/src/main/resources/META-INF/MANIFEST.MF"
+			if (new File(manif).exists()) {
+				from file(manif)
+			}
+			else
+			{
+				attributes(
+					'Class-Path'	 : configurations.compile.collect { it.getName() }.join(' ')
+				)
+			}
+			attributes(
+				'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+				'Build-Version'  : rootProject.ext.version,
+				'Created-By'     : "Gradle ${gradle.gradleVersion}",
+				'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+				'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+			)
+		}
+}
+
+
+project(':core:api')
+{
+	dependencies {
+        implementation name: 'xstream-1.4.2'
+    }	
+}
+project(':core:server')
+{
+	dependencies {
+        implementation project(':core:api')
+		implementation name: 'xstream-1.4.2'
+    }
+}
+project(':core:client')
+{
+	dependencies {
+        implementation project(':core:api')
+		implementation name: 'xstream-1.4.2'
+		implementation name: 'jcommon-1.0.17'
+		implementation name: 'jfreechart-1.0.14'
+		implementation name: 'zxing-core-1.7'
+		implementation name: 'zxing-j2se-1.7'
+    }
+}
+
+// Plugin subprojects of youscope
+project(':plugins')
+{
+	subprojects {
+		apply plugin: 'java'
+		group = 'org.youscope'
+		version = rootProject.version
+		repositories {
+		   flatDir {
+			   dirs '../../libs'
+		   }
+		}
+		jar.archiveName = "${rootProject.archivesBaseName}-${project.name}.${jar.extension}"
+		
+		dependencies {
+			implementation project(':core:api')
+			implementation name: 'xstream-1.4.2'
+		}
+		
+		jar.doFirst{
+			manifest{
+				def manif = "${projectDir}/src/main/resources/META-INF/MANIFEST.MF"
+				if (new File(manif).exists()) {
+					from file(manif)
+				}
+				else
+				{
+					attributes(
+						'Class-Path'	 : '../lib/youscope-common.jar ../lib/youscope-addon.jar ../lib/xstream-1.4.2.jar'
+					)
+				}
+				attributes(
+					'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+					'Build-Version'  : rootProject.ext.version,
+					'Created-By'     : "Gradle ${gradle.gradleVersion}",
+					'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+					'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+				)
+			}
+		}
+	}
+}
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '1.7'
+        targetCompatibility = '1.7'
+    } 
+}
+
+///////////////////////////////////
+// Define distribution structure
+///////////////////////////////////
+task externalLibs {
+    def libs = file("${rootProject.projectDir}/libs")
+    outputs.dir libs
+}
+
+
+// Package distribution
+distributions {
+    main {
+        contents {
+			from(externalLibs) {
+                into 'lib'
+            }
+			project(':core:api') {
+				from(jar) {
+					into 'lib'
+				}
+			}
+			project(':core:client') {
+				from(jar) {
+					into 'lib'
+				}
+			}
+			project(':core:server') {
+				from(jar) {
+					into 'lib'
+				}
+			}
+			project(':plugins') {
+				subprojects {
+					from(jar) {
+						into 'plugins'
+					}
+				}
+			}
+        }
+    }
+}

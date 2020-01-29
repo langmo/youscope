@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Class-Path: ../common/youscope-api.jar ../lib/xstream-1.4.2.jar ../lib/jcommon-1.0.17.jar ../lib/jfreechart-1.0.14.jar

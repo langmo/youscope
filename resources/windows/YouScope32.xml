@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>lib\youscope.jar</jar>
+  <outfile>YouScope32.exe</outfile>
+  <errTitle>YouScope</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>http://www.youscope.org</supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>YouScope.ico</icon>
+  <classPath>
+    <mainClass>org.youscope.starter.Starter</mainClass>
+    <cp>lib/youscope.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>1.7.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>32</runtimeBits>
+    <initialHeapSize>256</initialHeapSize>
+    <initialHeapPercent>10</initialHeapPercent>
+    <maxHeapSize>1024</maxHeapSize>
+    <maxHeapPercent>50</maxHeapPercent>
+    <opt>-Dpython.console.encoding=UTF-8</opt>
+    <opt>-Djava.library.path=drivers32</opt>
+  </jre>
+  <splash>
+    <file>splash.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
+  <versionInfo>
+    <fileVersion>2.1.0.0</fileVersion>
+    <txtFileVersion>2.1.0</txtFileVersion>
+    <fileDescription>YouScope - Microscope Control Environment</fileDescription>
+    <copyright>Moritz Lang, info@youscope.org</copyright>
+    <productVersion>2.1.0.0</productVersion>
+    <txtProductVersion>2.1.0</txtProductVersion>
+    <productName>YouScope - Microscope Control Environment</productName>
+    <companyName>YouScope.org</companyName>
+    <internalName>YouScope</internalName>
+    <originalFilename>YouScope.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+</launch4jConfig>
