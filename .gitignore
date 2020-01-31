@@ -1,4 +1,9 @@
-*/bin/
+bin/
+core/
+plugins/
+build/
+distribution/
 _site/
 create.bat
 preview.bat
+.gradle/
