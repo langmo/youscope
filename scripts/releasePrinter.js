@@ -412,5 +412,6 @@ function createNightlyElement(release, show)
 		
 		releaseDiv.appendChild(listElems);
 	}
+	releaseDiv.appendChild(document.createElement("hr"));
 	return releaseDiv;
 }
