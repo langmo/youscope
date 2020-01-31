@@ -369,8 +369,6 @@ function createNightlyElement(release, show)
 		listElem.style.marginTop = "0cm";
 		for(var lID =0; lID < assets.length; lID++)
 		{
-			if(lID in delIdx)
-				continue;
 			var assetElem = document.createElement("li");
 			assetElem.innerHTML = asset.created_at + ":";
 			assetElem.appendChild(addAsset(assets[lID]));
