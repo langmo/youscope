@@ -370,7 +370,7 @@ function createNightlyElement(release, show)
 		for(var lID =0; lID < assets.length; lID++)
 		{
 			var assetElem = document.createElement("li");
-			assetElem.innerHTML = asset.created_at + ":";
+			assetElem.innerHTML = assets[lID].created_at + ":";
 			assetElem.appendChild(addAsset(assets[lID]));
 			listElem.appendChild(assetElem);
 		}
