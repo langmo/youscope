@@ -197,7 +197,7 @@ function createMostRecent(releases, elementID)
 	// Nightly builds
 	if(latestNightly >= 0)
 	{
-		displayNightlyLinks(releases[latestNightly], releasesElement));		
+		displayNightlyLinks(releases[latestNightly], releasesElement);		
 	}
 }
 window.onload = function()
