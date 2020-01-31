@@ -352,30 +352,65 @@ function createNightlyElement(release, show)
 	hideAllElem.appendChild(document.createTextNode(")"));
 	optionalElem.appendChild(hideAllElem);
 	
+	var nightlies = {};
 	var assets = release.assets;
-	if(assets.length > 0)
+	for(let assetID in assets)
 	{
-		var addAsset = function(asset)
+		var asset = assets[assetID];
+		var created = asset.created_at.substring(0, asset.created_at.indexOf("T"));
+		if(!nightlies[created])
 		{
-			var assetURL = document.createElement("a");
-			assetURL.href = asset.browser_download_url;
-			assetURL.target = "_blank";
-			assetURL.innerHTML = asset.name;			
-			return assetURL;
-		};
-		
-		var listElem = document.createElement("ul");
-		listElem.style.marginLeft = "0cm";
-		listElem.style.marginTop = "0cm";
-		for(var lID =0; lID < assets.length; lID++)
-		{
-			var assetElem = document.createElement("li");
-			assetElem.innerHTML = assets[lID].created_at.substring(0,assets[lID].created_at.indexOf("T")) + ":";
-			assetElem.appendChild(addAsset(assets[lID]));
-			listElem.appendChild(assetElem);
+			nightlies[created] = {};
 		}
-		releaseDiv.appendChild(listElem);
+		if(asset.content_type == "application/tar")
+		{
+			nightlies[created].tar = {name: asset.name, url: asset.browser_download_url};
+		}
+		else if(asset.content_type == "application/zip")
+		{
+			nightlies[created].zip = {name: asset.name, url: asset.browser_download_url};
+		}
+	};
+	let keys = [];
+	for (let key in nightlies) 
+	{      
+		keys.push(key);
 	}
+	keys.sort();
+	for (let i=keys.length-1; i >= 0; i--) 
+	{ 
+		var created = keys[i];
+		var headerText = document.createElement("p");
+		headerText.appendChild(document.createTextNode(created + ":"));
+		headerText.style.fontWeight="bold";
+		releaseDiv.appendChild(headerText);
+
+		var listElems = document.createElement("ul");
+		listElems.style.marginLeft = "0cm";
+		listElems.style.marginTop = "0cm";
 	
+		if(nightlies[created].zip)
+		{
+			var listElem = document.createElement("li");
+			var assetURL = document.createElement("a");
+			assetURL.href = nightlies[created].zip.url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = nightlies[created].zip.name;
+			listElem.appendChild(assetURL);
+			listElems.appendChild(listElem);								
+		}
+		if(nightlies[created].tar)
+		{
+			var listElem = document.createElement("li");
+			var assetURL = document.createElement("a");
+			assetURL.href = nightlies[created].tar.url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = nightlies[created].tar.name;
+			listElem.appendChild(assetURL);
+			listElems.appendChild(listElem);		
+		}
+		
+		releaseDiv.appendChild(listElems);
+	}
 	return releaseDiv;
 }
