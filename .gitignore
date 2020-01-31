@@ -10,3 +10,7 @@ bin/
 
 # Matlab
 *.asv
+
+# Eclipse
+.project
+.classpath

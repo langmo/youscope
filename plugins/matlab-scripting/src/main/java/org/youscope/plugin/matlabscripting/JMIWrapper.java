@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
  */
 
 import java.util.HashMap;
-
 /**
  * This code is inspired by <a href="mailto:whitehouse@virginia.edu">Kamin Whitehouse</a>'s <a
  * href="http://www.cs.virginia.edu/~whitehouse/matlab/JavaMatlab.html">MatlabControl</a>. <br>
@@ -107,10 +106,10 @@ class JMIWrapper
 	    	whenMatlabIdle = matlabClass.getMethod("whenMatlabIdle", new Class<?>[] {Runnable.class});
 	    	whenMatlabIdle.setAccessible(true);
 	    	
-	    	mtFevalConsoleOutput = matlabClass.getMethod("mtFevalConsoleOutput", new Class<?>[] {String.class, Object[].class, Integer.class});
+	    	mtFevalConsoleOutput = matlabClass.getMethod("mtFevalConsoleOutput", new Class<?>[] {String.class, Object[].class, int.class});
 	    	mtFevalConsoleOutput.setAccessible(true);
-	    	
-	    	setEchoEval = matlabClass.getMethod("setEchoEval", new Class<?>[] {Boolean.class});
+
+	    	setEchoEval = matlabClass.getMethod("setEchoEval", new Class<?>[] {boolean.class});
 	    	setEchoEval.setAccessible(true);
     	}
     	catch (NoSuchMethodException e) 
@@ -133,16 +132,16 @@ class JMIWrapper
     	
     	try
     	{
-    		nativeIsMatlabThread = nativeMatlabClass.getMethod("nativeIsMatlabThread", new Class<?>[] {Runnable.class});
+    		nativeIsMatlabThread = nativeMatlabClass.getMethod("nativeIsMatlabThread", new Class<?>[] {});
     		nativeIsMatlabThread.setAccessible(true);
     	}
     	catch (NoSuchMethodException e) 
     	{
-        	throw new MatlabInvocationException("Could not find method from native Matlab class " + MATLAB_CLASS_NAME, e);
+        	throw new MatlabInvocationException("Could not find method from native Matlab class " + NATIVE_MATLAB_CLASS_NAME, e);
 		} 
     	catch (SecurityException e) 
     	{
-			throw new MatlabInvocationException("Not allowed to get method from native Matlab class " + MATLAB_CLASS_NAME, e);
+			throw new MatlabInvocationException("Not allowed to get method from native Matlab class " + NATIVE_MATLAB_CLASS_NAME, e);
 		}
     	
     	interfacesInitialized = true;

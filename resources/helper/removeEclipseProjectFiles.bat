@@ -5,4 +5,4 @@
 @rem   into Eclipse.
 
 DEL /S /Q .classpath .project
-forfiles /s /m .settings /c "cmd /c rmdir /s /q @path"
+forfiles /p ..\..\ /s /m .settings /c "cmd /c rmdir /s /q @path"
