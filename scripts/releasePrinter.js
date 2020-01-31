@@ -36,36 +36,36 @@ function createReleaseElements(releases, elementID)
 		{
 			if(latestStable < 0)
 				latestStable = i;
-			break;
 		}
 		else
 		{
 			if(latestPre < 0)
 				latestPre = i;
-			break;
 		}
 		if(latestNightly>=0 && latestStable>= 0 && latestPre >= 0)
 			break;
 	}
 	
 	// Latest stable release
-	var header = document.createElement("h2");
-	if(latestPre>latestStable)
-		header.innerHTML = "Current Release";
-	else
-		header.innerHTML = "Latest Stable Release";
-	releasesElement.appendChild(header);
-	releasesElement.appendChild(createReleaseElement(releases[latestStable], false));	
-
+	if(latestStable >= 0)
+	{
+		var header = document.createElement("h2");
+		if(latestPre < 0 || latestPre>latestStable)
+			header.innerHTML = "Current Release";
+		else
+			header.innerHTML = "Latest Stable Release";
+		releasesElement.appendChild(header);
+		releasesElement.appendChild(createReleaseElement(releases[latestStable], false));	
+	}
 	// Latest prerelease
-	if(latestPre<latestStable)
+	if(latestPre>= 0 && latestPre<latestStable)
 	{
 		header = document.createElement("h2");
 		header.innerHTML = "Latest Pre-Release";
 		releasesElement.appendChild(header);
 		releasesElement.appendChild(createReleaseElement(releases[latestPre], false));	
 	}
-	
+	// Nightly builds
 	if(latestNightly >= 0)
 	{
 		header = document.createElement("h2");
