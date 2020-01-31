@@ -62,7 +62,7 @@ function displayReleaseLinks(release)
 			var assetURL = document.createElement("a");
 			assetURL.href = assets[lID].browser_download_url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (64bit)";			
+			assetURL.innerHTML = "Windows 64bit";			
 			assetElem.appendChild(assetURL);
 			break;
 		}
@@ -76,12 +76,60 @@ function displayReleaseLinks(release)
 			var assetURL = document.createElement("a");
 			assetURL.href = assets[lID].browser_download_url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = "Windows XP, Vista, 7, 8, 10 (32bit)";			
+			assetURL.innerHTML = "Windows 32bit";			
 			assetElem.appendChild(assetURL);
 			break;
 		}
 	}
 	return assetElem;
+}
+function displayNightlyLinks(release, releasesElement)
+{
+	var nightlies = {};
+	var assets = release.assets;
+	for(let assetID in assets)
+	{
+		var asset = assets[assetID];
+		var created = asset.created_at.substring(0, asset.created_at.indexOf("T"));
+		if(!nightlies[created])
+		{
+			nightlies[created] = {};
+		}
+		if(asset.content_type == "application/tar")
+		{
+			nightlies[created].tar = {name: asset.name, url: asset.browser_download_url};
+		}
+		else if(asset.content_type == "application/zip")
+		{
+			nightlies[created].zip = {name: asset.name, url: asset.browser_download_url};
+		}
+	};
+	let keys = [];
+	for (let key in nightlies) 
+	{      
+		keys.push(key);
+	}
+	keys.sort();
+	var created = keys[keys.length-1];
+	
+	var assetElem = document.createElement("p");
+	assetElem.style.fontWeight="bold";
+	var assetURL = document.createElement("a");
+	assetURL.href = nightlies[created].zip.url;
+	assetURL.target = "_blank";
+	assetURL.innerHTML = "Windows 32/64bit";			
+	assetElem.appendChild(assetURL);
+	
+	var header = document.createElement("p");
+	var headerText = document.createElement("span");
+	headerText.appendChild(document.createTextNode("Latest Nightly-Build:"));
+	headerText.style.fontWeight="bold";
+	header.appendChild(headerText);
+	header.appendChild(document.createElement("br"));
+	header.appendChild(document.createTextNode("Date: "+created));
+	releasesElement.appendChild(header);
+	releasesElement.appendChild(assetElem);		
+	releasesElement.appendChild(document.createElement("hr"));		
 }
 
 function createMostRecent(releases, elementID)
@@ -92,41 +140,64 @@ function createMostRecent(releases, elementID)
 		releasesElement.removeChild(releasesElement.firstChild);
 	}
 	var latestStable = -1;
-	var header;
+	var latestNightly = -1;
+	var latestPre = -1;
 	for(var i=0; i<releases.length; i++)
 	{
-		if(!releases[i].prerelease)
+		if(releases[i].tag_name == "nightly")
 		{
-			latestStable = i;
-			header = document.createElement("p");
-			var headerText = document.createElement("span");
-			if(i==0)
-				headerText.appendChild(document.createTextNode("Current Release: "));
-			else
-				headerText.appendChild(document.createTextNode("Latest Stable Release: "));
-			headerText.style.fontWeight="bold";
-			header.appendChild(headerText);
-			header.appendChild(document.createElement("br"));
-			header.appendChild(document.createTextNode(releases[i].name+" ("+releases[i].tag_name+")"));
-			
-			releasesElement.appendChild(header);
-			releasesElement.appendChild(displayReleaseLinks(releases[i]));		
-			releasesElement.appendChild(document.createElement("hr"));
-			break;
+			if(latestNightly < 0)
+				latestNightly = i;
 		}
+		else if(!releases[i].prerelease)
+		{
+			if(latestStable < 0)
+				latestStable = i;
+		}
+		else
+		{
+			if(latestPre < 0)
+				latestPre = i;
+		}
+		if(latestNightly>=0 && latestStable>= 0 && latestPre >= 0)
+			break;
 	}
-	if(latestStable != 0)
+	// Latest stable release
+	if(latestStable >= 0)
 	{
-		header = document.createElement("p");
+		var header = document.createElement("p");
+		var headerText = document.createElement("span");
+		if(latestPre < 0 || latestPre>latestStable)
+			headerText.appendChild(document.createTextNode("Current Release: "));
+		else
+			headerText.appendChild(document.createTextNode("Latest Stable Release: "));
+		headerText.style.fontWeight="bold";
+		header.appendChild(headerText);
+		header.appendChild(document.createElement("br"));
+		header.appendChild(document.createTextNode(releases[latestStable].name+" ("+releases[latestStable].tag_name+")"));
+		
+		releasesElement.appendChild(header);
+		releasesElement.appendChild(displayReleaseLinks(releases[latestStable]));		
+		releasesElement.appendChild(document.createElement("hr"));
+	}
+	// Latest prerelease
+	if(latestPre>= 0 && latestPre<latestStable)
+	{
+		var header = document.createElement("p");
 		var headerText = document.createElement("span");
 		headerText.appendChild(document.createTextNode("Latest Pre-Release: "));
 		headerText.style.fontWeight="bold";
 		header.appendChild(headerText);
 		header.appendChild(document.createElement("br"));
-		header.appendChild(document.createTextNode(releases[0].name+" ("+releases[0].tag_name+")"));
+		header.appendChild(document.createTextNode(releases[latestPre].name+" ("+releases[latestPre].tag_name+")"));
 		releasesElement.appendChild(header);
-		releasesElement.appendChild(displayReleaseLinks(releases[0]));		
-		releasesElement.appendChild(document.createElement("hr"));
+		releasesElement.appendChild(displayReleaseLinks(releases[latestPre]));		
+		releasesElement.appendChild(document.createElement("hr"));	
+	}
+	// Nightly builds
+	if(latestNightly >= 0)
+	{
+		displayNightlyLinks(releases[latestNightly], releasesElement));		
 	}
 }
 window.onload = function()
