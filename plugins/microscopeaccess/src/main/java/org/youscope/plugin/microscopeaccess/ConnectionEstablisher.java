@@ -54,13 +54,13 @@ class ConnectionEstablisher
 	{
 		// Add microManager library folder to the system library path. The microManager main JAR file (MMCoreJ.jar) loads
 		// the microManager main dll (MMCoreJ_wrap.dll) via JNI. This step ensures, that JNI finds the dll.
-		if(changeSystemLibraryPath)
+		/*if(changeSystemLibraryPath)
 		{
 			if(!driverFolder.exists())
 				throw new MicroscopeConnectionException("The folder where the device drivers should be (" + driverFolder.toString() + ") does not exist.");
 	        System.setProperty("java.library.path", driverFolder.getAbsolutePath() + File.pathSeparator + System.getProperty("java.library.path"));
 	        System.out.println("Library path set to " + System.getProperty("java.library.path"));
-		}
+		}*/
 		
 		// Loads all microManager driver DLLs. 
 		// This step is necessary, if microManager does not find the respective DLLs on its own, e.g. since the folder containing them is not
@@ -72,28 +72,47 @@ class ConnectionEstablisher
 			automaticallyLoadDynamicLibraries(driverFolder);
 		}
 		
-		// Get URL to microManager JAR file.
-		if(!jarFile.exists())
+		// Test if microManager JAR file is already loaded
+		boolean mmAlreadyLoaded;
+		try {
+			ConnectionEstablisher.class.getClassLoader().loadClass("mmcorej.CMMCore");
+			mmAlreadyLoaded = true;
+		} 
+		catch (ClassNotFoundException e2) 
 		{
-			throw new MicroscopeConnectionException("The URL to the MicroManager JAR file could not be found under " + jarFile + ".");
-		}
-		URL jarURL;
-		try
-		{
-			jarURL = jarFile.toURI().toURL();
-		}
-		catch(MalformedURLException e1)
-		{
-			throw new MicroscopeConnectionException("The URL to the MicroMicroManager JAR file (" + jarFile + ") is not valid.", e1);
+			mmAlreadyLoaded = false;
 		}
 		
-		// Initialize class loader to load the microManager JAR file and connect it to YouScope.
-		URL thisPackageUrl = getThisPackageURL();
-		URL[] classLoaderURLs = new URL[]{jarURL, thisPackageUrl};
 		// TODO: where and when to close classLoader? Are loaded classes invalid after class loader has been closed?
-		@SuppressWarnings("resource")
-		MicroscopeClassLoader classLoader = new MicroscopeClassLoader(classLoaderURLs, ConnectionEstablisher.class.getClassLoader());
-
+		ClassLoader classLoader;
+		if(!mmAlreadyLoaded)
+		{
+			// Get URL to microManager JAR file.
+			if(!jarFile.exists())
+			{
+				throw new MicroscopeConnectionException("The MicroManager JAR file could not be found under " + jarFile + ".");
+			}
+			URL jarURL;
+			try
+			{
+				jarURL = jarFile.toURI().toURL();
+			}
+			catch(MalformedURLException e1)
+			{
+				throw new MicroscopeConnectionException("The URL to the MicroMicroManager JAR file (" + jarFile + ") is not valid.", e1);
+			}
+			
+			// Initialize class loader to load the microManager JAR file and connect it to YouScope.
+			URL thisPackageUrl = getThisPackageURL();
+			URL[] classLoaderURLs = new URL[]{jarURL, thisPackageUrl};
+			
+			classLoader = new MicroscopeClassLoader(classLoaderURLs, ConnectionEstablisher.class.getClassLoader());
+		}
+		else
+		{
+			classLoader = ConnectionEstablisher.class.getClassLoader();
+		}
+		
 		// Load microManager class and initialize a microManager object.
 		Class<?> microManagerClass;
 		Object microManager;

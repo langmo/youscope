@@ -5,17 +5,26 @@
 // Gradle plugins
 plugins {
 	id 'application'
+	id 'eclipse'
 }
-
-/*compileJava   {
-  sourceCompatibility = '1.7'
-  targetCompatibility = '1.7'
-}*/
 
 application {
 	executableDir = ''
 	mainClassName = 'org.youscope.starter.Starter'
 	applicationDefaultJvmArgs = ['-Djava.library.path=drivers64', '-Dpython.console.encoding=UTF-8']
+}
+allprojects {
+    tasks.withType(JavaExec) {
+        workingDir = new File("distribution")
+    } 
+}
+
+// Delete annoying start scripts. We are using exe's instead!
+startScripts {
+    doLast {
+        delete windowsScript
+		delete unixScript
+    }
 }
 
 distributions {
@@ -114,6 +123,7 @@ project(':core:client')
 		implementation name: 'jfreechart-1.0.14'
 		implementation name: 'zxing-core-1.7'
 		implementation name: 'zxing-j2se-1.7'
+		runtimeOnly name: 'fugue-icons-2.6.4'
     }
 }
 
@@ -166,6 +176,23 @@ allprojects {
         targetCompatibility = '1.7'
     } 
 }
+
+dependencies {
+	repositories {
+	   flatDir {
+		   dirs 'libs'
+	   }
+	}
+    runtimeOnly project(':core:server')
+    runtimeOnly project(':core:client')
+	project(':plugins')
+	{
+		subprojects {
+			runtimeOnly project(':plugins:' + project.name)
+		}
+	}
+}
+
 
 ///////////////////////////////////
 // Define distribution structure

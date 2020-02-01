@@ -238,6 +238,19 @@ class Client extends ClientServerConnection
     @Override
     boolean exists()
     {
-        return new File(clientJarFileLocation).exists();
+        // If stand alone, client jars will be loaded dynamically
+        if(new File(clientJarFileLocation).exists())
+        	return true;
+        // If running in IDE/gradle, jars might already be loaded. Thus, let's just see if
+        // the necessary classes are already there...
+        try
+        {
+            Server.class.getClassLoader().loadClass(CLIENT_CLASS);
+            return true;
+        } 
+        catch (ClassNotFoundException e)
+        {
+            return false;
+        }
     }
 }

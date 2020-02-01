@@ -101,6 +101,7 @@ public class MicroscopeConnectionFactoryImpl implements MicroscopeConnectionFact
         	return false;
         return true;
 	}
+	
 	@Override
 	public String[] getSupportedMicroscopeConnectionIDs()
 	{

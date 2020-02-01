@@ -1,0 +1,7 @@
+# YouScope run artifacts
+/error_client.txt
+/error_server.txt
+/log_client.txt
+/log_server.txt
+/youscope_properties.prop
+/configuration/
