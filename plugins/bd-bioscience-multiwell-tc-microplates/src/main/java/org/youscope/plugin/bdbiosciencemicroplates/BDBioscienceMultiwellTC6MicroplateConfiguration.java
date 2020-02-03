@@ -19,7 +19,7 @@ import org.youscope.common.configuration.YSConfigIcon;
  * @author Moritz Lang
  *
  */
-@YSConfigAlias("6 well microplate (BD Bioscience™ - Multiwell™ TC Plate)")
+@YSConfigAlias("6 well microplate (BD Bioscience - Multiwell TC Plate)")
 @YSConfigIcon("icons/map.png")
 public class BDBioscienceMultiwellTC6MicroplateConfiguration extends MicroplateConfiguration
 {

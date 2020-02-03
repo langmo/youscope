@@ -100,7 +100,7 @@ public class CellDetectionTableColumns
 	/**
 	 * Column containing cells' orientations.
 	 */
-	public final static ColumnDefinition<Double> TABLE_COLUMN_ORIENTATION = ColumnDefinition.createDoubleColumnDefinition("cell.orientation", "Orientation (in degrees) the cell is pointing to (-90° to 90).", true);
+	public final static ColumnDefinition<Double> TABLE_COLUMN_ORIENTATION = ColumnDefinition.createDoubleColumnDefinition("cell.orientation", "Orientation (in degrees) the cell is pointing to (-90 to 90).", true);
 	
 	/**
 	 * Column containing cells' fluorescence.

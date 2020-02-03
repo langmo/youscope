@@ -204,7 +204,7 @@ public class TileDefinitionUI extends AddonUIAdapter<AddonMetadata>
 		
 		private Rectangle										cellsLocation;
 		private Rectangle										boundaryLocation;
-		private static final String WIDTH_HEIGHT_LABEL_POSTFIX = "µm";
+		private static final String WIDTH_HEIGHT_LABEL_POSTFIX = "um";
 		// Set default values such that they are large enough during positioning. We set them to the initial values later.
 		private JLabel										widthLabel			= new JLabel("XXXXXXXXXX"+WIDTH_HEIGHT_LABEL_POSTFIX);
 		private JLabel										heightLabel			= new JLabel("XXXXXXXXXX"+WIDTH_HEIGHT_LABEL_POSTFIX);

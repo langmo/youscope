@@ -30,7 +30,7 @@ class BDBioscienceMultiwellTC6MicroplateResource extends ResourceAdapter<BDBiosc
 
 	public BDBioscienceMultiwellTC6MicroplateResource(PositionInformation positionInformation, BDBioscienceMultiwellTC6MicroplateConfiguration configuration)
 					throws ConfigurationException, RemoteException {
-		super(positionInformation, configuration, BDBioscienceMultiwellTC6MicroplateConfiguration.TYPE_IDENTIFIER, BDBioscienceMultiwellTC6MicroplateConfiguration.class, "6 well microplate (BD Bioscience™ - Multiwell™ TC Plate)");
+		super(positionInformation, configuration, BDBioscienceMultiwellTC6MicroplateConfiguration.TYPE_IDENTIFIER, BDBioscienceMultiwellTC6MicroplateConfiguration.class, "6 well microplate (BD Bioscience - Multiwell TC Plate)");
 	}
 
 	@Override
