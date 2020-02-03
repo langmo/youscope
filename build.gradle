@@ -78,7 +78,8 @@ task createExe32(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     jreRuntimeBits = "32"
     jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers32"]
 }
-task buildWindowsInstaller {
+task buildInstaller {
+	dependsOn: :installDist
 	doLast {    
 	    println "Building Windows installer"
         ant.taskdef(name: "nsis", classname: "com.danielreese.nsisant.Task", classpath: configurations.nsis.asPath)
