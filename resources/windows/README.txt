@@ -1,4 +1,7 @@
 The YouScope exe files are build using launch4j, which can be downloaded at http://launch4j.sourceforge.net/
+The exes are built automatically by the build script - no more action is needed.
+However, to build them stand alone, we here conveniently also provide the corresponding configuration (XML) files.
+
 There are two exes, one for 32bit and one for 64bit. The configurations of these files are
 YouScope32.xml
 YouScope64.xml

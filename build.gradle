@@ -6,6 +6,7 @@
 plugins {
 	id 'application'
 	id 'eclipse'
+	id 'edu.sc.seis.launch4j' version '2.4.6'
 }
 
 application {
@@ -17,6 +18,65 @@ allprojects {
     tasks.withType(JavaExec) {
         workingDir = new File("distribution")
     } 
+}
+
+// Empty task to prevent unnecessary copying of libs by launch4j
+task emptyTask{
+}
+
+// Configuration to create the exe files for YouScope
+// See https://github.com/TheBoegl/gradle-launch4j for details
+launch4j {
+   dontWrapJar = true
+   headerType = 'gui'
+   jar = "lib/youscope.jar"
+   errTitle = 'YouScope'
+   copyConfigurable = rootProject.tasks.emptyTask.outputs.files
+   
+   cmdLine = ""
+   chdir = '.'
+   priority = 'normal'
+   downloadUrl = "http://java.com/download"
+   supportUrl = 'http://www.youscope.org'
+   stayAlive = false
+   restartOnCrash = false
+   manifest = ""
+   icon = "${rootProject.projectDir}/resources/windows/YouScope.ico"
+   classpath = ['lib/youscope.jar']
+   mainClassName = "org.youscope.starter.Starter"
+   
+   bundledJre64Bit = false
+   bundledJreAsFallback = false
+   jreMinVersion = "1.7.0" 
+   initialHeapSize = 256
+   initialHeapPercent = 10
+   maxHeapSize = 1024
+   maxHeapPercent = 50
+  
+   splashFileName = "${rootProject.projectDir}/resources/windows/splash.bmp"
+   splashWaitForWindows = true
+   splashTimeout = 60
+   splashTimeoutError = true
+    
+   fileDescription = 'YouScope - Microscope Control Environment'
+   copyright = 'Moritz Lang, info@youscope.org'
+   productName = "YouScope - Microscope Control Environment"
+   companyName = "YouScope.org"
+   internalName = "YouScope"
+   language = "ENGLISH_US"
+}
+// 64 bit version of exe
+createExe {
+    outfile = 'YouScope64.exe'
+    jreRuntimeBits = "64"
+    jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers64"]
+}
+
+// 32 bit version of exe
+task createExe32(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
+    outfile = 'YouScope32.exe'
+    jreRuntimeBits = "32"
+    jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers32"]
 }
 
 // Delete annoying start scripts. We are using exe's instead!
@@ -207,6 +267,14 @@ task externalLibs {
 distributions {
     main {
         contents {
+			from(createExe)
+			{
+				into ''
+			}
+			from(createExe32)
+			{
+				into ''
+			}
 			from(externalLibs) {
                 into 'lib'
             }
