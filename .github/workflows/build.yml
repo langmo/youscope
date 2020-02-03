@@ -29,7 +29,11 @@ jobs:
           name: youscope.tar
           # Directory containing files to upload
           path: build/distributions/youscope.tar
-
+      - name: Create NSIS installer
+        # See https://github.com/joncloud/makensis-action for action
+        uses: joncloud/nsis-action@v1
+        with:
+            script-file: build/install/youscope/YouScope.nsi
       - name: Deploy .zip to nightly build
         uses: WebFreak001/deploy-nightly@v1.0.1
         env:
