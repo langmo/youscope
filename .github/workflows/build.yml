@@ -33,7 +33,7 @@ jobs:
         # See https://github.com/joncloud/makensis-action for action
         uses: joncloud/nsis-action@v1
         with:
-            script-file: build/install/youscope/YouScope.nsi
+            script-file: resources/nsis/YouScope.nsi
       - name: Deploy .zip to nightly build
         uses: WebFreak001/deploy-nightly@v1.0.1
         env:
