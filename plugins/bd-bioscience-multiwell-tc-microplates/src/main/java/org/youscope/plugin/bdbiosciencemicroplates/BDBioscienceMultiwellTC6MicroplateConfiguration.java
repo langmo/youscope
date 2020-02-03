@@ -15,7 +15,7 @@ import org.youscope.common.configuration.YSConfigAlias;
 import org.youscope.common.configuration.YSConfigIcon;
 
 /**
- * 6 well microplate (BD Bioscience™ - Multiwell™ TC Plate).
+ * 6 well microplate (BD Bioscience - Multiwell TC Plate).
  * @author Moritz Lang
  *
  */

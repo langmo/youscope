@@ -69,7 +69,7 @@ class MetadataManagerImpl extends HashMap<String, MetadataDefinition> implements
 	private static Collection<MetadataDefinition> generateDefaults()
 	{
 		ArrayList<MetadataDefinition> result = new ArrayList<>();
-		result.add(new MetadataDefinition("Temperature", MetadataDefinition.Type.DEFAULT , true,0,100,null, "°C"));
+		result.add(new MetadataDefinition("Temperature", MetadataDefinition.Type.DEFAULT , true,0,100,null, "C"));
 		result.add(new MetadataDefinition("User", MetadataDefinition.Type.OPTIONAL, true));
 		result.add(new MetadataDefinition("Species", MetadataDefinition.Type.DEFAULT, true, getModelOrganisms()));
 		result.add(new MetadataDefinition("Strain", MetadataDefinition.Type.DEFAULT, true));

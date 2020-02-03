@@ -319,7 +319,7 @@ public class PeriodVaryingPanel extends JPanel
 				if(col == 0)
 					return "Total:";
 				else if(col < 3)
-					return "—";
+					return "-";
 				else
 				{
 					int time = 0;
