@@ -11,6 +11,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Download NSIS
+        # See https://github.com/joncloud/makensis-action for action
+        uses: joncloud/nsis-action@v1
+        with:
+            just-include: true
+            #script-file: resources/nsis/YouScope.nsi
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -29,11 +35,6 @@ jobs:
           name: youscope.tar
           # Directory containing files to upload
           path: build/distributions/youscope.tar
-      - name: Create NSIS installer
-        # See https://github.com/joncloud/makensis-action for action
-        uses: joncloud/nsis-action@v1
-        with:
-            script-file: resources/nsis/YouScope.nsi
       - name: Deploy .zip to nightly build
         uses: WebFreak001/deploy-nightly@v1.0.1
         env:

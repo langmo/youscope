@@ -78,6 +78,16 @@ task createExe32(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     jreRuntimeBits = "32"
     jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers32"]
 }
+task buildWindowsInstaller {
+	doLast {    
+	    println "Building Windows installer"
+        ant.taskdef(name: "nsis", classname: "com.danielreese.nsisant.Task", classpath: configurations.nsis.asPath)
+        ant.nsis(script: "${rootProject.projectDir}/build/install/youscope/YouScope.nsi"/*, path: "C:/Program Files (x86)/NSIS/"*/,  out: "${rootProject.projectDir}/build/install/youscope/build.log") {
+		    define(name: "RELEASE_VERSION", value: "1.0")
+            define(name: "VERSION", value: "1.0.0")
+        }
+	}
+}
 
 // Delete annoying start scripts. We are using exe's instead!
 startScripts {
@@ -237,6 +247,9 @@ allprojects {
     } 
 }
 
+configurations {
+    nsis
+}
 dependencies {
 	repositories {
 	   flatDir {
@@ -251,6 +264,7 @@ dependencies {
 			runtimeOnly project(':plugins:' + project.name)
 		}
 	}
+	nsis files("${rootProject.projectDir}/resources/nsis/nsisant-1.3.jar")
 }
 
 
