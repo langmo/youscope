@@ -1,5 +1,8 @@
 name: YouScope CI
-on: [push]
+on: 
+    push:
+        branches:
+            - master
 
 jobs:
   nightly:
@@ -16,7 +19,7 @@ jobs:
         uses: joncloud/nsis-action@v1
         with:
             just-include: true
-            include-more-plugins: true
+            includeMorePlugins: ${{__dirname}}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
