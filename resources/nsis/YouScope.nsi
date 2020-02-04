@@ -5,9 +5,9 @@
 ;---------------------
 
 ; Comment out to not export win64
-;!define WIN64
+!define WIN64
 ; Comment out to not export win32
-!define WIN32
+;!define WIN32
 
 
 
@@ -127,8 +127,8 @@ Section "-Main Program" SecMain
 		FILE YouScope32.exe
 	!endif
 	
-	;AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
-	;Pop $0
+	AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
+	Pop $0
 
 	SetOutPath "$INSTDIR\lib"
 	FILE "lib\*"
