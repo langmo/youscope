@@ -127,8 +127,8 @@ Section "-Main Program" SecMain
 		FILE YouScope32.exe
 	!endif
 	
-	AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
-	Pop $0
+	;AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
+	;Pop $0
 
 	SetOutPath "$INSTDIR\lib"
 	FILE "lib\*"
