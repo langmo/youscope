@@ -19,7 +19,7 @@ jobs:
         uses: joncloud/nsis-action@v1
         with:
             just-include: true
-            includeMorePlugins: ${{__dirname}}
+            includeMorePlugins: 'd:/a/_actions/joncloud/nsis-action/v1/nsis/plugins/'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
