@@ -12,7 +12,6 @@ include 'core:api', 'core:server', 'core:client'
 //        'plugins:' + it.getName() 
 //    }.toArray(new java.lang.String[0])
 
-
 include 'plugins:ansi-sbs-microplates'
 include 'plugins:autofocus'
 include 'plugins:bd-bioscience-multiwell-tc-microplates'
