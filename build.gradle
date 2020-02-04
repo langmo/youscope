@@ -103,6 +103,23 @@ task buildInstaller {
         }
 	}
 }
+// work around for bugs in installDist on github
+installDist {
+	def installDir = file("${rootProject.buildDir}/install/${rootProject.name}")
+	def libDir = new File(installDir, "lib")
+	def binDir = new File(installDir, "bin")
+	// make the wrongly required directories before they are checked for
+	doFirst {
+		mkdir installDir
+		mkdir libDir
+		mkdir binDir
+	}
+	// remove them after the check
+	doLast {
+		libDir.deleteDir()
+		binDir.deleteDir()
+	}
+}
 
 // Delete annoying start scripts. We are using exe's instead!
 startScripts {
