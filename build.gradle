@@ -7,7 +7,7 @@ plugins {
 	id 'application'
 	id 'eclipse'
 	id 'edu.sc.seis.launch4j' version '2.4.6'
-	id "de.undercouch.download" version "4.0.4"
+	id "com.github.langmo.gradlensis" version "0.1.0"
 }
 
 application {
@@ -80,7 +80,28 @@ task createExe32(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers32"]
 }
 
+nsis {
+	configuration = file("${rootProject.projectDir}/resources/nsis/YouScope.nsi")
+	runIn =  file("${rootProject.buildDir}/install/youscope/")
+	additionalPlugins = ['AccessControl']
+	variables = ['WIN64':'True']
+}
+task createInstaller32(type: com.github.langmo.gradlensis.GradleNsisTask) {
+	variables = ['WIN32':'True']
+}
+createInstaller.dependsOn installDist
+createInstaller32.dependsOn installDist
+task createInstallers {
+	dependsOn ":createInstaller32"
+	dependsOn ":createInstaller"
+}
+def NSIS_GROUP = 'nsis'
+createInstaller32.group = createInstaller.group
+createInstaller32.description = createInstaller.description
+createInstallers.group = createInstaller.group
+createInstallers.description = "Creates both the 32 and 64bit installers"
 
+/*
 task copyInstallerConfig(type: Copy) {
     from file("${rootProject.projectDir}/resources/nsis/YouScope.nsi")
     into file("${rootProject.buildDir}/install/youscope/")
@@ -120,6 +141,7 @@ task buildInstaller {
 		println "Installer successfully built!"
 	}
 }
+*/
 // work around for bugs in installDist on github
 installDist {
 	def installDir = file("${rootProject.buildDir}/install/${rootProject.name}")
@@ -311,8 +333,6 @@ dependencies {
 		}
 	}
 }
-
-
 
 ///////////////////////////////////
 // Define distribution structure

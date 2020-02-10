@@ -4,11 +4,12 @@
 ;--- Configuration ---
 ;---------------------
 
-; Comment out to not export win64
-!define WIN64
-; Comment out to not export win32
-;!define WIN32
-
+; Define either WIN64, WIN32 or both to define which installer is created (default: WIN64)
+!ifndef WIN64
+	!ifndef WIN32
+		!define WIN64
+	!endif
+!endif
 
 
 
@@ -127,8 +128,8 @@ Section "-Main Program" SecMain
 		FILE YouScope32.exe
 	!endif
 	
-	;AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
-	;Pop $0
+	AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess" 
+	Pop $0
 
 	SetOutPath "$INSTDIR\lib"
 	FILE "lib\*"
