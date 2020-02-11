@@ -34,9 +34,9 @@ class SerialDeviceRMI extends DeviceRMI implements SerialDevice
 
 	private SerialDeviceInternal	serialDevice;
 
-	SerialDeviceRMI(SerialDeviceInternal serialDevice, int accessID) throws RemoteException
+	SerialDeviceRMI(SerialDeviceInternal serialDevice, MicroscopeRMI microscope, int accessID) throws RemoteException
 	{
-		super(serialDevice, accessID);
+		super(serialDevice, microscope, accessID);
 		this.serialDevice = serialDevice;
 	}
 

@@ -38,9 +38,9 @@ class StageDeviceImpl extends DeviceImpl implements StageDeviceInternal
 	private final static String PROPERTY_POSITION_X = "PositionX";
 	private final static String PROPERTY_POSITION_Y = "PositionY";
 	
-	StageDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID)
+	StageDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceName, libraryID, driverID, DeviceType.XYStageDevice, new String[]{PROPERTY_TRANSPOSE_X, PROPERTY_TRANSPOSE_Y, PROPERTY_POSITION_X, PROPERTY_POSITION_Y});
+		super(microscope, deviceName, libraryID, driverID, DeviceType.XYStageDevice, hub, new String[]{PROPERTY_TRANSPOSE_X, PROPERTY_TRANSPOSE_Y, PROPERTY_POSITION_X, PROPERTY_POSITION_Y});
 	}
 
 	@Override

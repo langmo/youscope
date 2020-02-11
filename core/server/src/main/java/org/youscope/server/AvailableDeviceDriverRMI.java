@@ -19,6 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.PreInitDevicePropertyInternal;
 import org.youscope.common.microscope.AvailableDeviceDriver;
+import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeDriverException;
@@ -35,18 +36,19 @@ class AvailableDeviceDriverRMI extends UnicastRemoteObject implements AvailableD
 	 */
 	private static final long				serialVersionUID	= 4944415630156050190L;
 
-	private AvailableDeviceDriverInternal	deviceDriver;
-
-	protected int							accessID;
+	private final AvailableDeviceDriverInternal	deviceDriver;
+	private final int							accessID;
+	private final MicroscopeRMI microscope;
 
 	/**
 	 * @throws RemoteException
 	 */
-	protected AvailableDeviceDriverRMI(AvailableDeviceDriverInternal deviceDriver, int accessID) throws RemoteException
+	protected AvailableDeviceDriverRMI(AvailableDeviceDriverInternal deviceDriver, MicroscopeRMI microscope, int accessID) throws RemoteException
 	{
 		super();
 		this.deviceDriver = deviceDriver;
 		this.accessID = accessID;
+		this.microscope = microscope;
 	}
 
 	@Override
@@ -99,9 +101,9 @@ class AvailableDeviceDriverRMI extends UnicastRemoteObject implements AvailableD
 	}
 
 	@Override
-	public void initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException
+	public Device initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException, RemoteException
 	{
-		deviceDriver.initializeDevice(preInitSettings, accessID);
+		return microscope.toDevice(deviceDriver.initializeDevice(preInitSettings, accessID));
 	}
 
 	@Override

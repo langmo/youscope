@@ -25,7 +25,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -37,6 +40,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -53,9 +57,11 @@ import javax.swing.event.ListSelectionListener;
 
 import org.youscope.clientinterfaces.YouScopeFrame;
 import org.youscope.common.microscope.AvailableDeviceDriver;
+import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceLoader;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
+import org.youscope.common.microscope.HubDevice;
 import org.youscope.common.microscope.PreInitDeviceProperty;
 import org.youscope.uielements.ImageLoadingTools;
 import org.youscope.uielements.StandardFormats;
@@ -71,102 +77,10 @@ import com.google.zxing.qrcode.QRCodeWriter;
  */
 class ManageAddDeviceFrame
 {
-	private final GridBagConstraints	newLineConstr = StandardFormats.getNewLineConstraint();
-	private final GridBagConstraints	bottomConstr = StandardFormats.getBottomContstraint();
-
-	private final YouScopeFrame			frame;
+	private final ArrayList<ActionListener> devicesChangedListener = new ArrayList<ActionListener>();
 	
-	private final JList<Object>					deviceTypesField			= new JList<Object>();
-	
-	private AvailableDeviceDriver[] deviceDrivers = null;
-	
-	private final Vector<AvailableDeviceDriver> currentlyShownDevices = new Vector<AvailableDeviceDriver>();
-	private final CurrentlyShownDevicesListModel currentlyShownDevicesListModel;
-	private final JList<Object> currentlyShownDevicesList;
-	
-	private final JComboBox<String> sortTypeField = new JComboBox<String>(new String[]{"Device Type", "Library"});
-	
-	private final SelectedDevicePanel selectedDevicePanel = new SelectedDevicePanel();
-	
-	private Vector<ActionListener> devicesChangedListener = new Vector<ActionListener>();
-	
-	private final JPanel deviceTypeElement;
-	private final JPanel deviceDriverElement;
-	private final JPanel deviceSettingsElement;
-	
-	private JLabel selectDriverLabel;
-	
-	ManageAddDeviceFrame(YouScopeFrame frame)
-	{
-		this.frame = frame;
-		frame.setTitle("Add Device");
-		frame.setResizable(true);
-		frame.setClosable(true);
-		frame.setMaximizable(true);
-		
-		// Initialize device type chooser
-		deviceTypesField.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		deviceTypesField.addListSelectionListener(new ListSelectionListener()
-		{
-			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
-				Object selectedValue = deviceTypesField.getSelectedValue();
-				if(selectedValue == null)
-					return;
-				else if(sortTypeField.getSelectedIndex() == 0 &&  selectedValue instanceof DeviceType)
-					showDevicesOfType((DeviceType)selectedValue);
-				else if(sortTypeField.getSelectedIndex() == 1 && selectedValue instanceof String)
-					showDevicesOfLibrary((String)selectedValue);
-			}
-		});
-		
-		// Initialize available device driver list
-		currentlyShownDevicesListModel = new CurrentlyShownDevicesListModel();
-		currentlyShownDevicesList = new JList<Object>(currentlyShownDevicesListModel);
-		currentlyShownDevicesList.setCellRenderer(new CurrentlyShownDevicesListRenderer());
-		currentlyShownDevicesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		currentlyShownDevicesList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-			{
-				@Override
-				public void valueChanged(ListSelectionEvent arg0)
-				{
-					currentlyShownDevicesList.setPrototypeCellValue(null);
-
-					if(arg0.getValueIsAdjusting())
-						return;
-					selectedDevicePanel.setSelectedDevice(currentlyShownDevicesList.getSelectedIndex());
-				}
-			});
-		
-		// Set layout
-		deviceTypeElement = new JPanel(new BorderLayout(5, 5));
-		JPanel sorterPanel = new JPanel(new GridLayout(1, 2, 5, 5));
-		sorterPanel.add(new JLabel("Sort by:"));
-		sorterPanel.add(sortTypeField);
-		deviceTypeElement.add(sorterPanel, BorderLayout.NORTH);
-		deviceTypeElement.add(new JScrollPane(deviceTypesField), BorderLayout.CENTER);
-		deviceTypeElement.setBorder(new TitledBorder("Step 1: Select Device Type"));
-		
-		deviceDriverElement = new JPanel(new BorderLayout());
-		deviceDriverElement.setBorder(new TitledBorder("Step 2: Select Device Driver"));
-		
-		deviceSettingsElement = new JPanel(new BorderLayout());
-		deviceSettingsElement.setBorder(new TitledBorder("Step 3: Configure Device"));
-		
-		// Initialize content.
-		frame.startInitializing();
-		new Thread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					initializeFrame();
-					ManageAddDeviceFrame.this.frame.endLoading();
-					ManageAddDeviceFrame.this.frame.setSize(new Dimension(790, 500));
-				}
-			}).start();
-	}
+	private static final GridBagConstraints	newLineConstr = StandardFormats.getNewLineConstraint();
+	private static final GridBagConstraints	bottomConstr = StandardFormats.getBottomContstraint();
 	
 	private class QRImageField extends JComponent
     {
@@ -252,30 +166,133 @@ class ManageAddDeviceFrame
         }
     }
 	
-	private class SelectedDevicePanel extends JPanel implements ActionListener
+	private static class DeviceSelectorPanel extends JPanel
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long	serialVersionUID	= -9001873347874072811L;
+		private final ArrayList<AvailableDeviceDriver> currentlyShownDevices = new ArrayList<AvailableDeviceDriver>();
+		private final CurrentlyShownDevicesListModel currentlyShownDevicesListModel;
+		private final JList<Object> currentlyShownDevicesList;
+		private final ArrayList<DeviceChangedListener> deviceChangeListeners = new ArrayList<DeviceChangedListener>();
+		DeviceSelectorPanel(YouScopeFrame frame)
+		{
+			super(new BorderLayout());
+			
+			// Initialize available device driver list
+			currentlyShownDevicesListModel = new CurrentlyShownDevicesListModel(currentlyShownDevices);
+			currentlyShownDevicesList = new JList<Object>(currentlyShownDevicesListModel);
+			currentlyShownDevicesList.setCellRenderer(new CurrentlyShownDevicesListRenderer());
+			currentlyShownDevicesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			currentlyShownDevicesList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+				{
+					@Override
+					public void valueChanged(ListSelectionEvent arg0)
+					{
+						currentlyShownDevicesList.setPrototypeCellValue(null);
+
+						if(arg0.getValueIsAdjusting())
+							return;
+						
+						int row = currentlyShownDevicesList.getSelectedIndex();
+						AvailableDeviceDriver selectedDevice;
+						if(row < 0 || row >= currentlyShownDevices.size())
+							selectedDevice = null;
+						else
+							selectedDevice = currentlyShownDevices.get(row);
+						for(DeviceChangedListener listener : deviceChangeListeners)
+						{
+							listener.deviceChanged(selectedDevice);
+						}
+					}
+				});
+			
+			setDevices(null);
+		}
+		static interface DeviceChangedListener extends EventListener
+		{
+			public void deviceChanged(AvailableDeviceDriver device);
+		}
+		void addDeviceChangeListener(DeviceChangedListener listener)
+		{
+			deviceChangeListeners.add(listener);
+		}
+		@SuppressWarnings("unused")
+		void removeDeviceChangeListener(DeviceChangedListener listener)
+		{
+			deviceChangeListeners.remove(listener);
+		}
+		public void setDevices(final List<AvailableDeviceDriver> devices)
+		{
+			// Remove all settings from previous driver.
+			removeAll();
+			if(devices == null)
+			{
+				Icon previousFirst = ImageLoadingTools.getResourceIcon("org/youscope/client/images/arrowLeft.png", "select previous tab first");
+				JLabel selectTypeLabel = new JLabel("<html><p style=\"font-size:16pt\">Select device type!</p></html>", SwingConstants.CENTER);
+				selectTypeLabel.setOpaque(false);
+				selectTypeLabel.setVerticalAlignment(SwingConstants.CENTER);
+				selectTypeLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+				selectTypeLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+				if(previousFirst != null)
+				{
+					selectTypeLabel.setIcon(previousFirst);
+				}
+				add(selectTypeLabel, BorderLayout.CENTER);
+				revalidate();
+				repaint();
+				return;
+			}
+			
+			currentlyShownDevicesList.clearSelection();
+			currentlyShownDevices.clear();
+			currentlyShownDevices.addAll(devices);			
+			currentlyShownDevicesListModel.fireContentsChanged();
+			removeAll();
+			add(new JScrollPane(currentlyShownDevicesList), BorderLayout.CENTER);
+			revalidate();
+			repaint();
+		}
+	}
+	
+	private class SelectedDevicePanel extends JPanel
 	{
 		/**
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= -9001873347874072884L;
-		private AvailableDeviceDriver selectedDevice = null;
 		private JTextField deviceNameField = new JTextField();
 		private final QRImageField qrImage = new QRImageField();
-		public synchronized void setSelectedDevice(int row)
+		private final YouScopeFrame frame;
+		SelectedDevicePanel(YouScopeFrame frame)
+		{
+			super(new BorderLayout());
+			this.frame = frame;
+			setSelectedDevice(null);
+		}
+		public void setSelectedDevice(final AvailableDeviceDriver selectedDevice)
 		{
 			// Remove all settings from previous driver.
 			deviceNameField.setText("");
-			selectedDevice = null;
 			removeAll();
-			if(row < 0 || row >= currentlyShownDevices.size())
+			if(selectedDevice == null)
 			{
-				validate();
+				Icon previousFirst = ImageLoadingTools.getResourceIcon("org/youscope/client/images/arrowLeft.png", "select previous tab first");
+				final JLabel selectDriverLabel = new JLabel("<html><p style=\"font-size:16pt\">Select device driver!</p></html>", SwingConstants.CENTER);
+				selectDriverLabel.setOpaque(false);
+				selectDriverLabel.setVerticalAlignment(SwingConstants.CENTER);
+				selectDriverLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+				selectDriverLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+				if(previousFirst != null)
+				{
+					selectDriverLabel.setIcon(previousFirst);
+				}
+				add(selectDriverLabel, BorderLayout.CENTER);
+				revalidate();
 				repaint();
 				return;
 			}
-			
-			// Get device
-			selectedDevice = currentlyShownDevices.elementAt(row);
 			
 			// Load data
 			String identifier = "";
@@ -299,7 +316,7 @@ class ManageAddDeviceFrame
 			
 	        // Setup layout
 			GridBagLayout deviceLayout = new GridBagLayout();
-			setLayout(deviceLayout);
+			JPanel contentPane = new JPanel(deviceLayout);
 	        
 	        // Setup description
 	        JLabel deviceDescriptionLabel = new JLabel("<html><p>"
@@ -311,12 +328,12 @@ class ManageAddDeviceFrame
 			deviceNameField.setText(identifier);
 			deviceDescriptionLabel.setOpaque(true);
 			deviceDescriptionLabel.setBorder(new CompoundBorder(new LineBorder(Color.BLACK, 1), new EmptyBorder(4,4,4,4)));
-			StandardFormats.addGridBagElement(deviceDescriptionLabel, deviceLayout, newLineConstr, this);
+			StandardFormats.addGridBagElement(deviceDescriptionLabel, deviceLayout, newLineConstr, contentPane);
 			
 			if(canCreate)
 			{
-				StandardFormats.addGridBagElement(new JLabel("Name for the device:"), deviceLayout, newLineConstr, this);
-		        StandardFormats.addGridBagElement(deviceNameField, deviceLayout, newLineConstr, this);
+				StandardFormats.addGridBagElement(new JLabel("Name for the device:"), deviceLayout, newLineConstr, contentPane);
+		        StandardFormats.addGridBagElement(deviceNameField, deviceLayout, newLineConstr, contentPane);
 			}
 
         	if(errorMessages.size() > 0)
@@ -329,102 +346,292 @@ class ManageAddDeviceFrame
         		errorMessage += "</html>";
         		JEditorPane editorPane = new JEditorPane("text/html", errorMessage);
     			editorPane.setEditable(false);
-    			StandardFormats.addGridBagElement(new JScrollPane(editorPane), deviceLayout, bottomConstr, this);
+    			StandardFormats.addGridBagElement(new JScrollPane(editorPane), deviceLayout, bottomConstr, contentPane);
         	}
         	else
         	{
         		JPanel emptyPanel = new JPanel();
-        		StandardFormats.addGridBagElement(emptyPanel, deviceLayout, bottomConstr, this);
+        		StandardFormats.addGridBagElement(emptyPanel, deviceLayout, bottomConstr, contentPane);
         	}
         	
         	// Add QR image
         	qrImage.setDriver(library);
-        	StandardFormats.addGridBagElement(qrImage, deviceLayout, newLineConstr, this);
-        	StandardFormats.addGridBagElement(new JLabel("Scan for driver description!", SwingConstants.CENTER), deviceLayout, newLineConstr, this);
+        	StandardFormats.addGridBagElement(qrImage, deviceLayout, newLineConstr, contentPane);
+        	StandardFormats.addGridBagElement(new JLabel("Scan for driver description!", SwingConstants.CENTER), deviceLayout, newLineConstr, contentPane);
 	        
 	        if(canCreate)
 	        {
 	        	JButton addDeviceButton = new JButton("Add device");
-	        	addDeviceButton.addActionListener(this);
-	        	StandardFormats.addGridBagElement(addDeviceButton, deviceLayout, newLineConstr, this);
+	        	addDeviceButton.addActionListener(new ActionListener() 
+	        	{
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) 
+					{
+						String deviceID = deviceNameField.getText();
+						loadDevice(selectedDevice, deviceID, frame);
+					}
+	        		
+	        	});
+	        	StandardFormats.addGridBagElement(addDeviceButton, deviceLayout, newLineConstr, contentPane);
 	        }
 	        
-	        deviceSettingsElement.removeAll();
-			deviceSettingsElement.add(this, BorderLayout.CENTER);
-			deviceSettingsElement.revalidate();
-			deviceSettingsElement.repaint();
+	        removeAll();
+			add(contentPane, BorderLayout.CENTER);
+			revalidate();
+			repaint();
 		}
+	}
+	private class MainPage extends JPanel
+	{
+		private static final long serialVersionUID = -8446959731048956390L;
+
+		private final JList<Object>					deviceTypesField			= new JList<Object>();
 		
-		@Override
-		public synchronized void actionPerformed(ActionEvent arg0)
+		private AvailableDeviceDriver[] deviceDrivers = null;
+		
+		private final JComboBox<String> sortTypeField = new JComboBox<String>(new String[]{"Device Type", "Library"});
+		
+		private final DeviceSelectorPanel deviceSelectorPanel;
+		private final SelectedDevicePanel selectedDevicePanel;
+		
+		private final JPanel deviceTypeElement;
+		
+		MainPage(final YouScopeFrame frame)
 		{
-			String deviceID = deviceNameField.getText();
-			PreInitDeviceProperty[] preInitProperties;
-			try
-			{
-				preInitProperties = selectedDevice.loadDevice(deviceID);
-			}
-			catch(Exception e1)
-			{
-				ClientSystem.err.println("Could not load device driver.", e1);
-				return;
-			}
+			super(new GridLayout(1, 3, 2, 2));
 			
-			if(preInitProperties != null && preInitProperties.length > 0)
+			selectedDevicePanel = new SelectedDevicePanel(frame);
+			deviceSelectorPanel = new DeviceSelectorPanel(frame);
+			deviceSelectorPanel.addDeviceChangeListener(new DeviceSelectorPanel.DeviceChangedListener() 
 			{
-				YouScopeFrame childFrame = frame.createModalChildFrame();
-				@SuppressWarnings("unused")
-				DevicePropertiesFrame devicePropertiesFrame = new DevicePropertiesFrame(selectedDevice, preInitProperties, deviceID, childFrame, frame);
-				childFrame.setVisible(true);
-				return;
-			}
+				@Override
+				public void deviceChanged(AvailableDeviceDriver device) {
+					selectedDevicePanel.setSelectedDevice(device);
+				}
+			});
+			
+			// Initialize device type chooser
+			deviceTypesField.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			deviceTypesField.addListSelectionListener(new ListSelectionListener()
+			{
+				@Override
+				public void valueChanged(ListSelectionEvent e)
+				{
+					Object selectedValue = deviceTypesField.getSelectedValue();
+					if(selectedValue == null)
+						return;
+					else if(sortTypeField.getSelectedIndex() == 0 &&  selectedValue instanceof DeviceType)
+						showDevicesOfType((DeviceType)selectedValue);
+					else if(sortTypeField.getSelectedIndex() == 1 && selectedValue instanceof String)
+						showDevicesOfLibrary((String)selectedValue);
+				}
+			});
+			
+			// Set layout
+			deviceTypeElement = new JPanel(new BorderLayout(5, 5));
+			JPanel sorterPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+			sorterPanel.add(new JLabel("Sort by:"));
+			sorterPanel.add(sortTypeField);
+			deviceTypeElement.add(sorterPanel, BorderLayout.NORTH);
+			deviceTypeElement.add(new JScrollPane(deviceTypesField), BorderLayout.CENTER);
+			deviceTypeElement.setBorder(new TitledBorder("Step 1: Select Device Type"));
+			
+			JPanel deviceDriverElement = new JPanel(new BorderLayout());
+			deviceDriverElement.setBorder(new TitledBorder("Step 2: Select Device Driver"));
+			
+			JPanel selectedDeviceElement = new JPanel(new BorderLayout());
+			selectedDeviceElement.setBorder(new TitledBorder("Step 3: Configure Device"));
+			
 			try
 			{
-				selectedDevice.initializeDevice(null);
+				DeviceLoader deviceDriverManager = YouScopeClientImpl.getMicroscope().getDeviceLoader();
+				deviceDrivers = deviceDriverManager.getAvailableDeviceDrivers();
 			}
 			catch(Exception e)
 			{
-				ClientSystem.err.println("Could not initialize device driver.", e);
-				return;
+				ClientSystem.err.println("Could not initialize available driver list.", e);
+				deviceDrivers = new AvailableDeviceDriver[0];
 			}
 			
-			for(ActionListener listener : devicesChangedListener)
+			sortTypeField.setSelectedIndex(1);
+			updateDeviceTypes();
+			sortTypeField.addActionListener(new ActionListener()
 			{
-				listener.actionPerformed(new ActionEvent(ManageAddDeviceFrame.this, 1234, "New device added."));
-			}
-			// Hide frame.
-			frame.setVisible(false);
-			for(ActionListener listener : devicesChangedListener)
-			{
-				listener.actionPerformed(new ActionEvent(ManageAddDeviceFrame.this, 1234, "New device added."));
-			}
-			// Hide frame.
-			frame.setVisible(false);
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					updateDeviceTypes();
+				}
+			});
+			
+			deviceDriverElement.add(deviceSelectorPanel, BorderLayout.CENTER);
+			selectedDeviceElement.add(selectedDevicePanel, BorderLayout.CENTER);
+			
+			add(deviceTypeElement);
+			add(deviceDriverElement);
+			add(selectedDeviceElement);			
 		}
-		
-		
-		
+		private void showDevicesOfLibrary(String libraryID)
+		{
+			ArrayList<AvailableDeviceDriver> currentlyShownDevices = new ArrayList<AvailableDeviceDriver>();
+			for(AvailableDeviceDriver deviceDriver : deviceDrivers)
+			{
+				try
+				{
+					if(deviceDriver.getLibraryID().equals(libraryID))
+					{
+						currentlyShownDevices.add(deviceDriver);
+					}
+				}
+				catch(Exception e)
+				{
+					ClientSystem.err.println("Could not obtain type of one device.", e);
+				}
+			}
+			
+			deviceSelectorPanel.setDevices(currentlyShownDevices);
+			selectedDevicePanel.setSelectedDevice(null);
+		}
+		private void showDevicesOfType(DeviceType type)
+		{
+			ArrayList<AvailableDeviceDriver> currentlyShownDevices = new ArrayList<AvailableDeviceDriver>();
+			for(AvailableDeviceDriver deviceDriver : deviceDrivers)
+			{
+				try
+				{
+					if(deviceDriver.getType().equals(type))
+					{
+						currentlyShownDevices.add(deviceDriver);
+					}
+				}
+				catch(Exception e)
+				{
+					ClientSystem.err.println("Could not obtain type of one device.", e);
+				}
+			}
+			
+			deviceSelectorPanel.setDevices(currentlyShownDevices);
+			selectedDevicePanel.setSelectedDevice(null);
+		}
+		private void updateDeviceTypes()
+		{
+			if(sortTypeField.getSelectedIndex() == 0)
+			{
+				Vector<DeviceType> mentionedDeviceTypes = new Vector<DeviceType>();
+				// Get all device types.
+				for(AvailableDeviceDriver deviceDriver : deviceDrivers)
+				{
+					DeviceType type;
+					try
+					{
+						type = deviceDriver.getType();
+					}
+					catch(Exception e)
+					{
+						ClientSystem.err.println("Could not get type of a driver.", e);
+						continue;
+					}
+					if(!mentionedDeviceTypes.contains(type))
+					{
+						mentionedDeviceTypes.add(type);
+					}
+				}
+				deviceTypesField.setListData(mentionedDeviceTypes);
+			}
+			else
+			{
+				Vector<String> mentionedDeviceTypes = new Vector<String>();
+				// Get all libraries
+				for(AvailableDeviceDriver deviceDriver : deviceDrivers)
+				{
+					String library;
+					try
+					{
+						library = deviceDriver.getLibraryID();
+					}
+					catch(Exception e)
+					{
+						ClientSystem.err.println("Could not get library of a driver.", e);
+						continue;
+					}
+					if(!mentionedDeviceTypes.contains(library))
+					{
+						mentionedDeviceTypes.add(library);
+					}
+				}
+				Collections.sort(mentionedDeviceTypes);
+				deviceTypesField.setListData(mentionedDeviceTypes);
+			}
+		}
 	}
-	private class DevicePropertiesFrame extends JPanel
+	private class PeripheralDevicesPage extends JPanel
+	{
+		/**
+		 * Serial Version UID.
+		 */
+		private static final long	serialVersionUID	= -3684188740751590777L;
+		private AvailableDeviceDriver[] peripherals;
+		private final DeviceSelectorPanel deviceSelectorPanel;
+		private final SelectedDevicePanel selectedDevicePanel;
+		PeripheralDevicesPage(HubDevice hub, YouScopeFrame frame)
+		{			
+			super(new GridLayout(1, 2, 2, 2));
+			selectedDevicePanel = new SelectedDevicePanel(frame);
+			deviceSelectorPanel = new DeviceSelectorPanel(frame);
+			deviceSelectorPanel.addDeviceChangeListener(new DeviceSelectorPanel.DeviceChangedListener() 
+			{
+				@Override
+				public void deviceChanged(AvailableDeviceDriver device) {
+					selectedDevicePanel.setSelectedDevice(device);
+				}
+			});
+			
+			JPanel deviceDriverElement = new JPanel(new BorderLayout());
+			deviceDriverElement.setBorder(new TitledBorder("Step 2: Select Device Driver"));
+			
+			JPanel selectedDeviceElement = new JPanel(new BorderLayout());
+			selectedDeviceElement.setBorder(new TitledBorder("Step 3: Configure Device"));
+			
+			try 
+			{
+				peripherals = hub.getPeripheralDevices();
+			} 
+			catch (Exception e) 
+			{
+				peripherals = new AvailableDeviceDriver[0];
+				ClientSystem.err.println("Could not obtain peripheral devices.", e);
+			}
+			ArrayList<AvailableDeviceDriver> peripheralsList = new ArrayList<AvailableDeviceDriver>(peripherals.length);
+			for(AvailableDeviceDriver deviceDriver : peripherals)
+			{
+				peripheralsList.add(deviceDriver);
+			}
+			deviceSelectorPanel.setDevices(peripheralsList);
+			
+			deviceDriverElement.add(deviceSelectorPanel, BorderLayout.CENTER);
+			selectedDeviceElement.add(selectedDevicePanel, BorderLayout.CENTER);
+			
+			add(deviceDriverElement);
+			add(selectedDeviceElement);
+		}
+	}
+	private class DevicePropertiesPage extends JPanel
 	{
 		/**
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= -3684188740751590716L;
-		private final AvailableDeviceDriver selectedDevice;
 		private final PreInitDeviceProperty[] preInitProperties;
 		private JComponent[] preInitPropertiesFields;
-		private final YouScopeFrame frame;
 		private JPanel preInitDevicePanel;
 		private final String deviceID;
-		private final YouScopeFrame parentFrame;
-		DevicePropertiesFrame(AvailableDeviceDriver selectedDevice, PreInitDeviceProperty[] preInitProperties, String deviceID, YouScopeFrame frame, YouScopeFrame parentFrame)
+		private final ArrayList<ActionListener> propertiesSetListeners = new ArrayList<ActionListener>();
+		private DeviceSetting[] deviceSettings = null;
+		DevicePropertiesPage(AvailableDeviceDriver selectedDevice, PreInitDeviceProperty[] preInitProperties, String deviceID, final YouScopeFrame frame)
 		{
-			this.selectedDevice = selectedDevice;
 			this.preInitProperties = preInitProperties;
-			this.frame = frame;
 			this.deviceID = deviceID;
-			this.parentFrame = parentFrame;
 			
 			// Load meta-data
 			String identifier = "";
@@ -432,7 +639,7 @@ class ManageAddDeviceFrame
 			String type = "";
 			String description = "";
 			boolean canCreate = true;
-			Vector<String> errorMessages = new Vector<String>();
+			ArrayList<String> errorMessages = new ArrayList<String>();
 			// Device description
 			try
 			{
@@ -443,7 +650,7 @@ class ManageAddDeviceFrame
 			}
 			catch(Exception e)
 			{
-				errorMessages.addElement(getErrorText("Could not get device description.", e));
+				errorMessages.add(getErrorText("Could not get device description.", e));
 			}
 			
 			// Check if driver needs serial port but no serial port is available.
@@ -460,7 +667,7 @@ class ManageAddDeviceFrame
 				}
 				catch(Exception e)
 				{
-					errorMessages.addElement(getErrorText("Could not detect if device needs a serial port.", e));
+					errorMessages.add(getErrorText("Could not detect if device needs a serial port.", e));
 				}
 			}
 			
@@ -549,7 +756,7 @@ class ManageAddDeviceFrame
 				preInitProperties = new PreInitDeviceProperty[0];
 				preInitPropertiesFields = new JComponent[0];
 				canCreate = false;
-				errorMessages.addElement(getErrorText("Could not get information about device pre-initialization properties.", e));
+				errorMessages.add(getErrorText("Could not get information about device pre-initialization properties.", e));
 			}
 			
 			GridBagLayout deviceLayout = new GridBagLayout();
@@ -604,7 +811,13 @@ class ManageAddDeviceFrame
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
-						initializeDevice();
+						createDeviceSettings();
+						// Hide frame.
+						frame.setVisible(false);
+						for(ActionListener listener : propertiesSetListeners)
+						{
+							listener.actionPerformed(new ActionEvent(DevicePropertiesPage.this, 1000, "Properties configured"));
+						}
 					}
 	        	});
 	        	buttonsPanel.add(addDeviceButton);
@@ -614,7 +827,11 @@ class ManageAddDeviceFrame
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
-						unloadDevice();
+						frame.setVisible(false);
+						for(ActionListener listener : propertiesSetListeners)
+						{
+							listener.actionPerformed(new ActionEvent(DevicePropertiesPage.this, 1001, "Property configuration canceled"));
+						}
 					}
 	        	});
 	        	buttonsPanel.add(cancelButton);
@@ -628,21 +845,31 @@ class ManageAddDeviceFrame
 					@Override
 					public void actionPerformed(ActionEvent arg0)
 					{
-						unloadDevice();
+						frame.setVisible(false);
+						for(ActionListener listener : propertiesSetListeners)
+						{
+							listener.actionPerformed(new ActionEvent(DevicePropertiesPage.this, 1001, "Property configuration canceled"));
+						}
 					}
 	        	});
 	        	StandardFormats.addGridBagElement(cancelButton, deviceLayout, newLineConstr, this);
 	        }
-	        
-	        // Initialize frame
-	        frame.setTitle("Add Device");
-			frame.setResizable(false);
-			frame.setClosable(false);
-			frame.setMaximizable(false);
-			frame.setContentPane(this);
-			frame.pack();
 		}
-		private void initializeDevice()
+		public void addPropertiesSetListener(ActionListener listener)
+		{
+			propertiesSetListeners.add(listener);
+		}
+		
+		@SuppressWarnings("unused")
+		public void removePropertiesSetListener(ActionListener listener)
+		{
+			propertiesSetListeners.remove(listener);
+		}
+		public DeviceSetting[] getProperties()
+		{
+			return deviceSettings;
+		}
+		private void createDeviceSettings()
 		{
 			if(preInitProperties.length != preInitPropertiesFields.length)
 			{
@@ -653,7 +880,7 @@ class ManageAddDeviceFrame
 			// Add device.
 			try
 			{
-				DeviceSetting[] deviceSettings = new DeviceSetting[preInitProperties.length];
+				deviceSettings = new DeviceSetting[preInitProperties.length];
 				for(int i=0; i<deviceSettings.length; i++)
 				{
 					String propertyName = preInitProperties[i].getPropertyID();
@@ -684,36 +911,14 @@ class ManageAddDeviceFrame
 						return;
 					}
 					deviceSettings[i].setValue(value);
-				}
-				selectedDevice.initializeDevice(deviceSettings);
-				
+				}				
 			}
 			catch(Exception e)
 			{
 				ClientSystem.err.println("Could not add device driver.", e);
 				return;
 			}
-			for(ActionListener listener : devicesChangedListener)
-			{
-				listener.actionPerformed(new ActionEvent(ManageAddDeviceFrame.this, 1234, "New device added."));
-			}
-			// Hide frame.
-			frame.setVisible(false);
-			// Hide parent frame.
-			parentFrame.setVisible(false);
 		} 
-		private void unloadDevice()
-		{
-			try
-			{
-				selectedDevice.unloadDevice();
-			}
-			catch(Exception e)
-			{
-				ClientSystem.err.println("Could not unload pre-initialized device.\nWe recommend reloading the configuration.", e);
-			}
-			frame.setVisible(false);
-		}
 	}
 	
 	private static String getErrorText(String message, Exception e)
@@ -744,174 +949,135 @@ class ManageAddDeviceFrame
 		devicesChangedListener.remove(listener);
 	}
 	
-	private void initializeFrame()
+	private void loadDevice(final AvailableDeviceDriver driver, String deviceID, final YouScopeFrame frame)
 	{
+		
+		PreInitDeviceProperty[] preInitProperties;
 		try
 		{
-			DeviceLoader deviceDriverManager = YouScopeClientImpl.getMicroscope().getDeviceLoader();
-			deviceDrivers = deviceDriverManager.getAvailableDeviceDrivers();
+			preInitProperties = driver.loadDevice(deviceID);
 		}
-		catch(Exception e)
+		catch(Exception e1)
 		{
-			ClientSystem.err.println("Could not initialize available driver list.", e);
+			ClientSystem.err.println("Could not load device driver.", e1);
 			return;
 		}
 		
-		sortTypeField.setSelectedIndex(1);
-		updateDeviceTypes();
-		sortTypeField.addActionListener(new ActionListener()
+		if(preInitProperties != null && preInitProperties.length > 0)
 		{
-			@Override
-			public void actionPerformed(ActionEvent arg0)
+			YouScopeFrame childFrame = frame.createModalChildFrame();
+			final DevicePropertiesPage devicePropertiesFrame = new DevicePropertiesPage(driver, preInitProperties, deviceID, childFrame);
+			devicePropertiesFrame.addPropertiesSetListener(new ActionListener() 
 			{
-				updateDeviceTypes();
-			}
-		});
-		
-		Icon previousFirst = ImageLoadingTools.getResourceIcon("org/youscope/client/images/arrowLeft.png", "select previous tab first");
-		
-		JLabel selectTypeLabel = new JLabel("<html><p style=\"font-size:16pt\">Select device type!</p></html>", SwingConstants.CENTER);
-		selectTypeLabel.setOpaque(false);
-		selectTypeLabel.setVerticalAlignment(SwingConstants.CENTER);
-		selectTypeLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-		selectTypeLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-		if(previousFirst != null)
-		{
-			selectTypeLabel.setIcon(previousFirst);
+				@Override
+				public void actionPerformed(ActionEvent e) 
+				{
+					DeviceSetting[] preInitProperties = devicePropertiesFrame.getProperties();
+					if(preInitProperties == null) // pressed cancel
+						unloadDevice(driver);
+					else
+						initializeDevice(driver, preInitProperties, frame);
+				}
+			});
+			
+			// Initialize frame
+			childFrame.setTitle("Add Device");
+			childFrame.setResizable(false);
+			childFrame.setClosable(false);
+			childFrame.setMaximizable(false);
+			childFrame.setContentPane(devicePropertiesFrame);
+			childFrame.pack();
+			
+			childFrame.setVisible(true);
 		}
-		deviceDriverElement.add(selectTypeLabel, BorderLayout.CENTER);
+		else
+			initializeDevice(driver, null, frame);
+	}
+	public void initializeFrame(final YouScopeFrame frame)
+	{
+		frame.setTitle("Add Device");
+		frame.setResizable(true);
+		frame.setClosable(true);
+		frame.setMaximizable(true);
 		
-		selectDriverLabel = new JLabel("<html><p style=\"font-size:16pt\">Select device driver!</p></html>", SwingConstants.CENTER);
-		selectDriverLabel.setOpaque(false);
-		selectDriverLabel.setVerticalAlignment(SwingConstants.CENTER);
-		selectDriverLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-		selectDriverLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-		if(previousFirst != null)
-		{
-			selectDriverLabel.setIcon(previousFirst);
-		}
-		deviceSettingsElement.add(selectDriverLabel, BorderLayout.CENTER);
-		
-		JPanel contentPane = new JPanel(new GridLayout(1, 3, 2, 2));
-		contentPane.add(deviceTypeElement);
-		contentPane.add(deviceDriverElement);
-		contentPane.add(deviceSettingsElement);
-		frame.setContentPane(contentPane);
-		frame.pack();
+		// Initialize content.
+		frame.startInitializing();
+		new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					MainPage mainPage = new MainPage(frame);
+					frame.setContentPane(mainPage);
+					frame.pack();
+					frame.endLoading();
+					frame.setSize(new Dimension(790, 500));
+				}
+			}).start();
 		
 	}
-	
-	private void updateDeviceTypes()
+	private void initializeDevice(AvailableDeviceDriver driver, DeviceSetting[] preInitProperties, YouScopeFrame frame)
 	{
-		if(sortTypeField.getSelectedIndex() == 0)
+		final Device device;
+		String deviceID;
+		try
 		{
-			Vector<DeviceType> mentionedDeviceTypes = new Vector<DeviceType>();
-			// Get all device types.
-			for(AvailableDeviceDriver deviceDriver : deviceDrivers)
-			{
-				DeviceType type;
-				try
+			device = driver.initializeDevice(preInitProperties);
+			deviceID = device.getDeviceID();
+		}
+		catch(Exception e)
+		{
+			ClientSystem.err.println("Could not initialize device driver.", e);
+			return;
+		}
+		
+		for(ActionListener listener : devicesChangedListener)
+		{
+			listener.actionPerformed(new ActionEvent(ManageAddDeviceFrame.this, 1234, "New device added."));
+		}
+		if(device instanceof HubDevice)
+		{
+			final YouScopeFrame childFrame = frame.createModalChildFrame();
+			
+			// Initialize frame
+			childFrame.setTitle("Add Peripheral Devices");
+			childFrame.setResizable(true);
+			childFrame.setClosable(true);
+			childFrame.setMaximizable(false);
+			// Initialize content.
+			childFrame.startInitializing();
+			new Thread(new Runnable()
 				{
-					type = deviceDriver.getType();
-				}
-				catch(Exception e)
-				{
-					ClientSystem.err.println("Could not get type of a driver.", e);
-					continue;
-				}
-				if(!mentionedDeviceTypes.contains(type))
-				{
-					mentionedDeviceTypes.add(type);
-				}
-			}
-			deviceTypesField.setListData(mentionedDeviceTypes);
+					@Override
+					public void run()
+					{
+						PeripheralDevicesPage peripheralsPage = new PeripheralDevicesPage((HubDevice) device, childFrame);
+						childFrame.setContentPane(peripheralsPage);
+						childFrame.pack();
+						childFrame.setSize(new Dimension(540, 500));
+						childFrame.endLoading();
+					}
+				}).start();
+			childFrame.setVisible(true);
 		}
 		else
 		{
-			Vector<String> mentionedDeviceTypes = new Vector<String>();
-			// Get all libraries
-			for(AvailableDeviceDriver deviceDriver : deviceDrivers)
-			{
-				String library;
-				try
-				{
-					library = deviceDriver.getLibraryID();
-				}
-				catch(Exception e)
-				{
-					ClientSystem.err.println("Could not get library of a driver.", e);
-					continue;
-				}
-				if(!mentionedDeviceTypes.contains(library))
-				{
-					mentionedDeviceTypes.add(library);
-				}
-			}
-			Collections.sort(mentionedDeviceTypes);
-			deviceTypesField.setListData(mentionedDeviceTypes);
+			JOptionPane.showMessageDialog(null, "A new device with ID "+deviceID+" was sucessfully added.", "Device Added", JOptionPane.INFORMATION_MESSAGE);		
+		}
+	}
+	private void unloadDevice(AvailableDeviceDriver driver)
+	{
+		try
+		{
+			driver.unloadDevice();
+		}
+		catch(Exception e)
+		{
+			ClientSystem.err.println("Could not unload pre-initialized device.\nWe recommend reloading the configuration.", e);
 		}
 	}
 	
-	private void showDevicesOfType(DeviceType type)
-	{
-		currentlyShownDevicesList.clearSelection();
-		currentlyShownDevices.clear();
-		for(AvailableDeviceDriver deviceDriver : deviceDrivers)
-		{
-			try
-			{
-				if(deviceDriver.getType().equals(type))
-				{
-					currentlyShownDevices.addElement(deviceDriver);
-				}
-			}
-			catch(Exception e)
-			{
-				ClientSystem.err.println("Could not obtain type of one device.", e);
-			}
-		}
-		
-		currentlyShownDevicesListModel.fireContentsChanged();
-		deviceDriverElement.removeAll();
-		deviceDriverElement.add(new JScrollPane(currentlyShownDevicesList), BorderLayout.CENTER);
-		deviceDriverElement.revalidate();
-		deviceSettingsElement.removeAll();
-		deviceSettingsElement.repaint();
-		deviceSettingsElement.add(selectDriverLabel, BorderLayout.CENTER);
-		deviceSettingsElement.revalidate();
-		deviceSettingsElement.repaint();
-	}
-	private void showDevicesOfLibrary(String libraryID)
-	{
-		currentlyShownDevicesList.clearSelection();
-		currentlyShownDevices.clear();
-		for(AvailableDeviceDriver deviceDriver : deviceDrivers)
-		{
-			try
-			{
-				if(deviceDriver.getLibraryID().equals(libraryID))
-				{
-					currentlyShownDevices.addElement(deviceDriver);
-				}
-			}
-			catch(Exception e)
-			{
-				ClientSystem.err.println("Could not obtain type of one device.", e);
-			}
-		}
-		
-		currentlyShownDevicesListModel.fireContentsChanged();
-		deviceDriverElement.removeAll();
-		deviceDriverElement.add(new JScrollPane(currentlyShownDevicesList), BorderLayout.CENTER);
-		deviceDriverElement.revalidate();
-		deviceSettingsElement.removeAll();
-		deviceSettingsElement.repaint();
-		deviceSettingsElement.add(selectDriverLabel, BorderLayout.CENTER);
-		deviceSettingsElement.revalidate();
-		deviceSettingsElement.repaint();
-	}
-	
-	private class CurrentlyShownDevicesListRenderer extends JPanel implements ListCellRenderer<Object>
+	private static class CurrentlyShownDevicesListRenderer extends JPanel implements ListCellRenderer<Object>
 	{
 	     /**
 		 * Serial Version UID.
@@ -948,7 +1114,7 @@ class ManageAddDeviceFrame
 	    	 {
 	    		 return new JLabel("<html>" + getErrorText("Value is not a device!", null) + "</html>");
 	    	 }
-	    	 isSelected = currentlyShownDevicesList.isSelectedIndex(index);
+	    	 isSelected = list.isSelectedIndex(index);
 	    	 AvailableDeviceDriver selectedDevice = (AvailableDeviceDriver)value;
 	    	 
 	    	// Load data
@@ -972,32 +1138,37 @@ class ManageAddDeviceFrame
 			{
 				descriptionLabel.setVisible(true);
 				descriptionLabel.setText("<html>Description:<br /><i>" + description + "</i></html>");
-				setBackground(currentlyShownDevicesList.getSelectionBackground());
-		    	setForeground(currentlyShownDevicesList.getSelectionForeground());
+				setBackground(list.getSelectionBackground());
+		    	setForeground(list.getSelectionForeground());
 			}
 			else
 			{
 				descriptionLabel.setVisible(false);
-				setBackground(currentlyShownDevicesList.getBackground());
-	    		setForeground(currentlyShownDevicesList.getForeground());
+				setBackground(list.getBackground());
+	    		setForeground(list.getForeground());
 			}
 			return this;
 	     }
 	 }
 
 	
-	private class CurrentlyShownDevicesListModel extends DefaultListModel<Object>
+	private static class CurrentlyShownDevicesListModel extends DefaultListModel<Object>
 	{
 		/**
 		 * Serial Version UID.
 		 */
 		private static final long	serialVersionUID	= -933873118426200597L;
+		private final List<AvailableDeviceDriver> currentlyShownDevices;
+		public CurrentlyShownDevicesListModel(List<AvailableDeviceDriver> currentlyShownDevices) 
+		{
+			this.currentlyShownDevices = currentlyShownDevices;
+		}
 		@Override
 		public Object getElementAt(int index)
 		{
 			if(index < 0 || index >= currentlyShownDevices.size())
 				return null;
-			return currentlyShownDevices.elementAt(index);
+			return currentlyShownDevices.get(index);
 		}
 
 		@Override

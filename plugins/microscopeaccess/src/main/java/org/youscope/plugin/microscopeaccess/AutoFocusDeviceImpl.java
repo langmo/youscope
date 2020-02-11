@@ -36,9 +36,9 @@ class AutoFocusDeviceImpl extends DeviceImpl implements AutoFocusDeviceInternal
 	private final static String PROPERTY_LOCKED = "Locked";
 	private final static String PROPERTY_TRIGGER_FULL_FOCUS = "TriggerFullFocus";
 	private final static String PROPERTY_TRIGGER_INCREMENTAL_FOCUS = "TriggerIncrementalFocus";
-	AutoFocusDeviceImpl(MicroscopeImpl microscope, String deviceID, String libraryID, String driverID)
+	AutoFocusDeviceImpl(MicroscopeImpl microscope, String deviceID, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceID, libraryID, driverID, DeviceType.AutoFocusDevice);
+		super(microscope, deviceID, libraryID, driverID, DeviceType.AutoFocusDevice, hub);
 	}
 	
 	@Override

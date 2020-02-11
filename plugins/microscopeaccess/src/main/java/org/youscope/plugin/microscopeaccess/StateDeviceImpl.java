@@ -38,9 +38,9 @@ class StateDeviceImpl extends DeviceImpl implements StateDeviceInternal
 	
 	private final SelectablePropertyImpl labelProperty;
 	
-	StateDeviceImpl(MicroscopeImpl microscope, String deviceID, String libraryID, String driverID)
+	StateDeviceImpl(MicroscopeImpl microscope, String deviceID, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceID, libraryID, driverID, DeviceType.StateDevice);
+		super(microscope, deviceID, libraryID, driverID, DeviceType.StateDevice, hub);
 		
 		labelProperty =  new SelectablePropertyImpl(microscope, deviceID, LABEL_PROPERTY_ID, new String[0], false, this)
 		{

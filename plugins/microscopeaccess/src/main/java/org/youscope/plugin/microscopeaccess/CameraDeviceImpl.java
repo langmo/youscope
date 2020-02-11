@@ -67,9 +67,9 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 		
 	private volatile ChannelInternal continousAcquisitionChannel = null;
 
-	CameraDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID)
+	CameraDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceName, libraryID, driverID, DeviceType.CameraDevice, new String[]{"TransposeMirrorX", "TransposeMirrorY", "TransposeXY"});
+		super(microscope, deviceName, libraryID, driverID, DeviceType.CameraDevice, hub, new String[]{"TransposeMirrorX", "TransposeMirrorY", "TransposeXY"});
 	}
 
 	@Override
@@ -1377,9 +1377,7 @@ class CameraDeviceImpl extends DeviceImpl implements CameraDeviceInternal
 			
 			try
 			{
-				core.setCameraDevice(getDeviceID());
-				core.stopSequenceAcquisition();
-				//core.stopSequenceAcquisition(getDeviceID());
+				core.stopSequenceAcquisition(getDeviceID());
 			}
 			catch(Exception e)
 			{

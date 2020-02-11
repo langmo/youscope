@@ -90,8 +90,9 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 				public void actionPerformed(ActionEvent arg0)
 				{
 					YouScopeFrame childFrame = ManageTabLoadedDevices.this.frame.createModalChildFrame();
-					ManageAddDeviceFrame addFrame = new ManageAddDeviceFrame(childFrame);
+					ManageAddDeviceFrame addFrame = new ManageAddDeviceFrame();
 					addFrame.addDevicesChangedListener(ManageTabLoadedDevices.this);
+					addFrame.initializeFrame(childFrame);
 					childFrame.setVisible(true);
 				}
 			});

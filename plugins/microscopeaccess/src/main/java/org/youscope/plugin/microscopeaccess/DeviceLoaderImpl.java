@@ -15,7 +15,7 @@ package org.youscope.plugin.microscopeaccess;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
 import org.youscope.addon.microscopeaccess.DeviceLoaderInternal;
@@ -35,7 +35,47 @@ import mmcorej.StrVector;
 class DeviceLoaderImpl implements DeviceLoaderInternal
 {
 	private final MicroscopeImpl microscope;
-	private static Vector<AvailableDeviceDriverInternal> availableDeviceDrivers = new Vector<AvailableDeviceDriverInternal>();
+	private class DeviceDescription
+	{
+		private final String driver;
+		private final String description;
+		private final String library;
+		private final DeviceType deviceType;
+		DeviceDescription(String library, String identifier, String description, DeviceType deviceType)
+		{
+			this.library = library;
+			this.driver = identifier;
+			this.description = description;
+			this.deviceType = deviceType;
+		}
+		boolean isHub()
+		{
+			return deviceType == DeviceType.HubDevice;
+		}
+		
+		DeviceType getType()
+		{
+			return deviceType;
+		}
+
+		String getDriverID()
+		{
+			return driver;
+		}
+
+		String getDescription()
+		{
+			return description;
+		}
+
+		String getLibraryID()
+		{
+			return library;
+		}
+	}
+	private static ArrayList<DeviceDescription> availableDeviceDrivers = new ArrayList<DeviceDescription>();
+	private static ArrayList<DeviceDescription> availableHubDrivers = new ArrayList<DeviceDescription>();
+	private static ArrayList<DeviceDescription> availableStandAloneDrivers = new ArrayList<DeviceDescription>();
 	private static boolean driverLoaded = false;
 	private final String driverFolder;
 	DeviceLoaderImpl(MicroscopeImpl microscope, String driverFolder)
@@ -47,8 +87,15 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 	@Override
 	public synchronized AvailableDeviceDriverInternal[] getAvailableDeviceDrivers() throws MicroscopeDriverException
 	{
-		loadAllDriver();
-		return availableDeviceDrivers.toArray(new AvailableDeviceDriverInternal[availableDeviceDrivers.size()]);
+		loadAllDrivers();
+		// Only return drivers which are either hubs or parts of libraries which don't have a hub
+		AvailableDeviceDriverInternal[] drivers = new AvailableDeviceDriverInternal[availableStandAloneDrivers.size()];
+		for(int i=0; i<drivers.length; i++)
+		{
+			DeviceDescription description = availableStandAloneDrivers.get(i);
+			drivers[i] = new AvailableDeviceDriverImpl(microscope, description.getLibraryID(), description.getDriverID(), description.getDescription(), description.getType());
+		}
+		return drivers;
 	}
 	
 	/**
@@ -124,7 +171,7 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 		return libraryNames;
 	}
 	
-	private synchronized void loadAllDriver() throws MicroscopeDriverException
+	private synchronized void loadAllDrivers() throws MicroscopeDriverException
 	{
 		if(driverLoaded)
 			return;
@@ -162,7 +209,10 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 					String deviceDescription = deviceDescriptions.get(i);
 					int deviceTypeID = deviceTypes.get(i);
 					DeviceType deviceType = getDeviceTypeFromID(deviceTypeID);
-					availableDeviceDrivers.add(new AvailableDeviceDriverImpl(microscope, deviceLibrary, device, deviceDescription, deviceType));
+					DeviceDescription driver = new DeviceDescription(deviceLibrary, device, deviceDescription, deviceType);
+					availableDeviceDrivers.add(driver);
+					if(driver.isHub())
+						availableHubDrivers.add(driver);
 				}
 			}
 		}
@@ -173,6 +223,25 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 		finally
 		{
 			microscope.unlockRead();
+		}
+		for(DeviceDescription driver : availableDeviceDrivers)
+		{
+			if(driver.isHub())
+				availableStandAloneDrivers.add(driver);
+			else
+			{
+				boolean foundHub = false;
+				for(DeviceDescription hub : availableHubDrivers)
+				{
+					if(hub.getLibraryID().equals(driver.getLibraryID()))
+					{
+						foundHub = true;
+						break;
+					}
+				}
+				if(!foundHub)
+					availableStandAloneDrivers.add(driver);
+			}
 		}
 		driverLoaded = true;
 	}
@@ -200,14 +269,12 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 			return DeviceType.AutoFocusDevice;
 		else if(deviceTypeID == mmcorej.DeviceType.ImageProcessorDevice.swigValue())
 			return DeviceType.ImageProcessorDevice;
-		//else if(deviceTypeID == mmcorej.DeviceType.ImageStreamerDevice.swigValue())
-		//	return DeviceType.ImageStreamerDevice;
 		else if(deviceTypeID == mmcorej.DeviceType.SignalIODevice.swigValue())
 			return DeviceType.SignalIODevice;
 		else if(deviceTypeID == mmcorej.DeviceType.MagnifierDevice.swigValue())
 			return DeviceType.MagnifierDevice;
-		//else if(deviceTypeID == mmcorej.DeviceType.ProgrammableIODevice.swigValue())
-		//	return DeviceType.ProgrammableIODevice;
+		else if(deviceTypeID == mmcorej.DeviceType.HubDevice.swigValue())
+			return DeviceType.HubDevice;
 		else
 			return DeviceType.UnknownType;
 	}
@@ -243,10 +310,19 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 	@Override
 	public AvailableDeviceDriverInternal getAvailableDeviceDriver(String libraryID, String driverID) throws MicroscopeDriverException
 	{
-		for(AvailableDeviceDriverInternal driver : getAvailableDeviceDrivers())
+		for(DeviceDescription description : availableStandAloneDrivers)
 		{
-			if(driver.getLibraryID().equals(libraryID) && driver.getDriverID().equals(driverID))
-				return driver;
+			if(description.getLibraryID().equals(libraryID) && description.getDriverID().equals(driverID))
+				return new AvailableDeviceDriverImpl(microscope, description.getLibraryID(), description.getDriverID(), description.getDescription(), description.getType());
+		}
+		return null;
+	}
+	AvailableDeviceDriverImpl getDeviceDriver(String libraryID, String driverID) throws MicroscopeDriverException
+	{
+		for(DeviceDescription description : availableDeviceDrivers)
+		{
+			if(description.getLibraryID().equals(libraryID) && description.getDriverID().equals(driverID))
+				return new AvailableDeviceDriverImpl(microscope, description.getLibraryID(), description.getDriverID(), description.getDescription(), description.getType());
 		}
 		return null;
 	}

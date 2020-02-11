@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.DeviceInternal;
+import org.youscope.addon.microscopeaccess.HubDeviceInternal;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.MicroscopeException;
@@ -40,6 +41,7 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 	private final String			deviceID;
 	private final DeviceType			deviceType;
 	private final String[] invalidParams;
+	private final HubDeviceImpl hub;
 	
 	private final String libraryID;
 	private final String driverID;
@@ -51,7 +53,7 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 	/**
 	 * Time (in ms) of last device action. Used for explicit delay.
 	 */
-	volatile long lastDeviceActionTime = 0;
+	private volatile long lastDeviceActionTime = 0;
 	
 	protected final Hashtable<String, PropertyImpl> properties = new Hashtable<String, PropertyImpl>();
 	
@@ -69,18 +71,11 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 	 * @param driverID ID of the driver.
 	 * @param deviceType The type of this device.
 	 */
-	public DeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, DeviceType deviceType)
+	public DeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, DeviceType deviceType, HubDeviceImpl hub)
 	{
-		this.microscope = microscope;
-		this.deviceID = deviceName;
-		this.deviceType = deviceType;
-		this.libraryID = libraryID;
-		this.driverID = driverID;
-		this.invalidParams = new String[0];
-		
-		this.deviceInitID = nextDeviceInitID++;
+		this(microscope, deviceName, libraryID, driverID, deviceType, hub, new String[0]);
 	}
-	protected DeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, DeviceType deviceType, String[] invalidParams)
+	protected DeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, DeviceType deviceType, HubDeviceImpl hub, String[] invalidParams)
 	{
 		this.microscope = microscope;
 		this.deviceID = deviceName;
@@ -88,7 +83,7 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 		this.libraryID = libraryID;
 		this.driverID = driverID;
 		this.invalidParams = invalidParams;
-		
+		this.hub = hub;
 		this.deviceInitID = nextDeviceInitID++;
 	}
 	
@@ -430,5 +425,10 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 	public void deviceStateModified()
 	{
 		lastDeviceActionTime = System.currentTimeMillis();
+	}
+	@Override
+	public HubDeviceInternal getHub() 
+	{
+		return hub;
 	}
 }

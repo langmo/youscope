@@ -28,9 +28,9 @@ public class FocusDeviceImpl extends DeviceImpl implements FocusDeviceInternal
 {
 	private final static String PROPERTY_POSITION = "Position";
 	
-	FocusDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID)
+	FocusDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceName, libraryID, driverID, DeviceType.StageDevice, new String[]{PROPERTY_POSITION});
+		super(microscope, deviceName, libraryID, driverID, DeviceType.StageDevice, hub, new String[]{PROPERTY_POSITION});
 	}
 	
 	@Override

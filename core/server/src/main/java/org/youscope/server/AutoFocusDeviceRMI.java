@@ -33,10 +33,10 @@ class AutoFocusDeviceRMI extends DeviceRMI implements AutoFocusDevice
 
     private final AutoFocusDeviceInternal autoFocusDevice;
 
-    AutoFocusDeviceRMI(AutoFocusDeviceInternal autoFocusDevice, int accessID)
+    AutoFocusDeviceRMI(AutoFocusDeviceInternal autoFocusDevice, MicroscopeRMI microscope, int accessID)
             throws RemoteException
     {
-        super(autoFocusDevice, accessID);
+        super(autoFocusDevice, microscope, accessID);
         this.autoFocusDevice = autoFocusDevice;
     }
 

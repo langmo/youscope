@@ -76,7 +76,7 @@ public interface AvailableDeviceDriverInternal
 	 * @throws MicroscopeDriverException
 	 * @throws MicroscopeLockedException 
 	 */
-	public void initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException;
+	public DeviceInternal initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException;
 	
 	/**
 	 * Unloads a previously loaded, but yet not initialized device. Should be called to clean up if a device was loaded, but it was decided to not initialize it.

@@ -44,9 +44,9 @@ class CameraDeviceRMI extends DeviceRMI implements CameraDevice
 	 * Constructor.
 	 * @throws RemoteException
 	 */
-	protected CameraDeviceRMI(CameraDeviceInternal camera, ChannelManagerImpl channelManager, int accessID) throws RemoteException
+	protected CameraDeviceRMI(CameraDeviceInternal camera, MicroscopeRMI microscope, ChannelManagerImpl channelManager, int accessID) throws RemoteException
 	{
-		super(camera, accessID);
+		super(camera, microscope, accessID);
 		this.camera = camera;
 		this.channelManager = channelManager;
 	}

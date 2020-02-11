@@ -33,9 +33,9 @@ class FocusDeviceRMI extends DeviceRMI implements FocusDevice
 
     private FocusDeviceInternal focusDevice;
 
-    FocusDeviceRMI(FocusDeviceInternal focusDevice, int accessID) throws RemoteException
+    FocusDeviceRMI(FocusDeviceInternal focusDevice, MicroscopeRMI microscope, int accessID) throws RemoteException
     {
-        super(focusDevice, accessID);
+        super(focusDevice, microscope, accessID);
         this.focusDevice = focusDevice;
     }
 

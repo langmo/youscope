@@ -55,15 +55,6 @@ public interface AvailableDeviceDriver extends Remote
 	public String getLibraryID() throws MicroscopeDriverException, RemoteException;
 
 	/**
-	 * Returns a list of properties for this device driver which have to be set before initialization of the driver.
-	 * @return List of properties which have to be pre-initialized.
-	 * @throws MicroscopeDriverException
-	 * @throws MicroscopeLockedException
-	 * @throws RemoteException
-	 */
-	// public PreInitDeviceProperty[] getPreInitDeviceProperties() throws MicroscopeDriverException, MicroscopeLockedException, RemoteException;
-
-	/**
 	 * Loads the specified device driver, but yet does not initialize it.
 	 * Returns a (possibly empty) list of properties for this device driver which have to be set when initializing the driver.
 	 * Should be followed by a call to initializeDevice or unloadDevice.
@@ -85,7 +76,7 @@ public interface AvailableDeviceDriver extends Remote
 	 * @throws MicroscopeLockedException
 	 * @throws RemoteException
 	 */
-	public void initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException, RemoteException;
+	public Device initializeDevice(DeviceSetting[] preInitSettings) throws MicroscopeDriverException, MicroscopeLockedException, RemoteException;
 
 	/**
 	 * Unloads a previously loaded, but yet not initialized device. Should be called to clean up if a device was loaded, but it was decided to not initialize it.

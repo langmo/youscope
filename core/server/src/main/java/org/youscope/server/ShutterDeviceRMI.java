@@ -32,9 +32,9 @@ class ShutterDeviceRMI extends DeviceRMI implements ShutterDevice
 
     private final ShutterDeviceInternal shutterDevice;
 
-    ShutterDeviceRMI(ShutterDeviceInternal shutterDevice, int accessID) throws RemoteException
+    ShutterDeviceRMI(ShutterDeviceInternal shutterDevice, MicroscopeRMI microscope, int accessID) throws RemoteException
     {
-        super(shutterDevice, accessID);
+        super(shutterDevice, microscope, accessID);
         this.shutterDevice = shutterDevice;
     }
 

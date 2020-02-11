@@ -74,6 +74,10 @@ public enum DeviceType
 	 */
 	GenericDevice("Generic"),
 	/**
+	 * A hub, containing other "child" peripheral devices
+	 */
+	HubDevice("Hub"),
+	/**
 	 * Special Device.
 	 */
 	AnyType("Special"),

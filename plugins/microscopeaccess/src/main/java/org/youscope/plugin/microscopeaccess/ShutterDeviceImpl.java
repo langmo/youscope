@@ -26,9 +26,9 @@ import org.youscope.common.microscope.MicroscopeLockedException;
  */
 class ShutterDeviceImpl extends DeviceImpl implements ShutterDeviceInternal
 {
-	ShutterDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID)
+	ShutterDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceName, libraryID, driverID, DeviceType.ShutterDevice);
+		super(microscope, deviceName, libraryID, driverID, DeviceType.ShutterDevice, hub);
 	}
 
 	@Override

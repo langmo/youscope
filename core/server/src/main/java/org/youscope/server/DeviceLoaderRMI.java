@@ -34,20 +34,20 @@ class DeviceLoaderRMI extends UnicastRemoteObject implements DeviceLoader
 	 */
 	private static final long		serialVersionUID	= -975901235633383293L;
 
-	protected DeviceLoaderInternal	deviceManager;
-
-	protected int					accessID;
-
+	private final DeviceLoaderInternal	deviceManager;
+	private final int					accessID;
+	private final MicroscopeRMI microscope;
 	/**
 	 * Constructor.
 	 * 
 	 * @throws RemoteException
 	 */
-	DeviceLoaderRMI(DeviceLoaderInternal deviceManager, int accessID) throws RemoteException
+	DeviceLoaderRMI(DeviceLoaderInternal deviceManager, MicroscopeRMI microscope, int accessID) throws RemoteException
 	{
 		super();
 		this.accessID = accessID;
 		this.deviceManager = deviceManager;
+		this.microscope = microscope;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ class DeviceLoaderRMI extends UnicastRemoteObject implements DeviceLoader
 		AvailableDeviceDriver[] drivers = new AvailableDeviceDriver[driversInternal.length];
 		for(int i = 0; i < driversInternal.length; i++)
 		{
-			drivers[i] = new AvailableDeviceDriverRMI(driversInternal[i], accessID);
+			drivers[i] = new AvailableDeviceDriverRMI(driversInternal[i], microscope, accessID);
 		}
 		return drivers;
 	}

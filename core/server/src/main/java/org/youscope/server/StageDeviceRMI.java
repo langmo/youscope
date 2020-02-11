@@ -33,9 +33,9 @@ class StageDeviceRMI extends DeviceRMI implements StageDevice
 
     private StageDeviceInternal stageDevice;
 
-    StageDeviceRMI(StageDeviceInternal stageDevice, int accessID) throws RemoteException
+    StageDeviceRMI(StageDeviceInternal stageDevice, MicroscopeRMI microscope, int accessID) throws RemoteException
     {
-        super(stageDevice, accessID);
+        super(stageDevice, microscope, accessID);
         this.stageDevice = stageDevice;
     }
 

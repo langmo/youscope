@@ -23,7 +23,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.youscope.addon.microscopeaccess.AutoFocusDeviceInternal;
 import org.youscope.addon.microscopeaccess.CameraDeviceInternal;
 import org.youscope.addon.microscopeaccess.DeviceInternal;
-import org.youscope.addon.microscopeaccess.DeviceLoaderInternal;
 import org.youscope.addon.microscopeaccess.FloatPropertyInternal;
 import org.youscope.addon.microscopeaccess.FocusDeviceInternal;
 import org.youscope.addon.microscopeaccess.IntegerPropertyInternal;
@@ -483,51 +482,54 @@ class MicroscopeImpl implements MicroscopeInternal
 		}
 	}
 	
-	DeviceImpl initializeDevice(String deviceID, String libraryID, String driverID, int accessID) throws MicroscopeException
+	DeviceImpl initializeDevice(String deviceID, String libraryID, String driverID, HubDeviceImpl hub, int accessID) throws MicroscopeException
 	{
 		DeviceType deviceType = getDeviceType(deviceID);
 		DeviceImpl device;
 		switch(deviceType)
 		{
 			case CameraDevice:
-				device = new CameraDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new CameraDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				if(standardCameraDevice == null)
 					standardCameraDevice = deviceID;
 				break;
 			case StageDevice:
-				device = new FocusDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new FocusDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				if(standardFocusDevice == null)
 					standardFocusDevice = deviceID;
 				break;
 			case AutoFocusDevice:
-				device = new AutoFocusDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new AutoFocusDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				if(standardAutoFocusDevice == null)
 					standardAutoFocusDevice = deviceID;
 				break;
 			case XYStageDevice:
-				device = new StageDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new StageDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				if(standardStageDevice == null)
 					standardStageDevice = deviceID;
 				break;
 			case StateDevice:
-				device = new StateDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new StateDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				break;
 			case ShutterDevice:
-				device = new ShutterDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new ShutterDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				if(standardShutterDevice == null)
 					standardShutterDevice = deviceID;
 				break;
 			case SerialDevice:
-				device = new SerialDeviceImpl(this, deviceID, libraryID, driverID);
+				device = new SerialDeviceImpl(this, deviceID, libraryID, driverID, hub);
+				break;
+			case HubDevice:
+				device = new HubDeviceImpl(this, deviceID, libraryID, driverID, hub);
 				break;
 			default:
-				device = new DeviceImpl(this, deviceID, libraryID, driverID, deviceType);
+				device = new DeviceImpl(this, deviceID, libraryID, driverID, deviceType, hub);
 				break;
 		}
 		device.initializeDevice(accessID);
 		devices.put(deviceID, device);
 		
-		stateChanged("Device " + deviceID + " loaded (Driver: " + libraryID + "." + driverID + ").");
+		stateChanged("Device " + deviceID + " loaded (driver: " + libraryID + "." + driverID + ", type:" +deviceType.toString()+").");
 		return device;
 	}
 	
@@ -777,7 +779,7 @@ class MicroscopeImpl implements MicroscopeInternal
 	}
 
 	@Override
-	public DeviceLoaderInternal getDeviceLoader() throws UnsupportedOperationException
+	public DeviceLoaderImpl getDeviceLoader() throws UnsupportedOperationException
 	{
 		// Test if the microManager version is too old to support the functions required by this feature.
 		try
@@ -832,14 +834,12 @@ class MicroscopeImpl implements MicroscopeInternal
 			return DeviceType.AutoFocusDevice;
 		else if(type == mmcorej.DeviceType.ImageProcessorDevice)
 			return DeviceType.ImageProcessorDevice;
-		//else if(type == mmcorej.DeviceType.ImageStreamerDevice)
-		//	return DeviceType.ImageStreamerDevice;
 		else if(type == mmcorej.DeviceType.SignalIODevice)
 			return DeviceType.SignalIODevice;
 		else if(type == mmcorej.DeviceType.MagnifierDevice)
 			return DeviceType.MagnifierDevice;
-		//else if(type == mmcorej.DeviceType.ProgrammableIODevice)
-		//	return DeviceType.ProgrammableIODevice;
+		else if(type == mmcorej.DeviceType.HubDevice)
+			return DeviceType.HubDevice;
 		else
 			return DeviceType.UnknownType;
 	}

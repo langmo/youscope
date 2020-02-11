@@ -16,6 +16,7 @@ package org.youscope.plugin.microscopeaccess;
 import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
+import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.PreInitDevicePropertyInternal;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
@@ -33,20 +34,39 @@ import mmcorej.StrVector;
  */
 class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 {
-	private final String identifier;
+	private final String driver;
 	private final String description;
 	private final String library;
 	private final DeviceType deviceType;
 	private final MicroscopeImpl microscope;
 	private volatile String currentlyLoadedDeviceID = null;
 	private volatile boolean serialPort = false;
-	AvailableDeviceDriverImpl(MicroscopeImpl microscope, String library, String identifier, String description, DeviceType deviceType)
+	private HubDeviceImpl hub;
+	AvailableDeviceDriverImpl(MicroscopeImpl microscope, String library, String driver, String description, DeviceType deviceType)
+	{
+		this(microscope, null, library, driver, description, deviceType);
+	}
+	AvailableDeviceDriverImpl(MicroscopeImpl microscope, HubDeviceImpl hub, String library, String driver, String description, DeviceType deviceType)
 	{
 		this.library = library;
-		this.identifier = identifier;
+		this.driver = driver;
 		this.description = description;
 		this.deviceType = deviceType;
 		this.microscope = microscope;
+		this.hub = hub;
+	}
+	HubDeviceImpl getHub()
+	{
+		return hub;
+	}
+	void setHub(HubDeviceImpl hub)
+	{
+		this.hub = hub;
+	}
+	
+	boolean isHub()
+	{
+		return deviceType == DeviceType.HubDevice;
 	}
 	
 	@Override
@@ -58,7 +78,7 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 	@Override
 	public String getDriverID()
 	{
-		return identifier;
+		return driver;
 	}
 
 	@Override
@@ -88,15 +108,17 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 		if(deviceID == null || deviceID.length() < 1)
 			throw new MicroscopeDriverException("The intended ID of the device is null or empty.");
 		if(currentlyLoadedDeviceID != null)
-			throw new MicroscopeDriverException("Device already loaded. Initialize device or unload it.");
+			unloadDevice(accessID);
 		try
 		{
 			// Get access to microManager
 			CMMCore core = microscope.startWrite(accessID);
 			
 			// Construct a device
-			core.loadDevice(deviceID, library, identifier);
+			core.loadDevice(deviceID, library, driver);
 			currentlyLoadedDeviceID = deviceID;
+			if(hub != null)
+				core.setParentLabel(deviceID, hub.getDeviceID());
 			PreInitDevicePropertyInternal[] properties = loadProperties(accessID);
 			return properties;
 			
@@ -120,7 +142,7 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 	}
 
 	@Override
-	public synchronized void initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException
+	public synchronized DeviceInternal initializeDevice(DeviceSetting[] preInitSettings, int accessID) throws MicroscopeDriverException, MicroscopeLockedException
 	{
 		if(currentlyLoadedDeviceID == null)
 			throw new MicroscopeDriverException("Device driver must be loaded before device is initialized.");
@@ -144,8 +166,9 @@ class AvailableDeviceDriverImpl implements AvailableDeviceDriverInternal
 			
 			// Initialize device.
 			core.initializeDevice(currentlyLoadedDeviceID);
-			microscope.initializeDevice(currentlyLoadedDeviceID, library, identifier, accessID);
+			DeviceInternal device = microscope.initializeDevice(currentlyLoadedDeviceID, library, driver, hub, accessID);
 			currentlyLoadedDeviceID = null;
+			return device;
 		}
 		catch(MicroscopeException e)
 		{

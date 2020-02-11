@@ -18,6 +18,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.FloatPropertyInternal;
+import org.youscope.addon.microscopeaccess.HubDeviceInternal;
 import org.youscope.addon.microscopeaccess.IntegerPropertyInternal;
 import org.youscope.addon.microscopeaccess.PropertyInternal;
 import org.youscope.addon.microscopeaccess.ReadOnlyPropertyInternal;
@@ -26,6 +27,7 @@ import org.youscope.addon.microscopeaccess.StringPropertyInternal;
 import org.youscope.common.microscope.Device;
 import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceType;
+import org.youscope.common.microscope.HubDevice;
 import org.youscope.common.microscope.MicroscopeException;
 import org.youscope.common.microscope.MicroscopeLockedException;
 import org.youscope.common.microscope.Property;
@@ -40,20 +42,22 @@ class DeviceRMI extends UnicastRemoteObject implements Device
 	 */
 	private static final long	serialVersionUID	= 8821464564099326373L;
 
-	protected DeviceInternal	device;
+	protected final DeviceInternal	device;
 
-	protected int				accessID;
+	protected final int				accessID;
 
+	protected final MicroscopeRMI microscope;
 	/**
 	 * Constructor.
 	 * 
 	 * @throws RemoteException
 	 */
-	DeviceRMI(DeviceInternal device, int accessID) throws RemoteException
+	DeviceRMI(DeviceInternal device, MicroscopeRMI microscope, int accessID) throws RemoteException
 	{
 		super();
 		this.accessID = accessID;
 		this.device = device;
+		this.microscope = microscope;
 	}
 
 	@Override
@@ -140,8 +144,15 @@ class DeviceRMI extends UnicastRemoteObject implements Device
 	}
 
 	@Override
-	public void waitForDevice() throws MicroscopeException, RemoteException, InterruptedException
+	public void waitForDevice() throws MicroscopeException, InterruptedException
 	{
 		device.waitForDevice();
+	}
+
+	@Override
+	public HubDevice getHub() throws RemoteException 
+	{
+		HubDeviceInternal hub = device.getHub();
+		return new HubDeviceRMI(hub, microscope, accessID);
 	}
 }

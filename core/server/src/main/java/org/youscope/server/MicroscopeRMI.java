@@ -20,6 +20,7 @@ import org.youscope.addon.microscopeaccess.AutoFocusDeviceInternal;
 import org.youscope.addon.microscopeaccess.CameraDeviceInternal;
 import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.FocusDeviceInternal;
+import org.youscope.addon.microscopeaccess.HubDeviceInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.addon.microscopeaccess.SerialDeviceInternal;
 import org.youscope.addon.microscopeaccess.ShutterDeviceInternal;
@@ -121,60 +122,62 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		return toDevice(microscope.getDevice(name));
 	}
 
-	private Device toDevice(DeviceInternal device) throws RemoteException
+	Device toDevice(DeviceInternal device) throws RemoteException
 	{
 		if(device instanceof CameraDeviceInternal)
-			return new CameraDeviceRMI((CameraDeviceInternal)device, channelManager, accessID);
+			return new CameraDeviceRMI((CameraDeviceInternal)device, this, channelManager, accessID);
 		else if(device instanceof StageDeviceInternal)
-			return new StageDeviceRMI((StageDeviceInternal)device, accessID);
+			return new StageDeviceRMI((StageDeviceInternal)device, this, accessID);
 		else if(device instanceof ShutterDeviceInternal)
-			return new ShutterDeviceRMI((ShutterDeviceInternal)device, accessID);
+			return new ShutterDeviceRMI((ShutterDeviceInternal)device, this, accessID);
 		else if(device instanceof FocusDeviceInternal)
-			return new FocusDeviceRMI((FocusDeviceInternal)device, accessID);
+			return new FocusDeviceRMI((FocusDeviceInternal)device, this, accessID);
 		else if(device instanceof StateDeviceInternal)
-			return new StateDeviceRMI((StateDeviceInternal)device, accessID);
+			return new StateDeviceRMI((StateDeviceInternal)device, this, accessID);
 		else if(device instanceof AutoFocusDeviceInternal)
-			return new AutoFocusDeviceRMI((AutoFocusDeviceInternal)device, accessID);
+			return new AutoFocusDeviceRMI((AutoFocusDeviceInternal)device, this, accessID);
 		else if(device instanceof SerialDeviceInternal)
-			return new SerialDeviceRMI((SerialDeviceInternal)device, accessID);
+			return new SerialDeviceRMI((SerialDeviceInternal)device, this, accessID);
+		else if(device instanceof HubDeviceInternal)
+			return new HubDeviceRMI((HubDeviceInternal)device, this, accessID);
 		else
-			return new DeviceRMI(device, accessID);
+			return new DeviceRMI(device, this, accessID);
 	}
 
 	@Override
 	public FocusDevice getFocusDevice() throws DeviceException, RemoteException
 	{
-		return new FocusDeviceRMI(microscope.getFocusDevice(), accessID);
+		return new FocusDeviceRMI(microscope.getFocusDevice(), this, accessID);
 	}
 
 	@Override
 	public FocusDevice getFocusDevice(String name) throws DeviceException, RemoteException
 	{
-		return new FocusDeviceRMI(microscope.getFocusDevice(name), accessID);
+		return new FocusDeviceRMI(microscope.getFocusDevice(name), this, accessID);
 	}
 
 	@Override
 	public StageDevice getStageDevice() throws DeviceException, RemoteException
 	{
-		return new StageDeviceRMI(microscope.getStageDevice(), accessID);
+		return new StageDeviceRMI(microscope.getStageDevice(), this, accessID);
 	}
 
 	@Override
 	public StageDevice getStageDevice(String name) throws DeviceException, RemoteException
 	{
-		return new StageDeviceRMI(microscope.getStageDevice(name), accessID);
+		return new StageDeviceRMI(microscope.getStageDevice(name), this, accessID);
 	}
 
 	@Override
 	public CameraDevice getCameraDevice() throws DeviceException, RemoteException
 	{
-		return new CameraDeviceRMI(microscope.getCameraDevice(), channelManager, accessID);
+		return new CameraDeviceRMI(microscope.getCameraDevice(), this, channelManager, accessID);
 	}
 
 	@Override
 	public CameraDevice getCameraDevice(String name) throws DeviceException, RemoteException
 	{
-		return new CameraDeviceRMI(microscope.getCameraDevice(name), channelManager, accessID);
+		return new CameraDeviceRMI(microscope.getCameraDevice(name), this, channelManager, accessID);
 	}
 
 	@Override
@@ -240,7 +243,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public DeviceLoader getDeviceLoader() throws RemoteException, UnsupportedOperationException
 	{
-		return new DeviceLoaderRMI(microscope.getDeviceLoader(), accessID);
+		return new DeviceLoaderRMI(microscope.getDeviceLoader(), this, accessID);
 	}
 
 	@Override
@@ -250,7 +253,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		FocusDevice[] devices = new FocusDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new FocusDeviceRMI(devicesInternal[i], accessID);
+			devices[i] = new FocusDeviceRMI(devicesInternal[i], this, accessID);
 		}
 		return devices;
 	}
@@ -270,7 +273,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public ShutterDevice getShutterDevice() throws RemoteException, DeviceException
 	{
-		return new ShutterDeviceRMI(microscope.getShutterDevice(), accessID);
+		return new ShutterDeviceRMI(microscope.getShutterDevice(), this, accessID);
 	}
 
 	@Override
@@ -280,7 +283,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		ShutterDevice[] devices = new ShutterDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new ShutterDeviceRMI(devicesInternal[i], accessID);
+			devices[i] = new ShutterDeviceRMI(devicesInternal[i], this, accessID);
 		}
 		return devices;
 	}
@@ -288,7 +291,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public ShutterDevice getShutterDevice(String deviceName) throws RemoteException, DeviceException
 	{
-		return new ShutterDeviceRMI(microscope.getShutterDevice(deviceName), accessID);
+		return new ShutterDeviceRMI(microscope.getShutterDevice(deviceName), this, accessID);
 	}
 
 	@Override
@@ -298,7 +301,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		StageDevice[] devices = new StageDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new StageDeviceRMI(devicesInternal[i], accessID);
+			devices[i] = new StageDeviceRMI(devicesInternal[i], this, accessID);
 		}
 		return devices;
 	}
@@ -322,7 +325,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		CameraDevice[] devices = new CameraDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new CameraDeviceRMI(devicesInternal[i], channelManager, accessID);
+			devices[i] = new CameraDeviceRMI(devicesInternal[i], this, channelManager, accessID);
 		}
 		return devices;
 	}
@@ -330,7 +333,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public StateDevice getStateDevice(String name) throws DeviceException, RemoteException
 	{
-		return new StateDeviceRMI(microscope.getStateDevice(name), accessID);
+		return new StateDeviceRMI(microscope.getStateDevice(name), this, accessID);
 	}
 
 	@Override
@@ -340,7 +343,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		StateDevice[] devices = new StateDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new StateDeviceRMI(devicesInternal[i], accessID);
+			devices[i] = new StateDeviceRMI(devicesInternal[i], this, accessID);
 		}
 		return devices;
 	}
@@ -396,7 +399,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public AutoFocusDevice getAutoFocusDevice() throws DeviceException, RemoteException
 	{
-		return new AutoFocusDeviceRMI(microscope.getAutoFocusDevice(), accessID);
+		return new AutoFocusDeviceRMI(microscope.getAutoFocusDevice(), this, accessID);
 	}
 
 	@Override
@@ -406,7 +409,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 		AutoFocusDevice[] devices = new AutoFocusDevice[devicesInternal.length];
 		for(int i = 0; i < devicesInternal.length; i++)
 		{
-			devices[i] = new AutoFocusDeviceRMI(devicesInternal[i], accessID);
+			devices[i] = new AutoFocusDeviceRMI(devicesInternal[i], this, accessID);
 		}
 		return devices;
 	}
@@ -414,7 +417,7 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	@Override
 	public AutoFocusDevice getAutoFocusDevice(String deviceID) throws DeviceException, RemoteException
 	{
-		return new AutoFocusDeviceRMI(microscope.getAutoFocusDevice(deviceID), accessID);
+		return new AutoFocusDeviceRMI(microscope.getAutoFocusDevice(deviceID), this, accessID);
 	}
 
 	@Override

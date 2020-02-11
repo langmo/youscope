@@ -181,9 +181,13 @@ public class LiveStreamPanel extends ImagePanel {
     	double exposure = channelControl.getExposure();
     	int imagingPeriod = channelControl.getImagingPeriod();
     	
-    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL, channel);
-    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP, channelGroup);
-    	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA, camera);
+    	if(channel != null && channelGroup != null)
+    	{
+    		properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL, channel);
+    		properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CHANNEL_GROUP, channelGroup);
+    	}
+    	if(camera != null)
+    		properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_CAMERA, camera);
     	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_EXPOSURE, exposure);
     	properties.setProperty(StandardProperty.PROPERTY_STREAM_LAST_PERIOD, imagingPeriod);
 	}

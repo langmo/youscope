@@ -106,4 +106,10 @@ public interface Device extends Remote
 	 * @throws MicroscopeLockedException
 	 */
 	public void setExplicitDelay(double delay) throws MicroscopeException, RemoteException, MicroscopeLockedException;
+
+	/**
+	 * If this is a peripheral device, this function returns the respective hub device. Otherwise, it returns null.
+	 * @return Hub device or null.
+	 */
+	public HubDevice getHub() throws RemoteException;
 }

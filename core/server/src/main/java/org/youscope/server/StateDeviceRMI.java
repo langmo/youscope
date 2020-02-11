@@ -33,9 +33,9 @@ class StateDeviceRMI extends DeviceRMI implements StateDevice
 
     private StateDeviceInternal stateDevice;
 
-    StateDeviceRMI(StateDeviceInternal stateDevice, int accessID) throws RemoteException
+    StateDeviceRMI(StateDeviceInternal stateDevice, MicroscopeRMI microscope, int accessID) throws RemoteException
     {
-        super(stateDevice, accessID);
+        super(stateDevice, microscope, accessID);
         this.stateDevice = stateDevice;
     }
 

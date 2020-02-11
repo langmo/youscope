@@ -29,9 +29,9 @@ public class SerialDeviceImpl extends DeviceImpl implements SerialDeviceInternal
 {
 	private final static String PROPERTY_SEND_COMMAND = "Send Command";
 	
-	SerialDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID)
+	SerialDeviceImpl(MicroscopeImpl microscope, String deviceName, String libraryID, String driverID, HubDeviceImpl hub)
 	{
-		super(microscope, deviceName, libraryID, driverID, DeviceType.SerialDevice);
+		super(microscope, deviceName, libraryID, driverID, DeviceType.SerialDevice, hub);
 	}
 
 	@Override

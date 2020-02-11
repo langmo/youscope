@@ -109,4 +109,10 @@ public interface DeviceInternal
 	 * @return Time when device was initialized.
 	 */
 	public Date getInitializationTime();
+	
+	/**
+	 * If this is a peripheral device, this function returns the respective hub device. Otherwise, it returns null.
+	 * @return Hub device or null.
+	 */
+	public HubDeviceInternal getHub();
 }
