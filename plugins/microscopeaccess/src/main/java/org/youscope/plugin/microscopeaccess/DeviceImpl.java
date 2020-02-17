@@ -118,6 +118,18 @@ class DeviceImpl implements DeviceInternal, Comparable<DeviceImpl>, PropertyActi
 			devicesPropertyNames = new StrVector();
 		}
 
+		if(hub!=null)
+		{
+			final String hubID = hub.getDeviceID();
+			properties.put("Hub", new ReadOnlyPropertyImpl(microscope, getDeviceID(), "Hub", false, this)
+			{
+				@Override
+				public String getValue()
+				{
+					return hubID;
+				}
+			});
+		}
 		for(String propertyID : devicesPropertyNames)
 		{
 			// Sort out invalid ones

@@ -39,9 +39,9 @@ public class YouScopeVersion
 {
 	private static final String	UNKNOWN	= "UNKNOWN";
 
-	private final static String		DEVELOPER_VERSION = "2.1.0"; 
+	private final static String		DEVELOPER_VERSION = "2.2.0"; 
 
-	private final static String		PRODUCT_VERSION = "R2018"; 
+	private final static String		PRODUCT_VERSION = "R2020"; 
 
 	private final static String		APPLICATION_NAME = "YouScope";
 	

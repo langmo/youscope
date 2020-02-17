@@ -310,6 +310,7 @@ class DeviceLoaderImpl implements DeviceLoaderInternal
 	@Override
 	public AvailableDeviceDriverInternal getAvailableDeviceDriver(String libraryID, String driverID) throws MicroscopeDriverException
 	{
+		loadAllDrivers();
 		for(DeviceDescription description : availableStandAloneDrivers)
 		{
 			if(description.getLibraryID().equals(libraryID) && description.getDriverID().equals(driverID))

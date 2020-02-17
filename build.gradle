@@ -89,59 +89,25 @@ nsis {
 task createInstaller32(type: com.github.langmo.gradlensis.GradleNsisTask) {
 	variables = ['WIN32':'True']
 }
+task createInstaller3264(type: com.github.langmo.gradlensis.GradleNsisTask) {
+	variables = ['WIN32':'True', 'WIN64':'True']
+}
 createInstaller.dependsOn installDist
 createInstaller32.dependsOn installDist
+createInstaller3264.dependsOn installDist
 task createInstallers {
 	dependsOn ":createInstaller32"
 	dependsOn ":createInstaller"
+	dependsOn ":createInstaller3264"
 }
 def NSIS_GROUP = 'nsis'
 createInstaller32.group = createInstaller.group
 createInstaller32.description = createInstaller.description
+createInstaller3264.group = createInstaller.group
+createInstaller3264.description = createInstaller.description
 createInstallers.group = createInstaller.group
-createInstallers.description = "Creates both the 32 and 64bit installers"
+createInstallers.description = "Creates both the 32bit, the 64bit, and the compined 32/64bit installers"
 
-/*
-task copyInstallerConfig(type: Copy) {
-    from file("${rootProject.projectDir}/resources/nsis/YouScope.nsi")
-    into file("${rootProject.buildDir}/install/youscope/")
-	doLast {    
-	    println "Copied installer build script to ${rootProject.buildDir}/install/youscope/."
-	}
-}
-task copyInstaller(type: Download) {
-    src 'http://github.com/downloads/dreese/nsis-ant/nsisant-1.3.jar'
-    dest "${rootProject.buildDir}/nsis/nsisant-1.3.jar"
-	doLast {    
-	    println "Copied installer binaries to ${rootProject.buildDir}/nsis/nsisant-1.3.jar."
-	}
-}
-
-task buildInstaller {
-	dependsOn ':installDist', ':copyInstallerConfig', ':copyInstaller'
-	tasks.getByPath(':copyInstallerConfig').mustRunAfter(":installDist")
-	doLast {    
-	    println "Building Windows installer"
-		try
-		{
-			ant.taskdef(name: "nsis", classname: "com.danielreese.nsisant.Task", classpath: "${rootProject.buildDir}/nsis/nsisant-1.3.jar")
-			ant.nsis(script: "${rootProject.buildDir}/install/youscope/YouScope.nsi", out: "${rootProject.projectDir}/build/installer_build.log") {
-				define(name: "RELEASE_VERSION", value: "1.0")
-				define(name: "VERSION", value: "1.0.0")
-			}
-		}
-		catch(Exception e)
-		{
-			File file = file("${rootProject.projectDir}/build/installer_build.log")
-			println file.text
-			throw e
-		}
-		File file = file("${rootProject.projectDir}/build/installer_build.log")
-		println file.text
-		println "Installer successfully built!"
-	}
-}
-*/
 // work around for bugs in installDist on github
 installDist {
 	def installDir = file("${rootProject.buildDir}/install/${rootProject.name}")

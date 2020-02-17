@@ -595,7 +595,7 @@ class ManageAddDeviceFrame
 			
 			try 
 			{
-				peripherals = hub.getPeripheralDevices();
+				peripherals = hub.getPeripheralDeviceDrivers();
 			} 
 			catch (Exception e) 
 			{

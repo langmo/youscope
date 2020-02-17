@@ -36,6 +36,7 @@ import org.youscope.common.microscope.DeviceLoader;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.DeviceType;
 import org.youscope.common.microscope.FocusDevice;
+import org.youscope.common.microscope.HubDevice;
 import org.youscope.common.microscope.Microscope;
 import org.youscope.common.microscope.MicroscopeConfiguration;
 import org.youscope.common.microscope.MicroscopeConfigurationException;
@@ -436,6 +437,24 @@ class MicroscopeRMI extends UnicastRemoteObject implements Microscope
 	public void removeConfigurationListener(MicroscopeConfigurationListener listener)
 	{
 		microscope.removeConfigurationListener(listener);
+	}
+
+	@Override
+	public HubDevice[] getHubDevices() throws RemoteException 
+	{
+		HubDeviceInternal[] devicesInternal = microscope.getHubDevices();
+		HubDevice[] devices = new HubDevice[devicesInternal.length];
+		for(int i = 0; i < devicesInternal.length; i++)
+		{
+			devices[i] = new HubDeviceRMI(devicesInternal[i], this, accessID);
+		}
+		return devices;
+	}
+
+	@Override
+	public HubDevice getHubDevice(String deviceID) throws DeviceException, RemoteException 
+	{
+		return new HubDeviceRMI(microscope.getHubDevice(deviceID), this, accessID);
 	}
 
 }

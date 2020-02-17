@@ -74,6 +74,8 @@ abstract class ConfigFileManipulator
 	protected static final String[]	COMMAND_PROPERTY					= {"Property", null, null, null};
 	protected static final String[]	COMMAND_PROPERTY_CORE				= {"Property", "Core", null, null};
 
+	protected static final String [] COMMAND_PARENT = {"Parent", null, null};
+	
 	protected static final String[]	IDENT_GENERATOR						= {"#@" + ConfigFileIdentification.IDENT_GENERATOR, null, null};
 	protected static final String[]	IDENT_COMPATIBLE					= {"#@" + ConfigFileIdentification.IDENT_COMPATIBLE, null, null};
 

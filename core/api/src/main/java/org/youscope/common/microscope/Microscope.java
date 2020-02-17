@@ -122,6 +122,22 @@ public interface Microscope extends Remote
 	public FocusDevice getFocusDevice(String deviceID) throws DeviceException, RemoteException;
 
 	/**
+	 * Returns a list of all installed hub devices.
+	 * 
+	 * @return Installed hub devices.
+	 */
+	public HubDevice[] getHubDevices() throws RemoteException;
+
+	/**
+	 * Returns the hub device with the given name.
+	 * @param deviceID Name of hub device.
+	 * 
+	 * @return Focus device.
+	 * @throws DeviceException
+	 */
+	public HubDevice getHubDevice(String deviceID) throws DeviceException, RemoteException;
+	
+	/**
 	 * Sets the default focus device.
 	 * @param deviceID Name of focus device.
 	 * 

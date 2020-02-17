@@ -87,6 +87,22 @@ public interface MicroscopeInternal
 	public FocusDeviceInternal getFocusDevice(String deviceID) throws DeviceException;
 	
 	/**
+	 * Returns a list of all installed hub devices.
+	 * 
+	 * @return Installed hub devices.
+	 */
+	public HubDeviceInternal[] getHubDevices();
+
+	/**
+	 * Returns the hub device with the given name.
+	 * @param deviceID Name of hub device.
+	 * 
+	 * @return Focus device.
+	 * @throws DeviceException
+	 */
+	public HubDeviceInternal getHubDevice(String deviceID) throws DeviceException;
+	
+	/**
 	 * Returns the current default auto-focus device.
 	 * 
 	 * @return Current auto-focus device.

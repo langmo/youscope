@@ -25,6 +25,7 @@ import org.youscope.addon.microscopeaccess.CameraDeviceInternal;
 import org.youscope.addon.microscopeaccess.DeviceInternal;
 import org.youscope.addon.microscopeaccess.FloatPropertyInternal;
 import org.youscope.addon.microscopeaccess.FocusDeviceInternal;
+import org.youscope.addon.microscopeaccess.HubDeviceInternal;
 import org.youscope.addon.microscopeaccess.IntegerPropertyInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
 import org.youscope.addon.microscopeaccess.PropertyInternal;
@@ -1159,5 +1160,28 @@ class MicroscopeImpl implements MicroscopeInternal
 		{
 			microscopeConfigurationListeners.removeElement(listener);
 		}
+	}
+
+	@Override
+	public HubDeviceImpl[] getHubDevices() 
+	{
+		Vector<HubDeviceImpl> devicesofType = new Vector<HubDeviceImpl>();
+		for(DeviceInternal device : devices.values())
+		{
+			if(device instanceof HubDeviceImpl)
+				devicesofType.addElement((HubDeviceImpl)device);
+		}
+		HubDeviceImpl[] retVal = devicesofType.toArray(new HubDeviceImpl[devicesofType.size()]);
+		Arrays.sort(retVal);
+		return retVal;
+	}
+
+	@Override
+	public HubDeviceInternal getHubDevice(String deviceID) throws DeviceException 
+	{
+		DeviceInternal device = getDevice(deviceID);
+		if(device instanceof HubDeviceInternal)
+			return (HubDeviceInternal)device;
+		throw new DeviceException("Device " + deviceID + " is not a hub device.");
 	}
 }

@@ -57,7 +57,7 @@ class ConfigFileParser extends ConfigFileManipulator
 			if(device.getDeviceID().equals(deviceID))
 				return device;
 		}
-		throw new DeviceException("Device with ID " + deviceID + " was not defined.");
+		throw new DeviceException("Device with ID " + deviceID + " not defined.");
 	}
 
 	/**
@@ -123,7 +123,8 @@ class ConfigFileParser extends ConfigFileManipulator
 					// Loading of devices
 					if(isCommand(tokens, COMMAND_DEVICE))
 						parseNewDevice(tokens);
-
+					else if(isCommand(tokens, COMMAND_PARENT))
+						parseParent(tokens);
 					// Initialization / Uninitialization
 					else if(isCommand(tokens, COMMAND_UNINITIALIZE))
 						parseUninitialize(accessID);
@@ -340,6 +341,14 @@ class ConfigFileParser extends ConfigFileManipulator
 		{
 			getPreInitDevice(tokens[1]).addPreInitDeviceSetting(new DeviceSetting(tokens[1], tokens[2], tokens[3]));
 		}
+	}
+	private void parseParent(String[] tokens) throws DeviceException
+	{
+		if(isInitialized)
+		{
+			throw new DeviceException("Hubs of devices must be declared before they are initialized.");
+		}
+		getPreInitDevice(tokens[1]).setHubID(tokens[2]);
 	}
 
 	private void parseUninitialize(int accessID) throws MicroscopeException, MicroscopeLockedException, InterruptedException

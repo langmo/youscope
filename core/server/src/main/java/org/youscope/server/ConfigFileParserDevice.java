@@ -16,7 +16,9 @@ package org.youscope.server;
 import java.util.Vector;
 
 import org.youscope.addon.microscopeaccess.AvailableDeviceDriverInternal;
+import org.youscope.addon.microscopeaccess.HubDeviceInternal;
 import org.youscope.addon.microscopeaccess.MicroscopeInternal;
+import org.youscope.common.microscope.DeviceException;
 import org.youscope.common.microscope.DeviceSetting;
 import org.youscope.common.microscope.MicroscopeDriverException;
 import org.youscope.common.microscope.MicroscopeLockedException;
@@ -31,6 +33,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 	private final String					deviceID;
 	private final String					libraryID;
 	private final String					driverID;
+	private String hubID = null;
 	private final MicroscopeInternal		microscope;
 	private final Vector<DeviceSetting>	settings				= new Vector<DeviceSetting>();
 	private final static String				LIBRARY_SERIAL_MANAGER	= "SerialManager";
@@ -47,7 +50,14 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 	{
 		settings.addElement(setting);
 	}
-
+	String getHubID()
+	{
+		return hubID;
+	}
+	void setHubID(String hubID)
+	{
+		this.hubID = hubID;
+	}
 	String getDeviceID()
 	{
 		return deviceID;
@@ -71,11 +81,30 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 			if(setting.isAbsoluteValue() == false)
 				throw new MicroscopeDriverException("Relative values are not allowed for properties when initializing a device.");
 		}
-
-		// Load driver
-		AvailableDeviceDriverInternal driver = microscope.getDeviceLoader().getAvailableDeviceDriver(libraryID, driverID);
-		if(driver == null)
-			throw new MicroscopeDriverException("Could not find driver with ID " + driverID + " in library " + libraryID + ".");
+		
+		AvailableDeviceDriverInternal driver;
+		if(hubID == null)
+		{
+			// Load driver
+			driver = microscope.getDeviceLoader().getAvailableDeviceDriver(libraryID, driverID);
+			if(driver == null)
+				throw new MicroscopeDriverException("Could not find driver with ID " + driverID + " in library " + libraryID + ".");
+		}
+		else
+		{
+			try 
+			{
+				HubDeviceInternal hub = microscope.getHubDevice(hubID);
+				driver = hub.getPeripheralDeviceDriver(driverID);
+				if(driver == null)
+					throw new MicroscopeDriverException("Hub with ID "+hubID+" does not have peripheral driver with ID " + driverID + " in library " + libraryID + ".");
+			} 
+			catch (DeviceException e) 
+			{
+				throw new MicroscopeDriverException("The hub of the declared device "+libraryID+"."+driverID+", "+hubID+", cannot be found.");
+			} 
+		}
+		
 
 		// initialize device
 		driver.loadDevice(deviceID, accessID);

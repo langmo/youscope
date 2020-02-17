@@ -23,14 +23,20 @@ class HubDeviceRMI extends DeviceRMI implements HubDevice
         this.hubDevice = hubDevice;
     }
 	@Override
-	public AvailableDeviceDriver[] getPeripheralDevices() throws MicroscopeDriverException, RemoteException 
+	public AvailableDeviceDriver[] getPeripheralDeviceDrivers() throws MicroscopeDriverException, RemoteException 
 	{
-		AvailableDeviceDriverInternal[] rawDrivers = hubDevice.getPeripheralDevices();
+		AvailableDeviceDriverInternal[] rawDrivers = hubDevice.getPeripheralDeviceDrivers();
 		AvailableDeviceDriver[] drivers = new AvailableDeviceDriver[rawDrivers.length];
 		for(int i=0; i<rawDrivers.length; i++)
 		{
 			drivers[i] = new AvailableDeviceDriverRMI(rawDrivers[i], microscope, accessID);
 		}
 		return drivers;
+	}
+	@Override
+	public AvailableDeviceDriver getPeripheralDeviceDriver(String driverID)
+			throws MicroscopeDriverException, RemoteException 
+	{
+		return new AvailableDeviceDriverRMI(hubDevice.getPeripheralDeviceDriver(driverID), microscope, accessID);
 	}
 }

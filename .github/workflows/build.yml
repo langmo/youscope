@@ -32,6 +32,13 @@ jobs:
           name: YouScope_32bit_Installer.exe
           # Directory containing files to upload
           path: build/distributions/YouScope_32bit_Installer.exe
+      - name: Upload 32/64bit installer as artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          # Artifact name
+          name: YouScope_3264bit_Installer.exe
+          # Directory containing files to upload
+          path: build/distributions/YouScope_3264bit_Installer.exe
       - name: Deploy 64bit installer as nightly build
         uses: WebFreak001/deploy-nightly@v1.0.1
         env:
@@ -52,5 +59,16 @@ jobs:
           release_id: 23258617 # same as above (id can just be taken out the upload_url, it's used to find old releases)
           asset_path: build/distributions/YouScope_32bit_Installer.exe # path to archive to upload
           asset_name: YouScope_32bit_Installer-$$.exe # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
+          asset_content_type: application/exe # required by GitHub API
+          max_releases: 30 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+      - name: Deploy 32/64bit installer as nightly build
+        uses: WebFreak001/deploy-nightly@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # automatically provided by github actions
+        with:
+          upload_url: https://uploads.github.com/repos/langmo/youscope/releases/23258617/assets{?name,label} # find out this value by opening https://api.github.com/repos/<owner>/<repo>/releases in your browser and copy the full "upload_url" value including the {?name,label} part
+          release_id: 23258617 # same as above (id can just be taken out the upload_url, it's used to find old releases)
+          asset_path: build/distributions/YouScope_3264bit_Installer.exe # path to archive to upload
+          asset_name: YouScope_3264bit_Installer-$$.exe # name to upload the release as, use $$ to insert date (YYYYMMDD) and 6 letter commit hash
           asset_content_type: application/exe # required by GitHub API
           max_releases: 30 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted

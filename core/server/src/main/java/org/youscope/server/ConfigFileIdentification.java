@@ -27,5 +27,5 @@ class ConfigFileIdentification
 
 	public final static ConfigFileGenerator		THIS_GENERATOR			= new ConfigFileGenerator();
 
-	public final static ConfigFileGenerator[]	COMPATIBLE_GENERATORS	= new ConfigFileGenerator[] {new ConfigFileGenerator("YouScope", "1.0"),new ConfigFileGenerator("MicroManager", "1.3"), new ConfigFileGenerator("MicroManager", "1.4")};
+	public final static ConfigFileGenerator[]	COMPATIBLE_GENERATORS	= new ConfigFileGenerator[] {new ConfigFileGenerator("YouScope", "1.0"),new ConfigFileGenerator("MicroManager", "1.3"), new ConfigFileGenerator("MicroManager", "1.4"), new ConfigFileGenerator("MicroManager", "2.0.0")};
 }
