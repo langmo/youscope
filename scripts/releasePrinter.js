@@ -357,18 +357,30 @@ function createNightlyElement(release, show)
 	for(let assetID in assets)
 	{
 		var asset = assets[assetID];
+		var regResult = fileReg.exec(asset.name);
+		var datePart = regResult[1];
+		var commitPart = regResult[2];
+		var bitPart = regResult[3];
 		var created = asset.created_at.substring(0, asset.created_at.indexOf("T"));
-		if(!nightlies[created])
+		var identifier = datePart+"-"+commitPart;
+		if(!nightlies[identifier])
 		{
-			nightlies[created] = {};
+			nightlies[identifier] = {};
+			nightlies[identifier].created = created;
+			nightlies[identifier].commit = commitPart;
+			nightlies[identifier].date = datePart;
 		}
-		if(asset.content_type == "application/tar")
+		if(bitPart == '32')
 		{
-			nightlies[created].tar = {name: asset.name, url: asset.browser_download_url};
+			nightlies[identifier].win32 = {name: asset.name, url: asset.browser_download_url};
 		}
-		else if(asset.content_type == "application/zip")
+		else if(bitPart == '64')
 		{
-			nightlies[created].zip = {name: asset.name, url: asset.browser_download_url};
+			nightlies[identifier].win64 = {name: asset.name, url: asset.browser_download_url};
+		}
+		else if(bitPart == '3264')
+		{
+			nightlies[identifier].win3264 = {name: asset.name, url: asset.browser_download_url};
 		}
 	};
 	let keys = [];
@@ -379,9 +391,9 @@ function createNightlyElement(release, show)
 	keys.sort();
 	for (let i=keys.length-1; i >= 0; i--) 
 	{ 
-		var created = keys[i];
+		var identifier = keys[i];
 		var headerText = document.createElement("p");
-		headerText.appendChild(document.createTextNode(created + ":"));
+		headerText.appendChild(document.createTextNode(nightlies[identifier].created + " (Build "+nightlies[identifier].commit+"):"));
 		headerText.style.fontWeight="bold";
 		releaseDiv.appendChild(headerText);
 
@@ -389,23 +401,33 @@ function createNightlyElement(release, show)
 		listElems.style.marginLeft = "0cm";
 		listElems.style.marginTop = "0cm";
 	
-		if(nightlies[created].zip)
+		if(nightlies[identifier].win64)
 		{
 			var listElem = document.createElement("li");
 			var assetURL = document.createElement("a");
-			assetURL.href = nightlies[created].zip.url;
+			assetURL.href = nightlies[identifier].win64.url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = nightlies[created].zip.name;
+			assetURL.innerHTML = nightlies[identifier].win64.name;
 			listElem.appendChild(assetURL);
 			listElems.appendChild(listElem);								
 		}
-		if(nightlies[created].tar)
+		if(nightlies[identifier].win32)
 		{
 			var listElem = document.createElement("li");
 			var assetURL = document.createElement("a");
-			assetURL.href = nightlies[created].tar.url;
+			assetURL.href = nightlies[identifier].win32.url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = nightlies[created].tar.name;
+			assetURL.innerHTML = nnightlies[identifier].win32.name;
+			listElem.appendChild(assetURL);
+			listElems.appendChild(listElem);		
+		}
+		if(nightlies[identifier].win3264)
+		{
+			var listElem = document.createElement("li");
+			var assetURL = document.createElement("a");
+			assetURL.href = nightlies[identifier].win3264.url;
+			assetURL.target = "_blank";
+			assetURL.innerHTML = nnightlies[identifier].win3264.name;
 			listElem.appendChild(assetURL);
 			listElems.appendChild(listElem);		
 		}
