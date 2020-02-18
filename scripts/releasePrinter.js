@@ -418,7 +418,7 @@ function createNightlyElement(release, show)
 			var assetURL = document.createElement("a");
 			assetURL.href = nightlies[identifier].win32.url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = nnightlies[identifier].win32.name;
+			assetURL.innerHTML = nightlies[identifier].win32.name;
 			listElem.appendChild(assetURL);
 			listElems.appendChild(listElem);		
 		}
@@ -428,7 +428,7 @@ function createNightlyElement(release, show)
 			var assetURL = document.createElement("a");
 			assetURL.href = nightlies[identifier].win3264.url;
 			assetURL.target = "_blank";
-			assetURL.innerHTML = nnightlies[identifier].win3264.name;
+			assetURL.innerHTML = nightlies[identifier].win3264.name;
 			listElem.appendChild(assetURL);
 			listElems.appendChild(listElem);		
 		}
