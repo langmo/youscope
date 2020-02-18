@@ -94,6 +94,10 @@ class ConfigFileParser extends ConfigFileManipulator
 						continue;
 
 					String[] tokens = line.split(",");
+					for(int i=0; i<tokens.length; i++)
+					{
+						tokens[i] = tokens[i].trim();
+					}
 
 					// First, check for identification comments.
 					if(isCommand(tokens, IDENT_GENERATOR))
