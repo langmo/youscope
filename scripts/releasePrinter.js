@@ -354,6 +354,7 @@ function createNightlyElement(release, show)
 	
 	var nightlies = {};
 	var assets = release.assets;
+	var fileReg = new RegExp('YouScope_Installer_([0-9]+)-([a-z0-9]+)-([3264]+)bit.exe');
 	for(let assetID in assets)
 	{
 		var asset = assets[assetID];
