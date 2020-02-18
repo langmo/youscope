@@ -7,3 +7,6 @@ _site/
 create.bat
 preview.bat
 .gradle/
+.classpath
+.project
+.settings/

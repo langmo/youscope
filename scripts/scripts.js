@@ -87,21 +87,34 @@ function displayNightlyLinks(release, releasesElement)
 {
 	var nightlies = {};
 	var assets = release.assets;
+	var fileReg = new RegExp('YouScope_Installer_([0-9]+)-([a-z0-9]+)-([3264]+)bit.exe');
 	for(let assetID in assets)
 	{
 		var asset = assets[assetID];
+		var regResult = fileReg.exec(asset.name);
+		var datePart = regResult[1];
+		var commitPart = regResult[2];
+		var bitPart = regResult[3];
 		var created = asset.created_at.substring(0, asset.created_at.indexOf("T"));
-		if(!nightlies[created])
+		var identifier = datePart+"-"+commitPart;
+		if(!nightlies[identifier])
 		{
-			nightlies[created] = {};
+			nightlies[identifier] = {};
+			nightlies[identifier].created = created;
+			nightlies[identifier].commit = commitPart;
+			nightlies[identifier].date = datePart;
 		}
-		if(asset.content_type == "application/tar")
+		if(bitPart == '32')
 		{
-			nightlies[created].tar = {name: asset.name, url: asset.browser_download_url};
+			nightlies[identifier].win32 = {name: asset.name, url: asset.browser_download_url};
 		}
-		else if(asset.content_type == "application/zip")
+		else if(bitPart == '64')
 		{
-			nightlies[created].zip = {name: asset.name, url: asset.browser_download_url};
+			nightlies[identifier].win64 = {name: asset.name, url: asset.browser_download_url};
+		}
+		else if(bitPart == '3264')
+		{
+			nightlies[identifier].win3264 = {name: asset.name, url: asset.browser_download_url};
 		}
 	};
 	let keys = [];
@@ -110,23 +123,34 @@ function displayNightlyLinks(release, releasesElement)
 		keys.push(key);
 	}
 	keys.sort();
-	var created = keys[keys.length-1];
+	var identifier = keys[keys.length-1];
 	
 	var assetElem = document.createElement("p");
 	assetElem.style.fontWeight="bold";
-	var assetURL = document.createElement("a");
-	assetURL.href = nightlies[created].zip.url;
-	assetURL.target = "_blank";
-	assetURL.innerHTML = "Windows 32/64bit";			
-	assetElem.appendChild(assetURL);
-	
+	if(nightlies[identifier].win64)
+	{
+		var assetURL = document.createElement("a");
+		assetURL.href = nightlies[identifier].win64.url;
+		assetURL.target = "_blank";
+		assetURL.innerHTML = "Windows 64bit";			
+		assetElem.appendChild(assetURL);
+		assetElem.appendChild(document.createElement("br"));
+	}
+	if(nightlies[identifier].win32)
+	{
+		var assetURL = document.createElement("a");
+		assetURL.href = nightlies[identifier].win32.url;
+		assetURL.target = "_blank";
+		assetURL.innerHTML = "Windows 32bit";			
+		assetElem.appendChild(assetURL);
+	}
 	var header = document.createElement("p");
 	var headerText = document.createElement("span");
 	headerText.appendChild(document.createTextNode("Latest Nightly-Build:"));
 	headerText.style.fontWeight="bold";
 	header.appendChild(headerText);
 	header.appendChild(document.createElement("br"));
-	header.appendChild(document.createTextNode("Date: "+created));
+	header.appendChild(document.createTextNode("Date: "+nightlies[identifier].created));
 	releasesElement.appendChild(header);
 	releasesElement.appendChild(assetElem);		
 	releasesElement.appendChild(document.createElement("hr"));		
