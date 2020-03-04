@@ -114,7 +114,7 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 	@Override
 	public int compareTo(ConfigFileParserDevice otherDevice)
 	{
-		// Used to sort elements such that the serial ports are always created first.
+		// First create all serial ports.
 		if(LIBRARY_SERIAL_MANAGER.equals(libraryID))
 		{
 			if(LIBRARY_SERIAL_MANAGER.equals(otherDevice.getLibraryID()))
@@ -123,6 +123,16 @@ class ConfigFileParserDevice extends ConfigFileManipulator implements Comparable
 		}
 		if(LIBRARY_SERIAL_MANAGER.equals(otherDevice.getLibraryID()))
 			return 1;
+		// First, load everything which doesn't have a hub device, which guarantees that hubs are loaded before their respective peripherals
+		if(getHubID() != null)
+		{
+			if(otherDevice.getHubID() != null)
+				return 0;
+			return 1;
+		}
+		if(otherDevice.getHubID() != null)
+			return -1;
+		// with respect to everything else, order probably doesn't matter
 		return 0;
 	}
 }

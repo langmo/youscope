@@ -73,7 +73,7 @@ class HubDeviceImpl extends DeviceImpl implements HubDeviceInternal
 				continue;
 			AvailableDeviceDriverImpl impl = microscope.getDeviceLoader().getDeviceDriver(getLibraryID(), peripheralDriverID);
 			if(impl == null)
-				throw new MicroscopeDriverException("Couldn't find driver for peripheral device " + peripheralDriverID + " of hub " + getDeviceID()+".");
+				impl = new AvailableDeviceDriverImpl(microscope, getLibraryID(), peripheralDriverID, "", DeviceType.AnyType);
 			impl.setHub(this);
 			return impl;
 		}
