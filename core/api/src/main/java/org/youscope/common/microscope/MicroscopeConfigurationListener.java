@@ -38,6 +38,12 @@ public interface MicroscopeConfigurationListener extends EventListener, Remote
 	 */
 	public void deviceRemoved(String deviceID) throws RemoteException;
 	/**
+	 * Called when a device was newly added.
+	 * @param deviceID The ID of the added device.
+	 * @throws RemoteException 
+	 */
+	public void deviceAdded(String deviceID) throws RemoteException;
+	/**
 	 * Called when a label of a state device changed its name.
 	 * @param oldLabel Setting containing the old label.
 	 * @param newLabel Setting containing the new label.

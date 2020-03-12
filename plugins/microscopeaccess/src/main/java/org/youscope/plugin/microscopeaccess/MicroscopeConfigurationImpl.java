@@ -396,4 +396,11 @@ class MicroscopeConfigurationImpl implements MicroscopeConfigurationInternal, Mi
 	{
 		return imageBufferSize;
 	}
+
+	@Override
+	public void deviceAdded(String deviceID)
+	{
+		// do nothing.
+		
+	}
 }

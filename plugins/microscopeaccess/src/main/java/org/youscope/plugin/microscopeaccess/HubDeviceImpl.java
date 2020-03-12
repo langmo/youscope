@@ -36,7 +36,7 @@ class HubDeviceImpl extends DeviceImpl implements HubDeviceInternal
 		}
 		ArrayList<AvailableDeviceDriverInternal> peripherals = new ArrayList<AvailableDeviceDriverInternal>((int) peripheralsRaw.size());
 		for(String peripheralDriverID : peripheralsRaw)
-		{
+		{			
 			AvailableDeviceDriverImpl impl = microscope.getDeviceLoader().getDeviceDriver(getLibraryID(), peripheralDriverID);
 			if(impl == null)
 			{
@@ -52,30 +52,10 @@ class HubDeviceImpl extends DeviceImpl implements HubDeviceInternal
 	public AvailableDeviceDriverInternal getPeripheralDeviceDriver(String driverID)
 			throws MicroscopeDriverException 
 	{
-		StrVector peripheralsRaw;
-		try
+		for(AvailableDeviceDriverInternal driver : getPeripheralDeviceDrivers())
 		{
-			CMMCore core = microscope.startRead();
-			peripheralsRaw = core.getInstalledDevices(getDeviceID());
-
-		}
-		catch(Exception e)
-		{
-			throw new MicroscopeDriverException("Could not get peripheral devices of hub \"" + getDeviceID() + "\": " + e.getMessage());
-		}
-		finally
-		{
-			microscope.unlockRead();
-		}
-		for(String peripheralDriverID : peripheralsRaw)
-		{
-			if(!peripheralDriverID.equals(driverID))
-				continue;
-			AvailableDeviceDriverImpl impl = microscope.getDeviceLoader().getDeviceDriver(getLibraryID(), peripheralDriverID);
-			if(impl == null)
-				impl = new AvailableDeviceDriverImpl(microscope, getLibraryID(), peripheralDriverID, "", DeviceType.AnyType);
-			impl.setHub(this);
-			return impl;
+			if(driver.getDriverID().equals(driverID))
+				return driver;
 		}
 		return null;
 	}

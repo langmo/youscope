@@ -20,8 +20,12 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -29,16 +33,27 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import org.youscope.client.ManageAddDeviceFrame.PeripheralDevicesPage;
 import org.youscope.clientinterfaces.YouScopeFrame;
+import org.youscope.clientinterfaces.YouScopeFrameListener;
 import org.youscope.common.microscope.Device;
+import org.youscope.common.microscope.DeviceException;
+import org.youscope.common.microscope.DeviceSetting;
+import org.youscope.common.microscope.DeviceType;
+import org.youscope.common.microscope.HubDevice;
+import org.youscope.common.microscope.MicroscopeConfigurationListener;
 import org.youscope.uielements.DescriptionPanel;
 import org.youscope.uielements.DynamicPanel;
 import org.youscope.uielements.ImageLoadingTools;
@@ -48,7 +63,7 @@ import org.youscope.uielements.StandardFormats;
  * @author Moritz Lang
  *
  */
-class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
+class ManageTabLoadedDevices extends ManageTabElement
 {
 	/**
 	 * Serial Version UID.
@@ -69,14 +84,179 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		this.frame = frame;
 		setOpaque(false);
 		
+		final MicroscopeConfigurationListener configurationListener = new MicroscopeConfigurationListener() {
+			
+			@Override
+			public void microscopeUninitialized() 
+			{
+				somethingChanged = true;
+				initializeContent();
+			}
+			
+			@Override
+			public void labelChanged(DeviceSetting oldLabel, DeviceSetting newLabel)
+			{
+				somethingChanged = true;
+				initializeContent();
+			}
+			
+			@Override
+			public void deviceRemoved(String deviceID)
+			{
+				somethingChanged = true;
+				initializeContent();
+			}
+
+			@Override
+			public void deviceAdded(String deviceID)
+			{
+				somethingChanged = true;
+				initializeContent();
+			}
+		};
+		frame.addFrameListener(new YouScopeFrameListener() {
+			
+			@Override
+			public void frameOpened() {
+				try {
+					YouScopeClientImpl.getMicroscope().addConfigurationListener(configurationListener);
+				} catch (RemoteException e) {
+					ClientSystem.err.println("Could not add listener which gets notified if microscope configuration changes.", e);
+				}
+			}
+			
+			@Override
+			public void frameClosed() {
+				try {
+					YouScopeClientImpl.getMicroscope().removeConfigurationListener(configurationListener);
+				} catch (RemoteException e) {
+					ClientSystem.err.println("Could not remove listener which gets notified if microscope configuration changes.", e);
+				}
+			}
+		});
+		
+		final Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "add device");
+		final Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "remove device");
+		
 		// Initialize available device driver table
 		loadedDevicesListModel = new LoadedDevicesListModel();
 		loadedDevicesList = new JList<LoadedDevice>(loadedDevicesListModel);
 		loadedDevicesList.setCellRenderer(new LoadedDevicesListRenderer());
 		loadedDevicesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
+		loadedDevicesList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent mouseEvent)
+			{
+				showContextMenu(mouseEvent);				
+			}
+			@Override
+	        public void mousePressed(MouseEvent mouseEvent) 
+	        {
+				showContextMenu(mouseEvent);
+	        }
+			private void showContextMenu(MouseEvent mouseEvent)
+			{
+	        	if (!mouseEvent.isPopupTrigger())
+	            	return;
+	            int index = loadedDevicesList.locationToIndex(mouseEvent.getPoint());
+	            if (index < 0 || index >= loadedDevices.size()) 
+	            	return;
+	            loadedDevicesList.setSelectedIndex(index);
+	            final LoadedDevice device = loadedDevices.get(index);
+	            
+                JPopupMenu menu = new JPopupMenu();
+                if(device.deviceType == DeviceType.HubDevice)
+                {
+                	JMenuItem peripheralsItem;
+                    if(addButtonIcon == null)
+                    	peripheralsItem = new JMenuItem("Add Peripherals");
+                    else
+                    	peripheralsItem = new JMenuItem("Add Peripherals", addButtonIcon);
+                    peripheralsItem.addActionListener(new ActionListener() 
+                    {
+                        @Override
+        				public void actionPerformed(ActionEvent arg0)
+        				{
+                        	Device hubTemp;
+							try 
+							{
+								hubTemp = YouScopeClientImpl.getMicroscope().getDevice(device.deviceName);
+							} 
+							catch (RemoteException|DeviceException e) 
+							{
+								ClientSystem.err.println("Could not get hub with ID " + device.deviceName, e);
+								return;
+							}
+                        	if(!(hubTemp instanceof HubDevice))
+                        	{
+                        		ClientSystem.err.println("Device " + device.deviceName + " is not a hub device, but identifies as such.");
+                        		return;
+                        	}
+                        	final HubDevice hub = (HubDevice)hubTemp;
+                        	
+                        	
+                			final YouScopeFrame childFrame = ManageTabLoadedDevices.this.frame.createModalChildFrame();
+                			
+                			// Initialize frame
+                			childFrame.setTitle("Add Peripheral Devices");
+                			childFrame.setResizable(true);
+                			childFrame.setClosable(true);
+                			childFrame.setMaximizable(false);
+                			// Initialize content.
+                			childFrame.startInitializing();
+                			new Thread(new Runnable()
+                				{
+                					@Override
+                					public void run()
+                					{
+                						PeripheralDevicesPage peripheralsPage = new PeripheralDevicesPage(hub, childFrame);
+                						childFrame.setContentPane(peripheralsPage);
+                						childFrame.pack();
+                						childFrame.setSize(new Dimension(540, 500));
+                						childFrame.endLoading();
+                					}
+                				}).start();
+                			childFrame.setVisible(true);
+        				}
+                    });
+                    menu.add(peripheralsItem);
+                }
+                JMenuItem deleteItem;
+                if(deleteButtonIcon == null)
+                	deleteItem = new JMenuItem("Remove Device");
+                else
+                	deleteItem = new JMenuItem("Remove Device", deleteButtonIcon);
+                deleteItem.addActionListener(new ActionListener() 
+                {
+                    @Override
+    				public void actionPerformed(ActionEvent arg0)
+    				{
+    					int shouldDelete = JOptionPane.showConfirmDialog(null, "Should the device " + device.deviceName + " really be deleted?", "Delete Device", JOptionPane. YES_NO_OPTION);
+                		if(shouldDelete != JOptionPane.YES_OPTION)
+                			return;
+                		
+    					try
+    					{
+    						YouScopeClientImpl.getMicroscope().getDeviceLoader().removeDevice(device.deviceName);
+    					}
+    					catch(Exception e)
+    					{
+    						ClientSystem.err.println("Could not remove device " + device.deviceName + ".", e);
+    					}
+    					somethingChanged = true;
+    					initializeContent();
+    				}
+                });
+                menu.add(deleteItem);
+                Point relativeMousePosition = loadedDevicesList.getMousePosition();
+                if(relativeMousePosition == null)
+                	return;
+                menu.show(loadedDevicesList, relativeMousePosition.x, relativeMousePosition.y);
+	        }
+	    });
+		
 		// Buttons panel
-		Icon addButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--plus.png", "add device");
 		JButton addButton;
 		if(addButtonIcon == null)
 			addButton= new JButton("Add Device");
@@ -91,13 +271,74 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 				{
 					YouScopeFrame childFrame = ManageTabLoadedDevices.this.frame.createModalChildFrame();
 					ManageAddDeviceFrame addFrame = new ManageAddDeviceFrame();
-					addFrame.addDevicesChangedListener(ManageTabLoadedDevices.this);
 					addFrame.initializeFrame(childFrame);
 					childFrame.setVisible(true);
 				}
 			});
 		
-		Icon deleteButtonIcon = ImageLoadingTools.getResourceIcon("icons/block--minus.png", "remove device");
+		// Buttons panel
+		final JButton peripheralButton;
+		if(addButtonIcon == null)
+			peripheralButton= new JButton("Add Peripherals");
+		else
+			peripheralButton = new JButton("Add Peripherals", addButtonIcon);
+		peripheralButton.setEnabled(false);
+		peripheralButton.setHorizontalAlignment(SwingConstants.LEFT);
+		peripheralButton.setOpaque(false);
+		peripheralButton.addActionListener(new ActionListener()
+			{
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					int row = loadedDevicesList.getSelectedIndex();
+					if(row < 0 || row >= loadedDevices.size())
+						return;
+					
+					LoadedDevice device = loadedDevices.elementAt(row);
+					
+					Device hubTemp;
+					try 
+					{
+						hubTemp = YouScopeClientImpl.getMicroscope().getDevice(device.deviceName);
+					} 
+					catch (RemoteException|DeviceException e) 
+					{
+						ClientSystem.err.println("Could not get hub with ID " + device.deviceName, e);
+						return;
+					}
+                	if(!(hubTemp instanceof HubDevice))
+                	{
+                		ClientSystem.err.println("Device " + device.deviceName + " is not a hub device, but identifies as such.");
+                		return;
+                	}
+                	final HubDevice hub = (HubDevice)hubTemp;
+                	
+                	
+        			final YouScopeFrame childFrame = ManageTabLoadedDevices.this.frame.createModalChildFrame();
+        			
+        			// Initialize frame
+        			childFrame.setTitle("Add Peripheral Devices");
+        			childFrame.setResizable(true);
+        			childFrame.setClosable(true);
+        			childFrame.setMaximizable(false);
+        			// Initialize content.
+        			childFrame.startInitializing();
+        			new Thread(new Runnable()
+        				{
+        					@Override
+        					public void run()
+        					{
+        						PeripheralDevicesPage peripheralsPage = new PeripheralDevicesPage(hub, childFrame);
+        						childFrame.setContentPane(peripheralsPage);
+        						childFrame.pack();
+        						childFrame.setSize(new Dimension(540, 500));
+        						childFrame.endLoading();
+        					}
+        				}).start();
+        			childFrame.setVisible(true);
+				}
+			});
+		
 		JButton deleteButton;
 		if(deleteButtonIcon == null)
 			deleteButton= new JButton("Remove Device");
@@ -110,7 +351,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 				@Override
 				public void actionPerformed(ActionEvent arg0)
 				{
-					int row = loadedDevicesList.getSelectedIndex();//.getSelectedRow();
+					int row = loadedDevicesList.getSelectedIndex();
 					if(row < 0 || row >= loadedDevices.size())
 						return;
 					
@@ -135,6 +376,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
         JPanel buttonPanel = new JPanel(buttonLayout);
         buttonPanel.setOpaque(false);
         StandardFormats.addGridBagElement(addButton, buttonLayout, newLineConstr, buttonPanel);
+        StandardFormats.addGridBagElement(peripheralButton, buttonLayout, newLineConstr, buttonPanel);
         StandardFormats.addGridBagElement(deleteButton, buttonLayout, newLineConstr, buttonPanel);
         JPanel emptyPanel = new JPanel();
         emptyPanel.setOpaque(false);
@@ -160,6 +402,24 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		mainPanel.addFill(loadedDevicesPanel);
 		add(mainPanel, BorderLayout.CENTER);
 		
+		loadedDevicesList.addListSelectionListener(new ListSelectionListener() 
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e) 
+			{
+				if(e.getValueIsAdjusting())
+					return;
+				int row = loadedDevicesList.getSelectedIndex();
+				if(row < 0 || row >= loadedDevices.size())
+					peripheralButton.setEnabled(false);
+				
+				LoadedDevice device = loadedDevices.elementAt(row);
+				if(device.deviceType == DeviceType.HubDevice)
+					peripheralButton.setEnabled(true);
+				else
+					peripheralButton.setEnabled(false);
+			}
+		});
 	}
 	
 	private final class LoadedDevice
@@ -167,11 +427,13 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		public final String deviceName;
 		public final String driverLibrary;
 		public final String driverName;
-		LoadedDevice(String deviceName, String driverLibrary, String driverName)
+		public final DeviceType deviceType;
+		LoadedDevice(String deviceName, String driverLibrary, String driverName, DeviceType deviceType)
 		{
 			this.deviceName = deviceName;
 			this.driverLibrary = driverLibrary;
 			this.driverName = driverName;
+			this.deviceType = deviceType;
 		}
 	}
 	
@@ -254,12 +516,6 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		somethingChanged = true;
-		initializeContent();
-	}
-	@Override
 	public void initializeContent()
 	{
 		loadedDevices.clear();
@@ -267,7 +523,7 @@ class ManageTabLoadedDevices extends ManageTabElement implements ActionListener
 		{
 			for(Device device : YouScopeClientImpl.getMicroscope().getDevices())
 			{
-				loadedDevices.addElement(new LoadedDevice(device.getDeviceID(), device.getLibraryID(), device.getDriverID()));
+				loadedDevices.addElement(new LoadedDevice(device.getDeviceID(), device.getLibraryID(), device.getDriverID(), device.getType()));
 			}
 		}
 		catch(Exception e)

@@ -531,6 +531,22 @@ class MicroscopeImpl implements MicroscopeInternal
 		devices.put(deviceID, device);
 		
 		stateChanged("Device " + deviceID + " loaded (driver: " + libraryID + "." + driverID + ", type:" +deviceType.toString()+").");
+		synchronized(microscopeConfigurationListeners)
+		{
+			for(int i=0; i<microscopeConfigurationListeners.size(); i++)
+			{
+				try
+				{
+					microscopeConfigurationListeners.elementAt(i).deviceAdded(deviceID);
+				}
+				catch(@SuppressWarnings("unused") RemoteException e)
+				{
+					// remove listener
+					microscopeConfigurationListeners.removeElementAt(i);
+					i--;
+				}
+			}
+		}
 		return device;
 	}
 	
@@ -1061,7 +1077,7 @@ class MicroscopeImpl implements MicroscopeInternal
 		return microscopeConfiguration;
 	}
 
-	void microscopeUninitialized()
+	private void microscopeUninitialized()
 	{
 		devices.clear();
 		standardFocusDevice = null;

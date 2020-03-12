@@ -232,4 +232,11 @@ class ChannelManagerImpl implements MicroscopeConfigurationListener
 	{
 		return new ChannelManagerRMI(accessID);
 	}
+
+	@Override
+	public void deviceAdded(String deviceID) 
+	{
+		// do nothing.
+		
+	}
 }

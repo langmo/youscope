@@ -405,4 +405,10 @@ class ChannelImpl implements ChannelInternal, MicroscopeConfigurationListener, C
 	{
 		return channelGroupID + "." + channelID;
 	}
+
+	@Override
+	public void deviceAdded(String deviceID)
+	{
+		// do nothing
+	}
 }

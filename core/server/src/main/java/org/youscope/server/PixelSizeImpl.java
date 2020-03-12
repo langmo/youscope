@@ -220,4 +220,10 @@ class PixelSizeImpl implements MicroscopeConfigurationListener, Comparable<Pixel
 	{
 		return new RMIInterface(accessID);
 	}
+
+	@Override
+	public void deviceAdded(String deviceID) throws RemoteException 
+	{
+		// do nothing
+	}
 }

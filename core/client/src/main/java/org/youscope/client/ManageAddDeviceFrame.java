@@ -77,12 +77,10 @@ import com.google.zxing.qrcode.QRCodeWriter;
  */
 class ManageAddDeviceFrame
 {
-	private final ArrayList<ActionListener> devicesChangedListener = new ArrayList<ActionListener>();
-	
 	private static final GridBagConstraints	newLineConstr = StandardFormats.getNewLineConstraint();
 	private static final GridBagConstraints	bottomConstr = StandardFormats.getBottomContstraint();
 	
-	private class QRImageField extends JComponent
+	private static class QRImageField extends JComponent
     {
         /**
          * Serial Version UID.
@@ -256,7 +254,7 @@ class ManageAddDeviceFrame
 		}
 	}
 	
-	private class SelectedDevicePanel extends JPanel
+	private static class SelectedDevicePanel extends JPanel
 	{
 		/**
 		 * Serial Version UID.
@@ -565,7 +563,7 @@ class ManageAddDeviceFrame
 			}
 		}
 	}
-	private class PeripheralDevicesPage extends JPanel
+	public static class PeripheralDevicesPage extends JPanel
 	{
 		/**
 		 * Serial Version UID.
@@ -616,7 +614,7 @@ class ManageAddDeviceFrame
 			add(selectedDeviceElement);
 		}
 	}
-	private class DevicePropertiesPage extends JPanel
+	private static class DevicePropertiesPage extends JPanel
 	{
 		/**
 		 * Serial Version UID.
@@ -939,17 +937,7 @@ class ManageAddDeviceFrame
 		return errorMessage;
 	}
 	
-	public void addDevicesChangedListener(ActionListener listener)
-	{
-		devicesChangedListener.add(listener);
-	}
-	
-	public void removeDevicesChangedListener(ActionListener listener)
-	{
-		devicesChangedListener.remove(listener);
-	}
-	
-	private void loadDevice(final AvailableDeviceDriver driver, String deviceID, final YouScopeFrame frame)
+	private static void loadDevice(final AvailableDeviceDriver driver, String deviceID, final YouScopeFrame frame)
 	{
 		
 		PreInitDeviceProperty[] preInitProperties;
@@ -1016,7 +1004,7 @@ class ManageAddDeviceFrame
 			}).start();
 		
 	}
-	private void initializeDevice(AvailableDeviceDriver driver, DeviceSetting[] preInitProperties, YouScopeFrame frame)
+	private static void initializeDevice(AvailableDeviceDriver driver, DeviceSetting[] preInitProperties, YouScopeFrame frame)
 	{
 		final Device device;
 		String deviceID;
@@ -1031,10 +1019,6 @@ class ManageAddDeviceFrame
 			return;
 		}
 		
-		for(ActionListener listener : devicesChangedListener)
-		{
-			listener.actionPerformed(new ActionEvent(ManageAddDeviceFrame.this, 1234, "New device added."));
-		}
 		if(device instanceof HubDevice)
 		{
 			final YouScopeFrame childFrame = frame.createModalChildFrame();
@@ -1065,7 +1049,7 @@ class ManageAddDeviceFrame
 			JOptionPane.showMessageDialog(null, "A new device with ID "+deviceID+" was sucessfully added.", "Device Added", JOptionPane.INFORMATION_MESSAGE);		
 		}
 	}
-	private void unloadDevice(AvailableDeviceDriver driver)
+	private static void unloadDevice(AvailableDeviceDriver driver)
 	{
 		try
 		{

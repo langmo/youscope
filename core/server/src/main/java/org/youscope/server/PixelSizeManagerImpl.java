@@ -193,4 +193,10 @@ class PixelSizeManagerImpl implements MicroscopeConfigurationListener
 	{
 		return new RMIInterface(accessID);
 	}
+
+	@Override
+	public void deviceAdded(String deviceID) throws RemoteException 
+	{
+		// do nothing.
+	}
 }
