@@ -14,9 +14,9 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>YouScope.ico</icon>
+  <var>PATH=%EXEDIR%\drivers32;%PATH%</var>
   <classPath>
     <mainClass>org.youscope.starter.Starter</mainClass>
-    <cp>lib/youscope.jar</cp>
   </classPath>
   <jre>
     <path></path>

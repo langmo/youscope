@@ -71,6 +71,7 @@ createExe {
     outfile = 'YouScope64.exe'
     jreRuntimeBits = "64"
     jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers64"]
+	variables = ['PATH=%EXEDIR%\\drivers64;%PATH%']
 }
 
 // 32 bit version of exe
@@ -78,52 +79,7 @@ task createExe32(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     outfile = 'YouScope32.exe'
     jreRuntimeBits = "32"
     jvmOptions = ["-Dpython.console.encoding=UTF-8", "-Djava.library.path=drivers32"]
-}
-
-nsis {
-	configuration = file("${rootProject.projectDir}/resources/nsis/YouScope.nsi")
-	runIn =  file("${rootProject.buildDir}/install/youscope/")
-	additionalPlugins = ['AccessControl']
-	variables = ['WIN64':'True']
-}
-task createInstaller32(type: com.github.langmo.gradlensis.GradleNsisTask) {
-	variables = ['WIN32':'True']
-}
-task createInstaller3264(type: com.github.langmo.gradlensis.GradleNsisTask) {
-	variables = ['WIN32':'True', 'WIN64':'True']
-}
-createInstaller.dependsOn installDist
-createInstaller32.dependsOn installDist
-createInstaller3264.dependsOn installDist
-task createInstallers {
-	dependsOn ":createInstaller32"
-	dependsOn ":createInstaller"
-	dependsOn ":createInstaller3264"
-}
-def NSIS_GROUP = 'nsis'
-createInstaller32.group = createInstaller.group
-createInstaller32.description = createInstaller.description
-createInstaller3264.group = createInstaller.group
-createInstaller3264.description = createInstaller.description
-createInstallers.group = createInstaller.group
-createInstallers.description = "Creates both the 32bit, the 64bit, and the compined 32/64bit installers"
-
-// work around for bugs in installDist on github
-installDist {
-	def installDir = file("${rootProject.buildDir}/install/${rootProject.name}")
-	def libDir = new File(installDir, "lib")
-	def binDir = new File(installDir, "bin")
-	// make the wrongly required directories before they are checked for
-	doFirst {
-		mkdir installDir
-		mkdir libDir
-		mkdir binDir
-	}
-	// remove them after the check
-	doLast {
-		println "Installing distribution to $installDir."
-		binDir.deleteDir()
-	}
+	variables = ['PATH=%EXEDIR%\\drivers32;%PATH%']
 }
 
 // Delete annoying start scripts. We are using exe's instead!
@@ -131,15 +87,6 @@ startScripts {
     doLast {
         delete windowsScript
 		delete unixScript
-    }
-}
-
-distributions {
-    main {
-        distributionBaseName = 'youscope'
-        contents {
-            from 'distribution'
-        }
     }
 }
 
@@ -308,10 +255,14 @@ task externalLibs {
     outputs.dir libs
 }
 
-
 // Package distribution
 distributions {
-    main {
+    nsis {
+		distributionBaseName = 'nsis'
+		// copy everything which is in the /distribution folder.
+        contents {
+            from 'distribution'
+        }
         contents {
 			from(createExe)
 			{
@@ -324,6 +275,11 @@ distributions {
 			from(externalLibs) {
                 into 'lib'
             }
+			project(':') {
+				from(jar) {
+					into 'lib'
+				}
+			}
 			project(':core:api') {
 				from(jar) {
 					into 'lib'
@@ -349,3 +305,49 @@ distributions {
         }
     }
 }
+
+// work around for bugs in installNsisDist on github
+installNsisDist {
+	def installDir = file("${rootProject.buildDir}/install/nsis")
+	def libDir = new File(installDir, "lib")
+	def binDir = new File(installDir, "bin")
+	// make the wrongly required directories before they are checked for
+	doFirst {
+		mkdir installDir
+		mkdir libDir
+		mkdir binDir
+	}
+	// remove them after the check
+	doLast {
+		println "Installing distribution to $installDir."
+		binDir.deleteDir()
+	}
+}
+
+nsis {
+	configuration = file("${rootProject.projectDir}/resources/nsis/YouScope.nsi")
+	runIn =  file("${rootProject.buildDir}/install/nsis/")
+	additionalPlugins = ['AccessControl']
+	variables = ['WIN64':'True']
+}
+task createInstaller32(type: com.github.langmo.gradlensis.GradleNsisTask) {
+	variables = ['WIN32':'True']
+}
+task createInstaller3264(type: com.github.langmo.gradlensis.GradleNsisTask) {
+	variables = ['WIN32':'True', 'WIN64':'True']
+}
+createInstaller.dependsOn installNsisDist
+createInstaller32.dependsOn installNsisDist
+createInstaller3264.dependsOn installNsisDist
+task createInstallers {
+	dependsOn ":createInstaller32"
+	dependsOn ":createInstaller"
+	dependsOn ":createInstaller3264"
+}
+def NSIS_GROUP = 'nsis'
+createInstaller32.group = createInstaller.group
+createInstaller32.description = createInstaller.description
+createInstaller3264.group = createInstaller.group
+createInstaller3264.description = createInstaller.description
+createInstallers.group = createInstaller.group
+createInstallers.description = "Creates both the 32bit, the 64bit, and the compined 32/64bit installers"
