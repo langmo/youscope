@@ -19,9 +19,9 @@
     <mainClass>org.youscope.starter.Starter</mainClass>
   </classPath>
   <jre>
-    <path></path>
+    <path>%JAVA_HOME%</path>
     <bundledJre64Bit>false</bundledJre64Bit>
-    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <bundledJreAsFallback>true</bundledJreAsFallback>
     <minVersion>1.7.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
