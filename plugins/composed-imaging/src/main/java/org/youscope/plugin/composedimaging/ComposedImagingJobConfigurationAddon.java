@@ -108,7 +108,6 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 	ComposedImagingJobConfigurationAddon(YouScopeClient client, YouScopeServer server) throws AddonException
 	{
 		super(getMetadata(),  client, server);
-		initializeConfiguration();
 	}
     
     static ComponentMetadataAdapter<ComposedImagingJobConfiguration> getMetadata()
@@ -599,10 +598,9 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		areaWidthField.setValue(areaWidth);
 		areaHeightField.setValue(areaHeight);
 	}
-
-	public void initializeConfiguration()
+	@Override
+	protected void initializeDefaultConfiguration(ComposedImagingJobConfiguration configuration) throws AddonException
 	{
-		ComposedImagingJobConfiguration configuration = getConfiguration();
 		double overlap = getClient().getPropertyProvider().getProperty(PROPERTY_OVERLAP, configuration.getOverlap());
 		int nx = getClient().getPropertyProvider().getProperty(PROPERTY_NX, configuration.getNx());
 		int ny = getClient().getPropertyProvider().getProperty(PROPERTY_NY, configuration.getNy());
@@ -695,10 +693,5 @@ class ComposedImagingJobConfigurationAddon extends ComponentAddonUIAdapter<Compo
 		getClient().getPropertyProvider().setProperty(PROPERTY_NX, nx);
 		getClient().getPropertyProvider().setProperty(PROPERTY_NY, ny);
 		
-	}
-
-	@Override
-	protected void initializeDefaultConfiguration(ComposedImagingJobConfiguration configuration) throws AddonException {
-		// do nothing.
 	}
 }
