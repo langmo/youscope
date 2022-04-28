@@ -85,8 +85,8 @@ class AboutFrame
         description.setContentType("text/html");
         description.setText("<html><p style=\"margin:0px;padding:0px;font-weight:bold;color: #000000;\">"
                 +"YouScope "+ YouScopeVersion.getFullVersion() + "<br />"
-                + "Created by Moritz Lang and contributers.<br /><br />"
-                + "(c) Copyright Moritz Lang, contributors and others 2009-2018.<br/>"
+                + "Created by Moritz Lang, Andreas Cuny and contributers.<br /><br />"
+                + "(c) Copyright Moritz Lang, contributors and others 2009-2022.<br/>"
                 + "All rights reserved.<br /><br />"
                 + "If you have remarks or questions,<br />"
                 + "visit: <a href=\"http://www.youscope.org\">www.youscope.org</a><br />"
