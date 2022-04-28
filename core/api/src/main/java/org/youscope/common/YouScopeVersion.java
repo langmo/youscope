@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Moritz Lang - initial API and implementation
+ *     Andreas P. Cuny - update product version
  ******************************************************************************/
 /* Copyright 2012 ETH Zuerich, CISD
  * 
@@ -41,7 +42,7 @@ public class YouScopeVersion
 
 	private final static String		DEVELOPER_VERSION = "2.2.0"; 
 
-	private final static String		PRODUCT_VERSION = "R2020"; 
+	private final static String		PRODUCT_VERSION = "R2022"; 
 
 	private final static String		APPLICATION_NAME = "YouScope";
 	
