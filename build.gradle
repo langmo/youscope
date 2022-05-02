@@ -255,13 +255,21 @@ task externalLibs {
     outputs.dir libs
 }
 
+task addMSVC {
+    def msvc = file("${rootProject.projectDir}/msvc")
+    outputs.dir msvc
+}
+
 // Package distribution
 distributions {
     nsis {
 		distributionBaseName = 'nsis'
 		// copy everything which is in the /distribution folder.
-        contents {
+		contents {
             from 'distribution'
+        }
+        contents {
+            from 'addMSVC'
         }
         contents {
 			from(createExe)
