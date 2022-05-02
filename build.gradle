@@ -269,7 +269,7 @@ distributions {
             from 'distribution'
         }
         contents {
-            from 'addMSVC'
+            from(addMSVC)
 			{
 				into 'msvc'
 			}
