@@ -126,6 +126,8 @@ Section "-Main Program" SecMain
 	SetOutPath "$INSTDIR"
 	
 	; We install the MSVC Runtime if not yet installed
+	File "msvc\vcredist_x64.exe"
+	
 	SetRegView 64 
     ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Version"
     DetailPrint "Found version $0"
@@ -134,7 +136,6 @@ Section "-Main Program" SecMain
     ${Else}
 		DetailPrint "Installing VC++ redistributable."
 		
-		File "msvc\vcredist_x64.exe"
 		ExecWait "$INSTDIR\vcredist_x64.exe"
 		Delete "$INSTDIR\vcredist_x64.exe"
     ${EndIf}
