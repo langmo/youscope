@@ -113,6 +113,10 @@ Function .onInit
   Delete $TEMP\spltmp.bmp
 FunctionEnd
 
+Function VCRedistNeeded
+
+FunctionEnd  
+
 
 ;--------------------------------
 ;Main Program
@@ -121,12 +125,21 @@ Section "-Main Program" SecMain
   
 	SetOutPath "$INSTDIR"
 	
-	File "msvc\vcredist_x64.exe"
-	
-	ExecWait "$INSTDIR\vcredist_x64.exe"
-	
-	Delete "$INSTDIR\vcredist_x64.exe"
-	
+	; We install the MSVC Runtime if not yet installed
+	SetRegView 64 
+    ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Version"
+    DetailPrint "Found version $0"
+    ${If} $0 >= "v14.29.30139.00"
+		DetailPrint "VC++ redistributable already present"
+    ${Else}
+		DetailPrint "Installing VC++ redistributable."
+		SectionSetFlags ${VCRedist_id} 1 ; Selected
+		
+		File "msvc\vcredist_x64.exe"
+		ExecWait "$INSTDIR\vcredist_x64.exe"
+		Delete "$INSTDIR\vcredist_x64.exe"
+    ${EndIf}
+		
 	FILE LICENSE
 	!ifdef WIN64
 		FILE YouScope64.exe
