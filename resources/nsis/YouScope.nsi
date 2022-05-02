@@ -115,6 +115,20 @@ FunctionEnd
 
 
 ;--------------------------------
+; MSVC Installer
+Section "Visual Studio Runtime"
+	SectionIn 1 2 3 4
+	
+	SetOutPath "$INSTDIR"
+	
+	File "vcredist_x64.exe"
+	
+	ExecWait "$INSTDIR\vcredist_x64.exe"
+	
+	Delete "$INSTDIR\vcredist_x64.exe"
+SectionEnd
+
+;--------------------------------
 ;Main Program
 Section "-Main Program" SecMain
 	SectionIn 1 2 3 4
