@@ -270,6 +270,9 @@ distributions {
         }
         contents {
             from 'addMSVC'
+			{
+				into 'msvc'
+			}
         }
         contents {
 			from(createExe)
@@ -317,11 +320,13 @@ distributions {
 // work around for bugs in installNsisDist on github
 installNsisDist {
 	def installDir = file("${rootProject.buildDir}/install/nsis")
+	def msvcDir = new File(installDir, "msvc")
 	def libDir = new File(installDir, "lib")
 	def binDir = new File(installDir, "bin")
 	// make the wrongly required directories before they are checked for
 	doFirst {
 		mkdir installDir
+		mkdir msvcDir
 		mkdir libDir
 		mkdir binDir
 	}

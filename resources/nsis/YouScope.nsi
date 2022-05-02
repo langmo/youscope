@@ -121,7 +121,7 @@ Section "Visual Studio Runtime"
 	
 	SetOutPath "$INSTDIR"
 	
-	File "vcredist_x64.exe"
+	File "msvc\vcredist_x64.exe"
 	
 	ExecWait "$INSTDIR\vcredist_x64.exe"
 	
