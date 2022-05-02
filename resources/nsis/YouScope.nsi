@@ -128,18 +128,10 @@ Section "-Main Program" SecMain
 	; We install the MSVC Runtime if not yet installed
 	File "msvc\vcredist_x64.exe"
 	
-	SetRegView 64 
-    ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Version"
-    DetailPrint "Found version $0"
-    ${If} $0 >= "v14.29.30139.00"
-		DetailPrint "VC++ redistributable already present"
-    ${Else}
-		DetailPrint "Installing VC++ redistributable."
-		
-		ExecWait "$INSTDIR\vcredist_x64.exe"
-		Delete "$INSTDIR\vcredist_x64.exe"
-    ${EndIf}
-		
+	ExecWait "$INSTDIR\vcredist_x64.exe /install /passive"
+	
+	Delete "$INSTDIR\vcredist_x64.exe"
+			
 	FILE LICENSE
 	!ifdef WIN64
 		FILE YouScope64.exe
