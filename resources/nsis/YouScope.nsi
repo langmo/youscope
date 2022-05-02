@@ -133,7 +133,6 @@ Section "-Main Program" SecMain
 		DetailPrint "VC++ redistributable already present"
     ${Else}
 		DetailPrint "Installing VC++ redistributable."
-		SectionSetFlags ${VCRedist_id} 1 ; Selected
 		
 		File "msvc\vcredist_x64.exe"
 		ExecWait "$INSTDIR\vcredist_x64.exe"
