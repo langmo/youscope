@@ -115,10 +115,10 @@ FunctionEnd
 
 
 ;--------------------------------
-; MSVC Installer
-Section "Visual Studio Runtime"
+;Main Program
+Section "-Main Program" SecMain
 	SectionIn 1 2 3 4
-	
+  
 	SetOutPath "$INSTDIR"
 	
 	File "msvc\vcredist_x64.exe"
@@ -126,14 +126,7 @@ Section "Visual Studio Runtime"
 	ExecWait "$INSTDIR\vcredist_x64.exe"
 	
 	Delete "$INSTDIR\vcredist_x64.exe"
-SectionEnd
-
-;--------------------------------
-;Main Program
-Section "-Main Program" SecMain
-	SectionIn 1 2 3 4
-  
-	SetOutPath "$INSTDIR"
+	
 	FILE LICENSE
 	!ifdef WIN64
 		FILE YouScope64.exe
