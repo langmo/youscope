@@ -327,6 +327,14 @@ SectionGroup "Job Types" SecJobTypes
   		;Files:
   		FILE "plugins\youscope-imaging-job.jar"  
 	SectionEnd
+	
+	Section "Image Subtraction Job" SecImageSubstractionJob
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-image-substraction-job.jar"  
+	SectionEnd
 
 	Section "Out-Of-Focus Job" SecOutOfFocusJob
   		SetOutPath "$INSTDIR\plugins"
@@ -475,6 +483,13 @@ SectionGroup "Job Types" SecJobTypes
   		;Files:
   		FILE "plugins\youscope-nemesys.jar"  
 	SectionEnd
+	Section "Fluigent" SecFluigent
+		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 3 4
+  
+  		;Files:
+  		FILE "plugins\youscope-fluigent.jar"  
+	SectionEnd
 	Section "Live Measurement" SecLiveMeasurement
 		SetOutPath "$INSTDIR\plugins"
   		SectionIn 1 2 3 4
@@ -537,6 +552,14 @@ SectionGroup "Tools" SecTools
   
   		;Files:
   		FILE "plugins\youscope-device-setting-manager.jar"  
+	SectionEnd
+	
+	Section "Focus Viewer" SecFocusViewer
+  		SetOutPath "$INSTDIR\plugins"
+  		SectionIn 1 2 4
+  
+  		;Files:
+  		FILE "plugins\youscope-focus-viewer.jar"  
 	SectionEnd
 
 
@@ -746,6 +769,7 @@ SectionEnd
 
 	LangString DESC_SecJobTypes ${LANG_ENGLISH} "Jobs are small bricks of actions which compose an imaging protocol, and can be added to several different measurement protocols."
 	LangString DESC_SecImagingJob ${LANG_ENGLISH} "Taking an image in a channel."
+	LangString DESC_SecImageSubstractionJob ${LANG_ENGLISH} "Taking two out-of-focus images and divide them."
 	LangString DESC_SecOutOfFocusJob ${LANG_ENGLISH} "Taking an out-of-focus image."
 	LangString DESC_SecZSlidesJob ${LANG_ENGLISH} "Taking several images at different focus positions."
 	LangString DESC_SecScriptingJob ${LANG_ENGLISH} "Possibility to control the microscope using scripts."
@@ -759,6 +783,7 @@ SectionEnd
 	LangString DESC_SecLiveStream ${LANG_ENGLISH} "The LiveStream continuously displays the current microscope image in a given channel."
 	LangString DESC_SecMultiStream ${LANG_ENGLISH} "Similar to the LiveStream. Overlays the images of several channels (up to 4) in a color image."
 	LangString DESC_SecPositionControl ${LANG_ENGLISH} "Possibility to display and change the position of the stage and the focus."
+	LangString DESC_SecFocusViewer ${LANG_ENGLISH} "Displays the focus position."
 	LangString DESC_SecMeasurementViewer ${LANG_ENGLISH} "Displays the results of a measurement."
 	LangString DESC_SecScripting ${LANG_ENGLISH} "Environment to display, manipulate, run and debug scripts in various languages."
 	;LangString DESC_SecYouPong ${LANG_ENGLISH} "Small game to be played by changing the stage position and focus. Experimental."
@@ -790,7 +815,7 @@ SectionEnd
 	LangString DESC_SecController ${LANG_ENGLISH} "Allows to implement feedback control algorithms." 
 	LangString DESC_SecCustomJob ${LANG_ENGLISH} "Allows to define custom reusable job types." 
 	LangString DESC_SecDropletMicrofluidics ${LANG_ENGLISH} "Droplet based microfluidic control algorithm." 
-	;LangString DESC_SecFluigent ${LANG_ENGLISH} "User interface and job to control Fluigent microfluidic pumps." 
+	LangString DESC_SecFluigent ${LANG_ENGLISH} "User interface and job to control Fluigent microfluidic pumps." 
 	LangString DESC_SecNemesys ${LANG_ENGLISH} "User interface and job to control Nemesys syringe systems." 
 	LangString DESC_SecLiveMeasurement ${LANG_ENGLISH} "Job allowing to modify its sub-jobs during a measurement." 
 	LangString DESC_SecRepeatJob ${LANG_ENGLISH} "Job repeating its child jobs several times."
@@ -834,6 +859,7 @@ SectionEnd
 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecJobTypes} $(DESC_SecJobTypes) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecImagingJob} $(DESC_SecImagingJob) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecImageSubstractionJob} $(DESC_SecImageSubstractionJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecOutOfFocusJob} $(DESC_SecOutOfFocusJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecZSlidesJob} $(DESC_SecZSlidesJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecScriptingJob} $(DESC_SecScriptingJob) 
@@ -847,6 +873,7 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecLiveStream} $(DESC_SecLiveStream) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecMultiStream} $(DESC_SecMultiStream) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecPositionControl} $(DESC_SecPositionControl) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecPositionControl} $(DESC_SecFocusViewer) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecMeasurementViewer} $(DESC_SecMeasurementViewer) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecScripting} $(DESC_SecScripting) 
 		;!insertmacro MUI_DESCRIPTION_TEXT ${SecYouPong} $(DESC_SecYouPong) 
@@ -878,7 +905,7 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecController} $(DESC_SecController) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomJob} $(DESC_SecCustomJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecDropletMicrofluidics} $(DESC_SecDropletMicrofluidics) 
-		;!insertmacro MUI_DESCRIPTION_TEXT ${SecFluigent} $(DESC_SecFluigent) 
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecFluigent} $(DESC_SecFluigent) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecNemesys} $(DESC_SecNemesys) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecLiveMeasurement} $(DESC_SecLiveMeasurement) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecRepeatJob} $(DESC_SecRepeatJob) 
