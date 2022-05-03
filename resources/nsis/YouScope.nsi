@@ -483,13 +483,13 @@ SectionGroup "Job Types" SecJobTypes
   		;Files:
   		FILE "plugins\youscope-nemesys.jar"  
 	SectionEnd
-	Section "Fluigent" SecFluigent
-		SetOutPath "$INSTDIR\plugins"
-  		SectionIn 1 3 4
+	;Section "Fluigent" SecFluigent
+	;	SetOutPath "$INSTDIR\plugins"
+  	;	SectionIn 1 3 4
   
   		;Files:
-  		FILE "plugins\youscope-fluigent.jar"  
-	SectionEnd
+  	;	FILE "plugins\youscope-fluigent.jar"  
+	;SectionEnd
 	Section "Live Measurement" SecLiveMeasurement
 		SetOutPath "$INSTDIR\plugins"
   		SectionIn 1 2 3 4
@@ -815,7 +815,7 @@ SectionEnd
 	LangString DESC_SecController ${LANG_ENGLISH} "Allows to implement feedback control algorithms." 
 	LangString DESC_SecCustomJob ${LANG_ENGLISH} "Allows to define custom reusable job types." 
 	LangString DESC_SecDropletMicrofluidics ${LANG_ENGLISH} "Droplet based microfluidic control algorithm." 
-	LangString DESC_SecFluigent ${LANG_ENGLISH} "User interface and job to control Fluigent microfluidic pumps." 
+	;LangString DESC_SecFluigent ${LANG_ENGLISH} "User interface and job to control Fluigent microfluidic pumps." 
 	LangString DESC_SecNemesys ${LANG_ENGLISH} "User interface and job to control Nemesys syringe systems." 
 	LangString DESC_SecLiveMeasurement ${LANG_ENGLISH} "Job allowing to modify its sub-jobs during a measurement." 
 	LangString DESC_SecRepeatJob ${LANG_ENGLISH} "Job repeating its child jobs several times."
@@ -905,7 +905,7 @@ SectionEnd
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecController} $(DESC_SecController) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecCustomJob} $(DESC_SecCustomJob) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecDropletMicrofluidics} $(DESC_SecDropletMicrofluidics) 
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecFluigent} $(DESC_SecFluigent) 
+		;!insertmacro MUI_DESCRIPTION_TEXT ${SecFluigent} $(DESC_SecFluigent) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecNemesys} $(DESC_SecNemesys) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecLiveMeasurement} $(DESC_SecLiveMeasurement) 
 		!insertmacro MUI_DESCRIPTION_TEXT ${SecRepeatJob} $(DESC_SecRepeatJob) 
